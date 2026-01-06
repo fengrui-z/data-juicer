@@ -9,8 +9,9 @@ from data_juicer.download.wikipedia import (
     get_wikipedia_urls, download_wikipedia,
     WikipediaDownloader, WikipediaIterator, WikipediaExtractor
 )
+from data_juicer.utils.unittest_utils import DataJuicerTestCaseBase
 
-class TestDownload(unittest.TestCase):
+class TestDownload(DataJuicerTestCaseBase):
     def setUp(self):
         super().setUp()
         # Creates a temporary directory that persists until you delete it
@@ -20,6 +21,7 @@ class TestDownload(unittest.TestCase):
         # Clean up the temporary directory after each test
         if os.path.exists(self.temp_dir):
             shutil.rmtree(self.temp_dir)
+        super().tearDown()
 
     def test_wikipedia_urls(self):
         dump_date = "20241101"

@@ -89,6 +89,10 @@ class DJDataset(ABC):
         """
         return column in self.schema().columns
 
+    @abstractmethod
+    def count(self) -> int:
+        """return the count of the dataset"""
+
 
 def wrap_func_with_nested_access(f):
     """
@@ -350,6 +354,8 @@ class NestedDataset(Dataset, DJDataset):
 
     def process_parallel(self, *args, **kwargs):
         raise NotImplementedError("The process_parallel method needs to be implemented for the NestedDataset class.")
+    def count(self) -> int:
+        return self.num_rows
 
     def update_args(self, args, kargs, is_filter=False):
         if args:
@@ -462,6 +468,13 @@ class NestedDataset(Dataset, DJDataset):
         constructors, such that the constructed dataset object is
         NestedDataset."""
         return NestedDataset(super().from_dict(*args, **kargs))
+
+    @classmethod
+    def from_list(cls, *args, **kargs):
+        """Override the from_dict func, which is called by most from_xx
+        constructors, such that the constructed dataset object is
+        NestedDataset."""
+        return NestedDataset(super().from_list(*args, **kargs))
 
     def add_column(self, *args, **kargs):
         """Override the add column func, such that the processed samples
