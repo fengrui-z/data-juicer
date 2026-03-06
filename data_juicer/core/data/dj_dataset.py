@@ -354,6 +354,7 @@ class NestedDataset(Dataset, DJDataset):
 
     def process_parallel(self, *args, **kwargs):
         raise NotImplementedError("The process_parallel method needs to be implemented for the NestedDataset class.")
+
     def count(self) -> int:
         return self.num_rows
 

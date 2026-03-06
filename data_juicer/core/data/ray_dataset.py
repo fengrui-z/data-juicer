@@ -17,15 +17,13 @@ from ray.data._internal.util import get_compute_strategy
 
 from data_juicer.core.data import DJDataset
 from data_juicer.core.data.schema import Schema
-<<<<<<< HEAD
 from data_juicer.core.RayOperatorWrapper import Actor
-=======
 from data_juicer.core.tracer import should_trace_op
->>>>>>> upstream/main
 from data_juicer.ops import Deduplicator, Filter, Mapper, Pipeline
 from data_juicer.ops.base_op import DEFAULT_BATCH_SIZE, TAGGING_OPS
 from data_juicer.utils.constant import Fields
 from data_juicer.utils.file_utils import is_remote_path
+from data_juicer.utils.process_utils import calculate_np
 from data_juicer.utils.webdataset_utils import _custom_default_decoder
 
 
@@ -200,8 +198,7 @@ class RayDataset(DJDataset):
         cached_columns = set(columns_result)
 
         for op in operators:
-<<<<<<< HEAD
-            cached_columns = self._run_single_op(op, cached_columns)
+            cached_columns = self._run_single_op(op, cached_columns, tracer=tracer)
             self.data = self.data.materialize()
         return self
 
@@ -745,25 +742,7 @@ class RayDataset(DJDataset):
 
         return transformed_data
 
-    def _run_single_op(self, op, cached_columns=None):
-=======
-            try:
-                cached_columns = self._run_single_op(op, cached_columns, tracer=tracer)
-            except Exception as e:
-                logger.error(f"Error processing operator {op}: {e}.")
-                if op.runtime_env is not None:
-                    logger.error("Try to fallback to the base runtime environment.")
-                    original_runtime_env = op.runtime_env
-                    try:
-                        op.runtime_env = None
-                        cached_columns = self._run_single_op(op, cached_columns, tracer=tracer)
-                    finally:
-                        op.runtime_env = original_runtime_env
-                else:
-                    raise e
-        return self
-
-    def _run_single_op(self, op, cached_columns=None, tracer=None):>>>>>>> upstream/main
+    def _run_single_op(self, op, cached_columns=None, tracer=None):
         # Use cached columns to avoid calling self.data.columns() which breaks pipeline
         if cached_columns is None:
             cached_columns = set(self.data.columns())
@@ -1048,4 +1027,3 @@ def read_json_stream(
         concurrency=concurrency,
         override_num_blocks=override_num_blocks,
     )
-

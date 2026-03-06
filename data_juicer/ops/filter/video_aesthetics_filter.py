@@ -131,7 +131,6 @@ class VideoAestheticsFilter(Filter):
             "" if frame_sampling_method == "all_keyframes" else f"-{frame_num}"
         )
 
-<<<<<<< HEAD
     def compute_stats_single_actor(self, sample, model, processor, rank=None, context=False):
         """
         Compute aesthetics scores for a single sample in the actor.
