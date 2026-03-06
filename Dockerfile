@@ -1,45 +1,61 @@
 # The data-juicer image includes all open-source contents of data-juicer,
 # and it will be installed in editable mode.
 
-FROM nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
+FROM nvidia/cuda:12.6.3-cudnn-devel-ubuntu24.04
 
-# change to aliyun source
+# avoid hanging on interactive installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# add aliyun apt source mirrors for faster download in China
 RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list \
     && sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 
-# install python 3.10
-RUN DEBIAN_FRONTEND=noninteractive apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y git curl vim wget python3.10 libpython3.10-dev python3-pip libgl1-mesa-glx libglib2.0-0 \
-    && ln -sf /usr/bin/python3.10  /usr/bin/python3 \
-    && ln -sf /usr/bin/python3.10  /usr/bin/python \
-    && apt-get autoclean && rm -rf /var/lib/apt/lists/* \
-    && pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
+# install some basic system dependencies
+RUN apt-get update && apt-get install -y \
+    git curl vim wget aria2 openssh-server gnupg build-essential cmake gfortran \
+    ffmpeg libsm6 libxext6 libgl1 libglx-mesa0 libglib2.0-0 libosmesa6-dev \
+    freeglut3-dev libglfw3-dev libgles2-mesa-dev vulkan-tools \
+    libopenblas-dev liblapack-dev postgresql postgresql-contrib libpq-dev \
+    software-properties-common gcc-11 g++-11 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 200 && \
+    update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 200 && \
+    rm -rf /var/lib/apt/lists/*
 
-# install 3rd-party system dependencies
-RUN DEBIAN_FRONTEND=noninteractive apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y ffmpeg libsm6 libxext6 software-properties-common build-essential cmake gfortran libopenblas-dev liblapack-dev postgresql postgresql-contrib libpq-dev
+# install Python 3.11
+RUN add-apt-repository -y ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install -y python3.11 python3.11-dev python3.11-venv python3.11-distutils && \
+    # set the default Python
+    update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1 && \
+    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1 && \
+    # install pip
+    curl https://bootstrap.pypa.io/get-pip.py   | python3.11 && \
+    pip install --upgrade pip && \
+    rm -rf /var/lib/apt/lists/*
 
-# prepare the java env
+# install uv
+RUN pip install --no-cache-dir uv -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# install java
 WORKDIR /opt
-# download jdk
-RUN wget https://aka.ms/download-jdk/microsoft-jdk-17.0.9-linux-x64.tar.gz -O jdk.tar.gz \
+RUN wget https://aka.ms/download-jdk/microsoft-jdk-17.0.9-linux-x64.tar.gz   -O jdk.tar.gz \
     && tar -xzf jdk.tar.gz \
     && rm -rf jdk.tar.gz \
     && mv jdk-17.0.9+8 jdk
-
-# set the environment variable
 ENV JAVA_HOME=/opt/jdk
+ENV PATH=$JAVA_HOME/bin:$PATH
 
 WORKDIR /data-juicer
 
-# install uv
-RUN pip install uv -i https://pypi.tuna.tsinghua.edu.cn/simple
+# install basic dependencies for Data-Juicer
+ENV UV_HTTP_TIMEOUT=600
+RUN uv pip install --upgrade --no-cache-dir setuptools==69.5.1 setuptools_scm -i https://pypi.tuna.tsinghua.edu.cn/simple --system \
+    && uv pip install --no-cache-dir git+https://github.com/datajuicer/recognize-anything.git -i https://pypi.tuna.tsinghua.edu.cn/simple --system
 
-# install requirements which need to be installed from source
-RUN uv pip install --upgrade setuptools==69.5.1 setuptools_scm -i https://pypi.tuna.tsinghua.edu.cn/simple --system \
-    && uv pip install http://dail-wlcb.oss-cn-wulanchabu.aliyuncs.com/data_juicer/recognize-anything-main.zip -i https://pypi.tuna.tsinghua.edu.cn/simple --system
-
-# install data-juicer then
+# copy source code and install
 COPY . .
-RUN uv pip install -v -e .[all] -i https://pypi.tuna.tsinghua.edu.cn/simple --system \
+RUN uv pip install --no-cache-dir -v -e .[all] -i https://pypi.tuna.tsinghua.edu.cn/simple --system \
     && python -c "import nltk; nltk.download('punkt_tab'); nltk.download('punkt'); nltk.download('averaged_perceptron_tagger');  nltk.download('averaged_perceptron_tagger_eng')"
+
+# 最终入口配置
+CMD ["/bin/bash"]

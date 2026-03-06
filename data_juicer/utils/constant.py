@@ -68,12 +68,15 @@ class MetaKeys(object):
     video_object_segment_tags = "video_object_segment_tags"
     # # depth info in video
     video_depth_tags = "video_depth_tags"
+    # # video optical flow
+    video_optical_flow = "video_optical_flow"
     # # info extracted by VGGT
     vggt_tags = "vggt_tags"
     # # image tags
     image_tags = "image_tags"
     # # hand reconstruction
     hand_reconstruction_tags = "hand_reconstruction_tags"
+    hand_reconstruction_hawor_tags = "hand_reconstruction_hawor_tags"
     # # bounding box tag
     bbox_tag = DEFAULT_PREFIX + "bbox__"
     # # class label (from detection) tag
@@ -83,6 +86,14 @@ class MetaKeys(object):
 
     # # pose information
     pose_info = "pose_info"
+    # # Static Camera Calibration Info (for DeepCalib)
+    static_camera_calibration_deepcalib_tags = "static_camera_calibration_deepcalib_tags"
+    # # Static Camera Calibration Info (for Moge-2)
+    static_camera_calibration_moge_tags = "static_camera_calibration_moge_tags"
+    # # Video Undistortion Info
+    video_undistortion_tags = "video_undistortion_tags"
+    # # Camera Pose Info
+    video_camera_pose_tags = "video_camera_pose_tags"
 
     # === info extraction related tags ===
     # # for event extraction
@@ -269,6 +280,10 @@ class StatsKeysConstant(object):
     image_nsfw_score = "image_nsfw_score"
     image_watermark_prob = "image_watermark_prob"
     image_pair_similarity = "image_pair_similarity"
+    image_subplot_confidence = "image_subplot_confidence"
+    horizontal_peak_count = "horizontal_peak_count"
+    vertical_peak_count = "vertical_peak_count"
+    subplot_detected = "subplot_detected"
 
     #  === audios ===
     audio_duration = "audio_duration"

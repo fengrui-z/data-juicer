@@ -4,6 +4,7 @@ from typing import Optional, Tuple, Union
 from pydantic import PositiveFloat, PositiveInt
 
 from data_juicer.ops.filter.video_motion_score_filter import VideoMotionScoreFilter
+from data_juicer.utils.constant import MetaKeys
 from data_juicer.utils.lazy_loader import LazyLoader
 from data_juicer.utils.resource_utils import cuda_device_count
 
@@ -49,17 +50,32 @@ class VideoMotionScoreRaftFilter(VideoMotionScoreFilter):
         self,
         min_score: float = 1.0,
         max_score: float = sys.float_info.max,
+        frame_field: Optional[str] = None,
         sampling_fps: PositiveFloat = 2,
         size: Union[PositiveInt, Tuple[PositiveInt], Tuple[PositiveInt, PositiveInt], None] = None,
         max_size: Optional[PositiveInt] = None,
         divisible: PositiveInt = 8,
         relative: bool = False,
         any_or_all: str = "any",
+        if_output_optical_flow: bool = False,
+        optical_flow_key: str = MetaKeys.video_optical_flow,
         *args,
         **kwargs,
     ):
         super().__init__(
-            min_score, max_score, sampling_fps, size, max_size, divisible, relative, any_or_all, *args, **kwargs
+            min_score,
+            max_score,
+            frame_field,
+            sampling_fps,
+            size,
+            max_size,
+            divisible,
+            relative,
+            any_or_all,
+            if_output_optical_flow,
+            optical_flow_key,
+            *args,
+            **kwargs,
         )
 
     def setup_model(self, rank=None):
