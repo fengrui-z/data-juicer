@@ -15,6 +15,10 @@ class ExecutorFactory:
             from .ray_executor_partitioned import PartitionedRayExecutor
 
             return PartitionedRayExecutor
+        elif executor_type == "xenna":
+            from .xenna_executor import XennaExecutor
+
+            return XennaExecutor
         # TODO: add nemo support
         #  elif executor_type == "nemo":
         #    return NemoExecutor

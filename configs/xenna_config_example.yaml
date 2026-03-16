@@ -1,0 +1,209 @@
+# Example Configuration for XennaExecutor
+# 
+# This file demonstrates all available configuration options
+# for the streaming Xenna executor.
+
+# =============================================================================
+# Data-Juicer Core Configuration
+# =============================================================================
+
+# Dataset input path (required)
+dataset_path: './data/input.jsonl'
+
+# Output path for processed data (required)
+export_path: './data/output.jsonl'
+
+# Export format: jsonl, json, parquet, etc.
+export_type: 'jsonl'
+
+# Number of samples per export shard
+export_shard_size: 10000
+
+# Working directory for intermediate files
+work_dir: './work_dir'
+
+# Number of processes for initial data loading
+np: 4
+
+# =============================================================================
+# Operator Pipeline Definition
+# =============================================================================
+
+process:
+  # Filter operators
+  - whitespace_filter:
+      min_ratio: 0.3
+      text_key: 'text'
+  
+  - alphanumeric_filter:
+      min_ratio: 0.5
+      text_key: 'text'
+  
+  # Mapper operators
+  - clean_copyright_mapper:
+      text_key: 'text'
+  
+  - language_id_mapper:
+      lang_key: 'lang'
+  
+  # Deduplication
+  - sentence_deduplicator:
+      lowercase: true
+      text_key: 'text'
+
+# =============================================================================
+# Xenna Executor Configuration
+# =============================================================================
+
+executor_type: 'xenna'
+
+xenna:
+  # ---------------------------------------------------------------------------
+  # Execution Mode
+  # ---------------------------------------------------------------------------
+  # Options: 'streaming', 'batch', 'serving'
+  # - streaming: Concurrent stage execution (recommended for production)
+  # - batch: Sequential execution with materialization between stages
+  # - serving: Online serving mode for real-time requests
+  execution_mode: 'streaming'
+
+  # ---------------------------------------------------------------------------
+  # Streaming Configuration
+  # ---------------------------------------------------------------------------
+  streaming:
+    # How often to run the autoscaler (seconds)
+    autoscale_interval_s: 30.0
+    
+    # Window size for throughput estimation (seconds)
+    speed_estimation_window_s: 120.0
+    
+    # Minimum data points for speed estimation
+    min_data_points: 5
+    
+    # Backpressure multiplier: max_queued = num_actors * slots * multiplier
+    # Higher = more buffering = higher throughput but more memory
+    max_queued_multiplier: 2.0
+    
+    # Minimum max_queued to prevent starvation
+    max_queued_lower_bound: 16
+    
+    # Verbosity: NONE, ERROR, WARNING, INFO, DEBUG, TRACE
+    verbosity_level: 'INFO'
+
+  # ---------------------------------------------------------------------------
+  # Resource Configuration
+  # ---------------------------------------------------------------------------
+  resource:
+    # Percentage of CPU resources to allocate (leave rest for Ray)
+    cpu_allocation_percentage: 0.95
+    
+    # Default CPU cores per worker
+    default_cpus_per_worker: 1.0
+    
+    # Default GPUs per worker
+    default_gpus_per_worker: 0.0
+    
+    # Allow fractional GPU allocation (e.g., 0.5 GPU per worker)
+    enable_gpu_fractional: true
+    
+    # Clear CUDA_VISIBLE_DEVICES for CPU-only actors
+    clear_cuda_on_cpu_actors: true
+    
+    # Maximum memory per worker in GB (null for auto)
+    max_memory_per_worker_gb: null
+
+  # ---------------------------------------------------------------------------
+  # Memory Safety Configuration
+  # ---------------------------------------------------------------------------
+  memory_safety:
+    # Enable backpressure to prevent OOM
+    enable_backpressure: true
+    
+    # Interval for memory checks (seconds)
+    memory_check_interval_s: 1.0
+    
+    # Memory usage threshold to trigger backpressure (0-1)
+    high_memory_threshold: 0.85
+    
+    # Memory usage threshold for emergency action (0-1)
+    critical_memory_threshold: 0.95
+    
+    # Emergency action: 'pause', 'scale_down', 'checkpoint'
+    emergency_action: 'pause'
+    
+    # Enable automatic garbage collection
+    enable_auto_gc: true
+    
+    # GC interval (seconds)
+    gc_interval_s: 30.0
+
+  # ---------------------------------------------------------------------------
+  # Fault Tolerance Configuration
+  # ---------------------------------------------------------------------------
+  fault_tolerance:
+    # Number of attempts for stage setup
+    num_setup_attempts: 3
+    
+    # Number of attempts for process_data per task
+    num_run_attempts: 2
+    
+    # Ignore failures and continue (be careful!)
+    ignore_failures: false
+    
+    # Reset workers on failure
+    reset_workers_on_failure: false
+    
+    # Max setup failure percentage before pipeline fails
+    max_setup_failure_percentage: 50.0
+    
+    # Maximum worker lifetime in minutes (0 = unlimited)
+    worker_max_lifetime_m: 0
+    
+    # Interval between worker restarts (minutes)
+    worker_restart_interval_m: 1
+
+  # ---------------------------------------------------------------------------
+  # Pipeline Configuration
+  # ---------------------------------------------------------------------------
+  # Number of concurrent tasks per actor
+  slots_per_actor: 2
+  
+  # Status logging interval (seconds)
+  logging_interval_s: 30.0
+  
+  # Over-provision factor for worker allocation
+  over_provision_factor: null
+  
+  # Log detailed worker allocation layout (verbose)
+  log_worker_allocation: false
+  
+  # Return outputs from last stage
+  return_last_stage_outputs: true
+
+# =============================================================================
+# Data-Juicer Optional Settings
+# =============================================================================
+
+# Enable checkpoint mechanism
+use_checkpoint: false
+
+# Enable cache
+use_cache: true
+
+# Cache compression method
+cache_compress: 'gzip'
+
+# Open tracer for sample-level tracking
+open_tracer: false
+
+# Enable monitoring
+open_monitor: true
+
+# OP fusion for optimization
+op_fusion: true
+
+# Fusion strategy: 'probe', 'simple'
+fusion_strategy: 'probe'
+
+# Adaptive batch sizing
+adaptive_batch_size: true
