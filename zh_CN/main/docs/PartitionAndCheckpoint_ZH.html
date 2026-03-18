@@ -1,0 +1,1082 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>分区处理与检查点 &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/PartitionAndCheckpoint_ZH';</script>
+    <script src="../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../_static/icon.png"/>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="Awesome Data-Model Co-Development of MLLMs" href="awesome_llm_data.html" />
+    <link rel="prev" title="作业管理" href="JobManagement_ZH.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../en/main/docs/PartitionAndCheckpoint.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../zh_CN/main/docs/PartitionAndCheckpoint_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../main/docs/PartitionAndCheckpoint_ZH.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="当前页面">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../en/main/docs/PartitionAndCheckpoint.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../zh_CN/main/docs/PartitionAndCheckpoint_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../main/docs/PartitionAndCheckpoint_ZH.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="章节导航">
+  <p class="bd-links__title" role="heading" aria-level="1">章节导航</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">教程</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="tutorial/DJ-Cookbook_ZH.html">DJ-Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/Installation_ZH.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/QuickStart_ZH.html">快速上手</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">帮助文档</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="Operators.html">Operator Schemas 算子提要</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DatasetCfg_ZH.html">数据集配置指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BadDataExhibition_ZH.html">“坏”数据展览</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DJ_SORA_ZH.html">DJ-SORA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DJ_service_ZH.html">DJ_服务化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DeveloperGuide_ZH.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Distributed_ZH.html">Data-Juicer 分布式数据处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="JobManagement_ZH.html">作业管理</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">分区处理与检查点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="awesome_llm_data.html">Awesome Data-Model Co-Development of MLLMs </a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">算子</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="operators/aggregator/index.html">Aggregator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/deduplicator/index.html">Deduplicator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/filter/index.html">Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/mapper/index.html">Mapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/formatter/index.html">Formatter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/grouper/index.html">Grouper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/selector/index.html">Selector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/pipeline/index.html">Pipeline</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">demos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../demos/README_ZH.html">演示</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/auto_evaluation_helm/README_ZH.html">自动化评测：HELM 评测及可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/process_video_on_ray/data/Note.html">Note for dataset path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/role_playing_system_prompt/README_ZH.html">为LLM构造角色扮演的system prompt</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">工具</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../tools/distributed_deduplication/README_ZH.html">分布式模糊去重工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/README_ZH.html">Auto Evaluation Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/gpt_eval/README_ZH.html">GPT EVAL：使用 OpenAI API 评测大模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/recorder/README_ZH.html">Evaluation Results Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/README_ZH.html">格式转换工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/multimodal/README_ZH.html">多模态工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/post_tuning_dialog/README_ZH.html">后微调工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/humanops/README.html">Label Studio Service Utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/mm_eval/inception_metrics/README_ZH.html">视频生成测评工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/mm_eval/vbench_metrics/README_ZH.html">VBench metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/postprocess/README_ZH.html">Postprocess tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/preprocess/README_ZH.html">预处理工具</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">第三方</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../thirdparty/LLM_ecosystems/README_ZH.html">大语言模型生态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../thirdparty/models/README_ZH.html">第三方模型库</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../docs_index_ZH.html" class="nav-link">文档</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">分区处理与检查点</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="id1">
+<h1>分区处理与检查点<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h1>
+<p>本文档描述 DataJuicer 的容错处理系统，包括分区、检查点和事件日志。</p>
+<section id="id2">
+<h2>概述<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">ray_partitioned</span></code> 执行器将数据集分割成分区，并使用可配置的检查点进行处理。失败的作业可以从最后一个检查点恢复。</p>
+<p><strong>检查点策略：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">every_n_ops</span></code> - 每 N 个操作检查点（默认，平衡方案）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">every_op</span></code> - 每个操作后检查点（最高容错性，影响性能）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">manual</span></code> - 仅在指定操作后检查点（适合已知的耗时操作）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">disabled</span></code> - 不检查点（最佳性能）</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>目录结构<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>{work_dir}/{job_id}/
+├── job_summary.json              # 作业元数据（完成时创建）
+├── events_{timestamp}.jsonl      # 机器可读事件日志
+├── dag_execution_plan.json       # DAG 执行计划
+├── checkpoints/                  # 检查点数据
+├── partitions/                   # 输入分区
+├── logs/                         # 人类可读日志
+└── metadata/                     # 作业元数据
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2>配置<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h2>
+<section id="id5">
+<h3>分区模式<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h3>
+<p><strong>自动模式</strong>（推荐）- 分析数据和资源以确定最佳分区：</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">executor_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ray_partitioned</span>
+
+<span class="nt">partition</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;auto&quot;</span>
+<span class="w">  </span><span class="nt">target_size_mb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256</span><span class="w">    </span><span class="c1"># 目标分区大小（128、256、512 或 1024）</span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span><span class="w">             </span><span class="c1"># 自动分析失败时的回退值</span>
+<span class="w">  </span><span class="nt">max_size_mb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256</span><span class="w">       </span><span class="c1"># 回退最大大小</span>
+</pre></div>
+</div>
+<p><strong>手动模式</strong> - 指定确切的分区数量：</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">partition</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;manual&quot;</span>
+<span class="w">  </span><span class="nt">num_of_partitions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3>检查点<a class="headerlink" href="#id6" title="链接到此标题。">#</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">checkpoint</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">strategy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">every_n_ops</span><span class="w">  </span><span class="c1"># every_n_ops（默认）, every_op, manual, disabled</span>
+<span class="w">  </span><span class="nt">n_ops</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w">               </span><span class="c1"># 默认：每 5 个操作检查点</span>
+<span class="w">  </span><span class="nt">op_names</span><span class="p">:</span><span class="w">              </span><span class="c1"># 用于 manual 策略 - 在耗时操作后检查点</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">document_deduplicator</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">embedding_mapper</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3>中间存储<a class="headerlink" href="#id7" title="链接到此标题。">#</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">intermediate_storage</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;parquet&quot;</span><span class="w">              </span><span class="c1"># parquet, arrow, jsonl</span>
+<span class="w">  </span><span class="nt">compression</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;snappy&quot;</span><span class="w">          </span><span class="c1"># snappy, gzip, none</span>
+<span class="w">  </span><span class="nt">preserve_intermediate_data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">retention_policy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;keep_all&quot;</span><span class="w">   </span><span class="c1"># keep_all, keep_failed_only, cleanup_all</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id8">
+<h2>使用方法<a class="headerlink" href="#id8" title="链接到此标题。">#</a></h2>
+<section id="id9">
+<h3>运行作业<a class="headerlink" href="#id9" title="链接到此标题。">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 自动分区模式</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--partition.mode<span class="w"> </span>auto
+
+<span class="c1"># 手动分区模式</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--partition.mode<span class="w"> </span>manual<span class="w"> </span>--partition.num_of_partitions<span class="w"> </span><span class="m">4</span>
+
+<span class="c1"># 自定义作业 ID</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--job_id<span class="w"> </span>my_experiment_001
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h3>恢复作业<a class="headerlink" href="#id10" title="链接到此标题。">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--job_id<span class="w"> </span>my_experiment_001
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h3>检查点策略<a class="headerlink" href="#id11" title="链接到此标题。">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 每个操作</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--checkpoint.strategy<span class="w"> </span>every_op
+
+<span class="c1"># 每 N 个操作</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--checkpoint.strategy<span class="w"> </span>every_n_ops<span class="w"> </span>--checkpoint.n_ops<span class="w"> </span><span class="m">3</span>
+
+<span class="c1"># 手动</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--checkpoint.strategy<span class="w"> </span>manual<span class="w"> </span>--checkpoint.op_names<span class="w"> </span>op1,op2
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id12">
+<h2>自动配置<a class="headerlink" href="#id12" title="链接到此标题。">#</a></h2>
+<p>在自动模式下，优化器会：</p>
+<ol class="arabic simple">
+<li><p>采样数据集以检测模态（文本、图像、音频、视频、多模态）</p></li>
+<li><p>测量每个样本的内存使用</p></li>
+<li><p>分析管道复杂性</p></li>
+<li><p>计算目标为配置的 <code class="docutils literal notranslate"><span class="pre">target_size_mb</span></code> 的分区大小</p></li>
+</ol>
+<p>按模态的默认分区大小：</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>模态</p></th>
+<th class="head"><p>默认大小</p></th>
+<th class="head"><p>最大大小</p></th>
+<th class="head"><p>内存倍数</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>文本</p></td>
+<td><p>10000</p></td>
+<td><p>50000</p></td>
+<td><p>1.0x</p></td>
+</tr>
+<tr class="row-odd"><td><p>图像</p></td>
+<td><p>2000</p></td>
+<td><p>10000</p></td>
+<td><p>5.0x</p></td>
+</tr>
+<tr class="row-even"><td><p>音频</p></td>
+<td><p>1000</p></td>
+<td><p>4000</p></td>
+<td><p>8.0x</p></td>
+</tr>
+<tr class="row-odd"><td><p>视频</p></td>
+<td><p>400</p></td>
+<td><p>2000</p></td>
+<td><p>20.0x</p></td>
+</tr>
+<tr class="row-even"><td><p>多模态</p></td>
+<td><p>1600</p></td>
+<td><p>6000</p></td>
+<td><p>10.0x</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id13">
+<h2>作业管理工具<a class="headerlink" href="#id13" title="链接到此标题。">#</a></h2>
+<section id="id14">
+<h3>监控器<a class="headerlink" href="#id14" title="链接到此标题。">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 显示进度</span>
+python<span class="w"> </span>-m<span class="w"> </span>data_juicer.utils.job.monitor<span class="w"> </span><span class="o">{</span>job_id<span class="o">}</span>
+
+<span class="c1"># 详细视图</span>
+python<span class="w"> </span>-m<span class="w"> </span>data_juicer.utils.job.monitor<span class="w"> </span><span class="o">{</span>job_id<span class="o">}</span><span class="w"> </span>--detailed
+
+<span class="c1"># 监视模式</span>
+python<span class="w"> </span>-m<span class="w"> </span>data_juicer.utils.job.monitor<span class="w"> </span><span class="o">{</span>job_id<span class="o">}</span><span class="w"> </span>--watch<span class="w"> </span>--interval<span class="w"> </span><span class="m">10</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.job.monitor</span><span class="w"> </span><span class="kn">import</span> <span class="n">show_job_progress</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">show_job_progress</span><span class="p">(</span><span class="s2">&quot;job_id&quot;</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id15">
+<h3>停止器<a class="headerlink" href="#id15" title="链接到此标题。">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 优雅停止</span>
+python<span class="w"> </span>-m<span class="w"> </span>data_juicer.utils.job.stopper<span class="w"> </span><span class="o">{</span>job_id<span class="o">}</span>
+
+<span class="c1"># 强制停止</span>
+python<span class="w"> </span>-m<span class="w"> </span>data_juicer.utils.job.stopper<span class="w"> </span><span class="o">{</span>job_id<span class="o">}</span><span class="w"> </span>--force
+
+<span class="c1"># 列出运行中的作业</span>
+python<span class="w"> </span>-m<span class="w"> </span>data_juicer.utils.job.stopper<span class="w"> </span>--list
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.job.stopper</span><span class="w"> </span><span class="kn">import</span> <span class="n">stop_job</span>
+
+<span class="n">stop_job</span><span class="p">(</span><span class="s2">&quot;job_id&quot;</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id16">
+<h3>通用工具<a class="headerlink" href="#id16" title="链接到此标题。">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.job.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">JobUtils</span><span class="p">,</span> <span class="n">list_running_jobs</span>
+
+<span class="n">running_jobs</span> <span class="o">=</span> <span class="n">list_running_jobs</span><span class="p">()</span>
+
+<span class="n">job_utils</span> <span class="o">=</span> <span class="n">JobUtils</span><span class="p">(</span><span class="s2">&quot;job_id&quot;</span><span class="p">)</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">job_utils</span><span class="o">.</span><span class="n">load_job_summary</span><span class="p">()</span>
+<span class="n">events</span> <span class="o">=</span> <span class="n">job_utils</span><span class="o">.</span><span class="n">load_event_logs</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id17">
+<h2>事件类型<a class="headerlink" href="#id17" title="链接到此标题。">#</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">job_start</span></code>, <code class="docutils literal notranslate"><span class="pre">job_complete</span></code>, <code class="docutils literal notranslate"><span class="pre">job_failed</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">partition_start</span></code>, <code class="docutils literal notranslate"><span class="pre">partition_complete</span></code>, <code class="docutils literal notranslate"><span class="pre">partition_failed</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">op_start</span></code>, <code class="docutils literal notranslate"><span class="pre">op_complete</span></code>, <code class="docutils literal notranslate"><span class="pre">op_failed</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">checkpoint_save</span></code>, <code class="docutils literal notranslate"><span class="pre">checkpoint_load</span></code></p></li>
+</ul>
+</section>
+<section id="id18">
+<h2>性能考虑<a class="headerlink" href="#id18" title="链接到此标题。">#</a></h2>
+<section id="ray">
+<h3>检查点与 Ray 优化的权衡<a class="headerlink" href="#ray" title="链接到此标题。">#</a></h3>
+<p><strong>关键洞察：检查点会干扰 Ray 的自动优化。</strong></p>
+<p>Ray 通过融合操作和流水线处理数据来优化执行。每个检查点都会强制物化，从而打破优化窗口：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>无检查点：          op1 → op2 → op3 → op4 → op5
+                    |___________________________|
+                         Ray 优化整个窗口
+
+every_op：          op1 | op2 | op3 | op4 | op5
+                    每个 | 处物化（5 个屏障）
+
+every_n_ops(5)：    op1 → op2 → op3 → op4 → op5 |
+                    |_____________________________|
+                         Ray 优化全部 5 个操作
+</pre></div>
+</div>
+</section>
+<section id="id19">
+<h3>检查点成本分析<a class="headerlink" href="#id19" title="链接到此标题。">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>成本类型</p></th>
+<th class="head"><p>典型值</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>检查点写入</p></td>
+<td><p>~2-5 秒</p></td>
+</tr>
+<tr class="row-odd"><td><p>轻量操作执行</p></td>
+<td><p>~1-2 秒</p></td>
+</tr>
+<tr class="row-even"><td><p>耗时操作执行</p></td>
+<td><p>分钟到小时</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>对于轻量操作，检查点的成本比失败后重新执行更高。</strong></p>
+<p>管道分析示例：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>filter(1秒) → mapper(2秒) → deduplicator(300秒) → filter(1秒)
+
+策略              | 开销    | 保护价值
+------------------|---------|------------------
+every_op          | ~20秒   | 失败时节省 1-304秒
+仅在 dedup 后     | ~5秒    | 失败时节省 300秒
+disabled          | 0秒     | 重新执行全部
+</pre></div>
+</div>
+</section>
+<section id="id20">
+<h3>策略建议<a class="headerlink" href="#id20" title="链接到此标题。">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>作业时长</p></th>
+<th class="head"><p>建议策略</p></th>
+<th class="head"><p>理由</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>&lt; 10 分钟</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">disabled</span></code></p></td>
+<td><p>重新执行成本低</p></td>
+</tr>
+<tr class="row-odd"><td><p>10-60 分钟</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">every_n_ops</span></code> (n=5)</p></td>
+<td><p>平衡保护</p></td>
+</tr>
+<tr class="row-even"><td><p>&gt; 60 分钟且有耗时操作</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">manual</span></code></p></td>
+<td><p>仅在耗时操作后检查点</p></td>
+</tr>
+<tr class="row-odd"><td><p>不稳定的基础设施</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">every_n_ops</span></code> (n=2-3)</p></td>
+<td><p>接受开销换取可靠性</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id21">
+<h3>操作分类<a class="headerlink" href="#id21" title="链接到此标题。">#</a></h3>
+<p><strong>耗时操作（建议在这些操作后检查点）：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">*_deduplicator</span></code> - 全局状态，计算耗时</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">*_embedding_*</span></code> - 模型推理</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">*_model_*</span></code> - 模型推理</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">*_vision_*</span></code> - 图像/视频处理</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">*_audio_*</span></code> - 音频处理</p></li>
+</ul>
+<p><strong>轻量操作（可跳过检查点）：</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">*_filter</span></code> - 简单过滤</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">clean_*</span></code> - 文本清理</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">remove_*</span></code> - 字段移除</p></li>
+</ul>
+</section>
+<section id="id22">
+<h3>存储建议<a class="headerlink" href="#id22" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p>事件日志：快速存储（SSD）</p></li>
+<li><p>检查点：大容量存储</p></li>
+<li><p>分区：本地存储</p></li>
+</ul>
+</section>
+<section id="id23">
+<h3>分区大小权衡<a class="headerlink" href="#id23" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p>较小分区：更好的容错性，更多调度开销</p></li>
+<li><p>较大分区：更少开销，更粗粒度的恢复</p></li>
+</ul>
+</section>
+</section>
+<section id="id24">
+<h2>故障排除<a class="headerlink" href="#id24" title="链接到此标题。">#</a></h2>
+<p><strong>作业恢复失败：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ls<span class="w"> </span>-la<span class="w"> </span>./outputs/<span class="o">{</span>work_dir<span class="o">}</span>/<span class="o">{</span>job_id<span class="o">}</span>/job_summary.json
+ls<span class="w"> </span>-la<span class="w"> </span>./outputs/<span class="o">{</span>work_dir<span class="o">}</span>/<span class="o">{</span>job_id<span class="o">}</span>/checkpoints/
+</pre></div>
+</div>
+<p><strong>检查 Ray 状态：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ray<span class="w"> </span>status
+</pre></div>
+</div>
+<p><strong>查看日志：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span>./outputs/<span class="o">{</span>work_dir<span class="o">}</span>/<span class="o">{</span>job_id<span class="o">}</span>/events_*.jsonl
+tail<span class="w"> </span>-f<span class="w"> </span>./outputs/<span class="o">{</span>work_dir<span class="o">}</span>/<span class="o">{</span>job_id<span class="o">}</span>/logs/*.txt
+</pre></div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="JobManagement_ZH.html"
+       title="上一页">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">上一页</p>
+        <p class="prev-next-title">作业管理</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="awesome_llm_data.html"
+       title="下一页">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">下一页</p>
+        <p class="prev-next-title">Awesome Data-Model Co-Development of MLLMs </p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">概述</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">目录结构</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">配置</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">分区模式</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">检查点</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">中间存储</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">使用方法</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">运行作业</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">恢复作业</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">检查点策略</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">自动配置</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">作业管理工具</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">监控器</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">停止器</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">通用工具</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">事件类型</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">性能考虑</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ray">检查点与 Ray 优化的权衡</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id19">检查点成本分析</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id20">策略建议</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id21">操作分类</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id22">存储建议</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id23">分区大小权衡</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id24">故障排除</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/docs/PartitionAndCheckpoint_ZH.md.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

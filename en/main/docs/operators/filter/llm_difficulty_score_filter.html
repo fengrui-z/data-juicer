@@ -1,0 +1,936 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>llm_difficulty_score_filter &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/operators/filter/llm_difficulty_score_filter';</script>
+    <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../_static/icon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="llm_perplexity_filter" href="llm_perplexity_filter.html" />
+    <link rel="prev" title="llm_analysis_filter" href="llm_analysis_filter.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/docs/operators/filter/llm_difficulty_score_filter.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/docs/operators/filter/llm_difficulty_score_filter.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/docs/operators/filter/llm_difficulty_score_filter.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/docs/operators/filter/llm_difficulty_score_filter.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/docs/operators/filter/llm_difficulty_score_filter.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/docs/operators/filter/llm_difficulty_score_filter.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/DJ-Cookbook.html">DJ-Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/Installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/QuickStart.html">Quick Start</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">docs</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Operators.html">Operator Schemas 算子提要</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../DatasetCfg.html">Dataset Configuration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BadDataExhibition.html">“Bad” Data Exhibition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../DJ_SORA.html">DJ-SORA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../DJ_service.html">DJ_service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../DeveloperGuide.html">How-to Guide for Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Distributed.html">Distributed Data Processing in Data-Juicer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../JobManagement.html">Job Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../PartitionAndCheckpoint.html">Partitioned Processing with Checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../awesome_llm_data.html">Awesome Data-Model Co-Development of MLLMs </a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">operators</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../aggregator/index.html">Aggregator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../deduplicator/index.html">Deduplicator</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Filter</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="alphanumeric_filter.html">alphanumeric_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="audio_duration_filter.html">audio_duration_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="audio_nmf_snr_filter.html">audio_nmf_snr_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="audio_size_filter.html">audio_size_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="average_line_length_filter.html">average_line_length_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="character_repetition_filter.html">character_repetition_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flagged_words_filter.html">flagged_words_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="general_field_filter.html">general_field_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_aesthetics_filter.html">image_aesthetics_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_aspect_ratio_filter.html">image_aspect_ratio_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_face_count_filter.html">image_face_count_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_face_ratio_filter.html">image_face_ratio_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_nsfw_filter.html">image_nsfw_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_pair_similarity_filter.html">image_pair_similarity_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_shape_filter.html">image_shape_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_size_filter.html">image_size_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_subplot_filter.html">image_subplot_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_text_matching_filter.html">image_text_matching_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_text_similarity_filter.html">image_text_similarity_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_watermark_filter.html">image_watermark_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="in_context_influence_filter.html">in_context_influence_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="instruction_following_difficulty_filter.html">instruction_following_difficulty_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="language_id_score_filter.html">language_id_score_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="llm_analysis_filter.html">llm_analysis_filter</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">llm_difficulty_score_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="llm_perplexity_filter.html">llm_perplexity_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="llm_quality_score_filter.html">llm_quality_score_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="llm_task_relevance_filter.html">llm_task_relevance_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maximum_line_length_filter.html">maximum_line_length_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="perplexity_filter.html">perplexity_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phrase_grounding_recall_filter.html">phrase_grounding_recall_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="special_characters_filter.html">special_characters_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="specified_field_filter.html">specified_field_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="specified_numeric_field_filter.html">specified_numeric_field_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stopwords_filter.html">stopwords_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="suffix_filter.html">suffix_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="text_action_filter.html">text_action_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="text_embd_similarity_filter.html">text_embd_similarity_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="text_entity_dependency_filter.html">text_entity_dependency_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="text_length_filter.html">text_length_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="text_pair_similarity_filter.html">text_pair_similarity_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="token_num_filter.html">token_num_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="video_aesthetics_filter.html">video_aesthetics_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="video_aspect_ratio_filter.html">video_aspect_ratio_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="video_duration_filter.html">video_duration_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="video_frames_text_similarity_filter.html">video_frames_text_similarity_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="video_motion_score_filter.html">video_motion_score_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="video_motion_score_ptlflow_filter.html">video_motion_score_ptlflow_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="video_motion_score_raft_filter.html">video_motion_score_raft_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="video_nsfw_filter.html">video_nsfw_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="video_ocr_area_ratio_filter.html">video_ocr_area_ratio_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="video_resolution_filter.html">video_resolution_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="video_tagging_from_frames_filter.html">video_tagging_from_frames_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="video_watermark_filter.html">video_watermark_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="word_repetition_filter.html">word_repetition_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="words_num_filter.html">words_num_filter</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../mapper/index.html">Mapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formatter/index.html">Formatter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../grouper/index.html">Grouper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../selector/index.html">Selector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pipeline/index.html">Pipeline</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">demos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../demos/README.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../demos/process_video_on_ray/data/Note.html">Note for dataset path</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">tools</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/distributed_deduplication/README.html">Distributed Fuzzy Deduplication Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/evaluator/README.html">Auto Evaluation Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/evaluator/gpt_eval/README.html">GPT EVAL: Evaluate your model with OpenAI API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/evaluator/recorder/README.html">Evaluation Results Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/fmt_conversion/README.html">Format Conversion Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/fmt_conversion/multimodal/README.html">Multimodal Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/fmt_conversion/post_tuning_dialog/README.html">Post Tuning Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/humanops/README.html">Label Studio Service Utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/mm_eval/inception_metrics/README.html">Metrics for video generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/mm_eval/vbench_metrics/README.html">VBench metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/postprocess/README.html">Postprocess tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/preprocess/README.html">Preprocess Tools</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">thirdparty</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../thirdparty/LLM_ecosystems/README.html">LLM Ecosystems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../thirdparty/models/README.html">Third-party Model Library</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../docs_index.html" class="nav-link">DOCS</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Filter</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">llm_difficulty_score_filter</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="llm-difficulty-score-filter">
+<h1>llm_difficulty_score_filter<a class="headerlink" href="#llm-difficulty-score-filter" title="Link to this heading">#</a></h1>
+<p>Filter to keep samples with high difficulty scores estimated by an LLM.</p>
+<p>This operator uses a Hugging Face LLM to evaluate the difficulty of each sample. The LLM analyzes the sample across multiple dimensions, including linguistic complexity, conceptual depth, prior knowledge, step complexity, and ambiguity. Each dimension is scored on a 1-5 scale, with 5 being the highest difficulty. The final difficulty score is computed as the average of these dimension scores. Samples are kept if their difficulty score falls within the specified range (min_score to max_score). The key metric ‘llm_difficulty_score’ is stored in the sample’s stats, along with detailed records and flags.</p>
+<p>用于保留由大型语言模型估计出高难度分数的样本的过滤器。</p>
+<p>该算子使用Hugging Face的大型语言模型评估每个样本的难度。LLM从多个维度分析样本，包括语言复杂性、概念深度、先验知识、步骤复杂性和模糊性。每个维度的评分范围为1-5分，5分为最高难度。最终的难度分数是这些维度分数的平均值。如果样本的难度分数在指定范围内（min_score到max_score），则保留该样本。关键指标’llm_difficulty_score’存储在样本的stats中，同时还有详细的记录和标志。</p>
+<p>Type 算子类型: <strong>filter</strong></p>
+<p>Tags 标签: gpu, vllm, hf, api</p>
+<section id="parameter-configuration">
+<h2>🔧 Parameter Configuration 参数配置<a class="headerlink" href="#parameter-configuration" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>name 参数名</p></th>
+<th class="head"><p>type 类型</p></th>
+<th class="head"><p>default 默认值</p></th>
+<th class="head"><p>desc 说明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">api_or_hf_model</span></code></p></td>
+<td><p>&lt;class ‘str’&gt;</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'gpt-4o'</span></code></p></td>
+<td><p>API or huggingface model name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">min_score</span></code></p></td>
+<td><p>&lt;class ‘float’&gt;</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.5</span></code></p></td>
+<td><p>The min score threshold to keep the sample.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_score</span></code></p></td>
+<td><p>&lt;class ‘float’&gt;</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1.0</span></code></p></td>
+<td><p>The max score threshold to keep the sample.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">is_hf_model</span></code></p></td>
+<td><p>&lt;class ‘bool’&gt;</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>If true, use Transformers for loading hugging face or local llm.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">api_endpoint</span></code></p></td>
+<td><p>typing.Optional[str]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>URL endpoint for the API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">response_path</span></code></p></td>
+<td><p>typing.Optional[str]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Path to extract content from the API response. Defaults to ‘choices.0.message.content’.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">input_keys</span></code></p></td>
+<td><p>typing.List[str]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">['text']</span></code></p></td>
+<td><p>Sub set of keys in the sample. Support data with multi fields such as ‘query’, ‘analysis’ and ‘answer’ in RFT data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">field_names</span></code></p></td>
+<td><p>typing.List[str]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">['Text']</span></code></p></td>
+<td><p>Corresponding field names for input keys.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">system_prompt</span></code></p></td>
+<td><p>typing.Optional[str]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>System prompt for the task.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">input_template</span></code></p></td>
+<td><p>typing.Optional[str]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Template for building the model input.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">field_template</span></code></p></td>
+<td><p>typing.Optional[str]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Template for each field in the prompt.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">try_num</span></code></p></td>
+<td><p>typing.Annotated[int, Gt(gt=0)]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">3</span></code></p></td>
+<td><p>The number of retry attempts when there is an API call error or output parsing error.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">enable_vllm</span></code></p></td>
+<td><p>&lt;class ‘bool’&gt;</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>If true, use VLLM for loading hugging face or local llm.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">model_params</span></code></p></td>
+<td><p>typing.Dict</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+<td><p>Parameters for initializing the API model.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sampling_params</span></code></p></td>
+<td><p>typing.Dict</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+<td><p>Extra parameters passed to the API call. e.g {‘temperature’: 0.9, ‘top_p’: 0.95}</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dim_required_keys</span></code></p></td>
+<td><p>typing.Optional[typing.List[str]]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>A list of keys used to calculate the average dimension score, only the dimension scores associated with these keys are used in the average calculation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kwargs</span></code></p></td>
+<td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">''</span></code></p></td>
+<td><p>Extra keyword arguments.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="effect-demonstration">
+<h2>📊 Effect demonstration 效果演示<a class="headerlink" href="#effect-demonstration" title="Link to this heading">#</a></h2>
+<section id="test-default-case">
+<h3>test_default_case<a class="headerlink" href="#test-default-case" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">LLMDifficultyScoreFilter</span><span class="p">(</span><span class="n">api_or_hf_model</span><span class="o">=</span><span class="s1">&#39;qwen2.5-72b-instruct&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="input-data">
+<h4>📥 input data 输入数据<a class="headerlink" href="#input-data" title="Link to this heading">#</a></h4>
+<div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 1:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">The cat sleeps on the mat. It is a sunny day, and the cat feels warm. Cats like to rest when they are not playing.</pre></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 2:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Photosynthesis is a process where plants convert sunlight into energy. Chlorophyll absorbs light, which triggers chemical reactions that produce glucose. This mechanism sustains ecosystems by providing food for herbivores and indirectly for carnivores.</pre></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 3:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">In quantum field theory, renormalization addresses infinities arising from loop integrals in Feynman diagrams. By redefining parameters such as mass and charge, physicists ensure finite predictions align with experimental observations. However, this procedure raises philosophical questions about whe...</pre><details style='margin:6px 0;'><summary style='cursor:pointer; color:#0366d6;'>Show more 展开更多 (84 more chars)</summary><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">In quantum field theory, renormalization addresses infinities arising from loop integrals in Feynman diagrams. By redefining parameters such as mass and charge, physicists ensure finite predictions align with experimental observations. However, this procedure raises philosophical questions about whether these adjustments reflect physical reality or merely mathematical conveniences.</pre></details></div>
+</section>
+<section id="output-data">
+<h4>📤 output data 输出数据<a class="headerlink" href="#output-data" title="Link to this heading">#</a></h4>
+<div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 1:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">In quantum field theory, renormalization addresses infinities arising from loop integrals in Feynman diagrams. By redefining parameters such as mass and charge, physicists ensure finite predictions align with experimental observations. However, this procedure raises philosophical questions about whe...</pre><details style='margin:6px 0;'><summary style='cursor:pointer; color:#0366d6;'>Show more 展开更多 (84 more chars)</summary><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">In quantum field theory, renormalization addresses infinities arising from loop integrals in Feynman diagrams. By redefining parameters such as mass and charge, physicists ensure finite predictions align with experimental observations. However, this procedure raises philosophical questions about whether these adjustments reflect physical reality or merely mathematical conveniences.</pre></details><div class='meta' style='margin:6px 0;'><table class='meta-table' style='border-collapse:collapse; width:100%; border:1px solid #e3e3e3;'><tr><th colspan='2' style='text-align:left; vertical-align:top; padding:6px 8px; font-weight:600; border-bottom:1px solid #e3e3e3;'>__dj__stats__</th></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:22px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>llm_difficulty_record</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'><div style='margin:2px 0 6px 0; padding-left:8px;'><table class='meta-table' style='border-collapse:collapse; width:100%; border:1px solid #e3e3e3;'><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:36px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>dimension_scores</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'><div style='margin:2px 0 6px 0; padding-left:8px;'><table class='meta-table' style='border-collapse:collapse; width:100%; border:1px solid #e3e3e3;'><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:50px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>ambiguity</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>3</td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:50px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>conceptual_depth</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>5</td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:50px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>linguistic_complexity</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>4</td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:50px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>prior_knowledge</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>5</td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:50px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>step_complexity</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>4</td></tr></table></div></td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:36px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>flags</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>[&#x27;philosophical_implications&#x27;, &#x27;cross_domain_synthesis&#x27;, &#x27;time_sensitive&#x27;]</td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:36px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>rationale</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>The text exhibits high linguistic complexity with sophisticated vocabulary and syntactic structures typical of advanced scientific literature. The conceptual depth is very high, delving into the intricacies of quantum field theory and the philosophical implications of renormalization. Prior knowledge is extensive, requiring a solid understanding of quantum mechanics, field theory, and some philosophy. The step complexity involves several layers of reasoning, from understanding the technical aspects of renormalization to grappling with its philosophical implications. The ambiguity is moderate, as the text leaves room for interpretation regarding the nature of the adjustments made in renormalization—whether they are physical realities or mathematical conveniences.</td></tr></table></div></td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:22px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>llm_difficulty_score</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>0.8400000000000001</td></tr></table></div></div>
+</section>
+<section id="explanation">
+<h4>✨ explanation 解释<a class="headerlink" href="#explanation" title="Link to this heading">#</a></h4>
+<p>This test uses the LLMDifficultyScoreFilter to filter out text samples based on their difficulty. The operator evaluates each text sample and assigns a difficulty score. Samples with higher scores, indicating more complex content, are kept. In this case, the first sample about a cat is simpler and likely to be filtered out, while the third sample, which discusses quantum field theory, is more complex and would be kept.
+此测试使用LLMDifficultyScoreFilter根据难度筛选文本样本。算子会评估每个文本样本并分配一个难度分数。得分较高的样本，表示内容更复杂，会被保留。在这种情况下，关于猫的第一条样本较为简单，可能会被过滤掉，而讨论量子场论的第三条样本更为复杂，会被保留。</p>
+</section>
+</section>
+<section id="test-rft-data">
+<h3>test_rft_data<a class="headerlink" href="#test-rft-data" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">LLMDifficultyScoreFilter</span><span class="p">(</span><span class="n">api_or_hf_model</span><span class="o">=</span><span class="s1">&#39;qwen2.5-72b-instruct&#39;</span><span class="p">,</span> <span class="n">input_keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;analysis&#39;</span><span class="p">,</span> <span class="s1">&#39;answer&#39;</span><span class="p">],</span> <span class="n">field_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Query&#39;</span><span class="p">,</span> <span class="s1">&#39;Analysis&#39;</span><span class="p">,</span> <span class="s1">&#39;Answer&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<section id="id1">
+<h4>📥 input data 输入数据<a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
+<div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 1:</strong> text | answer</div><div class="qa" style="margin-bottom:6px;"><div><strong>Q:</strong> <pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">What is the capital of France?</pre></div><div><strong>A:</strong> <pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">The capital of France is Paris.</pre></div></div><div class='meta' style='margin:6px 0;'><table class='meta-table' style='border-collapse:collapse; width:100%; border:1px solid #e3e3e3;'><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:8px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>analysis</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>The question asks for a factual piece of information about the capital city of France. The answer is straightforward and does not require any specialized knowledge or complex reasoning.</td></tr></table></div></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 2:</strong> text | answer</div><div class="qa" style="margin-bottom:6px;"><div><strong>Q:</strong> <pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">How does photosynthesis contribute to the carbon cycle?</pre></div><div><strong>A:</strong> <pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Photosynthesis contributes to the carbon cycle by absorbing carbon dioxide from the atmosphere. Plants use sunlight to convert this carbon dioxide into glucose and other organic compounds, storing carbon in their biomass. When plants die or are consumed, the carbon is released back into the environm...</pre><details style='margin:6px 0;'><summary style='cursor:pointer; color:#0366d6;'>Show more 展开更多 (63 more chars)</summary><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Photosynthesis contributes to the carbon cycle by absorbing carbon dioxide from the atmosphere. Plants use sunlight to convert this carbon dioxide into glucose and other organic compounds, storing carbon in their biomass. When plants die or are consumed, the carbon is released back into the environment through decomposition or respiration, completing the cycle.</pre></details></div></div><div class='meta' style='margin:6px 0;'><table class='meta-table' style='border-collapse:collapse; width:100%; border:1px solid #e3e3e3;'><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:8px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>analysis</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>This question requires an understanding of both photosynthesis and the carbon cycle. It involves explaining how plants absorb carbon dioxide during photosynthesis, convert it into organic matter, and release oxygen, thus influencing atmospheric carbon levels. The explanation requires linking two scientific concepts.</td></tr></table></div></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 3:</strong> text | answer</div><div class="qa" style="margin-bottom:6px;"><div><strong>Q:</strong> <pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">What are the implications of Gödel&#x27;s incompleteness theorems for formal systems in mathematics?</pre></div><div><strong>A:</strong> <pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Gödel&#x27;s incompleteness theorems imply that no formal system capable of expressing arithmetic can be both consistent and complete. There will always exist true statements that cannot be derived from the axioms of the system. This challenges the notion of a single, all-encompassing formal system for m...</pre><details style='margin:6px 0;'><summary style='cursor:pointer; color:#0366d6;'>Show more 展开更多 (214 more chars)</summary><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Gödel&#x27;s incompleteness theorems imply that no formal system capable of expressing arithmetic can be both consistent and complete. There will always exist true statements that cannot be derived from the axioms of the system. This challenges the notion of a single, all-encompassing formal system for mathematics and highlights the inherent limitations of logical reasoning. Philosophically, it raises questions about whether mathematical truth is independent of human construction or if it is inherently incomplete.</pre></details></div></div><div class='meta' style='margin:6px 0;'><table class='meta-table' style='border-collapse:collapse; width:100%; border:1px solid #e3e3e3;'><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:8px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>analysis</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>This question delves into advanced theoretical mathematics and philosophy. Gödel&#x27;s incompleteness theorems state that in any sufficiently powerful formal system, there will always be true statements that cannot be proven within the system. This has profound implications for the limits of mathematical reasoning and the nature of truth. To address this, one must understand formal logic, axiomatic systems, and the philosophical debates surrounding mathematical foundations.</td></tr></table></div></div>
+</section>
+<section id="id2">
+<h4>📤 output data 输出数据<a class="headerlink" href="#id2" title="Link to this heading">#</a></h4>
+<div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 1:</strong> text | answer</div><div class="qa" style="margin-bottom:6px;"><div><strong>Q:</strong> <pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">How does photosynthesis contribute to the carbon cycle?</pre></div><div><strong>A:</strong> <pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Photosynthesis contributes to the carbon cycle by absorbing carbon dioxide from the atmosphere. Plants use sunlight to convert this carbon dioxide into glucose and other organic compounds, storing carbon in their biomass. When plants die or are consumed, the carbon is released back into the environm...</pre><details style='margin:6px 0;'><summary style='cursor:pointer; color:#0366d6;'>Show more 展开更多 (63 more chars)</summary><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Photosynthesis contributes to the carbon cycle by absorbing carbon dioxide from the atmosphere. Plants use sunlight to convert this carbon dioxide into glucose and other organic compounds, storing carbon in their biomass. When plants die or are consumed, the carbon is released back into the environment through decomposition or respiration, completing the cycle.</pre></details></div></div><div class='meta' style='margin:6px 0;'><table class='meta-table' style='border-collapse:collapse; width:100%; border:1px solid #e3e3e3;'><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:8px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>analysis</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>This question requires an understanding of both photosynthesis and the carbon cycle. It involves explaining how plants absorb carbon dioxide during photosynthesis, convert it into organic matter, and release oxygen, thus influencing atmospheric carbon levels. The explanation requires linking two scientific concepts.</td></tr><tr><th colspan='2' style='text-align:left; vertical-align:top; padding:6px 8px; font-weight:600; border-bottom:1px solid #e3e3e3;'>__dj__stats__</th></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:22px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>llm_difficulty_record</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'><div style='margin:2px 0 6px 0; padding-left:8px;'><table class='meta-table' style='border-collapse:collapse; width:100%; border:1px solid #e3e3e3;'><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:36px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>dimension_scores</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'><div style='margin:2px 0 6px 0; padding-left:8px;'><table class='meta-table' style='border-collapse:collapse; width:100%; border:1px solid #e3e3e3;'><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:50px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>ambiguity</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>2</td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:50px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>conceptual_depth</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>3</td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:50px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>linguistic_complexity</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>2</td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:50px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>prior_knowledge</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>3</td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:50px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>step_complexity</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>3</td></tr></table></div></td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:36px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>flags</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>[&#x27;cross_domain_synthesis&#x27;, &#x27;scientific_concepts&#x27;]</td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:36px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>rationale</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>The query and answer have moderate linguistic complexity, using standard scientific terminology that is accessible but not overly sophisticated. The conceptual depth is intermediate, as it requires understanding the processes of photosynthesis and the carbon cycle and how they interrelate. Prior knowledge of basic biology and ecology is necessary. The step complexity is also intermediate, involving several linked steps in the explanation. There is minimal ambiguity, as the relationship between photosynthesis and the carbon cycle is well-defined in scientific literature.</td></tr></table></div></td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:22px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>llm_difficulty_score</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>0.52</td></tr></table></div></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 2:</strong> text | answer</div><div class="qa" style="margin-bottom:6px;"><div><strong>Q:</strong> <pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">What are the implications of Gödel&#x27;s incompleteness theorems for formal systems in mathematics?</pre></div><div><strong>A:</strong> <pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Gödel&#x27;s incompleteness theorems imply that no formal system capable of expressing arithmetic can be both consistent and complete. There will always exist true statements that cannot be derived from the axioms of the system. This challenges the notion of a single, all-encompassing formal system for m...</pre><details style='margin:6px 0;'><summary style='cursor:pointer; color:#0366d6;'>Show more 展开更多 (214 more chars)</summary><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Gödel&#x27;s incompleteness theorems imply that no formal system capable of expressing arithmetic can be both consistent and complete. There will always exist true statements that cannot be derived from the axioms of the system. This challenges the notion of a single, all-encompassing formal system for mathematics and highlights the inherent limitations of logical reasoning. Philosophically, it raises questions about whether mathematical truth is independent of human construction or if it is inherently incomplete.</pre></details></div></div><div class='meta' style='margin:6px 0;'><table class='meta-table' style='border-collapse:collapse; width:100%; border:1px solid #e3e3e3;'><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:8px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>analysis</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>This question delves into advanced theoretical mathematics and philosophy. Gödel&#x27;s incompleteness theorems state that in any sufficiently powerful formal system, there will always be true statements that cannot be proven within the system. This has profound implications for the limits of mathematical reasoning and the nature of truth. To address this, one must understand formal logic, axiomatic systems, and the philosophical debates surrounding mathematical foundations.</td></tr><tr><th colspan='2' style='text-align:left; vertical-align:top; padding:6px 8px; font-weight:600; border-bottom:1px solid #e3e3e3;'>__dj__stats__</th></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:22px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>llm_difficulty_record</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'><div style='margin:2px 0 6px 0; padding-left:8px;'><table class='meta-table' style='border-collapse:collapse; width:100%; border:1px solid #e3e3e3;'><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:36px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>dimension_scores</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'><div style='margin:2px 0 6px 0; padding-left:8px;'><table class='meta-table' style='border-collapse:collapse; width:100%; border:1px solid #e3e3e3;'><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:50px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>ambiguity</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>3</td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:50px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>conceptual_depth</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>5</td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:50px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>linguistic_complexity</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>4</td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:50px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>prior_knowledge</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>5</td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:50px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>step_complexity</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>4</td></tr></table></div></td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:36px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>flags</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>[&#x27;philosophical_debate&#x27;, &#x27;cross_domain_synthesis&#x27;, &#x27;theoretical_requirements&#x27;]</td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:36px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>rationale</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>The query and answer require a high level of prior knowledge in formal logic, axiomatic systems, and the philosophy of mathematics. The conceptual depth is very high, as it deals with fundamental questions about the nature of mathematical truth and the limits of formal systems. The linguistic complexity is moderate to high due to the use of specialized terminology and abstract concepts. The step complexity involves multiple layers of reasoning, including understanding the theorems themselves and their implications. The ambiguity is moderate, as the interpretation of the philosophical implications can vary among experts.</td></tr></table></div></td></tr><tr><td style='text-align:left; vertical-align:top; padding:4px 8px; padding-left:22px; font-weight:500; color:#444; border-bottom:1px solid #e3e3e3; white-space:nowrap;'>llm_difficulty_score</td><td style='text-align:left; vertical-align:top; padding:4px 6px; padding-left:4px; border-bottom:1px solid #e3e3e3;'>0.8400000000000001</td></tr></table></div></div>
+</section>
+<section id="id3">
+<h4>✨ explanation 解释<a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
+<p>This test demonstrates how the LLMDifficultyScoreFilter works with a dataset that includes both questions and their analyses. The operator evaluates the difficulty of each question, considering factors like conceptual depth and prior knowledge. Questions with higher difficulty scores, such as the one about Gödel’s incompleteness theorems, are kept, while simpler questions, like the one about the capital of France, are likely to be filtered out.
+此测试展示了LLMDifficultyScoreFilter如何处理包含问题及其分析的数据集。算子会评估每个问题的难度，考虑因素如概念深度和先验知识。难度分数较高的问题，例如关于哥德尔不完备定理的问题，会被保留，而较简单的问题，例如关于法国首都的问题，则可能被过滤掉。</p>
+</section>
+</section>
+</section>
+<section id="related-links">
+<h2>🔗 related links 相关链接<a class="headerlink" href="#related-links" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/fengrui-z/data-juicer/blob/main/data_juicer/ops/filter/llm_difficulty_score_filter.py">source code 源代码</a></p></li>
+<li><p><a class="reference external" href="https://github.com/fengrui-z/data-juicer/blob/main/tests/ops/filter/test_llm_difficulty_score_filter.py">unit test 单元测试</a></p></li>
+<li><p><a class="reference internal" href="../../Operators.html"><span class="std std-doc">Return operator list 返回算子列表</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="llm_analysis_filter.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">llm_analysis_filter</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="llm_perplexity_filter.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">llm_perplexity_filter</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameter-configuration">🔧 Parameter Configuration 参数配置</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#effect-demonstration">📊 Effect demonstration 效果演示</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-default-case">test_default_case</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#input-data">📥 input data 输入数据</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#output-data">📤 output data 输出数据</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#explanation">✨ explanation 解释</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-rft-data">test_rft_data</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">📥 input data 输入数据</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">📤 output data 输出数据</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">✨ explanation 解释</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-links">🔗 related links 相关链接</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/docs/operators/filter/llm_difficulty_score_filter.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

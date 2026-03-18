@@ -1,0 +1,976 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>document_simhash_deduplicator &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/operators/deduplicator/document_simhash_deduplicator';</script>
+    <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../_static/icon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="image_deduplicator" href="image_deduplicator.html" />
+    <link rel="prev" title="document_minhash_deduplicator_with_uid" href="document_minhash_deduplicator_with_uid.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/docs/operators/deduplicator/document_simhash_deduplicator.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/docs/operators/deduplicator/document_simhash_deduplicator.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/docs/operators/deduplicator/document_simhash_deduplicator.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/docs/operators/deduplicator/document_simhash_deduplicator.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/docs/operators/deduplicator/document_simhash_deduplicator.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/docs/operators/deduplicator/document_simhash_deduplicator.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/DJ-Cookbook.html">DJ-Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/Installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/QuickStart.html">Quick Start</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">docs</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../Operators.html">Operator Schemas 算子提要</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../DatasetCfg.html">Dataset Configuration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BadDataExhibition.html">“Bad” Data Exhibition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../DJ_SORA.html">DJ-SORA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../DJ_service.html">DJ_service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../DeveloperGuide.html">How-to Guide for Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Distributed.html">Distributed Data Processing in Data-Juicer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../JobManagement.html">Job Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../PartitionAndCheckpoint.html">Partitioned Processing with Checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../awesome_llm_data.html">Awesome Data-Model Co-Development of MLLMs </a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">operators</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../aggregator/index.html">Aggregator</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Deduplicator</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="document_deduplicator.html">document_deduplicator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="document_minhash_deduplicator.html">document_minhash_deduplicator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="document_minhash_deduplicator_with_uid.html">document_minhash_deduplicator_with_uid</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">document_simhash_deduplicator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="image_deduplicator.html">image_deduplicator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ray_bts_minhash_cpp_deduplicator.html">ray_bts_minhash_cpp_deduplicator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ray_bts_minhash_deduplicator.html">ray_bts_minhash_deduplicator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ray_bts_minhash_deduplicator_with_uid.html">ray_bts_minhash_deduplicator_with_uid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ray_document_deduplicator.html">ray_document_deduplicator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ray_image_deduplicator.html">ray_image_deduplicator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ray_video_deduplicator.html">ray_video_deduplicator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="video_deduplicator.html">video_deduplicator</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../filter/index.html">Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mapper/index.html">Mapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formatter/index.html">Formatter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../grouper/index.html">Grouper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../selector/index.html">Selector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pipeline/index.html">Pipeline</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">demos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../demos/README.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../demos/process_video_on_ray/data/Note.html">Note for dataset path</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">tools</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/distributed_deduplication/README.html">Distributed Fuzzy Deduplication Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/evaluator/README.html">Auto Evaluation Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/evaluator/gpt_eval/README.html">GPT EVAL: Evaluate your model with OpenAI API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/evaluator/recorder/README.html">Evaluation Results Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/fmt_conversion/README.html">Format Conversion Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/fmt_conversion/multimodal/README.html">Multimodal Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/fmt_conversion/post_tuning_dialog/README.html">Post Tuning Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/humanops/README.html">Label Studio Service Utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/mm_eval/inception_metrics/README.html">Metrics for video generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/mm_eval/vbench_metrics/README.html">VBench metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/postprocess/README.html">Postprocess tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools/preprocess/README.html">Preprocess Tools</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">thirdparty</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../thirdparty/LLM_ecosystems/README.html">LLM Ecosystems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../thirdparty/models/README.html">Third-party Model Library</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../docs_index.html" class="nav-link">DOCS</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Deduplicator</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">document_simhash_deduplicator</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="document-simhash-deduplicator">
+<h1>document_simhash_deduplicator<a class="headerlink" href="#document-simhash-deduplicator" title="Link to this heading">#</a></h1>
+<p>Deduplicates samples at the document level using SimHash.</p>
+<p>This operator computes SimHash values for each sample and removes duplicates based on a specified Hamming distance threshold. It supports different tokenization methods: ‘space’, ‘punctuation’, and ‘character’. The SimHash is computed over shingles of a given window size, and the deduplication process clusters similar documents and retains only one from each cluster. The default mode converts text to lowercase and can ignore specific patterns. The key metric, Hamming distance, is used to determine similarity between SimHash values. Important notes:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">ignore_pattern</span></code> parameter can be used to exclude certain substrings during SimHash computation.</p></li>
+<li><p>For punctuation-based tokenization, the <code class="docutils literal notranslate"><span class="pre">ignore_pattern</span></code> should not include punctuations to avoid conflicts.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">hamming_distance</span></code> must be less than the number of blocks (<code class="docutils literal notranslate"><span class="pre">num_blocks</span></code>).</p></li>
+<li><p>Only the first sample in each cluster is retained by default.</p></li>
+</ul>
+<p>使用SimHash在文档级别去重样本。</p>
+<p>该算子为每个样本计算SimHash值，并根据指定的汉明距离阈值移除重复项。它支持不同的分词方法：’space’、’punctuation’和’character’。SimHash是在给定窗口大小的片段上计算的，去重过程将相似文档聚类并从每个聚类中仅保留一个。默认模式将文本转换为小写，并可以忽略特定模式。关键指标汉明距离用于确定SimHash值之间的相似性。重要提示：</p>
+<ul class="simple">
+<li><p>可以使用<code class="docutils literal notranslate"><span class="pre">ignore_pattern</span></code>参数在SimHash计算过程中排除某些子字符串。</p></li>
+<li><p>对于基于标点符号的分词，<code class="docutils literal notranslate"><span class="pre">ignore_pattern</span></code>不应包含标点符号以避免冲突。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hamming_distance</span></code>必须小于区块数（<code class="docutils literal notranslate"><span class="pre">num_blocks</span></code>）。</p></li>
+<li><p>默认情况下，仅保留每个聚类中的第一个样本。</p></li>
+</ul>
+<p>Type 算子类型: <strong>deduplicator</strong></p>
+<p>Tags 标签: cpu, text</p>
+<section id="parameter-configuration">
+<h2>🔧 Parameter Configuration 参数配置<a class="headerlink" href="#parameter-configuration" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>name 参数名</p></th>
+<th class="head"><p>type 类型</p></th>
+<th class="head"><p>default 默认值</p></th>
+<th class="head"><p>desc 说明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tokenization</span></code></p></td>
+<td><p>&lt;class ‘str’&gt;</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'space'</span></code></p></td>
+<td><p>tokenization method for sample texts</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">window_size</span></code></p></td>
+<td><p>typing.Annotated[int, Gt(gt=0)]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">6</span></code></p></td>
+<td><p>window size of shingling</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lowercase</span></code></p></td>
+<td><p>&lt;class ‘bool’&gt;</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>whether to convert text to lower case first</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ignore_pattern</span></code></p></td>
+<td><p>typing.Optional[str]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>whether to ignore sub-strings with specific pattern when computing simhash</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">num_blocks</span></code></p></td>
+<td><p>typing.Annotated[int, Gt(gt=0)]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">6</span></code></p></td>
+<td><p>number of blocks in simhash computing</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hamming_distance</span></code></p></td>
+<td><p>typing.Annotated[int, Gt(gt=0)]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
+<td><p>the max hamming distance threshold in near-duplicate detection. When the hamming distance of two sample texts is &lt;= this threshold, they are regarded as similar samples and this op will only keep one of them after deduplication. This threshold should be always less than num_blocks</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">args</span></code></p></td>
+<td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">''</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kwargs</span></code></p></td>
+<td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">''</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="effect-demonstration">
+<h2>📊 Effect demonstration 效果演示<a class="headerlink" href="#effect-demonstration" title="Link to this heading">#</a></h2>
+<section id="test-0">
+<h3>test_0<a class="headerlink" href="#test-0" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">DocumentSimhashDeduplicator</span><span class="p">(</span><span class="n">ignore_pattern</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">p</span><span class="si">{P}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="input-data">
+<h4>📥 input data 输入数据<a class="headerlink" href="#input-data" title="Link to this heading">#</a></h4>
+<div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 1:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">欢迎来到阿里巴巴！</pre></div>
+</section>
+<section id="output-data">
+<h4>📤 output data 输出数据<a class="headerlink" href="#output-data" title="Link to this heading">#</a></h4>
+<div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 1:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">欢迎来到阿里巴巴！</pre></div>
+</section>
+<section id="explanation">
+<h4>✨ explanation 解释<a class="headerlink" href="#explanation" title="Link to this heading">#</a></h4>
+<p>This example demonstrates the operator’s behavior when there is only one unique document in the input. The operator computes a SimHash value for the single document and, since there are no duplicates, it retains the document as is.
+这个例子展示了当输入中只有一个唯一的文档时，算子的行为。算子为这个单个文档计算一个SimHash值，因为没有重复项，所以保留了该文档。</p>
+</section>
+</section>
+<section id="test-english-deduplication">
+<h3>test_english_deduplication<a class="headerlink" href="#test-english-deduplication" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">DocumentSimhashDeduplicator</span><span class="p">(</span><span class="n">ignore_pattern</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">p</span><span class="si">{P}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="id1">
+<h4>📥 input data 输入数据<a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
+<div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 1:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Today is Sunday and it&#x27;s a happy day!</pre></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 2:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Do you need a cup of coffee?</pre></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 3:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Today is sunday and it&#x27;s really a happy day!</pre></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 4:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">This paper proposed a novel method on LLM pretraining.</pre></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 5:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Smithfield employs 3,700 people at its plant in Sioux Falls, South Dakota. The plant slaughters 19,500 pigs a day — 5 percent of U.S. pork. Most of the workers are immigrants from Ethiopia, Mexico, South Sudan, Honduras, Myanmar, Somalia, Guatemala, and other poor countries.
+<p>Inevitably workers must…</pre><details style='margin:6px 0;'><summary style='cursor:pointer; color:#0366d6;'>Show more 展开更多 (8927 more chars)</summary><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Smithfield employs 3,700 people at its plant in Sioux Falls, South Dakota. The plant slaughters 19,500 pigs a day — 5 percent of U.S. pork. Most of the workers are immigrants from Ethiopia, Mexico, South Sudan, Honduras, Myanmar, Somalia, Guatemala, and other poor countries.</p>
+<p>Inevitably workers must pass within one foot of hundreds of colleagues in the hallways, locker rooms, cafeterias, and cutting lines. The same conditions have spurred Covid-19 outbreaks at meat plants from Minnesota and Wisconsin to Colorado, Nebraska, Missouri, Iowa, Pennsylvania, North Carolina, and Georgia.</p>
+<p>801 workers at the Sioux Falls plant have tested positive, together with 206 people close to them. The outbreak has killed Agustín Rodríguez Martínez, aged 64, an employee with two decades of experience originally from El Salvador, and Craig Allen Franken, 61, who worked for Smithfield his entire adult life.</p>
+<p>The company knew of its first infection on March 24 or earlier. The virus spread exponentially for several weeks. Ahead of Easter Sunday and Monday (April 12-13), Smithfield promised to “completely shutter” to sanitize and put up cardboard and plastic sheet dividers. This would not end transmission, as potentially hundreds of staff were already carrying the virus. But even during this “shutdown,” many cars were seen in the parking lot. The mayor admits that the company lied, and the local AFL-CIO alleges the plant ran 60 percent production. On Easter, with 238 known infections, Smithfield finally agreed to shut down indefinitely after a request from the mayor and the governor. Yet the company insisted on waiting three more days to actually halt production.</p>
+<p>Smithfield denied contributing to the outbreak, saying it took a “very proactive approach.” Relying on racism, the company blamed workers for getting themselves sick. A spokesperson said the outbreak was so severe because of the plant’s “large immigrant population,” claming “Living circumstances in certain cultures are different than they are with your traditional American family.” They slandered the workers as dirty, ignorant, and untrustworthy with help from governor Kristi Noem, who claimed, “99 percent of what’s going on today wasn’t happening inside the facility. It was more at home, where these employees were going home and spreading some of the virus” by living too close together.</p>
+<p>One sick worker, Michael Bul Gayo Gatluak, 22 and originally from South Sudan, says, “With how we work on the line, I would say I got sick because of them not taking safety measures.” His job is “really, really close” to other workers chopping fresh-killed pigs. “The job is so heavy. You have to breathe so hard.”</p>
+<p>In early March, union officials requested masks, overcoats, entrance checking for fevers, and less crowding in 500-capacity cafeterias. But Smithfield waited on most safety measures until early April. Only April 6 did they start checking for fevers. Instead of protective masks, they gave out beard nets.</p>
+<p>Smithfield concealed infections with a policy of informing only employees whose work stations were in the same area as a person who tested positive. The fact that workers are required to move around was willfully ignored. One worker who tested positive said, “I clearly would have gotten it at the factory. This week I have worked on three different floors. I’ve eaten in two different cafeterias … I’ve been walking through the whole place.” Employees from the eighth floor of the plant were quarantined, but everyone else was told to keep working.</p>
+<p>What Is Really Going On?</p>
+<p>Average plant wages are around $16 an hour. Smithfield never raised them. Instead, they offered $500 to employees who could go all of April without an unapproved day off. The company says their “Responsibility Bonuses” show their “immense gratefulness” to employees “for their selfless sacrifices.”</p>
+<p>Meanwhile, the local Argus Leader wrote union members wanted essential-worker hazard pay, which “would be considered hourly compensation about 1.5 or two times their normal pay.” One worker said, “I feel like they’re bribing us with [the bonus] to come to work sick. That’s how you know they don’t care.”</p>
+<p>Both Sioux Falls workers killed by Covid-19 were in their sixties. It is unconscionable that they were still working. All meatpackers over 50 should be on paid leave. Agustín Rodríguez, 64, had a rough job sawing the legs off dead pigs. He mopped floors with a fever shortly before he was hospitalized.</p>
+<p>When CEO Kenneth Sullivan closed the plant, he claimed, “We have continued to run our facilities for one reason: to sustain our nation’s food supply.” This is an effort to sweep Smithfield’s abuses under the rug, as if the company were operating for public benefit. This patriotic propaganda that all Americans are in it together is like a drug to keep workers from getting organized.</p>
+<p>The major union in the industry, including at Smithfield, is the United Food and Commercial Workers union (UFCW). What union leaders have done is ultimately troubling.</p>
+<p>Can Workers Fight?</p>
+<p>Local AFL-CIO president Kooper Caraway has publicly said management delayed safety action as long as possible for profit. But while some workers were demanding a two-week shutdown, Caraway told the Argus Leader that was unrealistic because the government considers the plant essential. He suggested the union would be happy with minimal safety measures: “Even if 10 people get exposed in a day rather than 11. If you can implement a program where even one or two less people get exposed during a shift, that’s one or two less people.” Of course reducing infections is good, but suggesting workers would be satisfied if the company allowed 90% of the contagion to continue is horrifying.</p>
+<p>The response of UFCW leadership was worse. As the disease was exploding, they told the Argus Leader, “We applaud [Smithfield’s] decision to temporarily close the plant [over Easter weekend] to push for an even safer work environment.” What does “even safer” mean in this context?</p>
+<p>The union bureaucracy has taken weak action elsewhere. In Pennsylvania, the UFCW negotiated $2 hazard pay for two months with Cargill Meat — the same pandemic premium Amazon gave workers without a union. In Nebraska, the UFCW negotiated $4 hazard pay for one month with meat giant JBS.</p>
+<p>The union has said nothing about forcing companies to send older workers home with pay, even though a 70-year-old shop steward and a 78-year-old grandfather working at JBS plants were killed by Covid-19. Smithfield workers were promised only two weeks of shutdown pay. For many, this compensation is half their normal paycheck because they routinely put in 66 hour weeks — overtime that costs exhaustion and chronic pain.</p>
+<p>Union officials endeavor to cooperate with the meat companies. An Iowa UFCW president actually suggested it might be impossible for plants to move workers a full six feet apart and told the Des Moines Register, “We can’t stop the plants. If we stop the plants from running, we stop feeding the country. We want to do everything we can to make sure the employees are safe to keep the plant running.”</p>
+<p>Every part of this explanation directly overlaps with what the Smithfield CEO said. Unfortunately, it amounts to accepting the company’s excuses.</p>
+<p>They claim that workers who do hard physical labor, waking up at 4 a.m. and often working six days a week for years, would be guilty of taking food away from the people and hurting America if they dared to fight for their human needs. But nothing is said about the company raking in profits and even murdering workers to increase them.</p>
+<p>Smithfield’s parent company W.H. Group, which slaughters around 30 million pigs per year in plants in both the United States and China, saw its profits skyrocket by about one third in 2019 to $1.38 billion. It is disturbing that UFCW officials do not bring up these soaring profits in their response to the outbreaks. Reuters published a report on the corporation’s financial success in late March. The head of W.H. Group had touted to the media that it got through the pandemic in China with very limited impact on production.</p>
+<p>It is true that many Smithfield workers are reasonably afraid for their jobs and want to keep working. A 25-year-old employee explained, “I have a lot of bills. My baby’s coming soon — I have to work.” At the same time, he was afraid of infecting his pregnant wife. His spouse, a former employee, said bitterly, “Smithfield— they don’t care about employees. They only care about their money.”</p>
+<p>Workers are pressured in these two painful directions. Nonetheless, work can mean solidarity. Before Smithfield even checked temperatures, there was a “sick-out” strike without union support by 800 to 1,000 workers at a JBS meat factory in Colorado. Hundreds of workers also called in sick days at a Nebraska JBS plant.</p>
+<p>Trade union leaders won’t even whisper the word “strike” when thousands of workers are thinking about it. They are limiting themselves to polite requests. We need a workers’ movement that asks who controls the factory, that threatens to disrupt the bosses’ profits, and that allows workers to use their immense power — this could change the meat industry and the world. </pre></details></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 6:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Smithfield employs 3,700 people at its plants in Sioux Falls, South Dakota. The plant slaughters 19,500 pig a day — 5 percent of U.S. pork. Most of the workers are immigrants from Ethiopia, Mexico, South Sudan, Honduras, Myanmar, Somalia, Guatemala, and other poor countries.</p>
+<p>Inevitably workers must…</pre><details style='margin:6px 0;'><summary style='cursor:pointer; color:#0366d6;'>Show more 展开更多 (8927 more chars)</summary><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Smithfield employs 3,700 people at its plants in Sioux Falls, South Dakota. The plant slaughters 19,500 pig a day — 5 percent of U.S. pork. Most of the workers are immigrants from Ethiopia, Mexico, South Sudan, Honduras, Myanmar, Somalia, Guatemala, and other poor countries.</p>
+<p>Inevitably workers must pass within one foot of hundreds of colleagues in the hallways, locker rooms, cafeterias, and cutting lines. The same conditions have spurred Covid-19 outbreaks at meat plants from Minnesota and Wisconsin to Colorado, Nebraska, Missouri, Iowa, Pennsylvania, North Carolina, and Georgia.</p>
+<p>801 workers at the Sioux Falls plant have tested positive, together with 206 people close to them. The outbreak has killed Agustín Rodríguez Martínez, aged 64, an employee with two decades of experience originally from El Salvador, and Craig Allen Franken, 61, who worked for Smithfield his entire adult life.</p>
+<p>The company knew of its first infection on March 24 or earlier. The virus spread exponentially for several weeks. Ahead of Easter Sunday and Monday (April 12-13), Smithfield promised to “completely shutter” to sanitize and put up cardboard and plastic sheet dividers. This would not end transmission, as potentially hundreds of staff were already carrying the virus. But even during this “shutdown,” many cars were seen in the parking lot. The mayor admits that the company lied, and the local AFL-CIO alleges the plant ran 60 percent production. On Easter, with 238 known infections, Smithfield finally agreed to shut down indefinitely after a request from the mayor and the governor. Yet the company insisted on waiting three more days to actually halt production.</p>
+<p>Smithfield denied contributing to the outbreak, saying it took a “very proactive approach.” Relying on racism, the company blamed workers for getting themselves sick. A spokesperson said the outbreak was so severe because of the plant’s “large immigrant population,” claming “Living circumstances in certain cultures are different than they are with your traditional American family.” They slandered the workers as dirty, ignorant, and untrustworthy with help from governor Kristi Noem, who claimed, “99 percent of what’s going on today wasn’t happening inside the facility. It was more at home, where these employees were going home and spreading some of the virus” by living too close together.</p>
+<p>One sick worker, Michael Bul Gayo Gatluak, 22 and originally from South Sudan, says, “With how we work on the line, I would say I got sick because of them not taking safety measures.” His job is “really, really close” to other workers chopping fresh-killed pigs. “The job is so heavy. You have to breathe so hard.”</p>
+<p>In early March, union officials requested masks, overcoats, entrance checking for fevers, and less crowding in 500-capacity cafeterias. But Smithfield waited on most safety measures until early April. Only April 6 did they start checking for fevers. Instead of protective masks, they gave out beard nets.</p>
+<p>Smithfield concealed infections with a policy of informing only employees whose work stations were in the same area as a person who tested positive. The fact that workers are required to move around was willfully ignored. One worker who tested positive said, “I clearly would have gotten it at the factory. This week I have worked on three different floors. I’ve eaten in two different cafeterias … I’ve been walking through the whole place.” Employees from the eighth floor of the plant were quarantined, but everyone else was told to keep working.</p>
+<p>What Is Really Going On?</p>
+<p>Average plant wages are around $16 an hour. Smithfield never raised them. Instead, they offered $500 to employees who could go all of April without an unapproved day off. The company says their “Responsibility Bonuses” show their “immense gratefulness” to employees “for their selfless sacrifices.”</p>
+<p>Meanwhile, the local Argus Leader wrote union members wanted essential-worker hazard pay, which “would be considered hourly compensation about 1.5 or two times their normal pay.” One worker said, “I feel like they’re bribing us with [the bonus] to come to work sick. That’s how you know they don’t care.”</p>
+<p>Both Sioux Falls workers killed by Covid-19 were in their sixties. It is unconscionable that they were still working. All meatpackers over 50 should be on paid leave. Agustín Rodríguez, 64, had a rough job sawing the legs off dead pigs. He mopped floors with a fever shortly before he was hospitalized.</p>
+<p>When CEO Kenneth Sullivan closed the plant, he claimed, “We have continued to run our facilities for one reason: to sustain our nation’s food supply.” This is an effort to sweep Smithfield’s abuses under the rug, as if the company were operating for public benefit. This patriotic propaganda that all Americans are in it together is like a drug to keep workers from getting organized.</p>
+<p>The major union in the industry, including at Smithfield, is the United Food and Commercial Workers union (UFCW). What union leaders have done is ultimately troubling.</p>
+<p>Can Workers Fight?</p>
+<p>Local AFL-CIO president Kooper Caraway has publicly said management delayed safety action as long as possible for profit. But while some workers were demanding a two-week shutdown, Caraway told the Argus Leader that was unrealistic because the government considers the plant essential. He suggested the union would be happy with minimal safety measures: “Even if 10 people get exposed in a day rather than 11. If you can implement a program where even one or two less people get exposed during a shift, that’s one or two less people.” Of course reducing infections is good, but suggesting workers would be satisfied if the company allowed 90% of the contagion to continue is horrifying.</p>
+<p>The response of UFCW leadership was worse. As the disease was exploding, they told the Argus Leader, “We applaud [Smithfield’s] decision to temporarily close the plant [over Easter weekend] to push for an even safer work environment.” What does “even safer” mean in this context?</p>
+<p>The union bureaucracy has taken weak action elsewhere. In Pennsylvania, the UFCW negotiated $2 hazard pay for two months with Cargill Meat — the same pandemic premium Amazon gave workers without a union. In Nebraska, the UFCW negotiated $4 hazard pay for one month with meat giant JBS.</p>
+<p>The union has said nothing about forcing companies to send older workers home with pay, even though a 70-year-old shop steward and a 78-year-old grandfather working at JBS plants were killed by Covid-19. Smithfield workers were promised only two weeks of shutdown pay. For many, this compensation is half their normal paycheck because they routinely put in 66 hour weeks — overtime that costs exhaustion and chronic pain.</p>
+<p>Union officials endeavor to cooperate with the meat companies. An Iowa UFCW president actually suggested it might be impossible for plants to move workers a full six feet apart and told the Des Moines Register, “We can’t stop the plants. If we stop the plants from running, we stop feeding the country. We want to do everything we can to make sure the employees are safe to keep the plant running.”</p>
+<p>Every part of this explanation directly overlaps with what the Smithfield CEO said. Unfortunately, it amounts to accepting the company’s excuses.</p>
+<p>They claim that workers who do hard physical labor, waking up at 4 a.m. and often working six days a week for years, would be guilty of taking food away from the people and hurting America if they dared to fight for their human needs. But nothing is said about the company raking in profits and even murdering workers to increase them.</p>
+<p>Smithfield’s parent company W.H. Group, which slaughters around 30 million pigs per year in plants in both the United States and China, saw its profits skyrocket by about one third in 2019 to $1.38 billion. It is disturbing that UFCW officials do not bring up these soaring profits in their response to the outbreaks. Reuters published a report on the corporation’s financial success in late March. The head of W.H. Group had touted to the media that it got through the pandemic in China with very limited impact on production.</p>
+<p>It is true that many Smithfield workers are reasonably afraid for their jobs and want to keep working. A 25-year-old employee explained, “I have a lot of bills. My baby’s coming soon — I have to work.” At the same time, he was afraid of infecting his pregnant wife. His spouse, a former employee, said bitterly, “Smithfield— they don’t care about employees. They only care about their money.”</p>
+<p>Workers are pressured in these two painful directions. Nonetheless, work can mean solidarity. Before Smithfield even checked temperatures, there was a “sick-out” strike without union support by 800 to 1,000 workers at a JBS meat factory in Colorado. Hundreds of workers also called in sick days at a Nebraska JBS plant.</p>
+<p>Trade union leaders won’t even whisper the word “strike” when thousands of workers are thinking about it. They are limiting themselves to polite requests. We need a workers’ movement that asks who controls the factory, that threatens to disrupt the bosses’ profits, and that allows workers to use their immense power — this could change the meat industry and the world. </pre></details></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 7:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Smithfield employs 3,700 people at its plant in Sioux Falls, South Dakota. The plant slaughters 19,500 pigs a day — 5 percent of U.S. pork. Most of the workers are immigrants from Ethiopia, Mexico, South Sudan, Honduras, Myanmar, Somalia, Guatemala, and other poor countries.</p>
+<p>Inevitably workers must…</pre><details style='margin:6px 0;'><summary style='cursor:pointer; color:#0366d6;'>Show more 展开更多 (4560 more chars)</summary><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Smithfield employs 3,700 people at its plant in Sioux Falls, South Dakota. The plant slaughters 19,500 pigs a day — 5 percent of U.S. pork. Most of the workers are immigrants from Ethiopia, Mexico, South Sudan, Honduras, Myanmar, Somalia, Guatemala, and other poor countries.</p>
+<p>Inevitably workers must pass within one foot of hundreds of colleagues in the hallways, locker rooms, cafeterias, and cutting lines. The same conditions have spurred Covid-19 outbreaks at meat plants from Minnesota and Wisconsin to Colorado, Nebraska, Missouri, Iowa, Pennsylvania, North Carolina, and Georgia.</p>
+<p>801 workers at the Sioux Falls plant have tested positive, together with 206 people close to them. The outbreak has killed Agustín Rodríguez Martínez, aged 64, an employee with two decades of experience originally from El Salvador, and Craig Allen Franken, 61, who worked for Smithfield his entire adult life.</p>
+<p>The company knew of its first infection on March 24 or earlier. The virus spread exponentially for several weeks. Ahead of Easter Sunday and Monday (April 12-13), Smithfield promised to “completely shutter” to sanitize and put up cardboard and plastic sheet dividers. This would not end transmission, as potentially hundreds of staff were already carrying the virus. But even during this “shutdown,” many cars were seen in the parking lot. The mayor admits that the company lied, and the local AFL-CIO alleges the plant ran 60 percent production. On Easter, with 238 known infections, Smithfield finally agreed to shut down indefinitely after a request from the mayor and the governor. Yet the company insisted on waiting three more days to actually halt production.</p>
+<p>Smithfield denied contributing to the outbreak, saying it took a “very proactive approach.” Relying on racism, the company blamed workers for getting themselves sick. A spokesperson said the outbreak was so severe because of the plant’s “large immigrant population,” claming “Living circumstances in certain cultures are different than they are with your traditional American family.” They slandered the workers as dirty, ignorant, and untrustworthy with help from governor Kristi Noem, who claimed, “99 percent of what’s going on today wasn’t happening inside the facility. It was more at home, where these employees were going home and spreading some of the virus” by living too close together.</p>
+<p>One sick worker, Michael Bul Gayo Gatluak, 22 and originally from South Sudan, says, “With how we work on the line, I would say I got sick because of them not taking safety measures.” His job is “really, really close” to other workers chopping fresh-killed pigs. “The job is so heavy. You have to breathe so hard.”</p>
+<p>In early March, union officials requested masks, overcoats, entrance checking for fevers, and less crowding in 500-capacity cafeterias. But Smithfield waited on most safety measures until early April. Only April 6 did they start checking for fevers. Instead of protective masks, they gave out beard nets.</p>
+<p>Smithfield concealed infections with a policy of informing only employees whose work stations were in the same area as a person who tested positive. The fact that workers are required to move around was willfully ignored. One worker who tested positive said, “I clearly would have gotten it at the factory. This week I have worked on three different floors. I’ve eaten in two different cafeterias … I’ve been walking through the whole place.” Employees from the eighth floor of the plant were quarantined, but everyone else was told to keep working.</p>
+<p>What Is Really Going On?</p>
+<p>Average plant wages are around $16 an hour. Smithfield never raised them. Instead, they offered $500 to employees who could go all of April without an unapproved day off. The company says their “Responsibility Bonuses” show their “immense gratefulness” to employees “for their selfless sacrifices.”</p>
+<p>Meanwhile, the local Argus Leader wrote union members wanted essential-worker hazard pay, which “would be considered hourly compensation about 1.5 or two times their normal pay.” One worker said, “I feel like they’re bribing us with [the bonus] to come to work sick. That’s how you know they don’t care.”</p>
+<p>Both Sioux Falls workers killed by Covid-19 were in their sixties. It is unconscionable that they were still working. All meatpackers over 50 should be on paid leave. Agustín Rodríguez, 64, had a rough job sawing the legs off dead pigs. He mopped floors with a fever shortly before he was hospitalized.</p>
+<p>When CEO Kenneth Sullivan closed the plant, he claimed, “We have continued to run our facilities for one reason: to sustain our nation’s food supply.” This is an effort to sweep Smithfield’s abuses under the rug, as if the company were operating for public benefit. This patriotic propaganda that all Americans are in it together is like a drug to keep workers from getting organized. </pre></details></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 8:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Smithfield employs 3,700 people at its plants in Sioux Falls, South Dakota. The plant slaughters 19,500 pig a day — 5 percent of U.S. pork. Most of the workers are immigrants from Ethiopia, Mexico, South Sudan, Honduras, Myanmar, Somalia, Guatemala, and other poor countries.</p>
+<p>Inevitably workers must…</pre><details style='margin:6px 0;'><summary style='cursor:pointer; color:#0366d6;'>Show more 展开更多 (4560 more chars)</summary><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Smithfield employs 3,700 people at its plants in Sioux Falls, South Dakota. The plant slaughters 19,500 pig a day — 5 percent of U.S. pork. Most of the workers are immigrants from Ethiopia, Mexico, South Sudan, Honduras, Myanmar, Somalia, Guatemala, and other poor countries.</p>
+<p>Inevitably workers must pass within one foot of hundreds of colleagues in the hallways, locker rooms, cafeterias, and cutting lines. The same conditions have spurred Covid-19 outbreaks at meat plants from Minnesota and Wisconsin to Colorado, Nebraska, Missouri, Iowa, Pennsylvania, North Carolina, and Georgia.</p>
+<p>801 workers at the Sioux Falls plant have tested positive, together with 206 people close to them. The outbreak has killed Agustín Rodríguez Martínez, aged 64, an employee with two decades of experience originally from El Salvador, and Craig Allen Franken, 61, who worked for Smithfield his entire adult life.</p>
+<p>The company knew of its first infection on March 24 or earlier. The virus spread exponentially for several weeks. Ahead of Easter Sunday and Monday (April 12-13), Smithfield promised to “completely shutter” to sanitize and put up cardboard and plastic sheet dividers. This would not end transmission, as potentially hundreds of staff were already carrying the virus. But even during this “shutdown,” many cars were seen in the parking lot. The mayor admits that the company lied, and the local AFL-CIO alleges the plant ran 60 percent production. On Easter, with 238 known infections, Smithfield finally agreed to shut down indefinitely after a request from the mayor and the governor. Yet the company insisted on waiting three more days to actually halt production.</p>
+<p>Smithfield denied contributing to the outbreak, saying it took a “very proactive approach.” Relying on racism, the company blamed workers for getting themselves sick. A spokesperson said the outbreak was so severe because of the plant’s “large immigrant population,” claming “Living circumstances in certain cultures are different than they are with your traditional American family.” They slandered the workers as dirty, ignorant, and untrustworthy with help from governor Kristi Noem, who claimed, “99 percent of what’s going on today wasn’t happening inside the facility. It was more at home, where these employees were going home and spreading some of the virus” by living too close together.</p>
+<p>One sick worker, Michael Bul Gayo Gatluak, 22 and originally from South Sudan, says, “With how we work on the line, I would say I got sick because of them not taking safety measures.” His job is “really, really close” to other workers chopping fresh-killed pigs. “The job is so heavy. You have to breathe so hard.”</p>
+<p>In early March, union officials requested masks, overcoats, entrance checking for fevers, and less crowding in 500-capacity cafeterias. But Smithfield waited on most safety measures until early April. Only April 6 did they start checking for fevers. Instead of protective masks, they gave out beard nets.</p>
+<p>Smithfield concealed infections with a policy of informing only employees whose work stations were in the same area as a person who tested positive. The fact that workers are required to move around was willfully ignored. One worker who tested positive said, “I clearly would have gotten it at the factory. This week I have worked on three different floors. I’ve eaten in two different cafeterias … I’ve been walking through the whole place.” Employees from the eighth floor of the plant were quarantined, but everyone else was told to keep working.</p>
+<p>What Is Really Going On?</p>
+<p>Average plant wages are around $16 an hour. Smithfield never raised them. Instead, they offered $500 to employees who could go all of April without an unapproved day off. The company says their “Responsibility Bonuses” show their “immense gratefulness” to employees “for their selfless sacrifices.”</p>
+<p>Meanwhile, the local Argus Leader wrote union members wanted essential-worker hazard pay, which “would be considered hourly compensation about 1.5 or two times their normal pay.” One worker said, “I feel like they’re bribing us with [the bonus] to come to work sick. That’s how you know they don’t care.”</p>
+<p>Both Sioux Falls workers killed by Covid-19 were in their sixties. It is unconscionable that they were still working. All meatpackers over 50 should be on paid leave. Agustín Rodríguez, 64, had a rough job sawing the legs off dead pigs. He mopped floors with a fever shortly before he was hospitalized.</p>
+<p>When CEO Kenneth Sullivan closed the plant, he claimed, “We have continued to run our facilities for one reason: to sustain our nation’s food supply.” This is an effort to sweep Smithfield’s abuses under the rug, as if the company were operating for public benefit. This patriotic propaganda that all Americans are in it together is like a drug to keep workers from getting organized. </pre></details></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 9:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">This paper proposed a novel method on LLM pretraining.</pre></div></p>
+</section>
+<section id="id2">
+<h4>📤 output data 输出数据<a class="headerlink" href="#id2" title="Link to this heading">#</a></h4>
+<div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 1:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Today is Sunday and it&#x27;s a happy day!</pre></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 2:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Do you need a cup of coffee?</pre></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 3:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Today is sunday and it&#x27;s really a happy day!</pre></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 4:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">This paper proposed a novel method on LLM pretraining.</pre></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 5:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Smithfield employs 3,700 people at its plant in Sioux Falls, South Dakota. The plant slaughters 19,500 pigs a day — 5 percent of U.S. pork. Most of the workers are immigrants from Ethiopia, Mexico, South Sudan, Honduras, Myanmar, Somalia, Guatemala, and other poor countries.
+<p>Inevitably workers must…</pre><details style='margin:6px 0;'><summary style='cursor:pointer; color:#0366d6;'>Show more 展开更多 (8927 more chars)</summary><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Smithfield employs 3,700 people at its plant in Sioux Falls, South Dakota. The plant slaughters 19,500 pigs a day — 5 percent of U.S. pork. Most of the workers are immigrants from Ethiopia, Mexico, South Sudan, Honduras, Myanmar, Somalia, Guatemala, and other poor countries.</p>
+<p>Inevitably workers must pass within one foot of hundreds of colleagues in the hallways, locker rooms, cafeterias, and cutting lines. The same conditions have spurred Covid-19 outbreaks at meat plants from Minnesota and Wisconsin to Colorado, Nebraska, Missouri, Iowa, Pennsylvania, North Carolina, and Georgia.</p>
+<p>801 workers at the Sioux Falls plant have tested positive, together with 206 people close to them. The outbreak has killed Agustín Rodríguez Martínez, aged 64, an employee with two decades of experience originally from El Salvador, and Craig Allen Franken, 61, who worked for Smithfield his entire adult life.</p>
+<p>The company knew of its first infection on March 24 or earlier. The virus spread exponentially for several weeks. Ahead of Easter Sunday and Monday (April 12-13), Smithfield promised to “completely shutter” to sanitize and put up cardboard and plastic sheet dividers. This would not end transmission, as potentially hundreds of staff were already carrying the virus. But even during this “shutdown,” many cars were seen in the parking lot. The mayor admits that the company lied, and the local AFL-CIO alleges the plant ran 60 percent production. On Easter, with 238 known infections, Smithfield finally agreed to shut down indefinitely after a request from the mayor and the governor. Yet the company insisted on waiting three more days to actually halt production.</p>
+<p>Smithfield denied contributing to the outbreak, saying it took a “very proactive approach.” Relying on racism, the company blamed workers for getting themselves sick. A spokesperson said the outbreak was so severe because of the plant’s “large immigrant population,” claming “Living circumstances in certain cultures are different than they are with your traditional American family.” They slandered the workers as dirty, ignorant, and untrustworthy with help from governor Kristi Noem, who claimed, “99 percent of what’s going on today wasn’t happening inside the facility. It was more at home, where these employees were going home and spreading some of the virus” by living too close together.</p>
+<p>One sick worker, Michael Bul Gayo Gatluak, 22 and originally from South Sudan, says, “With how we work on the line, I would say I got sick because of them not taking safety measures.” His job is “really, really close” to other workers chopping fresh-killed pigs. “The job is so heavy. You have to breathe so hard.”</p>
+<p>In early March, union officials requested masks, overcoats, entrance checking for fevers, and less crowding in 500-capacity cafeterias. But Smithfield waited on most safety measures until early April. Only April 6 did they start checking for fevers. Instead of protective masks, they gave out beard nets.</p>
+<p>Smithfield concealed infections with a policy of informing only employees whose work stations were in the same area as a person who tested positive. The fact that workers are required to move around was willfully ignored. One worker who tested positive said, “I clearly would have gotten it at the factory. This week I have worked on three different floors. I’ve eaten in two different cafeterias … I’ve been walking through the whole place.” Employees from the eighth floor of the plant were quarantined, but everyone else was told to keep working.</p>
+<p>What Is Really Going On?</p>
+<p>Average plant wages are around $16 an hour. Smithfield never raised them. Instead, they offered $500 to employees who could go all of April without an unapproved day off. The company says their “Responsibility Bonuses” show their “immense gratefulness” to employees “for their selfless sacrifices.”</p>
+<p>Meanwhile, the local Argus Leader wrote union members wanted essential-worker hazard pay, which “would be considered hourly compensation about 1.5 or two times their normal pay.” One worker said, “I feel like they’re bribing us with [the bonus] to come to work sick. That’s how you know they don’t care.”</p>
+<p>Both Sioux Falls workers killed by Covid-19 were in their sixties. It is unconscionable that they were still working. All meatpackers over 50 should be on paid leave. Agustín Rodríguez, 64, had a rough job sawing the legs off dead pigs. He mopped floors with a fever shortly before he was hospitalized.</p>
+<p>When CEO Kenneth Sullivan closed the plant, he claimed, “We have continued to run our facilities for one reason: to sustain our nation’s food supply.” This is an effort to sweep Smithfield’s abuses under the rug, as if the company were operating for public benefit. This patriotic propaganda that all Americans are in it together is like a drug to keep workers from getting organized.</p>
+<p>The major union in the industry, including at Smithfield, is the United Food and Commercial Workers union (UFCW). What union leaders have done is ultimately troubling.</p>
+<p>Can Workers Fight?</p>
+<p>Local AFL-CIO president Kooper Caraway has publicly said management delayed safety action as long as possible for profit. But while some workers were demanding a two-week shutdown, Caraway told the Argus Leader that was unrealistic because the government considers the plant essential. He suggested the union would be happy with minimal safety measures: “Even if 10 people get exposed in a day rather than 11. If you can implement a program where even one or two less people get exposed during a shift, that’s one or two less people.” Of course reducing infections is good, but suggesting workers would be satisfied if the company allowed 90% of the contagion to continue is horrifying.</p>
+<p>The response of UFCW leadership was worse. As the disease was exploding, they told the Argus Leader, “We applaud [Smithfield’s] decision to temporarily close the plant [over Easter weekend] to push for an even safer work environment.” What does “even safer” mean in this context?</p>
+<p>The union bureaucracy has taken weak action elsewhere. In Pennsylvania, the UFCW negotiated $2 hazard pay for two months with Cargill Meat — the same pandemic premium Amazon gave workers without a union. In Nebraska, the UFCW negotiated $4 hazard pay for one month with meat giant JBS.</p>
+<p>The union has said nothing about forcing companies to send older workers home with pay, even though a 70-year-old shop steward and a 78-year-old grandfather working at JBS plants were killed by Covid-19. Smithfield workers were promised only two weeks of shutdown pay. For many, this compensation is half their normal paycheck because they routinely put in 66 hour weeks — overtime that costs exhaustion and chronic pain.</p>
+<p>Union officials endeavor to cooperate with the meat companies. An Iowa UFCW president actually suggested it might be impossible for plants to move workers a full six feet apart and told the Des Moines Register, “We can’t stop the plants. If we stop the plants from running, we stop feeding the country. We want to do everything we can to make sure the employees are safe to keep the plant running.”</p>
+<p>Every part of this explanation directly overlaps with what the Smithfield CEO said. Unfortunately, it amounts to accepting the company’s excuses.</p>
+<p>They claim that workers who do hard physical labor, waking up at 4 a.m. and often working six days a week for years, would be guilty of taking food away from the people and hurting America if they dared to fight for their human needs. But nothing is said about the company raking in profits and even murdering workers to increase them.</p>
+<p>Smithfield’s parent company W.H. Group, which slaughters around 30 million pigs per year in plants in both the United States and China, saw its profits skyrocket by about one third in 2019 to $1.38 billion. It is disturbing that UFCW officials do not bring up these soaring profits in their response to the outbreaks. Reuters published a report on the corporation’s financial success in late March. The head of W.H. Group had touted to the media that it got through the pandemic in China with very limited impact on production.</p>
+<p>It is true that many Smithfield workers are reasonably afraid for their jobs and want to keep working. A 25-year-old employee explained, “I have a lot of bills. My baby’s coming soon — I have to work.” At the same time, he was afraid of infecting his pregnant wife. His spouse, a former employee, said bitterly, “Smithfield— they don’t care about employees. They only care about their money.”</p>
+<p>Workers are pressured in these two painful directions. Nonetheless, work can mean solidarity. Before Smithfield even checked temperatures, there was a “sick-out” strike without union support by 800 to 1,000 workers at a JBS meat factory in Colorado. Hundreds of workers also called in sick days at a Nebraska JBS plant.</p>
+<p>Trade union leaders won’t even whisper the word “strike” when thousands of workers are thinking about it. They are limiting themselves to polite requests. We need a workers’ movement that asks who controls the factory, that threatens to disrupt the bosses’ profits, and that allows workers to use their immense power — this could change the meat industry and the world. </pre></details></div><div class="sample-card" style="border:1px solid #ddd; padding:12px; margin:8px 0; border-radius:6px; background:#fafafa; box-shadow:0 1px 3px rgba(0,0,0,0.1);"><div class="sample-header" style="background:#f8f9fa; padding:4px 8px; margin-bottom:6px; border-radius:3px; font-size:0.9em; color:#666; border-left:3px solid #007acc;"><strong>Sample 6:</strong> text</div><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Smithfield employs 3,700 people at its plant in Sioux Falls, South Dakota. The plant slaughters 19,500 pigs a day — 5 percent of U.S. pork. Most of the workers are immigrants from Ethiopia, Mexico, South Sudan, Honduras, Myanmar, Somalia, Guatemala, and other poor countries.</p>
+<p>Inevitably workers must…</pre><details style='margin:6px 0;'><summary style='cursor:pointer; color:#0366d6;'>Show more 展开更多 (4560 more chars)</summary><pre style="padding:6px; background:#f6f8fa; border-radius:4px; overflow-x:auto; white-space:pre; word-wrap:normal;">Smithfield employs 3,700 people at its plant in Sioux Falls, South Dakota. The plant slaughters 19,500 pigs a day — 5 percent of U.S. pork. Most of the workers are immigrants from Ethiopia, Mexico, South Sudan, Honduras, Myanmar, Somalia, Guatemala, and other poor countries.</p>
+<p>Inevitably workers must pass within one foot of hundreds of colleagues in the hallways, locker rooms, cafeterias, and cutting lines. The same conditions have spurred Covid-19 outbreaks at meat plants from Minnesota and Wisconsin to Colorado, Nebraska, Missouri, Iowa, Pennsylvania, North Carolina, and Georgia.</p>
+<p>801 workers at the Sioux Falls plant have tested positive, together with 206 people close to them. The outbreak has killed Agustín Rodríguez Martínez, aged 64, an employee with two decades of experience originally from El Salvador, and Craig Allen Franken, 61, who worked for Smithfield his entire adult life.</p>
+<p>The company knew of its first infection on March 24 or earlier. The virus spread exponentially for several weeks. Ahead of Easter Sunday and Monday (April 12-13), Smithfield promised to “completely shutter” to sanitize and put up cardboard and plastic sheet dividers. This would not end transmission, as potentially hundreds of staff were already carrying the virus. But even during this “shutdown,” many cars were seen in the parking lot. The mayor admits that the company lied, and the local AFL-CIO alleges the plant ran 60 percent production. On Easter, with 238 known infections, Smithfield finally agreed to shut down indefinitely after a request from the mayor and the governor. Yet the company insisted on waiting three more days to actually halt production.</p>
+<p>Smithfield denied contributing to the outbreak, saying it took a “very proactive approach.” Relying on racism, the company blamed workers for getting themselves sick. A spokesperson said the outbreak was so severe because of the plant’s “large immigrant population,” claming “Living circumstances in certain cultures are different than they are with your traditional American family.” They slandered the workers as dirty, ignorant, and untrustworthy with help from governor Kristi Noem, who claimed, “99 percent of what’s going on today wasn’t happening inside the facility. It was more at home, where these employees were going home and spreading some of the virus” by living too close together.</p>
+<p>One sick worker, Michael Bul Gayo Gatluak, 22 and originally from South Sudan, says, “With how we work on the line, I would say I got sick because of them not taking safety measures.” His job is “really, really close” to other workers chopping fresh-killed pigs. “The job is so heavy. You have to breathe so hard.”</p>
+<p>In early March, union officials requested masks, overcoats, entrance checking for fevers, and less crowding in 500-capacity cafeterias. But Smithfield waited on most safety measures until early April. Only April 6 did they start checking for fevers. Instead of protective masks, they gave out beard nets.</p>
+<p>Smithfield concealed infections with a policy of informing only employees whose work stations were in the same area as a person who tested positive. The fact that workers are required to move around was willfully ignored. One worker who tested positive said, “I clearly would have gotten it at the factory. This week I have worked on three different floors. I’ve eaten in two different cafeterias … I’ve been walking through the whole place.” Employees from the eighth floor of the plant were quarantined, but everyone else was told to keep working.</p>
+<p>What Is Really Going On?</p>
+<p>Average plant wages are around $16 an hour. Smithfield never raised them. Instead, they offered $500 to employees who could go all of April without an unapproved day off. The company says their “Responsibility Bonuses” show their “immense gratefulness” to employees “for their selfless sacrifices.”</p>
+<p>Meanwhile, the local Argus Leader wrote union members wanted essential-worker hazard pay, which “would be considered hourly compensation about 1.5 or two times their normal pay.” One worker said, “I feel like they’re bribing us with [the bonus] to come to work sick. That’s how you know they don’t care.”</p>
+<p>Both Sioux Falls workers killed by Covid-19 were in their sixties. It is unconscionable that they were still working. All meatpackers over 50 should be on paid leave. Agustín Rodríguez, 64, had a rough job sawing the legs off dead pigs. He mopped floors with a fever shortly before he was hospitalized.</p>
+<p>When CEO Kenneth Sullivan closed the plant, he claimed, “We have continued to run our facilities for one reason: to sustain our nation’s food supply.” This is an effort to sweep Smithfield’s abuses under the rug, as if the company were operating for public benefit. This patriotic propaganda that all Americans are in it together is like a drug to keep workers from getting organized. </pre></details></div></p>
+</section>
+<section id="id3">
+<h4>✨ explanation 解释<a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
+<p>This example illustrates the operator’s ability to identify and remove near-duplicate documents based on their content. The operator computes SimHash values for each document and removes those that are too similar (based on Hamming distance). In this case, two sentences with very similar content but slight differences are considered duplicates, and only one of them is kept.
+这个例子说明了算子基于内容识别并移除近似重复文档的能力。算子为每个文档计算SimHash值，并根据汉明距离移除那些太相似的文档。在这个例子中，两个内容非常相似但有细微差别的句子被视为重复项，只保留其中一个。</p>
+</section>
+</section>
+</section>
+<section id="related-links">
+<h2>🔗 related links 相关链接<a class="headerlink" href="#related-links" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/fengrui-z/data-juicer/blob/main/data_juicer/ops/deduplicator/document_simhash_deduplicator.py">source code 源代码</a></p></li>
+<li><p><a class="reference external" href="https://github.com/fengrui-z/data-juicer/blob/main/tests/ops/deduplicator/test_document_simhash_deduplicator.py">unit test 单元测试</a></p></li>
+<li><p><a class="reference internal" href="../../Operators.html"><span class="std std-doc">Return operator list 返回算子列表</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="document_minhash_deduplicator_with_uid.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">document_minhash_deduplicator_with_uid</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="image_deduplicator.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">image_deduplicator</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameter-configuration">🔧 Parameter Configuration 参数配置</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#effect-demonstration">📊 Effect demonstration 效果演示</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-0">test_0</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#input-data">📥 input data 输入数据</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#output-data">📤 output data 输出数据</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#explanation">✨ explanation 解释</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#test-english-deduplication">test_english_deduplication</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">📥 input data 输入数据</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">📤 output data 输出数据</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">✨ explanation 解释</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-links">🔗 related links 相关链接</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/docs/operators/deduplicator/document_simhash_deduplicator.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,870 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Data-Juicer: The Data Operating System for the Foundation Model Era &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=8a448e45"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <script src="_static/sidebar.js?v=3fc1065c"></script>
+    <script src="_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="_static/icon.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="DOCS" href="docs_index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="#">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="./../../en/main/index.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="./../../zh_CN/main/index_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="./../main/index.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="./../../en/main/index.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="./../../zh_CN/main/index_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="./../main/index.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="data-juicer-the-data-operating-system-for-the-foundation-model-era">
+<h1>Data-Juicer: The Data Operating System for the Foundation Model Era<a class="headerlink" href="#data-juicer-the-data-operating-system-for-the-foundation-model-era" title="Link to this heading">#</a></h1>
+<p align="center">
+  <a href="https://pypi.org/project/py-data-juicer"><img src="https://img.shields.io/pypi/v/py-data-juicer?logo=pypi&color=026cad" alt="PyPI"></a>
+  <a href="https://pepy.tech/projects/py-data-juicer"><img src="https://static.pepy.tech/personalized-badge/py-data-juicer?period=total&units=INTERNATIONAL_SYSTEM&left_color=grey&right_color=green&left_text=downloads" alt="Downloads"></a>
+   <a href="https://hub.docker.com/r/datajuicer/data-juicer"><img src="https://img.shields.io/docker/v/datajuicer/data-juicer?logo=docker&label=Docker&color=498bdf" alt="Docker"></a>
+  <br>
+  <a href="https://datajuicer.github.io/data-juicer/"><img src="https://img.shields.io/badge/📖_Docs-Website-026cad" alt="Docs"></a>
+  <a href="https://datajuicer.github.io/data-juicer/en/main/docs/Operators.html"><img src="https://img.shields.io/badge/🧩_Operators-200+-blue" alt="Operators"></a>
+  <a href="https://github.com/datajuicer/data-juicer-hub"><img src="https://img.shields.io/badge/🍳_Recipes-50+-brightgreen" alt="Recipes"></a>
+  <br>
+  <a href="https://datajuicer.github.io/data-juicer/zh_CN/main/index_ZH.html"><img src="https://img.shields.io/badge/🇨🇳_文档-主页-red" alt="Chinese"></a>
+  <a href="https://arxiv.org/abs/2501.14755"><img src="https://img.shields.io/badge/NeurIPS'25_Spotlight-2.0-B31B1B?logo=arxiv" alt="Paper"></a>
+  <a href="https://github.com/datajuicer/data-juicer">
+    <img src="https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fgist.githubusercontent.com%2FHYLcool%2Ff856b14416f08f73d05d32fd992a9c29%2Fraw%2Ftotal_cov.json&label=coverage&logo=codecov&color=4c1" alt="Coverage">
+  </a>
+</p>
+<p align="center">
+  <b>Multimodal | Cloud-Native | AI-Ready | Large-Scale </b>
+</p>
+<p>Data-Juicer (DJ) transforms raw data chaos into AI-ready intelligence. It treats data processing as <em>composable infrastructure</em>—providing modular building blocks to clean, synthesize, and analyze data across the entire AI lifecycle, unlocking latent value in every byte.</p>
+<p>Whether you’re deduplicating web-scale pre-training corpora, curating agent interaction traces, or preparing domain-specific RAG indices, DJ scales seamlessly from your laptop to thousand-node clusters—no glue code required.</p>
+<blockquote>
+<div><p><strong>Alibaba Cloud PAI</strong> has deeply integrated Data-Juicer into its data processing products.  See <strong><a class="reference external" href="https://www.alibabacloud.com/help/en/pai/user-guide/quickly-submit-a-datajuicer-task">Quickly submit a DataJuicer job</a></strong>.</p>
+</div></blockquote>
+<hr class="docutils" />
+<section id="quick-start">
+<h2>🚀 Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
+<p><strong>Zero-install exploration</strong>:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://8.138.149.181/">JupyterLab Playground with Tutorials</a></p></li>
+<li><p><a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/docs_index.html">Ask DJ Copilot</a></p></li>
+</ul>
+<p><strong>Install &amp; run</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>py-data-juicer
+dj-process<span class="w"> </span>--config<span class="w"> </span>demos/process_simple/process.yaml
+</pre></div>
+</div>
+<p><strong>Or compose in Python</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">NestedDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.filter</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextLengthFilter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.mapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">WhitespaceNormalizationMapper</span>
+
+<span class="n">ds</span> <span class="o">=</span> <span class="n">NestedDataset</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span>
+    <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Short&quot;</span><span class="p">,</span> <span class="s2">&quot;This passes the filter.&quot;</span><span class="p">,</span> <span class="s2">&quot;Text   with   spaces&quot;</span><span class="p">]</span>
+<span class="p">})</span>
+<span class="n">res_ds</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">process</span><span class="p">([</span>
+    <span class="n">TextLengthFilter</span><span class="p">(</span><span class="n">min_len</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+    <span class="n">WhitespaceNormalizationMapper</span><span class="p">()</span>
+<span class="p">])</span>
+
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">res_ds</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="why-data-juicer">
+<h2>✨ Why Data-Juicer?<a class="headerlink" href="#why-data-juicer" title="Link to this heading">#</a></h2>
+<section id="modular-extensible-architecture">
+<h3>1. Modular &amp; Extensible Architecture<a class="headerlink" href="#modular-extensible-architecture" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>200+ operators</strong> spanning text, image, audio, video, and multimodal data</p></li>
+<li><p><strong>Recipe-first</strong>: Reproducible YAML pipelines you can version, share, and fork like code</p></li>
+<li><p><strong>Composable</strong>: Drop in a single operator, chain complex workflows, or orchestrate full pipelines</p></li>
+<li><p><strong>Hot-reload</strong>: Iterate on operators without pipeline restarts</p></li>
+</ul>
+</section>
+<section id="full-spectrum-data-intelligence">
+<h3>2. Full-Spectrum Data Intelligence<a class="headerlink" href="#full-spectrum-data-intelligence" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Foundation Models</strong>: Pre-training, fine-tuning, RL, and evaluation-grade curation</p></li>
+<li><p><strong>Agent Systems</strong>: Clean tool traces, structure context, de-identification, and quality gating</p></li>
+<li><p><strong>RAG &amp; Analytics</strong>: Extraction, normalization, semantic chunking, deduplication, and data profiling</p></li>
+</ul>
+</section>
+<section id="production-ready-performance">
+<h3>3. Production-Ready Performance<a class="headerlink" href="#production-ready-performance" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Scale</strong>: Process 70B samples in 2h on 50 Ray nodes (6400 cores)</p></li>
+<li><p><strong>Efficiency</strong>: Deduplicate 5TB in 2.8h using 1280 cores</p></li>
+<li><p><strong>Optimization</strong>: Automatic OP fusion (2-10x speedup), adaptive parallelism, CUDA acceleration, robustness</p></li>
+<li><p><strong>Observability</strong>: Built-in tracing for debugging, auditing, and iterative improvement</p></li>
+</ul>
+<blockquote>
+<div><p><em>⭐ If Data-Juicer saved you time or improved your data work, please consider starring the repo.</em> It helps more people discover the project and keeps you notified of new releases and features.</p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="news">
+<h2>📰 News<a class="headerlink" href="#news" title="Link to this heading">#</a></h2>
+<details open>
+<summary>[2026-02-12] Release v1.5.0: <b>Partitioned Ray Executor, OP-level Env Management, and More Embodied-AI OPs</b></summary>
+<ul class="simple">
+<li><p>🚀 <em>Enhanced Distributed Execution Framework</em> – Introduced partitioned Ray executor and OP-level isolated environments to improve fault tolerance, scalability, and dependency conflict resolution.</p></li>
+<li><p>🤖 <em>Expanded Embodied AI Video Processing</em> – Added specialized operators for camera calibration, video undistortion, hand reconstruction, and pose estimation to strengthen multi-view video handling.</p></li>
+<li><p>💪🏻 <em>System Performance &amp; Developer Experience Optimizations</em> – Enabled batch inference, memory/log reduction, core logic refactoring, and updated documentation/templates.</p></li>
+<li><p>🐳 <em>Critical Bug Fixes &amp; Stability Improvements</em> – Resolved duplicate tracking, parameter conflicts, homepage rendering issues, and outdated docs for higher reliability.</p></li>
+</ul>
+</details>
+<details open>
+<summary>[2026-02-02] Release v1.4.6: <b>Copilot, Video Bytes I/O & Ray Tracing </b></summary>
+<ul class="simple">
+<li><p>🤖 <em>Q&amp;A Copilot</em> —  Now live on our <a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/index.html">Doc Site</a> | <a class="reference external" href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&amp;amp;_dt_no_comment=1&amp;amp;origin=11?">DingTalk</a> | <a class="reference external" href="https://discord.gg/ngQbB9hEVK">Discord</a>. Feel free to ask anything related to Data-Juicer ecosystem!</p>
+<ul>
+<li><p>Check 🤖 <a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main">Data-Juicer Agents</a> | 📃 <a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/qa-copilot">Deploy-ready codes</a> | 🎬<a class="reference external" href="https://github.com/datajuicer/data-juicer-agents/blob/main/qa-copilot/DEMO.md"> More demos</a> for more details.</p></li>
+</ul>
+</li>
+<li><p>🎬 <em>Video Bytes I/O</em> — Direct bytes processing for video pipelines</p></li>
+<li><p>🫆 <em>Ray Mode Tracer</em> — Track changed samples in distributed processing</p></li>
+<li><p>🐳 <em>Enhancements &amp; fixes</em> — refreshed Docker image, small perf boosts, GitHub Insights traffic workflow, Ray compatibility updates, and bug/doc fixes.</p></li>
+</ul>
+</details>
+<details>
+<summary>[2026-01-15] Release v1.4.5: <b>20+ New OPs, Ray vLLM Pipelines & Sphinx Docs Upgrade</b> </summary>
+<ul class="simple">
+<li><p><em>Embodied-AI OPs</em>: added/enhanced mappers for video captioning (VLM), video object segmentation (YOLOE+SAM2), video depth estimation (viz + point cloud), human pose (MMPose), image tagging (VLM), single-image 3D body mesh recovery (SAM 3D Body), plus <em>S3 upload/download</em>.</p></li>
+<li><p><em>New Pipeline OP</em>: compose multiple OPs into one pipeline; introduced <em>Ray + vLLM</em> pipelines for LLM/VLM inference.</p></li>
+<li><p><em>Docs upgrade</em>: moved to a unified <em>Sphinx-based</em> documentation build/deploy workflow with isolated theme/architecture repo.</p></li>
+<li><p><em>Enhancements &amp; fixes</em>: dependency updates, improved Ray deduplication and S3 loading, OpenAI Responses API support, tracer consistency, Docker base updated to CUDA 12.6.3 + Ubuntu 24.04 + Py3.11, and multiple bug fixes.</p></li>
+</ul>
+</details>
+<details>
+<summary>[2025-12-01] Release v1.4.4: <b>NeurIPS’25 Spotlight, 6 New Video/MM OPs & S3 I/O</b> </summary>
+<ul class="simple">
+<li><p>NeurIPS’25 <strong>Spotlight</strong> for Data-Juicer 2.0</p></li>
+<li><p><em>Repo split</em>: sandbox/recipes/agents moved to standalone repos</p></li>
+<li><p><em>S3 I/O</em> added to loader/exporter</p></li>
+<li><p><em>6 new video &amp; multimodal OPs</em> (character detection, VGGT, whole-body pose, hand reconstruction) + docs/Ray/video I/O improvements and bug fixes</p></li>
+</ul>
+</details>
+<p>View <a class="reference external" href="https://github.com/datajuicer/data-juicer/releases">All Release</a> and <a class="reference internal" href="docs/news.html"><span class="std std-doc">News Archive</span></a></p>
+</section>
+<hr class="docutils" />
+<section id="users-ecosystems">
+<h2>🔌 Users &amp; Ecosystems<a class="headerlink" href="#users-ecosystems" title="Link to this heading">#</a></h2>
+<blockquote>
+<div><p>The below list focuses on <em>developer-facing integration and usages</em> in <em>alphabetical order</em>.<br />
+Missing your project / name? Feel free to <a class="reference external" href="https://github.com/datajuicer/data-juicer/pulls">open a PR</a> or <a class="reference internal" href="#contributing-community">reach out</a>.</p>
+</div></blockquote>
+<p>Data-Juicer plugs into your existing stack and evolves with community contributions:</p>
+<section id="extensions">
+<h3>Extensions<a class="headerlink" href="#extensions" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong><a class="reference external" href="https://github.com/datajuicer/data-juicer-agents">data-juicer-agents</a></strong> — DJ Copilot and agentic workflows</p></li>
+<li><p><strong><a class="reference external" href="https://github.com/datajuicer/data-juicer-hub">data-juicer-hub</a></strong> — Community recipes and best practices</p></li>
+<li><p><strong><a class="reference external" href="https://github.com/datajuicer/data-juicer-sandbox">data-juicer-sandbox</a></strong> — Data-model co-development with feedback loops</p></li>
+</ul>
+</section>
+<section id="frameworks-platforms">
+<h3>Frameworks &amp; Platforms<a class="headerlink" href="#frameworks-platforms" title="Link to this heading">#</a></h3>
+<p><a class="reference external" href="https://github.com/agentscope-ai/agentscope">AgentScope</a> · <a class="reference external" href="https://github.com/apache/arrow">Apache Arrow</a> · <a class="reference external" href="https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HdfsUserGuide.html">Apache HDFS</a> · <a class="reference external" href="https://hudi.apache.org/">Apache Hudi</a> · <a class="reference external" href="https://iceberg.apache.org/">Apache Iceberg</a> · <a class="reference external" href="https://paimon.apache.org/">Apache Paimon</a> · <a class="reference external" href="https://www.alibabacloud.com/en/product/machine-learning?_p_lc=1">Alibaba PAI</a> · <a class="reference external" href="https://delta.io/">Delta Lake</a> · <a class="reference external" href="https://github.com/modelscope/DiffSynth-Studio">DiffSynth-Studio</a> · <a class="reference external" href="https://github.com/aigc-apps/EasyAnimate">EasyAnimate</a> · <a class="reference external" href="https://github.com/modelscope/evalscope">Eval-Scope</a> · <a class="reference external" href="https://www.huawei.com/en/products/cloud-computing-dc/atlas/ascend">Huawei Ascend</a> · <a class="reference external" href="https://huggingface.co/">Hugging Face</a> · <a class="reference external" href="https://lancedb.github.io/lance/">LanceDB</a> · <a class="reference external" href="https://github.com/hiyouga/LLaMA-Factory">LLaMA-Factory</a> · <a class="reference external" href="https://modelscope.cn/">ModelScope</a> · <a class="reference external" href="https://github.com/modelscope/ms-swift">ModelScope Swift</a> · <a class="reference external" href="https://github.com/NVIDIA/NeMo">NVIDIA NeMo</a> · <a class="reference external" href="https://docs.ray.io/">Ray</a> · <a class="reference external" href="https://github.com/modelscope/RM-Gallery">RM-Gallery</a> · <a class="reference external" href="https://github.com/modelscope/Trinity-RFT">Trinity-RFT</a> · <a class="reference external" href="https://www.volcengine.com/">Volcano Engine</a></p>
+</section>
+<section id="industry">
+<h3>Industry<a class="headerlink" href="#industry" title="Link to this heading">#</a></h3>
+<p>Alibaba Group, Ant Group, BYD Auto, ByteDance, DTSTACK, <a class="reference external" href="http://JD.com">JD.com</a>, NVIDIA, OPPO, Xiaohongshu, Xiaomi, Ximalaya, and more.</p>
+</section>
+<section id="academia">
+<h3>Academia<a class="headerlink" href="#academia" title="Link to this heading">#</a></h3>
+<p>CAS, Nanjing University, Peking University, RUC, Tsinghua University, UCAS, Zhejiang University, and more.</p>
+</section>
+<section id="contributing-community">
+<h3>Contributing &amp; Community<a class="headerlink" href="#contributing-community" title="Link to this heading">#</a></h3>
+<p>We believe in <em>building together</em>. Whether you’re fixing a typo, crafting a new operator, or sharing a breakthrough recipe, every contribution shapes the future of data processing.</p>
+<p>We welcome contributions at all levels:</p>
+<ul class="simple">
+<li><p><strong><a class="reference external" href="https://github.com/datajuicer/data-juicer/labels/good%20first%20issue">Good First Issues</a></strong> — Add operators, improve docs, report issues, or fix bugs</p></li>
+<li><p><strong><a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/docs/DeveloperGuide.html">Developer Guide</a></strong> — Optimize engines, add features, or enhance core infrastructure</p></li>
+<li><p><strong><a class="reference external" href="https://github.com/datajuicer/data-juicer-hub">DJ-Hub</a></strong> — Share knowledge: recipes, papers, and best practices</p></li>
+<li><p><strong>Connect</strong>: <a class="reference external" href="https://join.slack.com/t/data-juicer/shared_invite/zt-23zxltg9d-Z4d3EJuhZbCLGwtnLWWUDg">Slack</a> · <a class="reference external" href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,N78tgW54U447gJP5aMC95B6qgQhlkVQS4+dp7qQq6MpuRVJIwrSsXmL8oFqU5ajJ&amp;amp;_dt_no_comment=1&amp;amp;origin=11?">DingTalk</a> · <a class="reference external" href="https://discord.gg/ngQbB9hEVK">Discord</a></p></li>
+</ul>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-center"><p>Discord</p></th>
+<th class="head text-center"><p>DingTalk</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p><img src="https://gw.alicdn.com/imgextra/i1/O1CN011Oj8CB1f8Bw5JpgJA_!!6000000003961-0-tps-762-769.jpg" width="100"></p></td>
+<td class="text-center"><p><img src="https://gw.alicdn.com/imgextra/i3/O1CN01bBPoaX1EwZsiYudtd_!!6000000000416-2-tps-656-660.png" width="100"></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Data-Juicer is made possible by the users and community:</p>
+<ul class="simple">
+<li><p><strong>Initiated by</strong>: Alibaba Tongyi Lab</p></li>
+<li><p><strong>Co-developed with</strong>: Alibaba Cloud PAI, Anyscale (Ray team), Sun Yat-sen University, NVIDIA (NeMo team), and <a class="reference external" href="https://github.com/datajuicer/data-juicer/graphs/contributors">contributors worldwide</a></p></li>
+<li><p><strong>Inspired by</strong>: Apache Arrow, Ray, Hugging Face Datasets, BLOOM, RedPajama-Data, …</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">#</a></h2>
+<p>For detailed documentation, please see <a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/docs_index.html">here</a>.</p>
+<p><strong>Quick Links:</strong></p>
+<ul class="simple">
+<li><p><strong><a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/docs/Operators.html">operator zoo</a></strong> — Browse 200+ operators with examples</p></li>
+<li><p><strong><a class="reference external" href="https://github.com/datajuicer/data-juicer-hub">data-juicer-hub</a></strong> — Community-driven recipes and best practices</p></li>
+<li><p><strong><a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/docs/DeveloperGuide.html">developer guide</a></strong> — Build your own code and contribute to DJ</p></li>
+<li><p><strong><a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/docs/tutorial/DJ-Cookbook.html">data-juicer-cookbook</a></strong> — resource archive</p></li>
+<li><p><strong><a class="reference external" href="https://datajuicer.github.io/data-juicer/en/main/docs/awesome_llm_data">awesome_llm_data</a></strong> —  “Awesome List” for data-model co-development</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="license-attribution">
+<h2>📄 License &amp; Attribution<a class="headerlink" href="#license-attribution" title="Link to this heading">#</a></h2>
+<p>Data-Juicer is released under the <a class="reference internal" href="#LICENSE"><span class="xref myst">Apache License 2.0</span></a>.<br />
+Attribution is appreciated: please use our <a class="reference external" href="https://dail-wlcb.oss-cn-wulanchabu.aliyuncs.com/data_juicer/assets/DJ-Org-Logo.jpeg">badge</a>, or text as “This project uses Data-Juicer: <a class="github reference external" href="https://github.com/datajuicer">datajuicer</a>”.</p>
+</section>
+<hr class="docutils" />
+<section id="citation">
+<h2>📖 Citation<a class="headerlink" href="#citation" title="Link to this heading">#</a></h2>
+<p>If you find Data-Juicer useful in your work, please cite:</p>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@inproceedings</span><span class="p">{</span><span class="nl">djv1</span><span class="p">,</span>
+<span class="w">  </span><span class="na">title</span><span class="p">=</span><span class="s">{Data-Juicer: A One-Stop Data Processing System for Large Language Models}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">author</span><span class="p">=</span><span class="s">{Chen, Daoyuan and Huang, Yilun and Ma, Zhijian and Chen, Hesen and Pan, Xuchen and Ge, Ce and Gao, Dawei and Xie, Yuexiang and Liu, Zhaoyang and Gao, Jinyang and Li, Yaliang and Ding, Bolin and Zhou, Jingren}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">booktitle</span><span class="p">=</span><span class="s">{SIGMOD}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">year</span><span class="p">=</span><span class="s">{2024}</span>
+<span class="p">}</span>
+
+<span class="nc">@article</span><span class="p">{</span><span class="nl">djv2</span><span class="p">,</span>
+<span class="w">  </span><span class="na">title</span><span class="p">=</span><span class="s">{Data-Juicer 2.0: Cloud-Scale Adaptive Data Processing for and with Foundation Models}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">author</span><span class="p">=</span><span class="s">{Chen, Daoyuan and Huang, Yilun and Pan, Xuchen and Jiang, Nana and Wang, Haibin and Zhang, Yilei and Ge, Ce and Chen, Yushuo and Zhang, Wenhao and Ma, Zhijian and Huang, Jun and Lin, Wei and Li, Yaliang and Ding, Bolin and Zhou, Jingren}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">journal</span><span class="p">=</span><span class="s">{NeurIPS}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">year</span><span class="p">=</span><span class="s">{2025}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<details>
+<summary><b>More Publications</b> (Click to expand)</summary>
+<ul class="simple">
+<li><p>(ICML’25 Spotlight) <a class="reference external" href="https://arxiv.org/abs/2407.11784">Data-Juicer Sandbox: A Feedback-Driven Suite for Multimodal Data-Model Co-development</a></p></li>
+<li><p>(CVPR’25) <a class="reference external" href="https://arxiv.org/abs/2408.04594">ImgDiff: Contrastive Data Synthesis for Vision Large Language Models</a></p></li>
+<li><p>(TPAMI’25) <a class="reference external" href="https://arxiv.org/abs/2407.08583">The Synergy between Data and Multi-Modal Large Language Models: A Survey from Co-Development Perspective</a></p></li>
+<li><p>(NeurIPS’25) <a class="reference external" href="https://arxiv.org/abs/2502.04380">Diversity as a Reward: Fine-Tuning LLMs on a Mixture of Domain-Undetermined Data</a></p></li>
+<li><p>(NeurIPS’25) <a class="reference external" href="https://arxiv.org/abs/2503.09499">MindGYM: What Matters in Question Synthesis for Thinking-Centric Fine-Tuning?</a></p></li>
+<li><p>(Benchmark Data) <a class="reference external" href="https://arxiv.org/abs/2412.17574">HumanVBench: Exploring Human-Centric Video Understanding Capabilities of MLLMs with Synthetic Benchmark Data</a></p></li>
+<li><p>(Benchmark Data) <a class="reference external" href="https://www.arxiv.org/abs/2505.16915">DetailMaster: Can Your Text-to-Image Model Handle Long Prompts?</a></p></li>
+<li><p>(Data Scaling) <a class="reference external" href="https://arxiv.org/abs/2405.14908">BiMix: A Bivariate Data Mixing Law for Language Model Pretraining</a></p></li>
+</ul>
+</details>
+</section>
+</section>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="right-next"
+       href="docs_index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">DOCS</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">🚀 Quick Start</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-data-juicer">✨ Why Data-Juicer?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#modular-extensible-architecture">1. Modular &amp; Extensible Architecture</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#full-spectrum-data-intelligence">2. Full-Spectrum Data Intelligence</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#production-ready-performance">3. Production-Ready Performance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#news">📰 News</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#users-ecosystems">🔌 Users &amp; Ecosystems</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extensions">Extensions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#frameworks-platforms">Frameworks &amp; Platforms</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#industry">Industry</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#academia">Academia</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing-community">Contributing &amp; Community</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#license-attribution">📄 License &amp; Attribution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citation">📖 Citation</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

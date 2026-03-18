@@ -1,0 +1,1261 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer.ops.op_env &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/ops/op_env';</script>
+    <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/_modules/data_juicer/ops/op_env.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/_modules/data_juicer/ops/op_env_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/_modules/data_juicer/ops/op_env.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/_modules/data_juicer/ops/op_env.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/_modules/data_juicer/ops/op_env_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/_modules/data_juicer/ops/op_env.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">模块代码</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer.ops.op_env</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>data_juicer.ops.op_env 源代码</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">packaging.requirements</span><span class="w"> </span><span class="kn">import</span> <span class="n">Requirement</span> <span class="k">as</span> <span class="n">PackageRequirement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">packaging.specifiers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpecifierSet</span>
+
+
+<div class="viewcode-block" id="parse_single_requirement">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.parse_single_requirement">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_single_requirement</span><span class="p">(</span><span class="n">req_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="c1"># parse a single requirement specifier</span>
+    <span class="n">req_str</span> <span class="o">=</span> <span class="n">req_str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="c1"># handle editable &amp; local package</span>
+    <span class="n">editable</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">req_str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;-e &quot;</span><span class="p">):</span>
+        <span class="n">editable</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">req_str</span> <span class="o">=</span> <span class="n">req_str</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="c1"># a local package</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">req_str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">req_str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Requirement</span><span class="p">(</span><span class="n">is_local</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">req_str</span><span class="p">,</span> <span class="n">is_editable</span><span class="o">=</span><span class="n">editable</span><span class="p">)</span>
+
+    <span class="c1"># a direct git package</span>
+    <span class="k">if</span> <span class="n">req_str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;git+&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">req_str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;git@&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Requirement</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">req_str</span><span class="p">)</span>
+
+    <span class="c1"># standard package, use packaging to parse</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">req</span> <span class="o">=</span> <span class="n">PackageRequirement</span><span class="p">(</span><span class="n">req_str</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Requirement</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">req</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">version</span><span class="o">=</span><span class="n">req</span><span class="o">.</span><span class="n">specifier</span><span class="p">,</span>
+            <span class="n">extras</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">extras</span><span class="p">),</span>
+            <span class="n">markers</span><span class="o">=</span><span class="n">req</span><span class="o">.</span><span class="n">marker</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">req</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to parse requirement from the requirement string: </span><span class="si">{</span><span class="n">req_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="parse_requirements_list">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.parse_requirements_list">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_requirements_list</span><span class="p">(</span><span class="n">req_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+    <span class="c1"># parse the detailed requirements info from a list of pip package specifiers</span>
+    <span class="n">parsed</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">failed</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">req_list</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">parse_single_requirement</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">failed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">parsed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">failed</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to parse </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">failed</span><span class="p">)</span><span class="si">}</span><span class="s2"> requirement(s), ignored: </span><span class="si">{</span><span class="n">failed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parsed</span></div>
+
+
+
+<div class="viewcode-block" id="parse_requirements_file">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.parse_requirements_file">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_requirements_file</span><span class="p">(</span><span class="n">req_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="c1"># parse the detailed requirements info from a requirements file</span>
+    <span class="n">req_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">req_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">req_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parse_requirements_list</span><span class="p">(</span><span class="n">req_list</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Requirement">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.Requirement">[文档]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Requirement</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A requirement for an operator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># the name of the package</span>
+    <span class="n">version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">SpecifierSet</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># the version specifier of the package</span>
+    <span class="n">extras</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># the extra optional dependencies to install of this package</span>
+    <span class="n">markers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># the environment markers</span>
+    <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># the URL of the package</span>
+    <span class="n">is_editable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># whether the package is editable</span>
+    <span class="n">is_local</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># whether the package is a local package</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># the path to the local package</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># convert the string version to a SpecifierSet</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">SpecifierSet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># special cases: editable &amp; local package</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_local</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_editable</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;-e </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># general requirement specifier</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="c1"># only consider to add the extra parts when there is a package name</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extras</span><span class="p">:</span>
+                <span class="n">extras_str</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extras</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">extras_str</span><span class="si">}</span><span class="s2">]&quot;</span>
+
+        <span class="c1"># parse two forms: name-based and URL-based</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">:</span>
+            <span class="c1"># URL-based specifier</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; @ </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Name-based specifier</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># Add environment markers, if any</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">markers</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; ; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">markers</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="OPEnvSpec">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.OPEnvSpec">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OPEnvSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Specification of the environment dependencies for an operator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="OPEnvSpec.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.OPEnvSpec.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">pip_pkgs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">env_vars</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">working_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;uv&quot;</span><span class="p">,</span>
+        <span class="n">extra_env_params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">parsed_requirements</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Requirement</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize an OPEnvSpec instance.</span>
+
+<span class="sd">        :param pip_pkgs: Pip packages to install, default is None. Could be a list or a str path to the requirement file</span>
+<span class="sd">        :param env_vars: Dictionary of environment variables, default is None</span>
+<span class="sd">        :param working_dir: Path to the working directory, default is None</span>
+<span class="sd">        :param backend: Package management backend, default is &quot;uv&quot;. Should be one of [&quot;pip&quot;, &quot;uv&quot;].</span>
+<span class="sd">        :param extra_env_params: Additional parameters dictionary passed to the ray runtime environment, default is None</span>
+<span class="sd">        :param parsed_requirements: a resolved version of requirements. It&#39;s a dict of req_name-resolved_info, where</span>
+<span class="sd">            the parsed package info includes version/url/...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pip_pkgs</span> <span class="o">=</span> <span class="n">pip_pkgs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env_vars</span> <span class="o">=</span> <span class="n">env_vars</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">=</span> <span class="n">working_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">backend</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;uv&quot;</span><span class="p">],</span> <span class="s2">&quot;Backend should be one of [&#39;pip&#39;, &#39;uv&#39;]&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extra_env_params</span> <span class="o">=</span> <span class="n">extra_env_params</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">parsed_requirements</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parsed_requirements</span> <span class="o">=</span> <span class="n">parsed_requirements</span>
+            <span class="c1"># update pip_pkgs with the parsed pip package list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pip_pkgs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="k">for</span> <span class="n">req</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_requirements</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pip_pkgs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pip_pkgs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">parsed_res</span> <span class="o">=</span> <span class="n">parse_requirements_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pip_pkgs</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parsed_requirements</span> <span class="o">=</span> <span class="p">{</span><span class="n">req</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="n">req</span><span class="o">.</span><span class="n">url</span><span class="p">:</span> <span class="n">req</span> <span class="k">for</span> <span class="n">req</span> <span class="ow">in</span> <span class="n">parsed_res</span><span class="p">}</span>
+                <span class="c1"># update with the parsed pip package list</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pip_pkgs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="k">for</span> <span class="n">req</span> <span class="ow">in</span> <span class="n">parsed_res</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parsed_requirements</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">req</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="n">req</span><span class="o">.</span><span class="n">url</span><span class="p">:</span> <span class="n">req</span> <span class="k">for</span> <span class="n">req</span> <span class="ow">in</span> <span class="n">parse_requirements_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pip_pkgs</span><span class="p">)</span>
+                <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pip_pkgs</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="OPEnvSpec.to_dict">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.OPEnvSpec.to_dict">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the OPEnvSpec instance to a dictionary.</span>
+
+<span class="sd">        :return: Dictionary representation of the OPEnvSpec instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">runtime_env_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pip_pkgs</span><span class="p">:</span>
+            <span class="n">runtime_env_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pip_pkgs</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_vars</span><span class="p">:</span>
+            <span class="n">runtime_env_dict</span><span class="p">[</span><span class="s2">&quot;env_vars&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_vars</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span><span class="p">:</span>
+            <span class="n">runtime_env_dict</span><span class="p">[</span><span class="s2">&quot;working_dir&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span>
+        <span class="n">runtime_env_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extra_env_params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">runtime_env_dict</span></div>
+
+
+<div class="viewcode-block" id="OPEnvSpec.get_hash">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.OPEnvSpec.get_hash">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">op_env_spec_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">serialized_spec</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">op_env_spec_dict</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">(</span><span class="n">serialized_spec</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="OPEnvSpec.get_requirement_name_list">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.OPEnvSpec.get_requirement_name_list">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_requirement_name_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parsed_requirements</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="op_requirements_to_op_env_spec">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.op_requirements_to_op_env_spec">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">op_requirements_to_op_env_spec</span><span class="p">(</span>
+    <span class="n">op_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">requirements</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">auto_recommended_requirements</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OPEnvSpec</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">requirements</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">auto_recommended_requirements</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No requirements are specified for op </span><span class="si">{</span><span class="n">op_name</span><span class="si">}</span><span class="s2">. Use auto recommended requirements instead: </span><span class="si">{</span><span class="n">auto_recommended_requirements</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">OPEnvSpec</span><span class="p">(</span><span class="n">pip_pkgs</span><span class="o">=</span><span class="n">auto_recommended_requirements</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">OPEnvSpec</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">requirements</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">requirements</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">auto_recommended_requirements</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">auto_recommended_requirements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">specified_spec</span> <span class="o">=</span> <span class="n">OPEnvSpec</span><span class="p">(</span><span class="n">pip_pkgs</span><span class="o">=</span><span class="n">requirements</span><span class="p">)</span>
+        <span class="n">recommended_reqs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">req</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="n">req</span><span class="o">.</span><span class="n">url</span><span class="p">:</span> <span class="n">req</span> <span class="k">for</span> <span class="n">req</span> <span class="ow">in</span> <span class="n">parse_requirements_list</span><span class="p">(</span><span class="n">auto_recommended_requirements</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">new_recommended_reqs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">recommended_reqs</span><span class="p">[</span><span class="n">req_key</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">req_key</span> <span class="ow">in</span> <span class="n">recommended_reqs</span>
+            <span class="k">if</span> <span class="n">req_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">specified_spec</span><span class="o">.</span><span class="n">parsed_requirements</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_recommended_reqs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Adding </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">new_recommended_reqs</span><span class="p">)</span><span class="si">}</span><span class="s2"> recommended requirements to op </span><span class="si">{</span><span class="n">op_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">new_recommended_reqs</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">OPEnvSpec</span><span class="p">(</span><span class="n">pip_pkgs</span><span class="o">=</span><span class="n">specified_spec</span><span class="o">.</span><span class="n">pip_pkgs</span> <span class="o">+</span> <span class="n">new_recommended_reqs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid type of specified requirements: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">requirements</span><span class="p">)</span><span class="si">}</span><span class="s2"> for op </span><span class="si">{</span><span class="n">op_name</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Expected str or List[str].&quot;</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ConflictResolveStrategy">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.ConflictResolveStrategy">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConflictResolveStrategy</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="c1"># Strategies to resolve the dependency conflicts.</span>
+    <span class="c1"># It decides how to handle the conflicts when merging OP environments.</span>
+    <span class="c1"># SPLIT: Log an error and keep the two specs split when there is a conflict.</span>
+    <span class="c1"># OVERWRITE: Overwrite the existing dependency with one from the later OP.</span>
+    <span class="c1"># LATEST: Use the latest version of all specified dependency versions.</span>
+    <span class="n">SPLIT</span> <span class="o">=</span> <span class="s2">&quot;split&quot;</span>
+    <span class="n">OVERWRITE</span> <span class="o">=</span> <span class="s2">&quot;overwrite&quot;</span>
+    <span class="n">LATEST</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="OPEnvManager">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.OPEnvManager">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OPEnvManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    OPEnvManager is a class that manages the environment dependencies for operators,</span>
+<span class="sd">    including recording OP dependencies, resolving dependency conflicts, merging OP environments, and so on.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="OPEnvManager.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.OPEnvManager.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">min_common_dep_num_to_combine</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">conflict_resolve_strategy</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ConflictResolveStrategy</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConflictResolveStrategy</span><span class="o">.</span><span class="n">SPLIT</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize OPEnvManager instance.</span>
+
+<span class="sd">        :param min_common_dep_num_to_combine: The minimum number of common dependencies required to</span>
+<span class="sd">                                              determine whether to merge two operation environment specifications.</span>
+<span class="sd">                                              If set to -1, it means no combination of operation environments.</span>
+<span class="sd">        :param conflict_resolve_strategy: Strategy for resolving dependency conflicts, default is SPLIT strategy.</span>
+<span class="sd">                                          SPLIT: Keep the two specs split when there is a conflict.</span>
+<span class="sd">                                          OVERWRITE: Overwrite the existing dependency with one from the later OP.</span>
+<span class="sd">                                          LATEST: Use the latest version of all specified dependency versions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_common_dep_num_to_combine</span> <span class="o">=</span> <span class="n">min_common_dep_num_to_combine</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_common_dep_num_to_combine</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;min_common_dep_num_to_combine is set to -1, which means no combination on OP Environments.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_common_dep_num_to_combine</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;min_common_dep_num_to_combine should be &gt;= 0 or == -1.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Try to combine OP Environments with at least &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_common_dep_num_to_combine</span><span class="si">}</span><span class="s2"> common dependencies &quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">conflict_resolve_strategy</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conflict_resolve_strategy</span> <span class="o">=</span> <span class="n">ConflictResolveStrategy</span><span class="p">(</span><span class="n">conflict_resolve_strategy</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">conflict_resolve_strategy</span> <span class="o">=</span> <span class="n">conflict_resolve_strategy</span>
+
+        <span class="c1"># OP name -&gt; OPEnvSpec with two isolated lists</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">op2hash</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash2ops</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash2specs</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+
+<div class="viewcode-block" id="OPEnvManager.print_the_current_states">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.OPEnvManager.print_the_current_states">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_the_current_states</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current states of OPEnvManager, including:</span>
+<span class="sd">        - number of recorded OPs</span>
+<span class="sd">        - number of used env specs</span>
+<span class="sd">        - what OPs share the same env spec</span>
+
+<span class="sd">        :return: A dictionary containing the current states of OPEnvManager</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_unique_specs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash2ops</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;The current states of OPEnvManager:&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">- Total number of unique environment specs: </span><span class="si">{</span><span class="n">num_unique_specs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">- OP-spec relations: (OP name -&gt; Packages)&quot;</span><span class="p">)</span>
+        <span class="n">mappings</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">hash_val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash2ops</span><span class="p">:</span>
+            <span class="n">op_key</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash2ops</span><span class="p">[</span><span class="n">hash_val</span><span class="p">])</span>
+            <span class="n">pkgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash2specs</span><span class="p">[</span><span class="n">hash_val</span><span class="p">]</span><span class="o">.</span><span class="n">pip_pkgs</span>
+            <span class="n">mappings</span><span class="p">[</span><span class="n">op_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">pkgs</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t\t</span><span class="s2">- [</span><span class="si">{</span><span class="n">op_key</span><span class="si">}</span><span class="s2">]: </span><span class="si">{</span><span class="n">pkgs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mappings</span></div>
+
+
+<div class="viewcode-block" id="OPEnvManager.record_op_env_spec">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.OPEnvManager.record_op_env_spec">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">record_op_env_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">op_env_spec</span><span class="p">:</span> <span class="n">OPEnvSpec</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Record the OP environment specification for an operator.</span>
+
+<span class="sd">        :param op_name: Name of the operator</span>
+<span class="sd">        :param op_env_spec: OP environment specification</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">env_spec_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_op_env_specs</span><span class="p">(</span><span class="n">op_env_spec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">op2hash</span><span class="p">[</span><span class="n">op_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">env_spec_hash</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash2ops</span><span class="p">[</span><span class="n">env_spec_hash</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OPEnvManager.merge_op_env_specs">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.OPEnvManager.merge_op_env_specs">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_op_env_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_env_spec</span><span class="p">:</span> <span class="n">OPEnvSpec</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Merge the OP environment specification for an operator with existing OP environment specification.</span>
+
+<span class="sd">        :param new_env_spec: OP environment specification</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_hash</span> <span class="o">=</span> <span class="n">new_env_spec</span><span class="o">.</span><span class="n">get_hash</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">new_hash</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash2specs</span><span class="p">:</span>
+            <span class="c1"># this env spec is existing, do nothing</span>
+            <span class="k">return</span> <span class="n">new_hash</span>
+
+        <span class="c1"># check if there are any existing env specs can be combined with the new one</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">curr_hash</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">op2hash</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">curr_env_spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash2specs</span><span class="p">[</span><span class="n">curr_hash</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">can_combine_op_env_specs</span><span class="p">(</span><span class="n">curr_env_spec</span><span class="p">,</span> <span class="n">new_env_spec</span><span class="p">):</span>
+                <span class="c1"># combine the two specs</span>
+                <span class="n">combined_spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">try_to_combine_op_env_specs</span><span class="p">(</span><span class="n">curr_env_spec</span><span class="p">,</span> <span class="n">new_env_spec</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">combined_spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># combine failed</span>
+                    <span class="k">continue</span>
+                <span class="n">combined_hash</span> <span class="o">=</span> <span class="n">combined_spec</span><span class="o">.</span><span class="n">get_hash</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">combined_hash</span> <span class="o">!=</span> <span class="n">curr_hash</span><span class="p">:</span>
+                    <span class="c1"># use a new env spec</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">hash2specs</span><span class="p">[</span><span class="n">combined_hash</span><span class="p">]</span> <span class="o">=</span> <span class="n">combined_spec</span>
+                    <span class="c1"># update existing OPs that use the current env spec</span>
+                    <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash2ops</span><span class="p">[</span><span class="n">curr_hash</span><span class="p">]:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">op2hash</span><span class="p">[</span><span class="n">op</span><span class="p">]</span> <span class="o">=</span> <span class="n">combined_hash</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">hash2ops</span><span class="p">[</span><span class="n">combined_hash</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash2ops</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">curr_hash</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">combined_hash</span>
+        <span class="c1"># no existing env specs can be combined</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash2specs</span><span class="p">[</span><span class="n">new_hash</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_env_spec</span>
+        <span class="k">return</span> <span class="n">new_hash</span></div>
+
+
+<div class="viewcode-block" id="OPEnvManager.can_combine_op_env_specs">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.OPEnvManager.can_combine_op_env_specs">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">can_combine_op_env_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_env_spec</span><span class="p">:</span> <span class="n">OPEnvSpec</span><span class="p">,</span> <span class="n">second_env_spec</span><span class="p">:</span> <span class="n">OPEnvSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if two OP environment specifications can be combined.</span>
+
+<span class="sd">        :param first_env_spec: Existing OP environment specification</span>
+<span class="sd">        :param second_env_spec: New OP environment specification</span>
+<span class="sd">        :return: True if the two specifications can be combined, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_common_dep_num_to_combine</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># no combination</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># check the number of common deps</span>
+        <span class="n">first_env_req_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">first_env_spec</span><span class="o">.</span><span class="n">get_requirement_name_list</span><span class="p">())</span>
+        <span class="n">second_env_req_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">second_env_spec</span><span class="o">.</span><span class="n">get_requirement_name_list</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">first_env_req_set</span> <span class="o">&amp;</span> <span class="n">second_env_req_set</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_common_dep_num_to_combine</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># check if they share the same working dir</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">first_env_spec</span><span class="o">.</span><span class="n">working_dir</span>
+            <span class="ow">and</span> <span class="n">second_env_spec</span><span class="o">.</span><span class="n">working_dir</span>
+            <span class="ow">and</span> <span class="n">first_env_spec</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">!=</span> <span class="n">second_env_spec</span><span class="o">.</span><span class="n">working_dir</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="OPEnvManager.try_to_combine_op_env_specs">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.OPEnvManager.try_to_combine_op_env_specs">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">try_to_combine_op_env_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_env_spec</span><span class="p">:</span> <span class="n">OPEnvSpec</span><span class="p">,</span> <span class="n">second_env_spec</span><span class="p">:</span> <span class="n">OPEnvSpec</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Try to combine the OP environment specification for an operator with existing OP environment specification.</span>
+
+<span class="sd">        :param first_env_spec: Name of the operator</span>
+<span class="sd">        :param second_env_spec: OP environment specification</span>
+<span class="sd">        :return: True if the two specifications can be combined, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">first_parsed_reqs</span> <span class="o">=</span> <span class="n">first_env_spec</span><span class="o">.</span><span class="n">parsed_requirements</span>
+        <span class="n">second_parsed_reqs</span> <span class="o">=</span> <span class="n">second_env_spec</span><span class="o">.</span><span class="n">parsed_requirements</span>
+        <span class="n">combined_req_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">first_parsed_reqs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">second_parsed_reqs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">new_parsed_reqs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">req_name</span> <span class="ow">in</span> <span class="n">combined_req_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">req_name</span> <span class="ow">in</span> <span class="n">first_parsed_reqs</span> <span class="ow">and</span> <span class="n">req_name</span> <span class="ow">in</span> <span class="n">second_parsed_reqs</span><span class="p">:</span>
+                <span class="c1"># resolve conflict</span>
+                <span class="n">first_req</span> <span class="o">=</span> <span class="n">first_parsed_reqs</span><span class="p">[</span><span class="n">req_name</span><span class="p">]</span>
+                <span class="n">second_req</span> <span class="o">=</span> <span class="n">second_parsed_reqs</span><span class="p">[</span><span class="n">req_name</span><span class="p">]</span>
+                <span class="n">combined_req</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_with_strategy</span><span class="p">(</span><span class="n">first_req</span><span class="p">,</span> <span class="n">second_req</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">combined_req</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># conflict cannot be resolved</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+                <span class="n">new_parsed_reqs</span><span class="p">[</span><span class="n">req_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">combined_req</span>
+            <span class="k">elif</span> <span class="n">req_name</span> <span class="ow">in</span> <span class="n">first_parsed_reqs</span><span class="p">:</span>
+                <span class="n">new_parsed_reqs</span><span class="p">[</span><span class="n">req_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">first_parsed_reqs</span><span class="p">[</span><span class="n">req_name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_parsed_reqs</span><span class="p">[</span><span class="n">req_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">second_parsed_reqs</span><span class="p">[</span><span class="n">req_name</span><span class="p">]</span>
+
+        <span class="c1"># combine other attributes</span>
+        <span class="k">if</span> <span class="n">first_env_spec</span><span class="o">.</span><span class="n">env_vars</span> <span class="ow">and</span> <span class="n">second_env_spec</span><span class="o">.</span><span class="n">env_vars</span><span class="p">:</span>
+            <span class="n">combined_env_vars</span> <span class="o">=</span> <span class="n">first_env_spec</span><span class="o">.</span><span class="n">env_vars</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">combined_env_vars</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">second_env_spec</span><span class="o">.</span><span class="n">env_vars</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">first_env_spec</span><span class="o">.</span><span class="n">env_vars</span><span class="p">:</span>
+            <span class="n">combined_env_vars</span> <span class="o">=</span> <span class="n">first_env_spec</span><span class="o">.</span><span class="n">env_vars</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">combined_env_vars</span> <span class="o">=</span> <span class="n">second_env_spec</span><span class="o">.</span><span class="n">env_vars</span>
+        <span class="n">combined_working_dir</span> <span class="o">=</span> <span class="n">first_env_spec</span><span class="o">.</span><span class="n">working_dir</span> <span class="ow">or</span> <span class="n">second_env_spec</span><span class="o">.</span><span class="n">working_dir</span>
+        <span class="n">combined_backend</span> <span class="o">=</span> <span class="n">first_env_spec</span><span class="o">.</span><span class="n">backend</span> <span class="k">if</span> <span class="n">first_env_spec</span><span class="o">.</span><span class="n">backend</span> <span class="o">==</span> <span class="n">second_env_spec</span><span class="o">.</span><span class="n">backend</span> <span class="k">else</span> <span class="s2">&quot;uv&quot;</span>
+        <span class="k">if</span> <span class="n">first_env_spec</span><span class="o">.</span><span class="n">extra_env_params</span> <span class="ow">and</span> <span class="n">second_env_spec</span><span class="o">.</span><span class="n">extra_env_params</span><span class="p">:</span>
+            <span class="n">combined_extra_env_params</span> <span class="o">=</span> <span class="n">first_env_spec</span><span class="o">.</span><span class="n">extra_env_params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">combined_extra_env_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">second_env_spec</span><span class="o">.</span><span class="n">extra_env_params</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">first_env_spec</span><span class="o">.</span><span class="n">extra_env_params</span><span class="p">:</span>
+            <span class="n">combined_extra_env_params</span> <span class="o">=</span> <span class="n">first_env_spec</span><span class="o">.</span><span class="n">extra_env_params</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">combined_extra_env_params</span> <span class="o">=</span> <span class="n">second_env_spec</span><span class="o">.</span><span class="n">extra_env_params</span>
+
+        <span class="c1"># create a new combined OPEnvSpec</span>
+        <span class="k">return</span> <span class="n">OPEnvSpec</span><span class="p">(</span>
+            <span class="n">env_vars</span><span class="o">=</span><span class="n">combined_env_vars</span><span class="p">,</span>
+            <span class="n">working_dir</span><span class="o">=</span><span class="n">combined_working_dir</span><span class="p">,</span>
+            <span class="n">backend</span><span class="o">=</span><span class="n">combined_backend</span><span class="p">,</span>
+            <span class="n">extra_env_params</span><span class="o">=</span><span class="n">combined_extra_env_params</span><span class="p">,</span>
+            <span class="n">parsed_requirements</span><span class="o">=</span><span class="n">new_parsed_reqs</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OPEnvManager.get_op_env_spec">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.OPEnvManager.get_op_env_spec">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_op_env_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OPEnvSpec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the OP environment specification for an operator.</span>
+
+<span class="sd">        :param op_name: Name of the operator</span>
+<span class="sd">        :return: OP environment specification</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">op_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">op2hash</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;OP </span><span class="si">{</span><span class="n">op_name</span><span class="si">}</span><span class="s2"> is not recorded in OPEnvManager&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash2specs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">op2hash</span><span class="p">[</span><span class="n">op_name</span><span class="p">]]</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_with_strategy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_req</span><span class="p">:</span> <span class="n">Requirement</span><span class="p">,</span> <span class="n">second_req</span><span class="p">:</span> <span class="n">Requirement</span><span class="p">):</span>
+        <span class="c1"># check if there are conflicts. Only consider the version conflicts for now.</span>
+        <span class="n">version1</span> <span class="o">=</span> <span class="n">first_req</span><span class="o">.</span><span class="n">version</span>
+        <span class="n">version2</span> <span class="o">=</span> <span class="n">second_req</span><span class="o">.</span><span class="n">version</span>
+        <span class="c1"># quick check</span>
+        <span class="k">if</span> <span class="n">version1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">second_req</span>
+        <span class="k">if</span> <span class="n">version2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">first_req</span>
+        <span class="k">if</span> <span class="n">version1</span> <span class="o">==</span> <span class="n">version2</span><span class="p">:</span>
+            <span class="c1"># no conflict</span>
+            <span class="k">return</span> <span class="n">first_req</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">dep_logic.specifiers</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">ArbitrarySpecifier</span><span class="p">,</span>
+            <span class="n">EmptySpecifier</span><span class="p">,</span>
+            <span class="n">UnionSpecifier</span><span class="p">,</span>
+            <span class="n">parse_version_specifier</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">parse_version_specifier</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">version1</span><span class="p">))</span>
+        <span class="n">p2</span> <span class="o">=</span> <span class="n">parse_version_specifier</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">version2</span><span class="p">))</span>
+        <span class="n">combined</span> <span class="o">=</span> <span class="n">p1</span> <span class="o">&amp;</span> <span class="n">p2</span>
+        <span class="c1"># combine other fields</span>
+        <span class="k">if</span> <span class="n">first_req</span><span class="o">.</span><span class="n">extras</span> <span class="ow">and</span> <span class="n">second_req</span><span class="o">.</span><span class="n">extras</span><span class="p">:</span>
+            <span class="n">combined_extras</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">first_req</span><span class="o">.</span><span class="n">extras</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">second_req</span><span class="o">.</span><span class="n">extras</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">first_req</span><span class="o">.</span><span class="n">extras</span><span class="p">:</span>
+            <span class="n">combined_extras</span> <span class="o">=</span> <span class="n">first_req</span><span class="o">.</span><span class="n">extras</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">combined_extras</span> <span class="o">=</span> <span class="n">second_req</span><span class="o">.</span><span class="n">extras</span>
+        <span class="k">if</span> <span class="n">first_req</span><span class="o">.</span><span class="n">markers</span> <span class="ow">and</span> <span class="n">second_req</span><span class="o">.</span><span class="n">markers</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">dep_logic.markers</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_marker</span>
+
+            <span class="n">marker1</span> <span class="o">=</span> <span class="n">parse_marker</span><span class="p">(</span><span class="n">first_req</span><span class="o">.</span><span class="n">markers</span><span class="p">)</span>
+            <span class="n">marker2</span> <span class="o">=</span> <span class="n">parse_marker</span><span class="p">(</span><span class="n">second_req</span><span class="o">.</span><span class="n">markers</span><span class="p">)</span>
+            <span class="n">combined_markers</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">marker1</span> <span class="o">&amp;</span> <span class="n">marker2</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">first_req</span><span class="o">.</span><span class="n">markers</span><span class="p">:</span>
+            <span class="n">combined_markers</span> <span class="o">=</span> <span class="n">first_req</span><span class="o">.</span><span class="n">markers</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">combined_markers</span> <span class="o">=</span> <span class="n">second_req</span><span class="o">.</span><span class="n">markers</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">combined</span><span class="p">,</span> <span class="n">EmptySpecifier</span><span class="p">):</span>
+            <span class="c1"># there is no conflict</span>
+            <span class="k">return</span> <span class="n">Requirement</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">first_req</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">second_req</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">version</span><span class="o">=</span><span class="n">SpecifierSet</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">combined</span><span class="p">)),</span>
+                <span class="n">extras</span><span class="o">=</span><span class="n">combined_extras</span><span class="p">,</span>
+                <span class="n">markers</span><span class="o">=</span><span class="n">combined_markers</span><span class="p">,</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">first_req</span><span class="o">.</span><span class="n">url</span> <span class="ow">or</span> <span class="n">second_req</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">is_editable</span><span class="o">=</span><span class="n">first_req</span><span class="o">.</span><span class="n">is_editable</span> <span class="ow">or</span> <span class="n">second_req</span><span class="o">.</span><span class="n">is_editable</span><span class="p">,</span>
+                <span class="n">is_local</span><span class="o">=</span><span class="n">first_req</span><span class="o">.</span><span class="n">is_local</span> <span class="ow">or</span> <span class="n">second_req</span><span class="o">.</span><span class="n">is_local</span><span class="p">,</span>
+                <span class="n">path</span><span class="o">=</span><span class="n">first_req</span><span class="o">.</span><span class="n">path</span> <span class="ow">or</span> <span class="n">second_req</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># both specifiers are arbitrary equality, must be split</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">ArbitrarySpecifier</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="n">ArbitrarySpecifier</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="c1"># and if any of them is arbitrary equality, just use it</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">ArbitrarySpecifier</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">first_req</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="n">ArbitrarySpecifier</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">second_req</span>
+
+        <span class="c1"># there are conflicts, resolve them with specified strategy</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conflict_resolve_strategy</span> <span class="o">==</span> <span class="n">ConflictResolveStrategy</span><span class="o">.</span><span class="n">SPLIT</span><span class="p">:</span>
+            <span class="c1"># split</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">conflict_resolve_strategy</span> <span class="o">==</span> <span class="n">ConflictResolveStrategy</span><span class="o">.</span><span class="n">OVERWRITE</span><span class="p">:</span>
+            <span class="c1"># overwrite</span>
+            <span class="k">return</span> <span class="n">second_req</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># latest</span>
+            <span class="c1"># None means +inf</span>
+            <span class="n">include_latest</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">latest_version</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="c1"># use union to combine them to find the latest version</span>
+            <span class="n">combined</span> <span class="o">=</span> <span class="n">p1</span> <span class="o">|</span> <span class="n">p2</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">combined</span><span class="p">,</span> <span class="n">UnionSpecifier</span><span class="p">):</span>
+                <span class="n">max_str</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">combined</span><span class="o">.</span><span class="n">ranges</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">include_max</span><span class="p">:</span>
+                            <span class="n">max_str</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;=</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">max</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">max_str</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">max</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">max_str</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="k">break</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">max_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">max_spec</span> <span class="o">=</span> <span class="n">parse_version_specifier</span><span class="p">(</span><span class="s2">&quot;||&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">max_str</span><span class="p">))</span>
+                    <span class="n">include_latest</span> <span class="o">=</span> <span class="n">max_spec</span><span class="o">.</span><span class="n">include_max</span>
+                    <span class="n">latest_version</span> <span class="o">=</span> <span class="n">max_spec</span><span class="o">.</span><span class="n">max</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">include_latest</span> <span class="o">=</span> <span class="n">combined</span><span class="o">.</span><span class="n">include_max</span>
+                <span class="n">latest_version</span> <span class="o">=</span> <span class="n">combined</span><span class="o">.</span><span class="n">max</span>
+            <span class="k">if</span> <span class="n">latest_version</span><span class="p">:</span>
+                <span class="n">latest_version</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">SpecifierSet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;==</span><span class="si">{</span><span class="n">latest_version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">include_latest</span> <span class="k">else</span> <span class="n">SpecifierSet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">latest_version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">latest_version</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Dependency conflict for </span><span class="si">{</span><span class="n">first_req</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">second_req</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;fallback to unpinned version under LATEST strategy: &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">first_req</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="n">second_req</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">Requirement</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">first_req</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">second_req</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">version</span><span class="o">=</span><span class="n">latest_version</span><span class="p">,</span>
+                <span class="n">extras</span><span class="o">=</span><span class="n">combined_extras</span><span class="p">,</span>
+                <span class="n">markers</span><span class="o">=</span><span class="n">combined_markers</span><span class="p">,</span>
+                <span class="n">url</span><span class="o">=</span><span class="n">first_req</span><span class="o">.</span><span class="n">url</span> <span class="ow">or</span> <span class="n">second_req</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+                <span class="n">is_editable</span><span class="o">=</span><span class="n">first_req</span><span class="o">.</span><span class="n">is_editable</span> <span class="ow">or</span> <span class="n">second_req</span><span class="o">.</span><span class="n">is_editable</span><span class="p">,</span>
+                <span class="n">is_local</span><span class="o">=</span><span class="n">first_req</span><span class="o">.</span><span class="n">is_local</span> <span class="ow">or</span> <span class="n">second_req</span><span class="o">.</span><span class="n">is_local</span><span class="p">,</span>
+                <span class="n">path</span><span class="o">=</span><span class="n">first_req</span><span class="o">.</span><span class="n">path</span> <span class="ow">or</span> <span class="n">second_req</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="analyze_lazy_loaded_requirements_for_code_file">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.analyze_lazy_loaded_requirements_for_code_file">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">analyze_lazy_loaded_requirements_for_code_file</span><span class="p">(</span><span class="n">code_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">code_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+        <span class="n">code_content</span> <span class="o">=</span> <span class="n">fin</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">analyze_lazy_loaded_requirements</span><span class="p">(</span><span class="n">code_content</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="analyze_lazy_loaded_requirements">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.op_env.html#data_juicer.ops.op_env.analyze_lazy_loaded_requirements">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">analyze_lazy_loaded_requirements</span><span class="p">(</span><span class="n">code_content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">ast</span>
+
+    <span class="n">reqs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">code_content</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Call</span><span class="p">):</span>
+            <span class="n">callee</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">unparse</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">callee</span> <span class="o">==</span> <span class="s2">&quot;LazyLoader&quot;</span><span class="p">:</span>
+                <span class="c1"># calling LazyLoader(module_name, package_name, package_url, ...)</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">unparse</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">args</span><span class="p">]</span>
+                <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">kw</span><span class="o">.</span><span class="n">arg</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">unparse</span><span class="p">(</span><span class="n">kw</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">keywords</span><span class="p">}</span>
+                <span class="n">target_args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;module_name&quot;</span><span class="p">,</span> <span class="s2">&quot;package_name&quot;</span><span class="p">,</span> <span class="s2">&quot;package_url&quot;</span><span class="p">]</span>
+                <span class="n">existing_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[:</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">target_args</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">))]</span>
+                <span class="n">parsed_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">target_args</span><span class="p">[:</span> <span class="nb">len</span><span class="p">(</span><span class="n">existing_args</span><span class="p">)],</span> <span class="n">existing_args</span><span class="p">))</span>
+                <span class="c1"># find missing kwargs</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">existing_args</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_args</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="n">target_args</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                        <span class="n">parsed_args</span><span class="p">[</span><span class="n">target_args</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">target_args</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+                <span class="n">req</span> <span class="o">=</span> <span class="n">Requirement</span><span class="p">()</span>
+                <span class="k">if</span> <span class="s2">&quot;package_name&quot;</span> <span class="ow">in</span> <span class="n">parsed_args</span><span class="p">:</span>
+                    <span class="n">req</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">parsed_args</span><span class="p">[</span><span class="s2">&quot;package_name&quot;</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">req</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">parsed_args</span><span class="p">[</span><span class="s2">&quot;module_name&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s2">&quot;package_url&quot;</span> <span class="ow">in</span> <span class="n">parsed_args</span><span class="p">:</span>
+                    <span class="n">req</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">parsed_args</span><span class="p">[</span><span class="s2">&quot;package_url&quot;</span><span class="p">]</span>
+                <span class="n">reqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">req</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">callee</span> <span class="o">==</span> <span class="s2">&quot;LazyLoader.check_packages&quot;</span><span class="p">:</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">ast</span><span class="o">.</span><span class="n">unparse</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">args</span><span class="p">]</span>
+                <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">kw</span><span class="o">.</span><span class="n">arg</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">unparse</span><span class="p">(</span><span class="n">kw</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">keywords</span><span class="p">}</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">parsed_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">parsed_args</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;package_specs&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">parsed_args</span><span class="p">:</span>
+                    <span class="n">req_list</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">parsed_args</span><span class="p">)</span>
+                    <span class="n">reqs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">req_list</span><span class="p">)</span>
+            <span class="c1"># ignore other situations</span>
+    <span class="k">return</span> <span class="n">reqs</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

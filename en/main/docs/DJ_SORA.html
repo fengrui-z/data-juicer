@@ -1,0 +1,907 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>DJ-SORA &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/DJ_SORA';</script>
+    <script src="../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../_static/icon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="DJ_service" href="DJ_service.html" />
+    <link rel="prev" title="“Bad” Data Exhibition" href="BadDataExhibition.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../en/main/docs/DJ_SORA.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../zh_CN/main/docs/DJ_SORA_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../main/docs/DJ_SORA.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../en/main/docs/DJ_SORA.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../zh_CN/main/docs/DJ_SORA_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../main/docs/DJ_SORA.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="tutorial/DJ-Cookbook.html">DJ-Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/Installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/QuickStart.html">Quick Start</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">docs</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="Operators.html">Operator Schemas 算子提要</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DatasetCfg.html">Dataset Configuration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BadDataExhibition.html">“Bad” Data Exhibition</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">DJ-SORA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DJ_service.html">DJ_service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DeveloperGuide.html">How-to Guide for Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Distributed.html">Distributed Data Processing in Data-Juicer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="JobManagement.html">Job Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PartitionAndCheckpoint.html">Partitioned Processing with Checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="awesome_llm_data.html">Awesome Data-Model Co-Development of MLLMs </a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">operators</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="operators/aggregator/index.html">Aggregator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/deduplicator/index.html">Deduplicator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/filter/index.html">Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/mapper/index.html">Mapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/formatter/index.html">Formatter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/grouper/index.html">Grouper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/selector/index.html">Selector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/pipeline/index.html">Pipeline</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">demos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../demos/README.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/process_video_on_ray/data/Note.html">Note for dataset path</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">tools</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../tools/distributed_deduplication/README.html">Distributed Fuzzy Deduplication Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/README.html">Auto Evaluation Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/gpt_eval/README.html">GPT EVAL: Evaluate your model with OpenAI API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/recorder/README.html">Evaluation Results Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/README.html">Format Conversion Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/multimodal/README.html">Multimodal Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/post_tuning_dialog/README.html">Post Tuning Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/humanops/README.html">Label Studio Service Utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/mm_eval/inception_metrics/README.html">Metrics for video generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/mm_eval/vbench_metrics/README.html">VBench metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/postprocess/README.html">Postprocess tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/preprocess/README.html">Preprocess Tools</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">thirdparty</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../thirdparty/LLM_ecosystems/README.html">LLM Ecosystems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../thirdparty/models/README.html">Third-party Model Library</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../docs_index.html" class="nav-link">DOCS</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DJ-SORA</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="dj-sora">
+<h1>DJ-SORA<a class="headerlink" href="#dj-sora" title="Link to this heading">#</a></h1>
+<hr class="docutils" />
+<p>Data is the key to the unprecedented development of large multi-modal models such as SORA. How to obtain and process data efficiently and scientifically faces new challenges! DJ-SORA aims to create a series of large-scale, high-quality open-source multi-modal data sets to assist the open-source community in data understanding and model training.</p>
+<p>DJ-SORA is based on Data-Juicer (including hundreds of dedicated video, image, audio, text and other multi-modal data processing <a class="reference internal" href="Operators.html"><span class="std std-doc">operators</span></a> and tools) to form a series of systematic and reusable Multimodal “data recipes” for analyzing, cleaning, and generating large-scale, high-quality multimodal data.</p>
+<p>This project is being actively updated and maintained. We eagerly invite you to participate and jointly create a more open and higher-quality multi-modal data ecosystem to unleash the unlimited potential of large models!</p>
+<p><img alt="Overview" src="https://img.alicdn.com/imgextra/i2/O1CN01YMO2p31MsT5PKu7fh_!!6000000001490-0-tps-2134-1518.jpg" /></p>
+<section id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>SORA only briefly mentions using DALLE-3 to generate captions and can handle varying durations, resolutions and aspect ratios.</p></li>
+<li><p>High-quality large-scale fine-grained data helps to densify data points, aiding models to better learn the conditional mapping of “text -&gt; spacetime token”, and solve a series of existing challenges in text-to-video models:</p>
+<ul>
+<li><p>Smoothness of visual flow, with some generated videos exhibiting dropped frames and static states.</p></li>
+<li><p>Text comprehension and fine-grained detail, where the produced results have a low match with the given prompts.</p></li>
+<li><p>Generated content showing distortions and violations of physical laws, especially when entities are in motion.</p></li>
+<li><p>Short video content, mostly around ~10 seconds, with little to no significant changes in scenes or backdrops.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="roadmap">
+<h2>Roadmap<a class="headerlink" href="#roadmap" title="Link to this heading">#</a></h2>
+<section id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="#dj-sora">DJ-SORA</a></p>
+<ul>
+<li><p><a class="reference internal" href="#motivation">Motivation</a></p></li>
+<li><p><a class="reference internal" href="#roadmap">Roadmap</a></p>
+<ul>
+<li><p><a class="reference internal" href="#overview">Overview</a></p></li>
+<li><p><a class="reference internal" href="#support-high-performance-loading-and-processing-of-video-data">Support high-performance loading and processing of video data</a></p></li>
+<li><p><a class="reference internal" href="#basic-operators-video-spatio-temporal-dimension">Basic Operators (video spatio-temporal dimension)</a></p></li>
+<li><p><a class="reference internal" href="#advanced-operators-fine-grained-modal-matching-and-data-generation">Advanced Operators (fine-grained modal matching and data generation)</a></p></li>
+<li><p><a class="reference internal" href="#advanced-operators-video-content">Advanced Operators (Video Content)</a></p></li>
+<li><p><a class="reference internal" href="#dj-sora-data-recipes-and-datasets">DJ-SORA Data Recipes and Datasets</a></p></li>
+<li><p><a class="reference internal" href="#dj-sora-data-validation-and-model-training">DJ-SORA Data Validation and Model Training</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="support-high-performance-loading-and-processing-of-video-data">
+<h3>Support high-performance loading and processing of video data<a class="headerlink" href="#support-high-performance-loading-and-processing-of-video-data" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[✅] Parallelize data loading and storing:</p>
+<ul>
+<li><p>[✅] lazy load with pyAV and ffmpeg</p></li>
+<li><p>[✅] Multi-modal data path signature</p></li>
+</ul>
+</li>
+<li><p>[✅] Parallelization operator processing:</p>
+<ul>
+<li><p>[✅] Support single machine multicore running</p></li>
+<li><p>[✅] GPU utilization</p></li>
+<li><p>[✅] Ray based multi-machine distributed running</p></li>
+<li><p>[✅] Aliyun PAI-DLC &amp; Slurm based multi-machine distributed running</p></li>
+</ul>
+</li>
+<li><p>[✅] Distributed scheduling optimization (OP-aware, automated load balancing) –&gt; Aliyun PAI-DLC</p></li>
+<li><p>[WIP] Low precision acceleration support for video related operators. (git tags: dj_op, dj_efficiency)</p></li>
+<li><p>[WIP] SOTA model enhancement of existing video related operators. (git tags: dj_op, dj_sota_models)</p></li>
+</ul>
+</section>
+<section id="basic-operators-video-spatio-temporal-dimension">
+<h3>Basic Operators (video spatio-temporal dimension)<a class="headerlink" href="#basic-operators-video-spatio-temporal-dimension" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Towards Data Quality</p>
+<ul>
+<li><p>[✅] video_resolution_filter (targeted resolution)</p></li>
+<li><p>[✅] video_aspect_ratio_filter (targeted aspect ratio)</p></li>
+<li><p>[✅] video_duration_filter (targeted duration)</p></li>
+<li><p>[✅] video_motion_score_filter (video continuity dimension, calculating optical flow and removing statistics and extreme dynamics)</p></li>
+<li><p>[✅] video_ocr_area_ratio_filter (remove samples with text areas that are too large)</p></li>
+</ul>
+</li>
+<li><p>Towards Data Diversity &amp; Quantity</p>
+<ul>
+<li><p>[✅] video_resize_resolution_mapper (enhancement in resolution dimension)</p></li>
+<li><p>[✅] video_resize_aspect_ratio_mapper (enhancement in aspect ratio dimension)</p></li>
+<li><p>[✅] video_split_by_duration_mapper (enhancement in time dimension)</p></li>
+<li><p>[✅] video_split_by_key_frame_mapper (enhancement in time dimension with key information focus)</p></li>
+<li><p>[✅] video_split_by_scene_mapper (enhancement in time dimension with scene continuity focus)</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="advanced-operators-fine-grained-modal-matching-and-data-generation">
+<h3>Advanced Operators (fine-grained modal matching and data generation)<a class="headerlink" href="#advanced-operators-fine-grained-modal-matching-and-data-generation" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Towards Data Quality</p>
+<ul>
+<li><p>[✅] video_frames_text_similarity_filter (enhancement in the spatiotemporal consistency dimension, calculating the matching score of key/specified frames and text)</p></li>
+</ul>
+</li>
+<li><p>Towards Diversity &amp; Quantity</p>
+<ul class="contains-task-list">
+<li><p>[✅] video_tagging_from_frames_mapper (with lightweight image-to-text models, spatial summary information from dense frames)</p></li>
+<li><p>[✅] video_captioning_from_frames_mapper (heavier image-to-text models, generating more detailed spatial information from fewer frames)</p></li>
+<li><p>[✅] video_tagging_from_audio_mapper (introducing audio classification/category and other meta information)</p></li>
+<li><p>[✅] video_captioning_from_audio_mapper (incorporating voice/dialogue information; AudioCaption for environmental and global context)</p></li>
+<li><p>[✅] video_captioning_from_video_mapper (video-to-text model, generating spacetime information from continuous frames)</p></li>
+<li><p>[✅] video_captioning_from_summarizer_mapper (combining the above sub-abilities, using pure text large models for denoising and summarizing different types of caption information)</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> [WIP] video_interleaved_mapper (enhancement in ICL, temporal, and cross-modal dimensions), <code class="docutils literal notranslate"><span class="pre">interleaved_modes</span></code> include:</p>
+<ul>
+<li><p>text_image_interleaved (placing captions and frames of the same video in temporal order)</p></li>
+<li><p>text_audio_interleaved (placing ASR text and frames of the same video in temporal order)</p></li>
+<li><p>text_image_audio_interleaved (alternating stitching of the above two types)</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="advanced-operators-video-content">
+<h3>Advanced Operators (Video Content)<a class="headerlink" href="#advanced-operators-video-content" title="Link to this heading">#</a></h3>
+<ul class="contains-task-list simple">
+<li><p>[✅] video_deduplicator (comparing hash values to deduplicate at the file sample level)</p></li>
+<li><p>[✅] video_aesthetic_filter (performing aesthetic scoring filters after frame decomposition)</p></li>
+<li><p>[✅] Compatibility with existing ffmpeg video commands</p>
+<ul>
+<li><p>audio_ffmpeg_wrapped_mapper</p></li>
+<li><p>video_ffmpeg_wrapped_mapper</p></li>
+</ul>
+</li>
+<li><p>[✅] Video content compliance and privacy protection operators (image, text, audio):</p>
+<ul>
+<li><p>[✅] Mosaic</p></li>
+<li><p>[✅] Copyright watermark</p></li>
+<li><p>[✅] Face blurring</p></li>
+<li><p>[✅] Violence and Adult Content</p></li>
+</ul>
+</li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> [TODO] (Beyond Interpolation) Enhancing data authenticity and density</p>
+<ul class="contains-task-list">
+<li><p>Collisions, lighting, gravity, 3D, scene and phase transitions, depth of field, etc.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Filter-type operators: whether captions describe authenticity, relevance scoring/correctness of that description</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Mapper-type operators: enhance textual descriptions of physical phenomena in video data</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> …</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="dj-sora-data-recipes-and-datasets">
+<h3>DJ-SORA Data Recipes and Datasets<a class="headerlink" href="#dj-sora-data-recipes-and-datasets" title="Link to this heading">#</a></h3>
+<ul class="contains-task-list simple">
+<li><p>Support for unified loading and conversion of representative datasets (other-data &lt;-&gt; dj-data), facilitating DJ operator processing and dataset expansion.</p>
+<ul>
+<li><p>[✅] <strong>Video-ChatGPT</strong>: 100K video-instruction data: <code class="docutils literal notranslate"><span class="pre">{&lt;question,</span> <span class="pre">answer,</span> <span class="pre">youtube_id&gt;}</span></code></p></li>
+<li><p>[✅] <strong>Youku-mPLUG-CN</strong>: 36TB video-caption data: <code class="docutils literal notranslate"><span class="pre">{&lt;caption,</span> <span class="pre">video_id&gt;}</span></code></p></li>
+<li><p>[✅] <strong>InternVid</strong>: 234M data sample: <code class="docutils literal notranslate"><span class="pre">{&lt;caption,</span> <span class="pre">youtube_id,</span> <span class="pre">start/end_time&gt;}</span></code></p></li>
+<li><p>[✅] <strong>MSR-VTT</strong>: 10K video-caption data: <code class="docutils literal notranslate"><span class="pre">{&lt;caption,</span> <span class="pre">video_id&gt;}</span></code></p></li>
+<li><p>[✅] ModelScope’s datasets integration</p></li>
+<li><p>[✅] VideoInstruct-100K, Panda70M, ……</p></li>
+</ul>
+</li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Large-scale high-quality DJ-SORA dataset</p>
+<ul class="contains-task-list">
+<li><p>[✅] (Data sandbox) Building and optimizing multimodal data recipes with DJ-video operators (which are also being continuously extended and improved).</p></li>
+<li><p>[✅] Continuous expansion of data sources: open-datasets, Youku, web, …</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Large-scale analysis, cleaning, and generation of high-quality multimodal datasets based on DJ recipes (OpenVideos, …)</p>
+<ul>
+<li><p>[WIP] broad scenarios, high-dynamic</p></li>
+</ul>
+</li>
+<li><p>…</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="dj-sora-data-validation-and-model-training">
+<h3>DJ-SORA Data Validation and Model Training<a class="headerlink" href="#dj-sora-data-validation-and-model-training" title="Link to this heading">#</a></h3>
+<ul class="contains-task-list simple">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Exploring and refining the collaborative development of multimodal data and model, establishing benchmarks and insights. <a class="reference external" href="https://arxiv.org/abs/2407.11784">paper</a></p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> [WIP] Integration of SORA-like model training pipelines</p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/aigc-apps/EasyAnimate">EasyAnimate</a></p></li>
+<li><p>[✅] <a class="reference external" href="https://t2v-turbo.github.io/">T2V</a></p></li>
+<li><p>[✅] <a class="reference external" href="https://vchitect.github.io/VBench-project/">V-Bench</a></p></li>
+<li><p>…</p></li>
+</ul>
+</li>
+<li><p>[✅] (Model-Data sandbox) With relatively small models and the DJ-SORA dataset, exploring low-cost, transferable, and instructive data-model co-design, configurations and checkpoints.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> [WIP] Training SORA-like models with DJ-SORA data on  larger scales and in more scenarios to improve model performance.</p>
+<ul>
+<li><p>[✅] Data-Juicer-T2V, <a class="reference external" href="https://huggingface.co/datajuicer/Data-Juicer-T2V-v2">V-Bench Top1 model</a>. Please refer <a class="reference external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/index.html">here</a> for more details.</p></li>
+<li><p>…</p></li>
+</ul>
+</li>
+<li><p>…</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="BadDataExhibition.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">“Bad” Data Exhibition</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="DJ_service.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">DJ_service</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation">Motivation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#roadmap">Roadmap</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#support-high-performance-loading-and-processing-of-video-data">Support high-performance loading and processing of video data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-operators-video-spatio-temporal-dimension">Basic Operators (video spatio-temporal dimension)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-operators-fine-grained-modal-matching-and-data-generation">Advanced Operators (fine-grained modal matching and data generation)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-operators-video-content">Advanced Operators (Video Content)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dj-sora-data-recipes-and-datasets">DJ-SORA Data Recipes and Datasets</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dj-sora-data-validation-and-model-training">DJ-SORA Data Validation and Model Training</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/docs/DJ_SORA.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

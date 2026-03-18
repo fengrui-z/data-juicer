@@ -1,0 +1,1106 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer.utils.ckpt_utils &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/utils/ckpt_utils';</script>
+    <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/_modules/data_juicer/utils/ckpt_utils.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/_modules/data_juicer/utils/ckpt_utils_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/_modules/data_juicer/utils/ckpt_utils.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/_modules/data_juicer/utils/ckpt_utils.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/_modules/data_juicer/utils/ckpt_utils_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/_modules/data_juicer/utils/ckpt_utils.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">模块代码</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer.utils.ckpt_utils</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>data_juicer.utils.ckpt_utils 源代码</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+
+<div class="viewcode-block" id="CheckpointManagerBase">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.CheckpointManagerBase">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CheckpointManagerBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for checkpoint managers.</span>
+
+<span class="sd">    Provides common functionality for managing checkpoint directories and</span>
+<span class="sd">    defines the interface that checkpoint managers should implement.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CheckpointManagerBase.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.CheckpointManagerBase.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ckpt_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize base checkpoint manager.</span>
+
+<span class="sd">        :param ckpt_dir: Directory to save and load checkpoints</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ckpt_dir</span> <span class="o">=</span> <span class="n">ckpt_dir</span>
+        <span class="c1"># Ensure checkpoint directory exists</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CheckpointManagerBase.save_checkpoint">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.CheckpointManagerBase.save_checkpoint">[文档]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save a dataset checkpoint.</span>
+
+<span class="sd">        :param dataset: Dataset to save</span>
+<span class="sd">        :param kwargs: Additional arguments specific to the implementation</span>
+<span class="sd">        :return: Path to saved checkpoint</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="CheckpointManagerBase.load_checkpoint">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.CheckpointManagerBase.load_checkpoint">[文档]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load a dataset checkpoint.</span>
+
+<span class="sd">        :param kwargs: Arguments specific to the implementation (e.g., op_idx, partition_id)</span>
+<span class="sd">        :return: Loaded dataset or None if checkpoint doesn&#39;t exist</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="CheckpointManagerBase.checkpoint_exists">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.CheckpointManagerBase.checkpoint_exists">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">checkpoint_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if a checkpoint file/directory exists.</span>
+
+<span class="sd">        :param checkpoint_path: Path to checkpoint</span>
+<span class="sd">        :return: True if checkpoint exists, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CheckpointManager">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.CheckpointManager">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CheckpointManager</span><span class="p">(</span><span class="n">CheckpointManagerBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class is used to save the latest version of dataset to checkpoint</span>
+<span class="sd">    directory or load it from checkpoint directory, a bit like cache management</span>
+<span class="sd">    Rerun the same config will reload the checkpoint and skip ops before it.</span>
+
+<span class="sd">    If any args of operator in process list is changed, all ops will be</span>
+<span class="sd">    rerun from the beginning.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CheckpointManager.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.CheckpointManager.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ckpt_dir</span><span class="p">,</span> <span class="n">original_process_list</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization method.</span>
+
+<span class="sd">        :param ckpt_dir: path to save and load checkpoint</span>
+<span class="sd">        :param original_process_list: process list in config</span>
+<span class="sd">        :param num_proc: number of process workers when saving dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ckpt_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ckpt_ds_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="p">,</span> <span class="s2">&quot;latest&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ckpt_op_record</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="p">,</span> <span class="s2">&quot;ckpt_op.json&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_list</span> <span class="o">=</span> <span class="n">original_process_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_proc</span> <span class="o">=</span> <span class="n">num_proc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">op_record</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ckpt_available</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_ckpt</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CheckpointManager.get_left_process_list">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.CheckpointManager.get_left_process_list">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_left_process_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get left process list of ops for processing dataset, when checkpoint is</span>
+<span class="sd">        available, remove some ops from process list, otherwise keep it</span>
+<span class="sd">        unchanged.</span>
+
+<span class="sd">        :return: process list of left ops</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_list</span></div>
+
+
+<div class="viewcode-block" id="CheckpointManager.check_ckpt">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.CheckpointManager.check_ckpt">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_ckpt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if checkpoint is available.</span>
+
+<span class="sd">        :return: True when checkpoint is available, else False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_ds_dir</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_ds_dir</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_op_record</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_op_record</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_ops_to_skip</span><span class="p">()</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="CheckpointManager.record">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.CheckpointManager.record">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_cfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save op name and args to op record, which is used to compare with</span>
+<span class="sd">        the process list from config to decide if a checkpoint is available.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">op_record</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_cfg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CheckpointManager.check_ops_to_skip">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.CheckpointManager.check_ops_to_skip">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_ops_to_skip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check which ops need to be skipped in the process list.</span>
+
+<span class="sd">        If op record list from checkpoint are the same as the prefix</span>
+<span class="sd">        part of process list, then skip these ops and start processing</span>
+<span class="sd">        from the checkpoint. Otherwise, process the original dataset</span>
+<span class="sd">        from scratch.</span>
+
+<span class="sd">        :return: whether to skip some ops or not</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># load op records</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_op_record</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">op_record</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fin</span><span class="p">)</span>
+
+        <span class="c1"># check whether the op records are exactly the same</span>
+        <span class="c1"># with prefix of process list</span>
+        <span class="c1"># 1. same: remove these ops from process list</span>
+        <span class="c1"># 2. different: cleanup op record, and keep process list unchanged</span>
+        <span class="n">recorded_op_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">op_record</span><span class="p">)</span>
+        <span class="n">process_op_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process_list</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">process_op_num</span> <span class="o">&lt;</span> <span class="n">recorded_op_num</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Current config ops (</span><span class="si">{</span><span class="n">process_op_num</span><span class="si">}</span><span class="s2">) are fewer than &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;checkpoint ops (</span><span class="si">{</span><span class="n">recorded_op_num</span><span class="si">}</span><span class="s2">). Cannot reuse checkpoint;&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; all ops will be processed from the beginning.&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">op_record</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">prefix_process</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_list</span><span class="p">[:</span><span class="n">recorded_op_num</span><span class="p">]</span>
+        <span class="n">all_the_same</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">dif1</span><span class="p">,</span> <span class="n">dif2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">record_op</span><span class="p">,</span> <span class="n">config_op</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">op_record</span><span class="p">,</span> <span class="n">prefix_process</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">record_op</span> <span class="o">!=</span> <span class="n">config_op</span><span class="p">:</span>
+                <span class="n">all_the_same</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">dif1</span><span class="p">,</span> <span class="n">dif2</span> <span class="o">=</span> <span class="n">record_op</span><span class="p">,</span> <span class="n">config_op</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">all_the_same</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">op_record</span><span class="p">:</span>
+                <span class="n">op_name</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skip op [</span><span class="si">{</span><span class="n">op_name</span><span class="si">}</span><span class="s2">].&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_list</span><span class="p">[</span><span class="n">recorded_op_num</span><span class="p">:]</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Processed ops of checkpoint are different from &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;current configs: checkpoint-</span><span class="si">{</span><span class="n">dif1</span><span class="si">}</span><span class="s2"> vs. config-&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dif2</span><span class="si">}</span><span class="s2">. All ops will be processed from the &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;beginning.&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">op_record</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="CheckpointManager.save_ckpt">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.CheckpointManager.save_ckpt">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_ckpt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ds</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save dataset to checkpoint directory and dump processed ops list.</span>
+<span class="sd">        Alias for save_checkpoint for backward compatibility.</span>
+
+<span class="sd">        :param ds: input dataset to save</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CheckpointManager.save_checkpoint">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.CheckpointManager.save_checkpoint">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save dataset to checkpoint directory and dump processed ops list.</span>
+
+<span class="sd">        :param ds: input dataset to save</span>
+<span class="sd">        :param kwargs: Additional arguments (not used, kept for interface compatibility)</span>
+<span class="sd">        :return: Path to checkpoint directory</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">left_sample_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">save_to_disk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_ds_dir</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_proc</span><span class="p">,</span> <span class="n">left_sample_num</span><span class="p">))</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_op_record</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">op_record</span><span class="p">,</span> <span class="n">fout</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ckpt_ds_dir</span></div>
+
+
+<div class="viewcode-block" id="CheckpointManager.load_ckpt">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.CheckpointManager.load_ckpt">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_ckpt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load dataset from a checkpoint file.</span>
+<span class="sd">        Alias for load_checkpoint for backward compatibility.</span>
+
+<span class="sd">        :return: a dataset stored in checkpoint file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CheckpointManager.load_checkpoint">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.CheckpointManager.load_checkpoint">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load dataset from a checkpoint file.</span>
+
+<span class="sd">        :param kwargs: Additional arguments (not used, kept for interface compatibility)</span>
+<span class="sd">        :return: a dataset stored in checkpoint file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">NestedDataset</span>
+
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">NestedDataset</span><span class="o">.</span><span class="n">load_from_disk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_ds_dir</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ds</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CheckpointStrategy">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.CheckpointStrategy">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CheckpointStrategy</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checkpoint strategies for controlling when to create checkpoints.&quot;&quot;&quot;</span>
+
+    <span class="n">EVERY_OP</span> <span class="o">=</span> <span class="s2">&quot;every_op&quot;</span>  <span class="c1"># Checkpoint after every operation</span>
+    <span class="n">EVERY_N_OPS</span> <span class="o">=</span> <span class="s2">&quot;every_n_ops&quot;</span>  <span class="c1"># Checkpoint after every N operations</span>
+    <span class="n">MANUAL</span> <span class="o">=</span> <span class="s2">&quot;manual&quot;</span>  <span class="c1"># Checkpoint only after specified operations</span>
+    <span class="n">DISABLED</span> <span class="o">=</span> <span class="s2">&quot;disabled&quot;</span>  <span class="c1"># Disable checkpointing entirely</span></div>
+
+
+
+<div class="viewcode-block" id="RayCheckpointManager">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.RayCheckpointManager">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RayCheckpointManager</span><span class="p">(</span><span class="n">CheckpointManagerBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checkpoint manager for Ray Data with per-partition checkpointing support.</span>
+
+<span class="sd">    This class manages checkpoints for Ray Data datasets using Parquet format,</span>
+<span class="sd">    supporting per-partition checkpointing and various checkpoint strategies.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RayCheckpointManager.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.RayCheckpointManager.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ckpt_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">checkpoint_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">checkpoint_strategy</span><span class="p">:</span> <span class="n">CheckpointStrategy</span> <span class="o">=</span> <span class="n">CheckpointStrategy</span><span class="o">.</span><span class="n">EVERY_OP</span><span class="p">,</span>
+        <span class="n">checkpoint_n_ops</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">checkpoint_op_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">event_logger</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize Ray checkpoint manager.</span>
+
+<span class="sd">        :param ckpt_dir: Directory to save and load checkpoints</span>
+<span class="sd">        :param checkpoint_enabled: Whether checkpointing is enabled</span>
+<span class="sd">        :param checkpoint_strategy: Strategy for when to create checkpoints</span>
+<span class="sd">        :param checkpoint_n_ops: Number of operations between checkpoints (for EVERY_N_OPS strategy)</span>
+<span class="sd">        :param checkpoint_op_names: List of operation names to checkpoint (for MANUAL strategy)</span>
+<span class="sd">        :param event_logger: Optional event logger for checkpoint events</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ckpt_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_enabled</span> <span class="o">=</span> <span class="n">checkpoint_enabled</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_strategy</span> <span class="o">=</span> <span class="n">checkpoint_strategy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_n_ops</span> <span class="o">=</span> <span class="n">checkpoint_n_ops</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_op_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">checkpoint_op_names</span> <span class="ow">or</span> <span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_logger</span> <span class="o">=</span> <span class="n">event_logger</span>
+
+        <span class="c1"># If strategy is DISABLED, disable checkpointing regardless of enabled flag</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_strategy</span> <span class="o">==</span> <span class="n">CheckpointStrategy</span><span class="o">.</span><span class="n">DISABLED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_enabled</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="RayCheckpointManager.resolve_checkpoint_filename">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.RayCheckpointManager.resolve_checkpoint_filename">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resolve_checkpoint_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">partition_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve checkpoint filename using consistent format.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;checkpoint_op_</span><span class="si">{</span><span class="n">op_idx</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">_partition_</span><span class="si">{</span><span class="n">partition_id</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">.parquet&quot;</span></div>
+
+
+<div class="viewcode-block" id="RayCheckpointManager.should_checkpoint">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.RayCheckpointManager.should_checkpoint">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">should_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">op_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine if checkpoint should be created based on configuration strategy.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_enabled</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_strategy</span> <span class="o">==</span> <span class="n">CheckpointStrategy</span><span class="o">.</span><span class="n">EVERY_OP</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_strategy</span> <span class="o">==</span> <span class="n">CheckpointStrategy</span><span class="o">.</span><span class="n">EVERY_N_OPS</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">op_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_n_ops</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_strategy</span> <span class="o">==</span> <span class="n">CheckpointStrategy</span><span class="o">.</span><span class="n">MANUAL</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">op_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_op_names</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_strategy</span> <span class="o">==</span> <span class="n">CheckpointStrategy</span><span class="o">.</span><span class="n">DISABLED</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown checkpoint strategy: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_strategy</span><span class="si">}</span><span class="s2">, defaulting to every_op&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="RayCheckpointManager.save_checkpoint">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.RayCheckpointManager.save_checkpoint">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_checkpoint</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dataset</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>  <span class="c1"># RayDataset or ray.data.Dataset</span>
+        <span class="n">op_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">op_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">partition_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">cfg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save dataset checkpoint to parquet format.</span>
+
+<span class="sd">        :param dataset: RayDataset or ray.data.Dataset to save</span>
+<span class="sd">        :param op_idx: Operation index</span>
+<span class="sd">        :param op_name: Operation name (optional)</span>
+<span class="sd">        :param partition_id: Partition ID</span>
+<span class="sd">        :param cfg: Optional config for RayDataset wrapper</span>
+<span class="sd">        :return: Path to saved checkpoint</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">checkpoint_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_checkpoint_filename</span><span class="p">(</span><span class="n">op_idx</span><span class="p">,</span> <span class="n">partition_id</span><span class="p">)</span>
+        <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="p">,</span> <span class="n">checkpoint_filename</span><span class="p">)</span>
+
+        <span class="c1"># Ensure directory exists</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Extract ray.data.Dataset if it&#39;s wrapped in RayDataset</span>
+        <span class="n">ray_data</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">dataset</span>
+
+        <span class="c1"># Save as parquet</span>
+        <span class="n">ray_data</span><span class="o">.</span><span class="n">write_parquet</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="p">)</span>
+
+        <span class="c1"># Log checkpoint save event if event logger is available</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_logger</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_logger</span><span class="p">,</span> <span class="s2">&quot;_log_event&quot;</span><span class="p">):</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.executor.event_logging_mixin</span><span class="w"> </span><span class="kn">import</span> <span class="n">EventType</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">event_logger</span><span class="o">.</span><span class="n">_log_event</span><span class="p">(</span>
+                <span class="n">event_type</span><span class="o">=</span><span class="n">EventType</span><span class="o">.</span><span class="n">CHECKPOINT_SAVE</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Saved checkpoint after operation </span><span class="si">{</span><span class="n">op_idx</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">op_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">partition_id</span><span class="o">=</span><span class="n">partition_id</span><span class="p">,</span>
+                <span class="n">operation_name</span><span class="o">=</span><span class="n">op_name</span><span class="p">,</span>
+                <span class="n">operation_idx</span><span class="o">=</span><span class="n">op_idx</span><span class="p">,</span>
+                <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;checkpoint_path&quot;</span><span class="p">:</span> <span class="n">checkpoint_path</span><span class="p">},</span>
+            <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved checkpoint: </span><span class="si">{</span><span class="n">checkpoint_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">checkpoint_path</span></div>
+
+
+<div class="viewcode-block" id="RayCheckpointManager.load_checkpoint">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.RayCheckpointManager.load_checkpoint">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_checkpoint</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">op_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">op_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">partition_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">cfg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>  <span class="c1"># Returns RayDataset or None</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load dataset checkpoint from parquet format.</span>
+
+<span class="sd">        :param op_idx: Operation index</span>
+<span class="sd">        :param op_name: Operation name (optional)</span>
+<span class="sd">        :param partition_id: Partition ID</span>
+<span class="sd">        :param cfg: Optional config for RayDataset wrapper</span>
+<span class="sd">        :return: RayDataset or None if checkpoint doesn&#39;t exist</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">checkpoint_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_checkpoint_filename</span><span class="p">(</span><span class="n">op_idx</span><span class="p">,</span> <span class="n">partition_id</span><span class="p">)</span>
+        <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="p">,</span> <span class="n">checkpoint_filename</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Lazy import ray to avoid dependency if not using Ray</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
+
+            <span class="n">ray</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;ray&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Load from parquet</span>
+            <span class="n">ray_dataset</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="p">)</span>
+
+            <span class="c1"># Log checkpoint load event if event logger is available</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_logger</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_logger</span><span class="p">,</span> <span class="s2">&quot;_log_event&quot;</span><span class="p">):</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.executor.event_logging_mixin</span><span class="w"> </span><span class="kn">import</span> <span class="n">EventType</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">event_logger</span><span class="o">.</span><span class="n">_log_event</span><span class="p">(</span>
+                    <span class="n">event_type</span><span class="o">=</span><span class="n">EventType</span><span class="o">.</span><span class="n">CHECKPOINT_LOAD</span><span class="p">,</span>
+                    <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Loaded checkpoint from operation </span><span class="si">{</span><span class="n">op_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">partition_id</span><span class="o">=</span><span class="n">partition_id</span><span class="p">,</span>
+                    <span class="n">operation_name</span><span class="o">=</span><span class="n">op_name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;op_</span><span class="si">{</span><span class="n">op_idx</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">operation_idx</span><span class="o">=</span><span class="n">op_idx</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;checkpoint_path&quot;</span><span class="p">:</span> <span class="n">checkpoint_path</span><span class="p">},</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Wrap in RayDataset if cfg is provided</span>
+            <span class="k">if</span> <span class="n">cfg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.data.ray_dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">RayDataset</span>
+
+                <span class="k">return</span> <span class="n">RayDataset</span><span class="p">(</span><span class="n">ray_dataset</span><span class="p">,</span> <span class="n">cfg</span><span class="o">=</span><span class="n">cfg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ray_dataset</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to load checkpoint </span><span class="si">{</span><span class="n">checkpoint_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="RayCheckpointManager.find_latest_checkpoint">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.RayCheckpointManager.find_latest_checkpoint">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_latest_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partition_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the latest checkpoint for a partition.</span>
+
+<span class="sd">        :param partition_id: Partition ID</span>
+<span class="sd">        :return: Tuple of (op_idx, op_name, checkpoint_path) or None if no checkpoint found</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">checkpoint_files</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;checkpoint_op_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_partition_</span><span class="si">{</span><span class="n">partition_id</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">.parquet&quot;</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># Parse filename: checkpoint_op_XXXX_partition_YYYY.parquet</span>
+                    <span class="n">parts</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.parquet&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+                        <span class="n">op_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                        <span class="c1"># For backward compatibility, we&#39;ll use a generic op_name</span>
+                        <span class="n">op_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;op_</span><span class="si">{</span><span class="n">op_idx</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="n">checkpoint_files</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">op_idx</span><span class="p">,</span> <span class="n">op_name</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)))</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
+                    <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">checkpoint_files</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Return the latest checkpoint (highest op_idx)</span>
+        <span class="n">latest</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">checkpoint_files</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">latest</span></div>
+
+
+<div class="viewcode-block" id="RayCheckpointManager.group_operations_for_checkpointing">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.RayCheckpointManager.group_operations_for_checkpointing">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">group_operations_for_checkpointing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ops</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Group operations based on checkpoint strategy.</span>
+
+<span class="sd">        :param ops: List of operations</span>
+<span class="sd">        :return: List of (start_idx, end_idx, group_ops) tuples</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">current_start</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ops</span><span class="p">):</span>
+            <span class="n">op_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="s2">&quot;_name&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;op_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">should_checkpoint</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">op_name</span><span class="p">):</span>
+                <span class="c1"># This operation should trigger a checkpoint</span>
+                <span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">current_start</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ops</span><span class="p">[</span><span class="n">current_start</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+                <span class="n">current_start</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="c1"># Add remaining operations as the last group</span>
+        <span class="k">if</span> <span class="n">current_start</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ops</span><span class="p">):</span>
+            <span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">current_start</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ops</span><span class="p">),</span> <span class="n">ops</span><span class="p">[</span><span class="n">current_start</span><span class="p">:]))</span>
+
+        <span class="k">return</span> <span class="n">groups</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

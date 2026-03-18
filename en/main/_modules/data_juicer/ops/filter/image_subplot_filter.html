@@ -1,0 +1,992 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer.ops.filter.image_subplot_filter &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/ops/filter/image_subplot_filter';</script>
+    <script src="../../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../../_static/icon.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/ops/filter/image_subplot_filter.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/ops/filter/image_subplot_filter_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/ops/filter/image_subplot_filter.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/ops/filter/image_subplot_filter.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/ops/filter/image_subplot_filter_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/ops/filter/image_subplot_filter.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer.ops.filter.image_subplot_filter</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for data_juicer.ops.filter.image_subplot_filter</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fields</span><span class="p">,</span> <span class="n">StatsKeys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.mm_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_data_with_context</span><span class="p">,</span> <span class="n">load_image</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..base_op</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPERATORS</span><span class="p">,</span> <span class="n">Filter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..op_fusion</span><span class="w"> </span><span class="kn">import</span> <span class="n">LOADED_IMAGES</span>
+
+<span class="c1"># Lazy loading for OpenCV</span>
+<span class="n">cv2</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;cv2&quot;</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s2">&quot;opencv-python&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ImageSubplotFilter">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.filter.image_subplot_filter.html#data_juicer.ops.filter.ImageSubplotFilter">[docs]</a>
+<span class="nd">@OPERATORS</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="s2">&quot;image_subplot_filter&quot;</span><span class="p">)</span>
+<span class="nd">@LOADED_IMAGES</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="s2">&quot;image_subplot_filter&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageSubplotFilter</span><span class="p">(</span><span class="n">Filter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter to detect and remove samples with images containing subplots.</span>
+
+<span class="sd">    This filter uses Hough Line Transform to detect straight lines in images,</span>
+<span class="sd">    which is particularly effective for detecting grid-like subplot layouts</span>
+<span class="sd">    with perfectly straight edges.</span>
+
+<span class="sd">    The algorithm works by:</span>
+<span class="sd">    1. Converting images to grayscale and applying edge detection</span>
+<span class="sd">    2. Using Hough Line Transform to detect straight lines</span>
+<span class="sd">    3. Classifying lines as horizontal or vertical based on angle</span>
+<span class="sd">    4. Counting lines that meet length and angle requirements</span>
+<span class="sd">    5. Calculating confidence based on line counts and distribution</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_batched_op</span> <span class="o">=</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="ImageSubplotFilter.__init__">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.filter.image_subplot_filter.html#data_juicer.ops.filter.ImageSubplotFilter.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">min_horizontal_lines</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">min_vertical_lines</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">min_confidence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">any_or_all</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span>
+        <span class="n">canny_threshold1</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">70</span><span class="p">,</span>
+        <span class="n">canny_threshold2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">190</span><span class="p">,</span>
+        <span class="n">hough_threshold</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">110</span><span class="p">,</span>
+        <span class="n">min_line_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">110</span><span class="p">,</span>
+        <span class="n">max_line_gap</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">18</span><span class="p">,</span>
+        <span class="n">angle_tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.0</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization method.</span>
+
+<span class="sd">        :param min_horizontal_lines: Minimum number of horizontal lines</span>
+<span class="sd">            to consider an image as containing subplots.</span>
+<span class="sd">        :param min_vertical_lines: Minimum number of vertical lines</span>
+<span class="sd">            to consider an image as containing subplots.</span>
+<span class="sd">        :param min_confidence: Minimum confidence score for filtering.</span>
+<span class="sd">            Images with subplot confidence above this threshold will be</span>
+<span class="sd">            considered as containing subplots.</span>
+<span class="sd">        :param any_or_all: Strategy for multi-image samples. &#39;any&#39; filters</span>
+<span class="sd">            the sample if any image contains subplots. &#39;all&#39; filters the</span>
+<span class="sd">            sample only if all images contain subplots.</span>
+<span class="sd">        :param canny_threshold1: First threshold for Canny edge detector.</span>
+<span class="sd">        :param canny_threshold2: Second threshold for Canny edge detector.</span>
+<span class="sd">        :param hough_threshold: Accumulator threshold for Hough transform.</span>
+<span class="sd">        :param min_line_length: Minimum line length to be detected.</span>
+<span class="sd">        :param max_line_gap: Maximum gap between line segments to be treated as a single line.</span>
+<span class="sd">        :param angle_tolerance: Tolerance in degrees for classifying lines as horizontal/vertical.</span>
+<span class="sd">        :param args: Extra args.</span>
+<span class="sd">        :param kwargs: Extra args.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Validate inputs</span>
+        <span class="k">if</span> <span class="n">any_or_all</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;any&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Keep strategy [</span><span class="si">{</span><span class="n">any_or_all</span><span class="si">}</span><span class="s2">] is not supported. &quot;</span> <span class="sa">f</span><span class="s2">&quot;Can only be one of [&#39;any&#39;, &#39;all&#39;].&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_horizontal_lines</span> <span class="o">=</span> <span class="n">min_horizontal_lines</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_vertical_lines</span> <span class="o">=</span> <span class="n">min_vertical_lines</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_confidence</span> <span class="o">=</span> <span class="n">min_confidence</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">any</span> <span class="o">=</span> <span class="n">any_or_all</span> <span class="o">==</span> <span class="s2">&quot;any&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canny_threshold1</span> <span class="o">=</span> <span class="n">canny_threshold1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">canny_threshold2</span> <span class="o">=</span> <span class="n">canny_threshold2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hough_threshold</span> <span class="o">=</span> <span class="n">hough_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_line_length</span> <span class="o">=</span> <span class="n">min_line_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_line_gap</span> <span class="o">=</span> <span class="n">max_line_gap</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angle_tolerance</span> <span class="o">=</span> <span class="n">angle_tolerance</span></div>
+
+
+<div class="viewcode-block" id="ImageSubplotFilter.compute_stats_single">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.filter.image_subplot_filter.html#data_juicer.ops.filter.ImageSubplotFilter.compute_stats_single">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_stats_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Detect subplots in images and compute statistics.</span>
+
+<span class="sd">        :param sample: Single sample.</span>
+<span class="sd">        :param context: Whether to store context information.</span>
+<span class="sd">        :return: Sample with computed statistics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check if already computed</span>
+        <span class="k">if</span> <span class="n">StatsKeys</span><span class="o">.</span><span class="n">image_subplot_confidence</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">sample</span>
+
+        <span class="c1"># Get image paths</span>
+        <span class="n">image_list</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">image_key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">image_list</span><span class="p">:</span>
+            <span class="c1"># No images in this sample</span>
+            <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">image_subplot_confidence</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">horizontal_peak_count</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+            <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">vertical_peak_count</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+            <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">subplot_detected</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="n">sample</span>
+
+        <span class="c1"># Load images</span>
+        <span class="n">sample</span><span class="p">,</span> <span class="n">images</span> <span class="o">=</span> <span class="n">load_data_with_context</span><span class="p">(</span>
+            <span class="n">sample</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">image_list</span><span class="p">,</span> <span class="n">load_image</span><span class="p">,</span> <span class="n">mm_bytes_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">image_bytes_key</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Compute subplot statistics for each image</span>
+        <span class="n">subplot_confidences</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">horizontal_line_counts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">vertical_line_counts</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">image_path</span> <span class="ow">in</span> <span class="n">image_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">image_path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">images</span><span class="p">:</span>
+                <span class="c1"># Image loading failed</span>
+                <span class="n">subplot_confidences</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+                <span class="n">horizontal_line_counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">vertical_line_counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">confidence</span><span class="p">,</span> <span class="n">h_count</span><span class="p">,</span> <span class="n">v_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detect_subplot</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">image_path</span><span class="p">])</span>
+                <span class="n">subplot_confidences</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">confidence</span><span class="p">)</span>
+                <span class="n">horizontal_line_counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">h_count</span><span class="p">)</span>
+                <span class="n">vertical_line_counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v_count</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="c1"># Handle any processing errors gracefully</span>
+                <span class="n">subplot_confidences</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+                <span class="n">horizontal_line_counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">vertical_line_counts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Store statistics</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">image_subplot_confidence</span><span class="p">]</span> <span class="o">=</span> <span class="n">subplot_confidences</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">horizontal_peak_count</span><span class="p">]</span> <span class="o">=</span> <span class="n">horizontal_line_counts</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">vertical_peak_count</span><span class="p">]</span> <span class="o">=</span> <span class="n">vertical_line_counts</span>
+
+        <span class="c1"># Determine if any image contains subplots</span>
+        <span class="n">max_confidence</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">subplot_confidences</span><span class="p">)</span> <span class="k">if</span> <span class="n">subplot_confidences</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">subplot_detected</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_confidence</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_confidence</span>
+
+        <span class="k">return</span> <span class="n">sample</span></div>
+
+
+<div class="viewcode-block" id="ImageSubplotFilter.process_single">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.filter.image_subplot_filter.html#data_juicer.ops.filter.ImageSubplotFilter.process_single">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process single sample to determine if it should be filtered.</span>
+
+<span class="sd">        :param sample: Single sample.</span>
+<span class="sd">        :return: True for keeping, False for filtering.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">subplot_confidences</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">image_subplot_confidence</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">subplot_confidences</span><span class="p">:</span>
+            <span class="c1"># No images, keep the sample</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="c1"># Apply threshold to determine which images contain subplots</span>
+        <span class="n">subplot_flags</span> <span class="o">=</span> <span class="p">[</span><span class="n">confidence</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_confidence</span> <span class="k">for</span> <span class="n">confidence</span> <span class="ow">in</span> <span class="n">subplot_confidences</span><span class="p">]</span>
+
+        <span class="c1"># Check horizontal and vertical line requirements</span>
+        <span class="n">horizontal_lines</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">horizontal_peak_count</span><span class="p">]</span>
+        <span class="n">vertical_lines</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">vertical_peak_count</span><span class="p">]</span>
+
+        <span class="n">valid_subplot_flags</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span>
+                <span class="n">has_subplot</span>
+                <span class="ow">and</span> <span class="n">horizontal_lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_horizontal_lines</span>
+                <span class="ow">and</span> <span class="n">vertical_lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_vertical_lines</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">has_subplot</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">subplot_flags</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">any</span><span class="p">:</span>
+            <span class="c1"># Filter if any image contains valid subplots</span>
+            <span class="k">return</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">valid_subplot_flags</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Filter only if all images contain valid subplots</span>
+            <span class="k">return</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">valid_subplot_flags</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_detect_subplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Detect subplots in a single image using Hough Line Transform.</span>
+
+<span class="sd">        :param image: PIL Image object.</span>
+<span class="sd">        :return: Tuple of (confidence_score, horizontal_line_count, vertical_line_count).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Convert PIL Image to OpenCV format</span>
+        <span class="n">img_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">img_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="c1"># Convert to grayscale</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">img_array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img_array</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_RGB2GRAY</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gray</span> <span class="o">=</span> <span class="n">img_array</span>
+
+        <span class="c1"># Apply Gaussian blur to reduce noise</span>
+        <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">GaussianBlur</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Apply Canny edge detection</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">Canny</span><span class="p">(</span><span class="n">gray</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">canny_threshold1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">canny_threshold2</span><span class="p">)</span>
+
+        <span class="c1"># Use Hough Line Transform to detect lines</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">HoughLinesP</span><span class="p">(</span>
+            <span class="n">edges</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hough_threshold</span><span class="p">,</span>
+            <span class="n">minLineLength</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_line_length</span><span class="p">,</span>
+            <span class="n">maxLineGap</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_line_gap</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">lines</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+        <span class="c1"># Classify lines as horizontal or vertical</span>
+        <span class="n">horizontal_lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">vertical_lines</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Calculate line angle</span>
+            <span class="k">if</span> <span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Vertical line</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="mf">90.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">y2</span> <span class="o">-</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">))</span>
+
+            <span class="c1"># Classify based on angle</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">angle_tolerance</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">angle</span> <span class="o">-</span> <span class="mi">180</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">angle_tolerance</span><span class="p">:</span>
+                <span class="c1"># Horizontal line (0° or 180°)</span>
+                <span class="n">horizontal_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="nb">abs</span><span class="p">(</span><span class="n">angle</span> <span class="o">-</span> <span class="mi">90</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">angle_tolerance</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">angle</span> <span class="o">+</span> <span class="mi">90</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">angle_tolerance</span><span class="p">:</span>
+                <span class="c1"># Vertical line (90° or -90°)</span>
+                <span class="n">vertical_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># Calculate confidence score with enhanced algorithm</span>
+        <span class="n">confidence</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_confidence_enhanced</span><span class="p">(</span><span class="n">horizontal_lines</span><span class="p">,</span> <span class="n">vertical_lines</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">confidence</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">horizontal_lines</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">vertical_lines</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_confidence_enhanced</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">horizontal_lines</span><span class="p">,</span> <span class="n">vertical_lines</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Enhanced confidence calculation considering line regularity and grid structure.</span>
+
+<span class="sd">        :param horizontal_lines: List of horizontal line coordinates.</span>
+<span class="sd">        :param vertical_lines: List of vertical line coordinates.</span>
+<span class="sd">        :param width: Image width.</span>
+<span class="sd">        :param height: Image height.</span>
+<span class="sd">        :return: Confidence score between 0 and 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">horizontal_lines</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">vertical_lines</span> <span class="ow">or</span> <span class="n">width</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">height</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="c1"># 1. Base score from number of lines</span>
+        <span class="n">h_score</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">horizontal_lines</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_horizontal_lines</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">v_score</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vertical_lines</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_vertical_lines</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="c1"># 2. Regularity score (line spacing consistency)</span>
+        <span class="n">h_regularity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_line_regularity</span><span class="p">(</span><span class="n">horizontal_lines</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="n">height</span><span class="p">)</span>
+        <span class="n">v_regularity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_line_regularity</span><span class="p">(</span><span class="n">vertical_lines</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="n">width</span><span class="p">)</span>
+
+        <span class="c1"># 3. Grid structure score (intersection analysis)</span>
+        <span class="n">grid_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_grid_score</span><span class="p">(</span><span class="n">horizontal_lines</span><span class="p">,</span> <span class="n">vertical_lines</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+
+        <span class="c1"># 4. Line length consistency score</span>
+        <span class="n">h_length_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_length_consistency</span><span class="p">(</span><span class="n">horizontal_lines</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="n">width</span><span class="p">)</span>
+        <span class="n">v_length_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_length_consistency</span><span class="p">(</span><span class="n">vertical_lines</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="n">height</span><span class="p">)</span>
+
+        <span class="c1"># 5. Combined confidence with weighted scores</span>
+        <span class="n">confidence</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">h_score</span> <span class="o">*</span> <span class="mf">0.2</span>
+            <span class="o">+</span> <span class="n">v_score</span> <span class="o">*</span> <span class="mf">0.2</span>
+            <span class="o">+</span> <span class="n">h_regularity</span> <span class="o">*</span> <span class="mf">0.15</span>
+            <span class="o">+</span> <span class="n">v_regularity</span> <span class="o">*</span> <span class="mf">0.15</span>
+            <span class="o">+</span> <span class="n">grid_score</span> <span class="o">*</span> <span class="mf">0.2</span>
+            <span class="o">+</span> <span class="n">h_length_score</span> <span class="o">*</span> <span class="mf">0.05</span>
+            <span class="o">+</span> <span class="n">v_length_score</span> <span class="o">*</span> <span class="mf">0.05</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">confidence</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_line_regularity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">dimension</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate regularity score based on line spacing consistency.</span>
+
+<span class="sd">        :param lines: List of line coordinates.</span>
+<span class="sd">        :param axis: 0 for horizontal lines (y-coordinate), 1 for vertical lines (x-coordinate).</span>
+<span class="sd">        :param dimension: Image dimension (height for horizontal, width for vertical).</span>
+<span class="sd">        :return: Regularity score between 0 and 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="c1"># Extract line positions</span>
+        <span class="n">positions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Horizontal lines - use y-coordinate</span>
+                <span class="n">positions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Average y-coordinate</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># Vertical lines - use x-coordinate</span>
+                <span class="n">positions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Average x-coordinate</span>
+
+        <span class="n">positions</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
+
+        <span class="c1"># Calculate spacings between consecutive lines</span>
+        <span class="n">spacings</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">spacings</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="c1"># Calculate coefficient of variation (lower = more regular)</span>
+        <span class="n">mean_spacing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">spacings</span><span class="p">)</span>
+        <span class="n">std_spacing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">spacings</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mean_spacing</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="n">cv</span> <span class="o">=</span> <span class="n">std_spacing</span> <span class="o">/</span> <span class="n">mean_spacing</span>
+
+        <span class="c1"># Convert CV to regularity score (lower CV = higher regularity)</span>
+        <span class="n">regularity</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">cv</span><span class="p">)</span>
+
+        <span class="c1"># Penalize if spacings are too small (likely noise)</span>
+        <span class="n">min_spacing</span> <span class="o">=</span> <span class="n">dimension</span> <span class="o">*</span> <span class="mf">0.05</span>  <span class="c1"># At least 5% of dimension</span>
+        <span class="k">if</span> <span class="n">mean_spacing</span> <span class="o">&lt;</span> <span class="n">min_spacing</span><span class="p">:</span>
+            <span class="n">regularity</span> <span class="o">*=</span> <span class="mf">0.5</span>
+
+        <span class="k">return</span> <span class="n">regularity</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_grid_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">horizontal_lines</span><span class="p">,</span> <span class="n">vertical_lines</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate grid structure score based on line intersections.</span>
+
+<span class="sd">        :param horizontal_lines: List of horizontal line coordinates.</span>
+<span class="sd">        :param vertical_lines: List of vertical line coordinates.</span>
+<span class="sd">        :param width: Image width.</span>
+<span class="sd">        :param height: Image height.</span>
+<span class="sd">        :return: Grid score between 0 and 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">horizontal_lines</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">vertical_lines</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="c1"># Extract line positions</span>
+        <span class="n">h_positions</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([(</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">horizontal_lines</span><span class="p">])</span>
+        <span class="n">v_positions</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">vertical_lines</span><span class="p">])</span>
+
+        <span class="c1"># For subplots, we expect lines to form a grid</span>
+        <span class="c1"># Simple heuristic: more lines should form more intersections</span>
+        <span class="n">intersection_density</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">h_positions</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">v_positions</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">height</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10000</span>
+
+        <span class="c1"># Normalize to 0-1 range</span>
+        <span class="n">grid_score</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">intersection_density</span> <span class="o">/</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">grid_score</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_length_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">dimension</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate line length consistency score.</span>
+
+<span class="sd">        :param lines: List of line coordinates.</span>
+<span class="sd">        :param axis: 0 for horizontal lines, 1 for vertical lines.</span>
+<span class="sd">        :param dimension: Image dimension for normalization.</span>
+<span class="sd">        :return: Length consistency score between 0 and 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="c1"># Calculate line lengths</span>
+        <span class="n">lengths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Horizontal lines</span>
+                <span class="n">length</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># x2 - x1</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># Vertical lines</span>
+                <span class="n">length</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># y2 - y1</span>
+            <span class="n">lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+
+        <span class="c1"># Calculate coefficient of variation for lengths</span>
+        <span class="n">mean_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span>
+        <span class="n">std_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">mean_length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+        <span class="n">cv</span> <span class="o">=</span> <span class="n">std_length</span> <span class="o">/</span> <span class="n">mean_length</span>
+
+        <span class="c1"># Convert CV to consistency score (lower CV = higher consistency)</span>
+        <span class="n">consistency</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">cv</span><span class="p">)</span>
+
+        <span class="c1"># Penalize if lines are too short</span>
+        <span class="n">min_length</span> <span class="o">=</span> <span class="n">dimension</span> <span class="o">*</span> <span class="mf">0.3</span>  <span class="c1"># At least 30% of dimension</span>
+        <span class="k">if</span> <span class="n">mean_length</span> <span class="o">&lt;</span> <span class="n">min_length</span><span class="p">:</span>
+            <span class="n">consistency</span> <span class="o">*=</span> <span class="mf">0.5</span>
+
+        <span class="k">return</span> <span class="n">consistency</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

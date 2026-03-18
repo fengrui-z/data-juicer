@@ -1,0 +1,909 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>DJ-SORA &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/DJ_SORA_ZH';</script>
+    <script src="../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../_static/icon.png"/>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="DJ_服务化" href="DJ_service_ZH.html" />
+    <link rel="prev" title="“坏”数据展览" href="BadDataExhibition_ZH.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../en/main/docs/DJ_SORA.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../zh_CN/main/docs/DJ_SORA_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../main/docs/DJ_SORA_ZH.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="当前页面">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../en/main/docs/DJ_SORA.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../zh_CN/main/docs/DJ_SORA_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../main/docs/DJ_SORA_ZH.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="章节导航">
+  <p class="bd-links__title" role="heading" aria-level="1">章节导航</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">教程</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="tutorial/DJ-Cookbook_ZH.html">DJ-Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/Installation_ZH.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/QuickStart_ZH.html">快速上手</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">帮助文档</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="Operators.html">Operator Schemas 算子提要</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DatasetCfg_ZH.html">数据集配置指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BadDataExhibition_ZH.html">“坏”数据展览</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">DJ-SORA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DJ_service_ZH.html">DJ_服务化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DeveloperGuide_ZH.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Distributed_ZH.html">Data-Juicer 分布式数据处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="JobManagement_ZH.html">作业管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PartitionAndCheckpoint_ZH.html">分区处理与检查点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="awesome_llm_data.html">Awesome Data-Model Co-Development of MLLMs </a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">算子</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="operators/aggregator/index.html">Aggregator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/deduplicator/index.html">Deduplicator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/filter/index.html">Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/mapper/index.html">Mapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/formatter/index.html">Formatter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/grouper/index.html">Grouper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/selector/index.html">Selector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/pipeline/index.html">Pipeline</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">demos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../demos/README_ZH.html">演示</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/auto_evaluation_helm/README_ZH.html">自动化评测：HELM 评测及可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/process_video_on_ray/data/Note.html">Note for dataset path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/role_playing_system_prompt/README_ZH.html">为LLM构造角色扮演的system prompt</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">工具</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../tools/distributed_deduplication/README_ZH.html">分布式模糊去重工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/README_ZH.html">Auto Evaluation Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/gpt_eval/README_ZH.html">GPT EVAL：使用 OpenAI API 评测大模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/recorder/README_ZH.html">Evaluation Results Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/README_ZH.html">格式转换工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/multimodal/README_ZH.html">多模态工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/post_tuning_dialog/README_ZH.html">后微调工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/humanops/README.html">Label Studio Service Utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/mm_eval/inception_metrics/README_ZH.html">视频生成测评工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/mm_eval/vbench_metrics/README_ZH.html">VBench metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/postprocess/README_ZH.html">Postprocess tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/preprocess/README_ZH.html">预处理工具</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">第三方</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../thirdparty/LLM_ecosystems/README_ZH.html">大语言模型生态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../thirdparty/models/README_ZH.html">第三方模型库</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../docs_index_ZH.html" class="nav-link">文档</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">DJ-SORA</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="dj-sora">
+<h1>DJ-SORA<a class="headerlink" href="#dj-sora" title="链接到此标题。">#</a></h1>
+<hr class="docutils" />
+<p>数据是SORA等前沿大模型的关键，如何高效科学地获取和处理数据面临新的挑战！DJ-SORA旨在创建一系列大规模高质量开源多模态数据集，助力开源社区数据理解和模型训练。</p>
+<p>DJ-SORA将基于Data-Juicer(包含上百个专用的视频、图像、音频、文本等多模态数据处理<a class="reference internal" href="Operators.html"><span class="std std-doc">算子</span></a>及工具)，形成一系列系统化可复用的多模态“数据菜谱”，用于分析、清洗及生成大规模高质量多模态数据。</p>
+<p>本项目正在积极更新和维护中，我们热切地邀请您参与，共同打造一个更开放、更高质的多模态数据生态系统，激发大模型无限潜能！</p>
+<p><img alt="Overview" src="https://img.alicdn.com/imgextra/i4/O1CN01XphcBN2ACXcS6S1JH_!!6000000008167-2-tps-2289-1620.png" /></p>
+<section id="id1">
+<h2>动机<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h2>
+<ul class="simple">
+<li><p>SORA仅简略提及使用了DALLE-3来生成高质量caption，且模型输入数据有变化的时长、分辨率和宽高比。</p></li>
+<li><p>高质量大规模细粒度数据有助于稠密化数据点，帮助模型学好“文本 -&gt; spacetime token”的条件映射，解决text-2-video模型的一系列现有挑战：</p>
+<ul>
+<li><p>画面流畅性和一致性，部分生成的视频有丢帧及静止状态</p></li>
+<li><p>文本理解能力和细粒度，生成出的结果和prompt匹配度较低</p></li>
+<li><p>视频内容较短，大多只有~10s，且场景画面不会有大的改变</p></li>
+<li><p>生成内容存在变形扭曲和物理规则违背情况，特别是在实体做出动作时</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id2">
+<h2>路线图<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
+<section id="id3">
+<h3>概览<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="#dj-sora">DJ-SORA</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1">动机</a></p></li>
+<li><p><a class="reference internal" href="#id2">路线图</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3">概览</a></p></li>
+<li><p><a class="reference internal" href="#id4">支持视频数据的高性能加载和处理</a></p></li>
+<li><p><a class="reference internal" href="#id5">基础算子（视频时空维度）</a></p></li>
+<li><p><a class="reference internal" href="#id6">进阶算子（细粒度模态间匹配及生成）</a></p></li>
+<li><p><a class="reference internal" href="#id7">进阶算子（视频内容）</a></p></li>
+<li><p><a class="reference internal" href="#id8">DJ-SORA数据菜谱及数据集</a></p></li>
+<li><p><a class="reference internal" href="#id9">DJ-SORA数据验证及模型训练</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id4">
+<h3>支持视频数据的高性能加载和处理<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p>[✅] 并行化数据加载存储：</p>
+<ul>
+<li><p>[✅] lazy load with pyAV and ffmpeg</p></li>
+<li><p>[✅] 多模态数据路径签名</p></li>
+</ul>
+</li>
+<li><p>[✅] 并行化算子处理：</p>
+<ul>
+<li><p>[✅] 支持单机多核</p></li>
+<li><p>[✅] GPU调用</p></li>
+<li><p>[✅] Ray多机分布式</p></li>
+<li><p>[✅] 基于阿里云PAI-DLC和Slurm的多机分布式</p></li>
+</ul>
+</li>
+<li><p>[✅] 分布式调度优化（OP-aware、自动化负载均衡）--&gt;  Aliyun PAI-DLC</p></li>
+<li><p>[WIP] 视频相关算子的低精度加速支持, git tags: dj_op, dj_efficiency</p></li>
+<li><p>[WIP] 现有视频相关算子的SOTA模型增强, git tags: dj_op, dj_sota_models</p></li>
+</ul>
+</section>
+<section id="id5">
+<h3>基础算子（视频时空维度）<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p>面向数据质量</p>
+<ul>
+<li><p>[✅] video_resolution_filter （在分辨率维度进行过滤）</p></li>
+<li><p>[✅] video_aspect_ratio_filter （在宽高比维度进行过滤）</p></li>
+<li><p>[✅] video_duration_filter （在时间维度进行过滤）</p></li>
+<li><p>[✅] video_motion_score_filter（在视频连续性维度过滤，计算光流，去除静态和极端动态）</p></li>
+<li><p>[✅] video_ocr_area_ratio_filter （移除文本区域过大的样本）</p></li>
+</ul>
+</li>
+<li><p>面向数据多样性及数量</p>
+<ul>
+<li><p>[✅] video_resize_resolution_mapper（在分辨率维度进行增强）</p></li>
+<li><p>[✅] video_resize_aspect_ratio_mapper（在宽高比维度进行增强）</p></li>
+<li><p>[✅] video_split_by_key_frame_mapper（基于关键帧进行切割）</p></li>
+<li><p>[✅] video_split_by_duration_mapper（在时间维度进行切割）</p></li>
+<li><p>[✅] video_split_by_scene_mapper (基于场景连续性进行切割)</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id6">
+<h3>进阶算子（细粒度模态间匹配及生成）<a class="headerlink" href="#id6" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p>面向数据质量</p>
+<ul>
+<li><p>[✅] video_frames_text_similarity_filter（在时空一致性维度过滤，计算关键/指定帧 和文本的匹配分）</p></li>
+</ul>
+</li>
+<li><p>面向数据多样性及数量</p>
+<ul class="contains-task-list">
+<li><p>[✅] video_tagging_from_frames_mapper (轻量图生文模型，密集帧生成空间  概要信息)</p></li>
+<li><p>[✅] video_captioning_from_frames_mapper（更重的图生文模型，少量帧生  成更详细空间信息）</p></li>
+<li><p>[✅] video_tagging_from_audio_mapper (引入audio classification/category等meta信息)</p></li>
+<li><p>[✅] video_captioning_from_audio_mapper（引入人声/对话等信息；  AudioCaption环境、场景等全局信息）</p></li>
+<li><p>[✅] video_captioning_from_video_mapper（视频生文模型，连续帧生成时序信息）</p></li>
+<li><p>[✅] video_captioning_from_summarizer_mapper（基于上述子能力的组合，使用纯文本大模型对不同种caption信息去噪、摘要）</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> [WIP] video_interleaved_mapper（在ICL、时间和跨模态维度增强），<code class="docutils literal notranslate"><span class="pre">interleaved_modes</span></code> include</p>
+<ul>
+<li><p>text_image_interleaved（按时序交叉放置同一视频的的caption和frames）</p></li>
+<li><p>text_audio_interleaved（按时序交叉放置同一视频的的ASR文本和frames）</p></li>
+<li><p>text_image_audio_interleaved（交替拼接上述两种）</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id7">
+<h3>进阶算子（视频内容）<a class="headerlink" href="#id7" title="链接到此标题。">#</a></h3>
+<ul class="contains-task-list simple">
+<li><p>[✅] video_deduplicator （比较MD5哈希值在文件样本级别去重）</p></li>
+<li><p>[✅] video_aesthetic_filter（拆帧后，进行美学度打分过滤）</p></li>
+<li><p>[✅]兼容ffmpeg已有的video commands</p>
+<ul>
+<li><p>audio_ffmpeg_wrapped_mapper</p></li>
+<li><p>video_ffmpeg_wrapped_mapper</p></li>
+</ul>
+</li>
+<li><p>[WIP] 视频内容合规和隐私保护算子（图像、文字、音频）：</p>
+<ul>
+<li><p>[✅] 马赛克</p></li>
+<li><p>[✅] 版权水印</p></li>
+<li><p>[✅] 人脸模糊</p></li>
+<li><p>[✅] 黄暴恐</p></li>
+</ul>
+</li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> [TODO] (Beyond Interpolation) 增强数据真实性和稠密性</p>
+<ul class="contains-task-list">
+<li><p>碰撞、光影、重力、3D、场景切换（phase tranisition）、景深等</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Filter类算子: caption是否描述真实性，该描述的相关性得分/正确性得分</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> Mapper类算子：增强video数据中对物理现象的文本描述</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> ...</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id8">
+<h3>DJ-SORA数据菜谱及数据集<a class="headerlink" href="#id8" title="链接到此标题。">#</a></h3>
+<ul class="contains-task-list simple">
+<li><p>支持代表性数据的统一加载和转换（other-data &lt;-&gt; dj-data），方便DJ算子处理及扩展数据集</p>
+<ul>
+<li><p>[✅] <strong>Video-ChatGPT</strong>: 100K video-instruction data:<code class="docutils literal notranslate"><span class="pre">{&lt;question,</span> <span class="pre">answer,</span> <span class="pre">youtube_id&gt;}</span></code></p></li>
+<li><p>[✅] <strong>Youku-mPLUG-CN</strong>: 36TB video-caption data：<code class="docutils literal notranslate"><span class="pre">{&lt;caption,</span> <span class="pre">video_id&gt;}</span></code></p></li>
+<li><p>[✅] <strong>InternVid</strong>: 234M data sample:<code class="docutils literal notranslate"><span class="pre">{&lt;caption,</span> <span class="pre">youtube_id,</span> <span class="pre">start/end_time&gt;}</span></code></p></li>
+<li><p>[✅] <strong>MSR-VTT</strong>: 10K video-caption data：<code class="docutils literal notranslate"><span class="pre">{&lt;caption,</span> <span class="pre">video_id&gt;}</span></code></p></li>
+<li><p>[✅] ModelScope数据集集成</p></li>
+<li><p>[✅] VideoInstruct-100K, Panda70M, ......</p></li>
+</ul>
+</li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> 大规模高质量DJ-SORA数据集</p>
+<ul class="contains-task-list">
+<li><p>[✅] (Data sandbox) 基于DJ-video算子构建和优化多模态数据菜谱 (算子同期持续完善)</p></li>
+<li><p>[✅] 数据源持续扩充：open-datasets, youku, web， ...</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> 基于DJ菜谱规模化分析、清洗、生成高质量多模态数据集</p>
+<ul>
+<li><p>[WIP] 多场景、高动态</p></li>
+</ul>
+</li>
+<li><p>...</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id9">
+<h3>DJ-SORA数据验证及模型训练<a class="headerlink" href="#id9" title="链接到此标题。">#</a></h3>
+<ul class="contains-task-list simple">
+<li><p>[✅]  探索及完善多模态数据和模型的协同开发，形成benchmark和insights: <a class="reference external" href="https://arxiv.org/abs/2407.11784">paper</a></p></li>
+<li><p>[] [WIP] 类SORA模型训练pipeline集成</p>
+<ul>
+<li><p>[✅] <a class="reference external" href="https://github.com/aigc-apps/EasyAnimate">EasyAnimate</a></p></li>
+<li><p>[✅] <a class="reference external" href="https://t2v-turbo.github.io/">T2V</a></p></li>
+<li><p>[✅] <a class="reference external" href="https://vchitect.github.io/VBench-project/">V-Bench</a></p></li>
+<li><p>...</p></li>
+</ul>
+</li>
+<li><p>[✅] (Model-Data sandbox) 在相对小的模型和DJ-SORA数据集上，探索形成低开销、可迁移、有指导性的data-model co-design、配置及检查点</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"> [WIP] 更大规模、更多场景使用DJ-SORA数据训练类SORA模型，提高模型性能</p>
+<ul>
+<li><p>[✅] Data-Juicer-T2V, <a class="reference external" href="https://huggingface.co/datajuicer/Data-Juicer-T2V-v2">V-Bench Top1 model</a>。详情请参考<a class="reference external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/index_ZH.html">这里</a>。</p></li>
+<li><p>...</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="BadDataExhibition_ZH.html"
+       title="上一页">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">上一页</p>
+        <p class="prev-next-title">“坏”数据展览</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="DJ_service_ZH.html"
+       title="下一页">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">下一页</p>
+        <p class="prev-next-title">DJ_服务化</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">动机</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">路线图</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">概览</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">支持视频数据的高性能加载和处理</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">基础算子（视频时空维度）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">进阶算子（细粒度模态间匹配及生成）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">进阶算子（视频内容）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">DJ-SORA数据菜谱及数据集</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">DJ-SORA数据验证及模型训练</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/docs/DJ_SORA_ZH.md.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

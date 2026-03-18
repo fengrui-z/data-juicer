@@ -1,0 +1,919 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer.tools.quality_classifier.qc_utils &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/tools/quality_classifier/qc_utils';</script>
+    <script src="../../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../../_static/icon.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/tools/quality_classifier/qc_utils.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/tools/quality_classifier/qc_utils_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/tools/quality_classifier/qc_utils.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/tools/quality_classifier/qc_utils.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/tools/quality_classifier/qc_utils_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/tools/quality_classifier/qc_utils.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer.tools.quality_classifier.qc_utils</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for data_juicer.tools.quality_classifier.qc_utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">wget</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.ml</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipeline</span><span class="p">,</span> <span class="n">PipelineModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.ml.classification</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.ml.feature</span><span class="w"> </span><span class="kn">import</span> <span class="n">HashingTF</span><span class="p">,</span> <span class="n">Tokenizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparkSession</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">col</span><span class="p">,</span> <span class="n">rand</span><span class="p">,</span> <span class="n">udf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">DoubleType</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">,</span> <span class="n">StringType</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.cache_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">DATA_JUICER_MODELS_CACHE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.model_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODEL_LINKS</span><span class="p">,</span> <span class="n">prepare_sentencepiece_for_lang</span>
+
+
+<div class="viewcode-block" id="init_spark">
+<a class="viewcode-back" href="../../../../api/data_juicer.tools.quality_classifier.qc_utils.html#data_juicer.tools.quality_classifier.qc_utils.init_spark">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">init_spark</span><span class="p">(</span><span class="n">spark_executor_memory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spark_driver_memory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">spark_executor_memoryOverhead</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize a spark session. You can set parameters such as memory, number</span>
+<span class="sd">    of partitions, timeout and so on here</span>
+<span class="sd">    :return: A spark session instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">spark_executor_memory</span><span class="p">:</span>
+        <span class="n">spark_executor_memory</span> <span class="o">=</span> <span class="s2">&quot;64g&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">spark_driver_memory</span><span class="p">:</span>
+        <span class="n">spark_driver_memory</span> <span class="o">=</span> <span class="s2">&quot;64g&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">spark_executor_memoryOverhead</span><span class="p">:</span>
+        <span class="n">spark_executor_memoryOverhead</span> <span class="o">=</span> <span class="s2">&quot;20000&quot;</span>
+    <span class="n">spark</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">master</span><span class="p">(</span><span class="s2">&quot;local[*]&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.driver.memory&quot;</span><span class="p">,</span> <span class="n">spark_driver_memory</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.executor.memory&quot;</span><span class="p">,</span> <span class="n">spark_executor_memory</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.sql.shuffle.partitions&quot;</span><span class="p">,</span> <span class="s2">&quot;300&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.sql.execution.arrow.pyspark.enabled&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.executor.memoryOverhead&quot;</span><span class="p">,</span> <span class="n">spark_executor_memoryOverhead</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.network.timeout&quot;</span><span class="p">,</span> <span class="s2">&quot;10000s&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="s2">&quot;spark.executor.heartbeatInterval&quot;</span><span class="p">,</span> <span class="s2">&quot;3600s&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Spark initialization done.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">spark</span></div>
+
+
+
+<div class="viewcode-block" id="prepare_model">
+<a class="viewcode-back" href="../../../../api/data_juicer.tools.quality_classifier.qc_utils.html#data_juicer.tools.quality_classifier.qc_utils.prepare_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_model</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">model_path</span><span class="o">=</span><span class="n">DATA_JUICER_MODELS_CACHE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prepare the specific model from model cache path or the remote oss</span>
+<span class="sd">    :param model_name: name of the quality classifier model</span>
+<span class="sd">    :param model_path: the path to store the model to be loaded</span>
+<span class="sd">    :return: a loaded PipelineModel</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">udm</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">model_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;gpt3&quot;</span><span class="p">,</span> <span class="s2">&quot;chinese&quot;</span><span class="p">,</span> <span class="s2">&quot;code&quot;</span><span class="p">]:</span>
+        <span class="c1"># use user-specific model</span>
+        <span class="n">real_model_path</span> <span class="o">=</span> <span class="n">model_name</span>
+        <span class="n">udm</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># use prepared models we provided</span>
+        <span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_quality_model&quot;</span> <span class="o">%</span> <span class="n">model_name</span>
+        <span class="n">real_model_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Preparing scorer model in [</span><span class="si">{</span><span class="n">real_model_path</span><span class="si">}</span><span class="s2">]...&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">real_model_path</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">real_model_path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">PipelineModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">real_model_path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">udm</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Customized model [</span><span class="si">{</span><span class="n">real_model_path</span><span class="si">}</span><span class="s2">] cannot be loaded.&quot;</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># No specific models in local file systems. Download them from remote.</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">wget</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">MODEL_LINKS</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">.zip&quot;</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">.zip&quot;</span><span class="p">),</span> <span class="n">bar</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="c1"># extract the compressed model file into a model directory</span>
+    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">.zip&quot;</span><span class="p">))</span> <span class="k">as</span> <span class="n">zp</span><span class="p">:</span>
+        <span class="n">zp</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">PipelineModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">real_model_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="load_dataset">
+<a class="viewcode-back" href="../../../../api/data_juicer.tools.quality_classifier.qc_utils.html#data_juicer.tools.quality_classifier.qc_utils.load_dataset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_dataset</span><span class="p">(</span><span class="n">spark</span><span class="p">,</span> <span class="n">ds_path</span><span class="p">,</span> <span class="n">text_key</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">only_text</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load a single dataset using PySpark. Only support &#39;json&#39;, &#39;jsonl&#39;, or</span>
+<span class="sd">    &#39;parquet&#39; files for now</span>
+<span class="sd">    :param spark: spark session</span>
+<span class="sd">    :param ds_path: dataset path</span>
+<span class="sd">    :param text_key: the name of the column that stores the contents of texts</span>
+<span class="sd">    :param only_text: whether to load texts only and drop other columns.</span>
+<span class="sd">    :return: a data frame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># load dataset using different methods according to the suffix</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading dataset from [</span><span class="si">{</span><span class="n">ds_path</span><span class="si">}</span><span class="s2">]...&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ds_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ds_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.jsonl&quot;</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">ds_path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ds_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.parquet&quot;</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="n">ds_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s2">&quot;Dataset type is not supported for now. &quot;</span>
+            <span class="s2">&quot;Suffix of dataset file should be one of &quot;</span>
+            <span class="s2">&quot;[.json, .jsonl, .parquet]&quot;</span>
+        <span class="p">)</span>
+    <span class="c1"># rename the column that stores texts to &quot;text&quot; if necessary</span>
+    <span class="k">if</span> <span class="n">text_key</span> <span class="o">!=</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">withColumnRenamed</span><span class="p">(</span><span class="n">text_key</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">)</span>
+    <span class="c1"># whether to keep &quot;text&quot; column only</span>
+    <span class="k">if</span> <span class="n">only_text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="load_datasets">
+<a class="viewcode-back" href="../../../../api/data_juicer.tools.quality_classifier.qc_utils.html#data_juicer.tools.quality_classifier.qc_utils.load_datasets">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_datasets</span><span class="p">(</span><span class="n">spark</span><span class="p">,</span> <span class="n">ds_paths</span><span class="p">,</span> <span class="n">text_key</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">only_text</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load a list of datasets. Only support &#39;json&#39;, &#39;jsonl&#39;, or &#39;parquet&#39; files</span>
+<span class="sd">    for now</span>
+<span class="sd">    :param spark: spark session</span>
+<span class="sd">    :param ds_paths: a list of datasets to be loaded.</span>
+<span class="sd">    :param text_key: the name of the column that stores the contents of texts</span>
+<span class="sd">    :param label: the label set to these datasets. Used in training pipeline</span>
+<span class="sd">    :param only_text: whether to load texts only and drop other columns.</span>
+<span class="sd">    :return: a data frame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ds_paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No dataset path provided.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="c1"># load each dataset in order and union them all</span>
+    <span class="n">base_ds</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">spark</span><span class="p">,</span> <span class="n">ds_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">text_key</span><span class="p">,</span> <span class="n">only_text</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ds_paths</span><span class="p">)):</span>
+        <span class="n">base_ds</span> <span class="o">=</span> <span class="n">base_ds</span><span class="o">.</span><span class="n">unionAll</span><span class="p">(</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">spark</span><span class="p">,</span> <span class="n">ds_paths</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">text_key</span><span class="p">,</span> <span class="n">only_text</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># add labels for training pipeline</span>
+        <span class="k">return</span> <span class="n">base_ds</span><span class="o">.</span><span class="n">selectExpr</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2"> as label&quot;</span> <span class="o">%</span> <span class="n">label</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">base_ds</span></div>
+
+
+
+<div class="viewcode-block" id="shuffle">
+<a class="viewcode-back" href="../../../../api/data_juicer.tools.quality_classifier.qc_utils.html#data_juicer.tools.quality_classifier.qc_utils.shuffle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">shuffle</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Shuffle a data frame</span>
+<span class="sd">    :param df: input data frame</span>
+<span class="sd">    :return: shuffled data frame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">temp_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;rand&quot;</span><span class="p">,</span> <span class="n">rand</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">))</span>
+    <span class="n">df_rnd</span> <span class="o">=</span> <span class="n">temp_df</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">temp_df</span><span class="o">.</span><span class="n">rand</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df_rnd</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">df_rnd</span><span class="o">.</span><span class="n">rand</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="export_result">
+<a class="viewcode-back" href="../../../../api/data_juicer.tools.quality_classifier.qc_utils.html#data_juicer.tools.quality_classifier.qc_utils.export_result">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_result</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">res_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export a dataset to specified path. Only support &#39;json&#39;, &#39;jsonl&#39;, or</span>
+<span class="sd">    &#39;parquet&#39; export formats for now</span>
+<span class="sd">    :param ds: the dataset to be exported</span>
+<span class="sd">    :param res_path: the path to store the exported dataset</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exporting predicted result to [</span><span class="si">{</span><span class="n">res_path</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">res_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">res_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.jsonl&quot;</span><span class="p">):</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">&quot;overwrite&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;json&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">res_path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">res_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.parquet&quot;</span><span class="p">):</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">&quot;overwrite&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;parquet&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">res_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ds</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">&quot;overwrite&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">res_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_keep_method_udf">
+<a class="viewcode-back" href="../../../../api/data_juicer.tools.quality_classifier.qc_utils.html#data_juicer.tools.quality_classifier.qc_utils.get_keep_method_udf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_keep_method_udf</span><span class="p">(</span><span class="n">keep_method</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given the name of keep method, return a PySpark user-defined function of</span>
+<span class="sd">    this kind of keep method. Only support &#39;gpt3&#39; or &#39;label&#39; for now</span>
+<span class="sd">    :param keep_method: name of keep method</span>
+<span class="sd">    :return: a PySpark udf of specified keep method</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">keep_method</span> <span class="o">==</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">udf</span><span class="p">(</span><span class="k">lambda</span> <span class="n">score</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">score</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">IntegerType</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">keep_method</span> <span class="o">==</span> <span class="s2">&quot;gpt3&quot;</span><span class="p">:</span>
+        <span class="n">pareto</span> <span class="o">=</span> <span class="mi">9</span>
+        <span class="k">return</span> <span class="n">udf</span><span class="p">(</span><span class="k">lambda</span> <span class="n">score</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">score</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">pareto</span><span class="p">(</span><span class="n">pareto</span><span class="p">)),</span> <span class="n">IntegerType</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Keep method [</span><span class="si">{</span><span class="n">keep_method</span><span class="si">}</span><span class="s2">] is not &quot;</span> <span class="sa">f</span><span class="s2">&quot;implemented for now.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="tokenize_dataset">
+<a class="viewcode-back" href="../../../../api/data_juicer.tools.quality_classifier.qc_utils.html#data_juicer.tools.quality_classifier.qc_utils.tokenize_dataset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tokenize_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tokenize the texts in input dataset using specified tokenizer</span>
+<span class="sd">    :param ds: dataset to be tokenized</span>
+<span class="sd">    :param tokenizer: tokenizer used to tokenize texts</span>
+<span class="sd">    :return: a dataset with an extra column &quot;words&quot; that stores the tokenized</span>
+<span class="sd">        texts</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tkn</span> <span class="o">=</span> <span class="n">prepare_sentencepiece_for_lang</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">)</span>
+    <span class="c1"># create a PySpark udf to tokenize the dataset</span>
+    <span class="n">tokenizer_udf</span> <span class="o">=</span> <span class="n">udf</span><span class="p">(</span><span class="k">lambda</span> <span class="n">text</span><span class="p">:</span> <span class="n">tkn</span><span class="o">.</span><span class="n">encode_as_pieces</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="n">ArrayType</span><span class="p">(</span><span class="n">StringType</span><span class="p">()))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Tokenize texts using specific tokenizer...&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ds</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;words&quot;</span><span class="p">,</span> <span class="n">tokenizer_udf</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)))</span></div>
+
+
+
+<div class="viewcode-block" id="train">
+<a class="viewcode-back" href="../../../../api/data_juicer.tools.quality_classifier.qc_utils.html#data_juicer.tools.quality_classifier.qc_utils.train">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">train</span><span class="p">(</span><span class="n">output_model_path</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Train a quality classifier with training dataset and export the trained</span>
+<span class="sd">    model to a specified path</span>
+<span class="sd">    :param output_model_path: the path to store the trained model</span>
+<span class="sd">    :param ds: training dataset</span>
+<span class="sd">    :param tokenizer: specified sentencepiece tokenizer. It&#39;s None in default,</span>
+<span class="sd">        which means using the standard Tokenizer in PySpark</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Preparing training quality classifier model...&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tokenizer</span><span class="p">:</span>
+        <span class="c1"># tokenizer is not standard Tokenizer in PySpark, need to apply it</span>
+        <span class="c1"># explicitly</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">tokenize_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">)</span>
+
+    <span class="c1"># model</span>
+    <span class="n">hashingTF</span> <span class="o">=</span> <span class="n">HashingTF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;words&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+    <span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">tokenizer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># using standard Tokenizer in PySpark</span>
+        <span class="n">std_tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;words&quot;</span><span class="p">)</span>
+        <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">std_tokenizer</span><span class="p">,</span> <span class="n">hashingTF</span><span class="p">,</span> <span class="n">lr</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># using extra sentencepiece tokenizer, which will not included in the</span>
+        <span class="c1"># final PipelineModel</span>
+        <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">hashingTF</span><span class="p">,</span> <span class="n">lr</span><span class="p">])</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Start training...&quot;</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Trained model saving...&quot;</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">write</span><span class="p">()</span><span class="o">.</span><span class="n">overwrite</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">output_model_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="eval">
+<a class="viewcode-back" href="../../../../api/data_juicer.tools.quality_classifier.qc_utils.html#data_juicer.tools.quality_classifier.qc_utils.eval">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluate a quality classifier model on specified dataset</span>
+<span class="sd">    :param model_path: the path to the model to be evaluated</span>
+<span class="sd">    :param ds: evaluation dataset</span>
+<span class="sd">    :param tokenizer: specified sentencepiece tokenizer. It&#39;s None in default,</span>
+<span class="sd">        which means using the standard Tokenizer in PySpark</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Preparing to evaluate...&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tokenizer</span><span class="p">:</span>
+        <span class="c1"># tokenizer is not standard Tokenizer in PySpark, need to apply it</span>
+        <span class="c1"># explicitly</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">tokenize_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Start evaluation...&quot;</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">prepare_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+    <span class="c1"># get positive and negative samples</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s2">&quot;label = 1&quot;</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s2">&quot;label = 0&quot;</span><span class="p">)</span>
+    <span class="c1"># get TP, FP, TN, FN samples</span>
+    <span class="n">TP</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s2">&quot;prediction = 1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">FP</span> <span class="o">=</span> <span class="n">N</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s2">&quot;prediction = 1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">TN</span> <span class="o">=</span> <span class="n">N</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s2">&quot;prediction = 0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">FN</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s2">&quot;prediction = 0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="c1"># compute precision, recall and F1 metrics</span>
+    <span class="n">precision</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">TP</span> <span class="o">/</span> <span class="p">(</span><span class="n">TP</span> <span class="o">+</span> <span class="n">FP</span><span class="p">)</span>
+    <span class="n">recall</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">TP</span> <span class="o">/</span> <span class="n">P</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="n">F1</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">precision</span> <span class="o">*</span> <span class="n">recall</span> <span class="o">/</span> <span class="p">(</span><span class="n">precision</span> <span class="o">+</span> <span class="n">recall</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TP: </span><span class="si">{</span><span class="n">TP</span><span class="si">}</span><span class="s2">, FN: </span><span class="si">{</span><span class="n">FN</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FP: </span><span class="si">{</span><span class="n">FP</span><span class="si">}</span><span class="s2">, TN: </span><span class="si">{</span><span class="n">TN</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P: </span><span class="si">{</span><span class="n">precision</span><span class="si">}</span><span class="s2">, R: </span><span class="si">{</span><span class="n">recall</span><span class="si">}</span><span class="s2">, F1: </span><span class="si">{</span><span class="n">F1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="predict">
+<a class="viewcode-back" href="../../../../api/data_juicer.tools.quality_classifier.qc_utils.html#data_juicer.tools.quality_classifier.qc_utils.predict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep_method</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Predict document scores for a dataset using a trained quality classifier</span>
+<span class="sd">    model</span>
+<span class="sd">    :param model: the model used to predict</span>
+<span class="sd">    :param ds: the dataset to be predicted</span>
+<span class="sd">    :param tokenizer: specified sentencepiece tokenizer. It&#39;s None in default,</span>
+<span class="sd">        which means using the standard Tokenizer in PySpark</span>
+<span class="sd">    :param keep_method: name of keep method to label the &quot;should_keep&quot; column</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Start scoring dataset...&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tokenizer</span><span class="p">:</span>
+        <span class="c1"># tokenizer is not standard Tokenizer in PySpark, need to apply it</span>
+        <span class="c1"># explicitly</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">tokenize_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">)</span>
+
+    <span class="n">prediction</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+
+    <span class="c1"># A UDF to extract doc scores from probability vectors</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_prob</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># extract the predicted probability as the doc_score</span>
+    <span class="n">extract_prob_udf</span> <span class="o">=</span> <span class="n">udf</span><span class="p">(</span><span class="n">extract_prob</span><span class="p">,</span> <span class="n">DoubleType</span><span class="p">())</span>
+    <span class="n">doc_score</span> <span class="o">=</span> <span class="n">prediction</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;doc_score&quot;</span><span class="p">,</span> <span class="n">extract_prob_udf</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;probability&quot;</span><span class="p">)))</span>
+
+    <span class="c1"># A UDF to get the bool value indicating whether this sample should be kept</span>
+    <span class="n">should_keep_label_udf</span> <span class="o">=</span> <span class="n">get_keep_method_udf</span><span class="p">(</span><span class="n">keep_method</span><span class="p">)</span>
+    <span class="n">should_keep</span> <span class="o">=</span> <span class="n">doc_score</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;should_keep&quot;</span><span class="p">,</span> <span class="n">should_keep_label_udf</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;doc_score&quot;</span><span class="p">)))</span>
+    <span class="c1"># drop extra useless columns</span>
+    <span class="k">return</span> <span class="n">should_keep</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;words&quot;</span><span class="p">,</span> <span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="s2">&quot;rawPrediction&quot;</span><span class="p">,</span> <span class="s2">&quot;probability&quot;</span><span class="p">,</span> <span class="s2">&quot;prediction&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

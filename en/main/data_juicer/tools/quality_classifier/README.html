@@ -1,0 +1,858 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Data Scoring &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'data_juicer/tools/quality_classifier/README';</script>
+    <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../_static/icon.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/data_juicer/tools/quality_classifier/README.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/data_juicer/tools/quality_classifier/README_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/data_juicer/tools/quality_classifier/README.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/data_juicer/tools/quality_classifier/README.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/data_juicer/tools/quality_classifier/README_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/data_juicer/tools/quality_classifier/README.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Data Scoring</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="data-scoring">
+<h1>Data Scoring<a class="headerlink" href="#data-scoring" title="Link to this heading">#</a></h1>
+<section id="data-scoring-capabilities">
+<h2>Data Scoring Capabilities<a class="headerlink" href="#data-scoring-capabilities" title="Link to this heading">#</a></h2>
+<p>Data-Juicer provides a set of data scoring capabilities to help you evaluate your datasets.</p>
+<ul class="simple">
+<li><p>All <a class="reference internal" href="../../../docs/Operators.html"><span class="std std-doc">Filter Operators</span></a> include a sub-process called <code class="docutils literal notranslate"><span class="pre">compute_stats</span></code>, which calculates statistical measurements based on a pre-defined functional goal of the operator. These measurements are typically derived using simple rules, auxiliary models, or advanced algorithms, such as for perplexity, length, modality matching scores, etc. The <code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> will automatically aggregate these statistics and report them in the resulting dataset.</p></li>
+<li><p>Prompt-based LLM scoring operators are also available, such as <code class="docutils literal notranslate"><span class="pre">llm_difficulty_score_filter</span></code> and <code class="docutils literal notranslate"><span class="pre">llm_quality_score_filter</span></code>. These operators come with default prompts for general use cases but also offer flexibility for users to customize their own models or specific requirements.</p></li>
+<li><p>Additionally, we provide a toolkit to reproduce the GPT-3 quality classifier, as described in the following section.</p></li>
+</ul>
+</section>
+<section id="quality-classifier-toolkit-gpt-3-reproduced">
+<h2>Quality Classifier Toolkit (GPT-3 Reproduced)<a class="headerlink" href="#quality-classifier-toolkit-gpt-3-reproduced" title="Link to this heading">#</a></h2>
+<p>Help you reproduce and apply quality classifier to your web datasets similar to GPT-3 quality classifier.</p>
+<p>The whole toolkit is based on PySpark. And the basic structure of quality classifiers here consists of:</p>
+<ul class="simple">
+<li><p>tokenizer: the <a class="reference external" href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.feature.Tokenizer.html##tokenizer">standard Tokenizer</a> of PySpark or <a class="reference external" href="https://github.com/google/sentencepiece">sentencepiece</a> model</p></li>
+<li><p>feature extractor: <a class="reference external" href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.feature.HashingTF.html##hashingtf">HashingTF</a></p></li>
+<li><p>classifier: <a class="reference external" href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.classification.LogisticRegression.html##logisticregression">LogisticRegression</a></p></li>
+</ul>
+<section id="usage">
+<h3>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h3>
+<section id="predict-with-existing-classifiers">
+<h4>Predict with existing classifiers<a class="headerlink" href="#predict-with-existing-classifiers" title="Link to this heading">#</a></h4>
+<p>Use <code class="docutils literal notranslate"><span class="pre">predict.py</span></code> to predict a document score of “quality” and a label for each sample to indicate whether this sample should be kept according to the score.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1">## predict doc_score for a dataset</span>
+python<span class="w"> </span>predict.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>&lt;dataset_path&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>&lt;result_path&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--model<span class="w"> </span>&lt;model_path&gt;<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--tokenizer<span class="w"> </span>&lt;tokenizer_type&gt;<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--keep_method<span class="w"> </span>&lt;keep_method&gt;<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--text_key<span class="w"> </span>&lt;text_key&gt;<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--overall_stats<span class="o">]</span>
+
+<span class="c1">## print the usage message</span>
+python<span class="w"> </span>predict.py<span class="w"> </span>--help
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dataset_path</span></code>: the input dataset path. The suffix of the path should be one of the <code class="docutils literal notranslate"><span class="pre">[json,</span> <span class="pre">jsonl,</span> <span class="pre">parquet]</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">result_path</span></code>: the path to store the dataset with prediction results. The suffix of the path should be one of the <code class="docutils literal notranslate"><span class="pre">[json,</span> <span class="pre">jsonl,</span> <span class="pre">parquet]</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">model_path</span></code>: (Optional. Default: “gpt3”) the path to the model used to predict. You can use one of the models we provide <code class="docutils literal notranslate"><span class="pre">[gpt3,</span> <span class="pre">chinese,</span> <span class="pre">code]</span></code>. Or you can use the model trained by yourself using the <code class="docutils literal notranslate"><span class="pre">train.py</span></code> script.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tokenizer</span></code>: (Optional. Default: None) the tokenizer to tokenize texts to be classified. If it’s None, the <a class="reference external" href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.feature.Tokenizer.html##tokenizer">standard Tokenizer</a> of PySpark will be used. Besides, you can use one of the tokenizers we provide <code class="docutils literal notranslate"><span class="pre">[zh.sp.model,</span> <span class="pre">code.sp.model]</span></code>. Or you can set it to a path to your own <a class="reference external" href="https://github.com/google/sentencepiece">sentencepiece</a> model.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">keep_method</span></code>: (Optional. Default: “gpt3”) the method used to decide whether a sample should be kept according to the doc_score. Should be one of <code class="docutils literal notranslate"><span class="pre">[gpt3,</span> <span class="pre">label]</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">text_key</span></code>: (Optional. Default: “text”) the field name to store texts to be classified in the input dataset.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">overall_stats</span></code>: (Optional. Default: False) whether to generate an overall stats report of document scores.</p></li>
+</ul>
+</section>
+<section id="train-your-own-quality-classifier">
+<h4>Train your own quality classifier<a class="headerlink" href="#train-your-own-quality-classifier" title="Link to this heading">#</a></h4>
+<p>Use <code class="docutils literal notranslate"><span class="pre">train.py</span></code> to train your own quality classifier for your datasets.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1">## train a quality classifier for your own dataset</span>
+python<span class="w"> </span>train.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>&lt;positive_datasets&gt;<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>&lt;negative_datasets&gt;<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--output_model_path<span class="w"> </span>&lt;model_name&gt;<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--num_training_samples<span class="w"> </span>&lt;num_training_samples&gt;<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--train_test_split_ratio<span class="w"> </span>&lt;train_test_split_ratio&gt;<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--tokenizer<span class="w"> </span>&lt;tokenizer_type&gt;<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--evaluation<span class="w"> </span>&lt;evaluation&gt;<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--text_key<span class="w"> </span>&lt;text_key&gt;<span class="o">]</span>
+
+<span class="c1">## print the usage message</span>
+python<span class="w"> </span>train.py<span class="w"> </span>--help
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">positive_datasets</span></code>: the paths to the positive datasets. It could be a string for a single dataset, e.g. <code class="docutils literal notranslate"><span class="pre">'pos.parquet'</span></code>, or a list of strings for multiple datasets, e.g. <code class="docutils literal notranslate"><span class="pre">'[&quot;pos1.parquet&quot;,</span> <span class="pre">&quot;pos2.parquet&quot;]'</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">negative_datasets</span></code>: the paths to the negative datasets. Similar to <code class="docutils literal notranslate"><span class="pre">positive_datasets</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_model_path</span></code>: (Optional. Default: “my_quality_model”) the path to store the trained classifier.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_training_samples</span></code>: (Optional. Default: 0) number of samples used to train the model for pos/neg datasets respectively. Default 0 means using all samples to train.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">train_test_split_ratio</span></code>: (Optional. Default: 0.8) ratio to split training set, and the rest of samples will be test set used to evaluate.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tokenizer</span></code>: (Optional. Default: None) the tokenizer to tokenize texts to be classified. If it’s None, the <a class="reference external" href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.feature.Tokenizer.html##tokenizer">standard Tokenizer</a> of PySpark will be used. Besides, you can use one of the tokenizers we provide <code class="docutils literal notranslate"><span class="pre">[zh.sp.model,</span> <span class="pre">code.sp.model]</span></code>. Or you can set it to a path to your own <a class="reference external" href="https://github.com/google/sentencepiece">sentencepiece</a> model.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">evaluation</span></code>: (Optional, Default: True) whether to evaluate the trained classifier using the test set after training.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">text_key</span></code>: (Optional. Default: “text”) the field name to store texts to be classified in the input dataset.</p></li>
+</ul>
+</section>
+<section id="evaluate-a-quality-classifier">
+<h4>Evaluate a quality classifier<a class="headerlink" href="#evaluate-a-quality-classifier" title="Link to this heading">#</a></h4>
+<p>Use <code class="docutils literal notranslate"><span class="pre">eval.py</span></code> to evaluate a quality classifier to report Precision, Recall, and F1 metrics.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1">## evaluate a quality classifier on your own dataset</span>
+python<span class="w"> </span>eval.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--positive_datasets<span class="w"> </span>&lt;positive_datasets&gt;<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--negative_datasets<span class="w"> </span>&lt;negative_datasets&gt;<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--model<span class="w"> </span>&lt;model_path&gt;<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--tokenizer<span class="w"> </span>&lt;tokenizer_type&gt;<span class="o">]</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--text_key<span class="w"> </span>&lt;text_key&gt;<span class="o">]</span>
+
+<span class="c1">## print the usage message</span>
+python<span class="w"> </span>eval.py<span class="w"> </span>--help
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">positive_datasets</span></code>: (Optional. Default: None) the paths to the positive datasets. It could be a string for a single dataset, e.g. <code class="docutils literal notranslate"><span class="pre">'pos.parquet'</span></code>, or a list of strings for multiple datasets, e.g. <code class="docutils literal notranslate"><span class="pre">'[&quot;pos1.parquet&quot;,</span> <span class="pre">&quot;pos2.parquet&quot;]'</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">negative_datasets</span></code>: (Optional. Default: None) the paths to the negative datasets. Similar to <code class="docutils literal notranslate"><span class="pre">positive_datasets</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">model_path</span></code>: (Optional. Default: “my_quality_model”) the path to the model to be evaluated. You can evaluate one of the models we provide <code class="docutils literal notranslate"><span class="pre">[gpt3,</span> <span class="pre">chinese,</span> <span class="pre">code]</span></code>. Or you can evaluate the model trained by yourself using the <code class="docutils literal notranslate"><span class="pre">train.py</span></code> script.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tokenizer</span></code>: (Optional. Default: None) the tokenizer to tokenize texts to be classified. If it’s None, the <a class="reference external" href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.feature.Tokenizer.html##tokenizer">standard Tokenizer</a> of PySpark will be used. Besides, you can use one of the tokenizers we provide <code class="docutils literal notranslate"><span class="pre">[zh.sp.model,</span> <span class="pre">code.sp.model]</span></code>. Or you can set it to a path to your own <a class="reference external" href="https://github.com/google/sentencepiece">sentencepiece</a> model.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">text_key</span></code>: (Optional. Default: “text”) the field name to store texts to be classified in the input dataset.</p></li>
+</ul>
+</section>
+</section>
+<section id="model-zoo">
+<h3>Model Zoo<a class="headerlink" href="#model-zoo" title="Link to this heading">#</a></h3>
+<p>We provide 3 models we trained before: <code class="docutils literal notranslate"><span class="pre">gpt3</span></code>, <code class="docutils literal notranslate"><span class="pre">chinese</span></code>, <code class="docutils literal notranslate"><span class="pre">code</span></code>. Each model has its tokenizer and keep method. Tokenizers “xx.sp.model” are trained on the training data using <a class="reference external" href="https://github.com/google/sentencepiece">sentencepiece</a>.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>model</p></th>
+<th class="head"><p>tokenizer</p></th>
+<th class="head"><p>keep method</p></th>
+<th class="head"><p>positive datasets</p></th>
+<th class="head"><p>negative datasets</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gpt3</span></code></p></td>
+<td><p>standard Tokenizer</p></td>
+<td><p>pareto</p></td>
+<td><p>Wikipedia-en &amp; books1 &amp; OpenWebText2</p></td>
+<td><p>CommonCrawl</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">chinese</span></code></p></td>
+<td><p>zh.sp.model</p></td>
+<td><p>label</p></td>
+<td><p>Wikipedia-zh &amp; Wudao</p></td>
+<td><p>Samples in Chinese from CommonCrawl</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">code</span></code></p></td>
+<td><p>code.sp.model</p></td>
+<td><p>label</p></td>
+<td><p>Samples with max_stars_count &gt;= 1372 from TheStack</p></td>
+<td><p>Random samples from the rest of TheStack</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gpt3</span></code>: GPT-3 quality classifier reproduced by us.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chinese</span></code>: A Chinese quality classifier trained by the same pipeline as <code class="docutils literal notranslate"><span class="pre">gpt3</span></code>, but with different tokenizer and training data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">code</span></code>: (Experimental) A code quality classifier trained by the same pipeline as <code class="docutils literal notranslate"><span class="pre">gpt3</span></code>, but with different tokenizer and training data. We only keep “programming” and “markup” language types of samples for training.</p></li>
+<li><p>Experiments of these classifiers on corresponding test sets are shown in the table below:</p></li>
+</ul>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>model</p></th>
+<th class="head"><p>Precision</p></th>
+<th class="head"><p>Recall</p></th>
+<th class="head"><p>F1</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gpt3</span></code></p></td>
+<td><p>96.82%</p></td>
+<td><p>98.14%</p></td>
+<td><p>97.47%</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">chinese</span></code></p></td>
+<td><p>98.00%</p></td>
+<td><p>99.30%</p></td>
+<td><p>98.64%</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">code</span></code></p></td>
+<td><p>71.23%</p></td>
+<td><p>54.21%</p></td>
+<td><p>61.56%</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<ul class="simple">
+<li><p>Keep ratios of <code class="docutils literal notranslate"><span class="pre">gpt3</span></code> and <code class="docutils literal notranslate"><span class="pre">chiense</span></code> classifiers on CommonCrawl are shown in the table below:</p></li>
+</ul>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>model</p></th>
+<th class="head"><p>keep ratio &#64; label</p></th>
+<th class="head"><p>keep ratio &#64; pareto</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GPT-3 quality classifier (estimated)</p></td>
+<td><p>-</p></td>
+<td><p>~1.3%</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gpt3</span></code></p></td>
+<td><p>3.22%</p></td>
+<td><p>1.41%</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">chinese</span></code></p></td>
+<td><p>1.81%</p></td>
+<td><p>-</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="more-about-quality-classifier">
+<h3>More about Quality Classifier<a class="headerlink" href="#more-about-quality-classifier" title="Link to this heading">#</a></h3>
+<section id="method">
+<h4>Method<a class="headerlink" href="#method" title="Link to this heading">#</a></h4>
+<p>The quality classifiers here mainly refer to the GPT-3 quality classifier mentioned in the Appendix A of GPT-3 paper:</p>
+<blockquote>
+<div><p>In order to improve the quality of Common Crawl, we developed an automatic filtering method to remove low quality documents. Using the original WebText as a proxy for high-quality documents, we trained a classifier to distinguish these from raw Common Crawl. We then used this classifier to re-sample Common Crawl by prioritizing documents which were predicted by the classifier to be higher quality. The classifier is trained using logistic regression classifier with features from Spark’s standard tokenizer and HashingTF 10. For the positive examples, we used a collection of curated datasets such as WebText, Wikiedia, and our web books corpus as the positive examples, and for the negative examples, we used unfiltered Common Crawl. We used this classifier to score Common Crawl documents. We kept each document in our dataset iff</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>np.random.pareto(α) &gt; 1 − document_score
+</pre></div>
+</div>
+<p>We chose α = 9 in order to take mostly documents the classifier scored highly, but still include some documents that were out of distribution. α was chosen to match the distribution of scores from our classifier on WebText. We found this re-weighting increased quality as measured by loss on a range of out-of-distribution generative text samples.</p>
+</div></blockquote>
+</section>
+<section id="tokenizers">
+<h4>Tokenizers<a class="headerlink" href="#tokenizers" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Standard Tokenizer in Spark: split texts by whitespaces.</p></li>
+<li><p>zh/code.sp.model: trained using sentencepiece.</p></li>
+</ul>
+</section>
+<section id="keep-methods">
+<h4>Keep Methods<a class="headerlink" href="#keep-methods" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>label: <code class="docutils literal notranslate"><span class="pre">doc_score</span> <span class="pre">&gt;</span> <span class="pre">0.5</span></code></p></li>
+<li><p>pareto: <code class="docutils literal notranslate"><span class="pre">doc_score</span> <span class="pre">&gt;</span> <span class="pre">1</span> <span class="pre">-</span> <span class="pre">np.random.pareto(α),</span> <span class="pre">α</span> <span class="pre">=</span> <span class="pre">9</span></code></p></li>
+</ul>
+</section>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-scoring-capabilities">Data Scoring Capabilities</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quality-classifier-toolkit-gpt-3-reproduced">Quality Classifier Toolkit (GPT-3 Reproduced)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#usage">Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#predict-with-existing-classifiers">Predict with existing classifiers</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#train-your-own-quality-classifier">Train your own quality classifier</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluate-a-quality-classifier">Evaluate a quality classifier</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-zoo">Model Zoo</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#more-about-quality-classifier">More about Quality Classifier</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#method">Method</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tokenizers">Tokenizers</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#keep-methods">Keep Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/data_juicer/tools/quality_classifier/README.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

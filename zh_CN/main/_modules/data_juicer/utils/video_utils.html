@@ -1,0 +1,1647 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer.utils.video_utils &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/utils/video_utils';</script>
+    <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/_modules/data_juicer/utils/video_utils.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/_modules/data_juicer/utils/video_utils_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/_modules/data_juicer/utils/video_utils.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/_modules/data_juicer/utils/video_utils.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/_modules/data_juicer/utils/video_utils_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/_modules/data_juicer/utils/video_utils.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">模块代码</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer.utils.video_utils</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>data_juicer.utils.video_utils 源代码</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">abc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">queue</span><span class="w"> </span><span class="kn">import</span> <span class="n">Empty</span><span class="p">,</span> <span class="n">Queue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">IO</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">attrs</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">npt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.mm_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">close_video</span><span class="p">,</span> <span class="n">cut_video_by_seconds</span>
+
+<span class="c1"># TODO: support cuda</span>
+
+<span class="n">av</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;av&quot;</span><span class="p">)</span>
+<span class="n">cv2</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;cv2&quot;</span><span class="p">)</span>
+<span class="n">decord</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;decord&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="VideoMetadata">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.VideoMetadata">[文档]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VideoMetadata</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Metadata for video content.</span>
+
+<span class="sd">    This class stores essential video properties such as resolution, frame rate,</span>
+<span class="sd">    duration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">fps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">num_frames</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="Frames">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.Frames">[文档]</a>
+<span class="nd">@attrs</span><span class="o">.</span><span class="n">define</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Frames</span><span class="p">:</span>
+    <span class="n">frames</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">]]</span>
+    <span class="n">indices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">pts_time</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="Clip">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.Clip">[文档]</a>
+<span class="nd">@attrs</span><span class="o">.</span><span class="n">define</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Clip</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Container for video clip data including metadata, frames, and processing results.</span>
+
+<span class="sd">    This class stores information about a video segment, including its source, span, frames and so on.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">source_video</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">span</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">encoded_data</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">frames</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="VideoReader">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.VideoReader">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VideoReader</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract class for video processing.</span>
+
+<span class="sd">    This class provides an interface for video processing tasks such as</span>
+<span class="sd">    extracting frames, key frames, and clipping.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="VideoReader.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.VideoReader.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">video_source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize video reader.</span>
+
+<span class="sd">        :param video_source: Path, URL, bytes, or file-like object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_source</span> <span class="o">=</span> <span class="n">video_source</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span>
+
+<div class="viewcode-block" id="VideoReader.get_metadata">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.VideoReader.get_metadata">[文档]</a>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VideoMetadata</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get video metadata.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="VideoReader.extract_frames">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.VideoReader.extract_frames">[文档]</a>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Yield frames between [start_time, end_time) as numpy arrays.</span>
+
+<span class="sd">        :param start_time: Start time in seconds (inclusive)</span>
+<span class="sd">        :param end_time: End time in seconds (exclusive). If None, extract to end of video.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="VideoReader.extract_keyframes">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.VideoReader.extract_keyframes">[文档]</a>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_keyframes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Frames&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract keyframes and return them in a `Frames` object.</span>
+
+<span class="sd">        :param start_time: Start time in seconds (inclusive)</span>
+<span class="sd">        :param end_time: End time in seconds (exclusive). If None, extract to end of video.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="VideoReader.extract_clip">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.VideoReader.extract_clip">[文档]</a>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_clip</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">to_numpy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Clip&quot;</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract a subclip.</span>
+
+<span class="sd">        :param start_time: Start time in seconds</span>
+<span class="sd">        :param end_time: End time in seconds. If None, extract to end of video.</span>
+<span class="sd">        :param output_path: The path to save the output video clip. If provided, the clip is saved to a file.</span>
+<span class="sd">        :param to_numpy: Whether to return frames as a list of numpy arrays.</span>
+<span class="sd">        :return: A `Clip` object on success, or `None` on failure.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="VideoReader.check_time_span">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.VideoReader.check_time_span">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_time_span</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">start_time</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;start_time cannot be negative&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">end_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">end_time</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;end_time cannot be negative&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">end_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">end_time</span> <span class="o">&lt;=</span> <span class="n">start_time</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;end_time must be greater than start_time&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VideoReader.close">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.VideoReader.close">[文档]</a>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Release any held resources.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<div class="viewcode-block" id="VideoReader.is_available">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.VideoReader.is_available">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_available</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the backend is available.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AVReader">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.AVReader">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AVReader</span><span class="p">(</span><span class="n">VideoReader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Video reader using the AV library.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AVReader.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.AVReader.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">video_source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]],</span> <span class="n">video_stream_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">frame_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rgb24&quot;</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize AVReader.</span>
+
+<span class="sd">        :param video_source: Path, URL, bytes, or file-like object.</span>
+<span class="sd">        :param video_stream_index: Video stream index to decode, default set to 0.</span>
+<span class="sd">        :param frame_format: Frame format to decode, default set to &quot;rgb24&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">video_source</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame_format</span> <span class="o">=</span> <span class="n">frame_format</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_stream_index</span> <span class="o">=</span> <span class="n">video_stream_index</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_source</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">container</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_source</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">container</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_source</span><span class="p">)</span>
+
+        <span class="n">video_streams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">video</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">video_streams</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Not found video stream&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_stream_index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_stream_index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">video_streams</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;index </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">video_stream_index</span><span class="si">}</span><span class="s2"> is out of range, valid range: 0-</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">video_streams</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">video</span><span class="p">[</span><span class="n">video_stream_index</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="AVReader.get_metadata">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.AVReader.get_metadata">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VideoMetadata</span><span class="p">:</span>
+        <span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_stream</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">VideoMetadata</span><span class="p">(</span>
+            <span class="n">duration</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">duration</span> <span class="o">*</span> <span class="n">stream</span><span class="o">.</span><span class="n">time_base</span><span class="p">),</span>
+            <span class="n">fps</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">average_rate</span><span class="p">),</span>
+            <span class="n">width</span><span class="o">=</span><span class="n">stream</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="n">stream</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+            <span class="n">num_frames</span><span class="o">=</span><span class="n">stream</span><span class="o">.</span><span class="n">frames</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">metadata</span></div>
+
+
+<div class="viewcode-block" id="AVReader.extract_frames">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.AVReader.extract_frames">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_frames</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the video&#39;s frames from the container within a specified time range.</span>
+
+<span class="sd">        :param start_time: Start time in seconds (default: 0.0).</span>
+<span class="sd">        :param end_time: End time in seconds (exclusive). If None, decode until end.</span>
+
+<span class="sd">        :return: Iterator of numpy objects within the specified time range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_time_span</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">end_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">end_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">duration</span>
+        <span class="k">elif</span> <span class="n">end_time</span> <span class="ow">and</span> <span class="n">end_time</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">duration</span><span class="p">:</span>
+            <span class="n">end_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">duration</span>
+
+        <span class="n">time_base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_stream</span><span class="o">.</span><span class="n">time_base</span>
+        <span class="n">start_pts</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">start_time</span> <span class="o">/</span> <span class="n">time_base</span><span class="p">)</span>
+        <span class="n">end_pts</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">end_time</span> <span class="o">/</span> <span class="n">time_base</span><span class="p">)</span> <span class="k">if</span> <span class="n">end_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="c1"># Seek to the start position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">start_pts</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">video_stream</span><span class="p">)</span>
+
+        <span class="c1"># Decode and filter frames</span>
+        <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">video</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">video_stream_index</span><span class="p">):</span>
+            <span class="n">frame_pts</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">pts</span>
+            <span class="k">if</span> <span class="n">frame_pts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>  <span class="c1"># Skip frames with invalid PTS</span>
+
+            <span class="n">frame_time</span> <span class="o">=</span> <span class="n">frame_pts</span> <span class="o">*</span> <span class="n">time_base</span>
+
+            <span class="c1"># Skip frames before start_time (may occur due to keyframe seeking)</span>
+            <span class="k">if</span> <span class="n">frame_time</span> <span class="o">&lt;</span> <span class="n">start_time</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Break if past end_time</span>
+            <span class="k">if</span> <span class="n">end_pts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">frame_pts</span> <span class="o">&gt;=</span> <span class="n">end_pts</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">rgb_frame</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">reformat</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_format</span><span class="p">)</span><span class="o">.</span><span class="n">to_ndarray</span><span class="p">()</span>
+
+            <span class="k">yield</span> <span class="n">rgb_frame</span></div>
+
+
+<div class="viewcode-block" id="AVReader.extract_keyframes">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.AVReader.extract_keyframes">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_keyframes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">return_meta_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract key frames.</span>
+
+<span class="sd">        :param start_time: Start time in seconds (default: 0.0).</span>
+<span class="sd">        :param end_time: End time in seconds (exclusive). If None, decode until end.</span>
+<span class="sd">        :param return_meta_only: If True, only return timestamps and indices of keyframes.</span>
+
+<span class="sd">        :return: Return a Frames object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_time_span</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">)</span>
+
+        <span class="n">end_time</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">end_time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span> <span class="k">if</span> <span class="n">end_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">duration</span>
+        <span class="n">time_base</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_stream</span><span class="o">.</span><span class="n">time_base</span>
+        <span class="n">stream_start_seconds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_stream</span><span class="o">.</span><span class="n">start_time</span> <span class="o">*</span> <span class="n">time_base</span>
+
+        <span class="n">key_frames</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">pts_time</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">video</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">video_stream_index</span><span class="p">):</span>
+            <span class="c1"># Calculate absolute time in container&#39;s timeline</span>
+            <span class="n">frame_abs_time</span> <span class="o">=</span> <span class="n">stream_start_seconds</span> <span class="o">+</span> <span class="n">frame</span><span class="o">.</span><span class="n">pts</span> <span class="o">*</span> <span class="n">time_base</span>
+
+            <span class="c1"># Stop if we&#39;ve passed the end time</span>
+            <span class="k">if</span> <span class="n">frame_abs_time</span> <span class="o">&gt;=</span> <span class="n">end_time</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="c1"># Collect keyframes within the target range</span>
+            <span class="k">if</span> <span class="n">frame</span><span class="o">.</span><span class="n">key_frame</span> <span class="ow">and</span> <span class="n">frame_abs_time</span> <span class="o">&gt;=</span> <span class="n">start_time</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">return_meta_only</span><span class="p">:</span>
+                    <span class="n">key_frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">reformat</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_format</span><span class="p">)</span><span class="o">.</span><span class="n">to_ndarray</span><span class="p">())</span>
+                <span class="n">pts_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">stream_start_seconds</span> <span class="o">+</span> <span class="n">frame</span><span class="o">.</span><span class="n">pts</span> <span class="o">*</span> <span class="n">time_base</span><span class="p">))</span>
+
+        <span class="n">frame_indices</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">fps</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">pts_time</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">Frames</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="n">key_frames</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="n">frame_indices</span><span class="p">,</span> <span class="n">pts_time</span><span class="o">=</span><span class="n">pts_time</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AVReader.extract_clip">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.AVReader.extract_clip">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_clip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">to_numpy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract a clip from the video based on the start and end time.</span>
+
+<span class="sd">        :param start_time: the start time in second.</span>
+<span class="sd">        :param end_time: the end time in second. If it&#39;s None, this function</span>
+<span class="sd">            will cut the video from the start_seconds to the end of the video.</span>
+<span class="sd">        :param output_path: the path to output video.</span>
+
+<span class="sd">        :return: Clip object.</span>
+<span class="sd">            If output_path is not None, it will save the clip to output_path.</span>
+<span class="sd">            If to_numpy is True, it will return clip data as numpy array and save to Clip.frames.</span>
+<span class="sd">            If to_numpy is False, it will return clip data as bytes and save to Clip.encoded_data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_time_span</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">end_time</span> <span class="ow">and</span> <span class="n">end_time</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">duration</span><span class="p">:</span>
+            <span class="n">end_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">duration</span>
+
+        <span class="n">frames</span><span class="p">,</span> <span class="n">encoded_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">to_numpy</span><span class="p">)</span> <span class="ow">or</span> <span class="n">output_path</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">cut_video_by_seconds</span><span class="p">(</span>
+                <span class="n">input_video</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">container</span><span class="p">,</span>
+                <span class="n">output_video</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
+                <span class="n">start_seconds</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span>
+                <span class="n">end_seconds</span><span class="o">=</span><span class="n">end_time</span><span class="p">,</span>
+                <span class="n">video_stream_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">video_stream_index</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">output_path</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+                <span class="n">encoded_data</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">encoded_data</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extract_frames</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">Clip</span><span class="p">(</span>
+            <span class="c1"># id=uuid.uuid4(),</span>
+            <span class="n">source_video</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">video_source</span><span class="p">,</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
+            <span class="n">span</span><span class="o">=</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">),</span>
+            <span class="n">encoded_data</span><span class="o">=</span><span class="n">encoded_data</span><span class="p">,</span>
+            <span class="n">frames</span><span class="o">=</span><span class="n">frames</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AVReader.is_available">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.AVReader.is_available">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_available</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">av</span>  <span class="c1"># noqa: F401</span>
+
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="AVReader.close">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.AVReader.close">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">close_video</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">container</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="FFmpegReader">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.FFmpegReader">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FFmpegReader</span><span class="p">(</span><span class="n">VideoReader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Video reader using FFmpeg.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FFmpegReader.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.FFmpegReader.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">video_source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]],</span> <span class="n">video_stream_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">frame_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rgb24&quot;</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize FFmpegReader.</span>
+
+<span class="sd">        :param video_source: Path, URL, bytes, or file-like object.</span>
+<span class="sd">        :param video_stream_index: Video stream index to decode, default set to 0.</span>
+<span class="sd">        :param frame_format: Frame format, default set to &quot;rgb24&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">video_source</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_stream_index</span> <span class="o">=</span> <span class="n">video_stream_index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame_format</span> <span class="o">=</span> <span class="n">frame_format</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_temp_file</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_should_cleanup</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_source</span>
+        <span class="c1"># Convert Path to string if needed</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_source</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">video_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_source</span><span class="p">)</span>
+
+        <span class="c1"># Handle bytes and file-like objects by creating temporary files</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_source</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_source</span><span class="p">,</span> <span class="s2">&quot;read&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_source</span><span class="p">,</span> <span class="s2">&quot;seek&quot;</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">video_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_temp_file</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_temp_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a temporary file for bytes or file-like input and set cleanup flag.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Create a named temporary file that will be automatically deleted when closed</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_temp_file</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.mp4&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_should_cleanup</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_source</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                <span class="c1"># Write bytes to temporary file</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_temp_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_source</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># File-like object - read and write its content</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">video_source</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Ensure we&#39;re at the beginning</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_source</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temp_file</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_temp_file</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_temp_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># Clean up on error</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cleanup_temp_file</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to create temporary file for video source: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temp_file</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cleanup_temp_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clean up temporary file if it was created.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_cleanup</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temp_file</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_temp_file</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+            <span class="n">temp_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_temp_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_temp_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">temp_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                    <span class="n">temp_path</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to remove temporary file </span><span class="si">{</span><span class="n">temp_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_temp_file</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_should_cleanup</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="FFmpegReader.get_metadata">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.FFmpegReader.get_metadata">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VideoMetadata</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;ffprobe&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-v&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-select_streams&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;v:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">video_stream_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-show_entries&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;stream=duration,avg_frame_rate,width,height,nb_frames&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-show_entries&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;format=duration&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-of&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">video_path</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FFprobe error: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">probe_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to parse output of FFprobe: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">streams</span> <span class="o">=</span> <span class="n">probe_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;streams&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">streams</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Not found video stream!&quot;</span><span class="p">)</span>
+        <span class="n">video_stream</span> <span class="o">=</span> <span class="n">streams</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">format_info</span> <span class="o">=</span> <span class="n">probe_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;format&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="n">duration</span> <span class="o">=</span> <span class="n">video_stream</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;duration&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">duration</span><span class="p">:</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># use container format duration as a fallback</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">format_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;duration&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+        <span class="n">avg_frame_rate</span> <span class="o">=</span> <span class="n">video_stream</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;avg_frame_rate&quot;</span><span class="p">,</span> <span class="s2">&quot;0/0&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;/&quot;</span> <span class="ow">in</span> <span class="n">avg_frame_rate</span><span class="p">:</span>
+            <span class="n">numerator</span><span class="p">,</span> <span class="n">denominator</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">avg_frame_rate</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">))</span>
+            <span class="n">fps</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span> <span class="k">if</span> <span class="n">denominator</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fps</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">avg_frame_rate</span><span class="p">)</span> <span class="k">if</span> <span class="n">avg_frame_rate</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+        <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">video_stream</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">video_stream</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;height&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">num_frames</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">video_stream</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nb_frames&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+        <span class="c1"># If the number of frames is not available, estimate it based on duration and frame rate</span>
+        <span class="k">if</span> <span class="n">num_frames</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">fps</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">num_frames</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">duration</span> <span class="o">*</span> <span class="n">fps</span><span class="p">))</span>
+
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">VideoMetadata</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="n">fps</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span> <span class="n">num_frames</span><span class="o">=</span><span class="n">num_frames</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">metadata</span></div>
+
+
+<div class="viewcode-block" id="FFmpegReader.extract_frames">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.FFmpegReader.extract_frames">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_frames</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the video&#39;s frames within a specified time range.</span>
+
+<span class="sd">        :param start_time: Start time in seconds (default: 0.0).</span>
+<span class="sd">        :param end_time: End time in seconds (exclusive). If None, decode until end.</span>
+<span class="sd">        :param duration: Duration from start_time. Mutually exclusive with end_time.</span>
+
+<span class="sd">        :return: Iterator of VideoFrame objects within the specified time range.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_time_span</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">)</span>
+
+        <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">width</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">height</span>
+
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;ffmpeg&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-v&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;quiet&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-ss&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">start_time</span><span class="p">),</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">end_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;-to&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">end_time</span><span class="p">)]</span>
+
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="p">[</span>
+            <span class="s2">&quot;-i&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">video_path</span><span class="p">,</span>
+            <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;rawvideo&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-pix_fmt&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">frame_format</span><span class="p">,</span>
+            <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+
+        <span class="n">frame_size</span> <span class="o">=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1"># 3 bytes per pixel of RGB</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">raw_frame</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">frame_size</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">raw_frame</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">frame_size</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">frame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">raw_frame</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+                <span class="k">yield</span> <span class="n">frame</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kill_process</span><span class="p">(</span><span class="n">process</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FFmpegReader.extract_keyframes">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.FFmpegReader.extract_keyframes">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_keyframes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">return_meta_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract only true keyframes (I-frames) from video.</span>
+
+<span class="sd">        :param start_time: Start time in seconds (default: 0.0).</span>
+<span class="sd">        :param end_time: End time in seconds (exclusive). If None, decode until end.</span>
+<span class="sd">        :param return_meta_only: If True, only return timestamps and indices of keyframes.</span>
+<span class="sd">        :return: Return a Frames object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_time_span</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">)</span>
+
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ffmpeg&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">start_time</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">end_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">end_time</span><span class="p">:</span>
+                <span class="n">end_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">duration</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;-ss&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">start_time</span><span class="p">),</span> <span class="s2">&quot;-to&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">end_time</span><span class="p">)])</span>
+
+        <span class="k">if</span> <span class="n">return_meta_only</span><span class="p">:</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="s2">&quot;-i&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">video_path</span><span class="p">,</span>
+                    <span class="s2">&quot;-vf&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;showinfo,select=eq(pict_type\,I)&quot;</span><span class="p">,</span>  <span class="c1"># noqa: W605</span>
+                    <span class="s2">&quot;-vsync&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;vfr&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;null&quot;</span><span class="p">,</span>  <span class="c1"># don&#39;t output actual file</span>
+                    <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="s2">&quot;-i&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">video_path</span><span class="p">,</span>
+                    <span class="s2">&quot;-vf&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;showinfo,select=eq(pict_type\,I)&quot;</span><span class="p">,</span>  <span class="c1"># noqa: W605</span>
+                    <span class="s2">&quot;-vsync&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;vfr&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;rawvideo&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;-pix_fmt&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">frame_format</span><span class="p">,</span>
+                    <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+
+        <span class="n">key_frames</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="n">metadata_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
+        <span class="n">stop_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">read_stderr</span><span class="p">():</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Parse metadata from stderr and put it into a queue</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">stop_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="s2">&quot;iskey:1&quot;</span> <span class="ow">in</span> <span class="n">line</span> <span class="ow">and</span> <span class="s2">&quot;pts_time:&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;n:\s*(\d+).*?pts_time:([\d.]+)&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                            <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># frame index in the original video</span>
+                            <span class="n">pts_time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+                            <span class="n">metadata_queue</span><span class="o">.</span><span class="n">put</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">pts_time</span><span class="p">))</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">UnicodeDecodeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+                    <span class="k">continue</span>
+
+        <span class="c1"># start the stderr thread</span>
+        <span class="n">stderr_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">read_stderr</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">stderr_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">return_meta_only</span><span class="p">:</span>
+                <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">width</span>
+                <span class="n">frame_size</span> <span class="o">=</span> <span class="n">h</span> <span class="o">*</span> <span class="n">w</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1"># 3 bytes per pixel for RGB</span>
+
+                <span class="c1"># main thread reads stdout frame data</span>
+                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">raw_frame</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">frame_size</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">raw_frame</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">frame_size</span><span class="p">:</span>
+                        <span class="k">break</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">n</span><span class="p">,</span> <span class="n">pts_time</span> <span class="o">=</span> <span class="n">metadata_queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="n">metadata</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">pts_time</span><span class="p">))</span>
+                    <span class="k">except</span> <span class="n">Empty</span><span class="p">:</span>
+                        <span class="k">break</span>
+
+                    <span class="n">frame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">raw_frame</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+                    <span class="n">key_frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Only collect timestamps</span>
+                <span class="k">while</span> <span class="n">process</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">n</span><span class="p">,</span> <span class="n">pts_time</span> <span class="o">=</span> <span class="n">metadata_queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+                        <span class="n">metadata</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">pts_time</span><span class="p">))</span>
+                    <span class="k">except</span> <span class="n">Empty</span><span class="p">:</span>
+                        <span class="c1"># Process is still running, continue waiting for metadata</span>
+                        <span class="k">pass</span>
+                <span class="c1"># Drain any remaining metadata from the queue after the process has finished</span>
+                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">n</span><span class="p">,</span> <span class="n">pts_time</span> <span class="o">=</span> <span class="n">metadata_queue</span><span class="o">.</span><span class="n">get_nowait</span><span class="p">()</span>
+                        <span class="n">metadata</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">pts_time</span><span class="p">))</span>
+                    <span class="k">except</span> <span class="n">Empty</span><span class="p">:</span>
+                        <span class="k">break</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">stop_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kill_process</span><span class="p">(</span><span class="n">process</span><span class="p">)</span>
+            <span class="n">stderr_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">metadata</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Frames</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">[],</span> <span class="n">indices</span><span class="o">=</span><span class="p">[],</span> <span class="n">pts_time</span><span class="o">=</span><span class="p">[])</span>
+
+        <span class="n">frame_indices</span><span class="p">,</span> <span class="n">pts_time</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_meta_only</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Frames</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">[],</span> <span class="n">indices</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">frame_indices</span><span class="p">),</span> <span class="n">pts_time</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">pts_time</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">Frames</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="n">key_frames</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">frame_indices</span><span class="p">),</span> <span class="n">pts_time</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">pts_time</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="FFmpegReader.extract_clip">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.FFmpegReader.extract_clip">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_clip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">to_numpy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract a clip from the video based on the start and end time.</span>
+<span class="sd">        :param output_path: the path to output video.</span>
+<span class="sd">        :param start_time: the start time in second.</span>
+<span class="sd">        :param end_time: the end time in second. If it&#39;s None, this function</span>
+<span class="sd">            will cut the video from the start_seconds to the end of the video.</span>
+<span class="sd">        :param to_numpy: whether to return clip data as numpy array and save to Clip.frames.</span>
+
+<span class="sd">        :return: Clip object.</span>
+<span class="sd">            If output_path is not None, it will save the clip to output_path.</span>
+<span class="sd">            If to_numpy is True, it will return clip data as numpy array and save to Clip.frames.</span>
+<span class="sd">            If to_numpy is False, it will return clip data as bytes and save to Clip.encoded_data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_time_span</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">)</span>
+
+        <span class="c1"># allows adding extra arguments passed to ffmpeg</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">shlex</span>
+
+        <span class="n">ffmpeg_extra_args</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ffmpeg_extra_args&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+
+        <span class="c1"># Build ffmpeg command</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;ffmpeg&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-y&quot;</span><span class="p">,</span>  <span class="c1"># Overwrite output file without asking</span>
+            <span class="s2">&quot;-ss&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">start_time</span><span class="p">),</span>  <span class="c1"># Start time</span>
+            <span class="s2">&quot;-i&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">video_path</span><span class="p">,</span>  <span class="c1"># Input file</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Add end time if specified</span>
+        <span class="k">if</span> <span class="n">end_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;-t&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">duration</span><span class="p">)])</span>
+
+        <span class="c1"># Set output options</span>
+        <span class="n">cmd</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;-c&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;copy&quot;</span><span class="p">,</span>  <span class="c1"># Stream copy (fast, no re-encoding)</span>
+                <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;mp4&quot;</span><span class="p">,</span>
+                <span class="c1"># &quot;-movflags&quot;, &quot;frag_keyframe+empty_moov&quot;,  # opening when mounting oss storage may avoid unexpected errors.</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">cmd</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">ffmpeg_extra_args</span><span class="p">)</span>
+
+        <span class="n">encoded_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Output to file</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">output_path</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">output_path</span><span class="p">])</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">to_numpy</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extract_frames</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Output to stdout</span>
+            <span class="n">cmd</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;pipe:1&quot;</span><span class="p">])</span>  <span class="c1"># Output to stdout</span>
+            <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+            <span class="n">encoded_data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kill_process</span><span class="p">(</span><span class="n">process</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Clip</span><span class="p">(</span>
+            <span class="c1"># id=uuid.uuid4(),</span>
+            <span class="n">source_video</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">video_source</span><span class="p">,</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
+            <span class="n">span</span><span class="o">=</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">),</span>
+            <span class="n">encoded_data</span><span class="o">=</span><span class="n">encoded_data</span><span class="p">,</span>
+            <span class="n">frames</span><span class="o">=</span><span class="n">frames</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FFmpegReader.close">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.FFmpegReader.close">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clean up resources, including temporary files.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cleanup_temp_file</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="FFmpegReader.is_available">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.FFmpegReader.is_available">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_available</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;ffmpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;-version&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_kill_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">process</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="p">:</span>
+            <span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="p">:</span>
+            <span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">process</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">process</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>  <span class="c1"># wait the process to finish,</span>
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span><span class="p">:</span>
+            <span class="n">process</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>  <span class="c1"># if it doesn&#39;t finish within 5 seconds, kill it</span></div>
+
+
+
+<span class="c1"># TODO: support audio for clip</span>
+<div class="viewcode-block" id="DecordReader">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.DecordReader">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DecordReader</span><span class="p">(</span><span class="n">VideoReader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Video reader using Decord&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DecordReader.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.DecordReader.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">video_source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">IO</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]],</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the video reader.</span>
+
+<span class="sd">        :param video_source: Path, URL, bytes, or file-like object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">video_source</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">video_source</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="n">decord</span><span class="o">.</span><span class="n">VideoReader</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">video_source</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">video_source</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="n">decord</span><span class="o">.</span><span class="n">VideoReader</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">video_source</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="n">decord</span><span class="o">.</span><span class="n">VideoReader</span><span class="p">(</span><span class="n">video_source</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DecordReader.get_metadata">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.DecordReader.get_metadata">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VideoMetadata</span><span class="p">:</span>
+        <span class="n">fps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">get_avg_fps</span><span class="p">()</span>
+        <span class="n">num_frames</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">VideoMetadata</span><span class="p">(</span>
+            <span class="n">duration</span><span class="o">=</span><span class="n">num_frames</span> <span class="o">/</span> <span class="n">fps</span><span class="p">,</span>
+            <span class="n">fps</span><span class="o">=</span><span class="n">fps</span><span class="p">,</span>
+            <span class="n">width</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">height</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">num_frames</span><span class="o">=</span><span class="n">num_frames</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_frame_index_by_time_span</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="c1"># Get video properties</span>
+        <span class="n">fps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">fps</span>
+        <span class="n">num_frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">num_frames</span>
+        <span class="n">total_duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">duration</span>
+
+        <span class="c1"># Set default end_time if not provided</span>
+        <span class="k">if</span> <span class="n">end_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">end_time</span> <span class="o">=</span> <span class="n">total_duration</span>
+        <span class="k">elif</span> <span class="n">end_time</span> <span class="o">&gt;</span> <span class="n">total_duration</span><span class="p">:</span>
+            <span class="n">end_time</span> <span class="o">=</span> <span class="n">total_duration</span>
+
+        <span class="c1"># Convert time to frame indices (using ceiling for start and end)</span>
+        <span class="n">start_frame</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">start_time</span> <span class="o">*</span> <span class="n">fps</span><span class="p">)</span>
+        <span class="n">end_frame</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">end_time</span> <span class="o">*</span> <span class="n">fps</span><span class="p">)</span>
+
+        <span class="c1"># Clamp frames to valid range [0, num_frames]</span>
+        <span class="n">start_frame</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">start_frame</span><span class="p">,</span> <span class="n">num_frames</span><span class="p">))</span>
+        <span class="n">end_frame</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">end_frame</span><span class="p">,</span> <span class="n">num_frames</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">start_frame</span><span class="p">,</span> <span class="n">end_frame</span>
+
+<div class="viewcode-block" id="DecordReader.extract_frames">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.DecordReader.extract_frames">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_frames</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the video&#39;s frames within a specified time range using decord.</span>
+
+<span class="sd">        :param start_time: Start time in seconds (default: 0.0).</span>
+<span class="sd">        :param end_time: End time in seconds (exclusive). If None, decode until end.</span>
+<span class="sd">        :return: Numpy array of frames in shape (num_frames, height, width, channels).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_time_span</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">)</span>
+
+        <span class="n">start_frame</span><span class="p">,</span> <span class="n">end_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_frame_index_by_time_span</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">)</span>
+
+        <span class="c1"># Handle empty frame range</span>
+        <span class="k">if</span> <span class="n">start_frame</span> <span class="o">&gt;=</span> <span class="n">end_frame</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+
+        <span class="c1"># Extract frames using decord</span>
+        <span class="n">frame_indices</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_frame</span><span class="p">,</span> <span class="n">end_frame</span><span class="p">)</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">get_batch</span><span class="p">(</span><span class="n">frame_indices</span><span class="p">)</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+
+        <span class="k">yield from</span> <span class="n">frames</span></div>
+
+
+<div class="viewcode-block" id="DecordReader.extract_keyframes">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.DecordReader.extract_keyframes">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_keyframes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">return_meta_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract keyframes from video.</span>
+
+<span class="sd">        :param start_time: Start time in seconds (default: 0.0).</span>
+<span class="sd">        :param end_time: End time in seconds (exclusive). If None, decode until end.</span>
+<span class="sd">        :param return_meta_only: If True, only return timestamps and indices of keyframes.</span>
+<span class="sd">        :return: Return a Frames object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_time_span</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">)</span>
+
+        <span class="n">start_frame</span><span class="p">,</span> <span class="n">end_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_frame_index_by_time_span</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">)</span>
+
+        <span class="n">key_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">get_key_indices</span><span class="p">()</span>
+
+        <span class="c1"># filter key frames within the specified time range</span>
+        <span class="n">filtered_key_indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">key_indices</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">start_frame</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="n">end_frame</span><span class="p">:</span>
+                <span class="n">filtered_key_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filtered_key_indices</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: No keyframes found between </span><span class="si">{</span><span class="n">start_time</span><span class="si">}</span><span class="s2">s and </span><span class="si">{</span><span class="n">end_time</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Frames</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">[],</span> <span class="n">indices</span><span class="o">=</span><span class="p">[],</span> <span class="n">pts_time</span><span class="o">=</span><span class="p">[])</span>
+
+        <span class="n">key_times</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">filtered_key_indices</span><span class="p">:</span>
+            <span class="n">start_pts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">get_frame_timestamp</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+            <span class="n">key_times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">start_pts</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">return_meta_only</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Frames</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">[],</span> <span class="n">indices</span><span class="o">=</span><span class="n">filtered_key_indices</span><span class="p">,</span> <span class="n">pts_time</span><span class="o">=</span><span class="n">key_times</span><span class="p">)</span>
+
+        <span class="n">key_frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">get_batch</span><span class="p">(</span><span class="n">filtered_key_indices</span><span class="p">)</span>
+        <span class="n">key_frames</span> <span class="o">=</span> <span class="n">key_frames</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">Frames</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="n">key_frames</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="n">filtered_key_indices</span><span class="p">,</span> <span class="n">pts_time</span><span class="o">=</span><span class="n">key_times</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DecordReader.extract_clip">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.DecordReader.extract_clip">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_clip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">to_numpy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract a clip from the video based on the start and end time.</span>
+
+<span class="sd">        :param start_time: the start time in second.</span>
+<span class="sd">        :param end_time: the end time in second. If it&#39;s None, this function</span>
+<span class="sd">            will cut the video from the start_seconds to the end of the video.</span>
+<span class="sd">        :param output_path: the path to output video.</span>
+<span class="sd">        :param to_numpy: whether to return clip data as numpy array and save to Clip.frames.</span>
+<span class="sd">        :return: Clip object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">to_numpy</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;to_numpy&#39; must be True when using decord&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">output_path</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;&#39;output_path&#39; is not supported when using decord&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_time_span</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">)</span>
+
+        <span class="c1"># Calculate frame indices</span>
+        <span class="n">start_frame</span><span class="p">,</span> <span class="n">end_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_frame_index_by_time_span</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">)</span>
+
+        <span class="c1"># Handle empty frame range</span>
+        <span class="k">if</span> <span class="n">start_frame</span> <span class="o">&gt;=</span> <span class="n">end_frame</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Extract frames using decord</span>
+        <span class="n">frame_indices</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_frame</span><span class="p">,</span> <span class="n">end_frame</span><span class="p">)</span>
+        <span class="n">clip</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">get_batch</span><span class="p">(</span><span class="n">frame_indices</span><span class="p">)</span><span class="o">.</span><span class="n">asnumpy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">clip</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">Clip</span><span class="p">(</span>
+            <span class="c1"># id=uuid.uuid4(),</span>
+            <span class="n">source_video</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">video_source</span><span class="p">,</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
+            <span class="n">span</span><span class="o">=</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">),</span>
+            <span class="n">frames</span><span class="o">=</span><span class="n">clip</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DecordReader.close">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.DecordReader.close">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span></div>
+
+
+<div class="viewcode-block" id="DecordReader.is_available">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.DecordReader.is_available">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_available</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">decord</span>  <span class="c1"># noqa: F401</span>
+
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="create_video_reader">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.create_video_reader">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_video_reader</span><span class="p">(</span><span class="n">video_source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VideoReader</span><span class="p">:</span>
+    <span class="n">backends</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ffmpeg&quot;</span><span class="p">:</span> <span class="n">FFmpegReader</span><span class="p">,</span> <span class="s2">&quot;decord&quot;</span><span class="p">:</span> <span class="n">DecordReader</span><span class="p">,</span> <span class="s2">&quot;av&quot;</span><span class="p">:</span> <span class="n">AVReader</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">backend</span> <span class="o">!=</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">backends</span><span class="p">[</span><span class="n">backend</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">video_source</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Backend </span><span class="si">{</span><span class="n">backend</span><span class="si">}</span><span class="s2"> not available&quot;</span><span class="p">)</span>
+
+    <span class="c1"># select available backend automatically</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">backends</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">video_source</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No available video backend found&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

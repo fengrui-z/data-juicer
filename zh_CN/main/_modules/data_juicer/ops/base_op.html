@@ -1,0 +1,1813 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer.ops.base_op &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/ops/base_op';</script>
+    <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/_modules/data_juicer/ops/base_op.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/_modules/data_juicer/ops/base_op_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/_modules/data_juicer/ops/base_op.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/_modules/data_juicer/ops/base_op.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/_modules/data_juicer/ops/base_op_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/_modules/data_juicer/ops/base_op.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">模块代码</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer.ops.base_op</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>data_juicer.ops.base_op 源代码</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABCMeta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pa</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fields</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.mm_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">size_to_bytes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.model_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">free_models</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.process_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.ray_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_ray_mode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Registry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.resource_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_cuda_available</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.op_env</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">OPEnvSpec</span><span class="p">,</span>
+    <span class="n">analyze_lazy_loaded_requirements_for_code_file</span><span class="p">,</span>
+    <span class="n">op_requirements_to_op_env_spec</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">OPERATORS</span> <span class="o">=</span> <span class="n">Registry</span><span class="p">(</span><span class="s2">&quot;Operators&quot;</span><span class="p">)</span>
+<span class="n">UNFORKABLE</span> <span class="o">=</span> <span class="n">Registry</span><span class="p">(</span><span class="s2">&quot;Unforkable&quot;</span><span class="p">)</span>
+<span class="n">NON_STATS_FILTERS</span> <span class="o">=</span> <span class="n">Registry</span><span class="p">(</span><span class="s2">&quot;Non-stats Filters&quot;</span><span class="p">)</span>
+<span class="n">TAGGING_OPS</span> <span class="o">=</span> <span class="n">Registry</span><span class="p">(</span><span class="s2">&quot;Tagging Operators&quot;</span><span class="p">)</span>
+<span class="n">ATTRIBUTION_FILTERS</span> <span class="o">=</span> <span class="n">Registry</span><span class="p">(</span><span class="s2">&quot;Attribution Filters&quot;</span><span class="p">)</span>
+<span class="n">DEFAULT_BATCH_SIZE</span> <span class="o">=</span> <span class="mi">1000</span>
+
+
+<div class="viewcode-block" id="convert_list_dict_to_dict_list">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.convert_list_dict_to_dict_list">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_list_dict_to_dict_list</span><span class="p">(</span><span class="n">samples</span><span class="p">):</span>
+    <span class="c1"># reconstruct samples from &quot;list of dicts&quot; to &quot;dict of lists&quot;</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">res_samples</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="n">res_samples</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">res_samples</span></div>
+
+
+
+<div class="viewcode-block" id="convert_dict_list_to_list_dict">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.convert_dict_list_to_list_dict">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_dict_list_to_list_dict</span><span class="p">(</span><span class="n">samples</span><span class="p">):</span>
+    <span class="c1"># reconstruct samples from &quot;dict of lists&quot; to &quot;list of dicts&quot;</span>
+    <span class="n">reconstructed_samples</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">samples</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="c1"># take any key, since they should be of same length</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]])):</span>
+        <span class="n">reconstructed_samples</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="n">samples</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">reconstructed_samples</span></div>
+
+
+
+<div class="viewcode-block" id="convert_arrow_to_python">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.convert_arrow_to_python">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_arrow_to_python</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span><span class="p">):</span>
+            <span class="n">sample</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">to_pydict</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+
+<div class="viewcode-block" id="catch_map_batches_exception">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.catch_map_batches_exception">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">catch_map_batches_exception</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">skip_op_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">op_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For batched-map sample-level fault tolerance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">op_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">op_name</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="vm">__name__</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+    <span class="nd">@convert_arrow_to_python</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_op_error</span><span class="p">:</span>
+                <span class="k">raise</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+
+            <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An error occurred in </span><span class="si">{</span><span class="n">op_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> -- </span><span class="si">{</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">samples</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+            <span class="n">ret</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">ret</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">source_file</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+
+<div class="viewcode-block" id="sample_to_dict">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.sample_to_dict">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sample_to_dict</span><span class="p">(</span><span class="n">sample</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert sample to dict.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">datasets.formatting.formatting</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyDict</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">LazyDict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">sample</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">sample</span><span class="o">.</span><span class="n">to_pydict</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown sample type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="wrap_mapper_with_tracer">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.wrap_mapper_with_tracer">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wrap_mapper_with_tracer</span><span class="p">(</span><span class="n">process_method</span><span class="p">,</span> <span class="n">op_name</span><span class="p">,</span> <span class="n">text_key</span><span class="p">,</span> <span class="n">tracer</span><span class="p">,</span> <span class="n">is_batched_op</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrap a mapper&#39;s process method to collect sample-level changes.</span>
+
+<span class="sd">    :param process_method: the original process method (single or batched)</span>
+<span class="sd">    :param op_name: the operator name</span>
+<span class="sd">    :param text_key: the text key to compare</span>
+<span class="sd">    :param tracer: the tracer instance</span>
+<span class="sd">    :param is_batched_op: whether this is a batched operator</span>
+<span class="sd">    :return: wrapped process method</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.tracer</span><span class="w"> </span><span class="kn">import</span> <span class="n">should_trace_op</span>
+
+    <span class="k">if</span> <span class="n">tracer</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">should_trace_op</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">op_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">process_method</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">process_method</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_process</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.tracer</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">check_tracer_collect_complete</span><span class="p">,</span>
+            <span class="n">collect_for_mapper</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Check if collection is already complete (early exit for performance)</span>
+        <span class="k">if</span> <span class="n">check_tracer_collect_complete</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">op_name</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">process_method</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">sample_dict</span> <span class="o">=</span> <span class="n">sample_to_dict</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_batched_op</span><span class="p">:</span>
+            <span class="c1"># Batched processing: sample is dict of lists</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+
+            <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sample_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">num_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+
+            <span class="c1"># Make a deep copy of original samples for comparison</span>
+            <span class="n">original_samples</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
+                <span class="n">orig_sample</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">sample_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">}</span>
+                <span class="n">original_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">orig_sample</span><span class="p">))</span>
+
+            <span class="c1"># Process the batch</span>
+            <span class="n">processed_batch</span> <span class="o">=</span> <span class="n">process_method</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="n">processed_batch_dict</span> <span class="o">=</span> <span class="n">sample_to_dict</span><span class="p">(</span><span class="n">processed_batch</span><span class="p">)</span>
+
+            <span class="c1"># Collect changes for each sample</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">check_tracer_collect_complete</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">op_name</span><span class="p">):</span>
+                    <span class="k">break</span>
+
+                <span class="n">orig_sample</span> <span class="o">=</span> <span class="n">original_samples</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">proc_sample</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">processed_batch_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">processed_batch_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+                <span class="n">collect_for_mapper</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">op_name</span><span class="p">,</span> <span class="n">orig_sample</span><span class="p">,</span> <span class="n">proc_sample</span><span class="p">,</span> <span class="n">text_key</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">processed_batch</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Single sample processing</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+
+            <span class="n">original_sample_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">sample_dict</span><span class="p">)</span>
+            <span class="n">processed_sample</span> <span class="o">=</span> <span class="n">process_method</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">processed_sample_dict</span> <span class="o">=</span> <span class="n">sample_to_dict</span><span class="p">(</span><span class="n">processed_sample</span><span class="p">)</span>
+
+            <span class="c1"># Collect sample-level change</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tracer_collect_complete</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">op_name</span><span class="p">):</span>
+                <span class="n">collect_for_mapper</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">op_name</span><span class="p">,</span> <span class="n">original_sample_dict</span><span class="p">,</span> <span class="n">processed_sample_dict</span><span class="p">,</span> <span class="n">text_key</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">processed_sample</span>
+
+    <span class="k">return</span> <span class="n">wrapped_process</span></div>
+
+
+
+<div class="viewcode-block" id="wrap_filter_with_tracer">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.wrap_filter_with_tracer">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wrap_filter_with_tracer</span><span class="p">(</span><span class="n">process_method</span><span class="p">,</span> <span class="n">op_name</span><span class="p">,</span> <span class="n">tracer</span><span class="p">,</span> <span class="n">is_batched_op</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrap a filter&#39;s process method to collect sample-level changes.</span>
+
+<span class="sd">    :param process_method: the original process method (single or batched)</span>
+<span class="sd">    :param op_name: the operator name</span>
+<span class="sd">    :param tracer: the tracer instance</span>
+<span class="sd">    :param is_batched_op: whether this is a batched operator</span>
+<span class="sd">    :return: wrapped process method</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.tracer</span><span class="w"> </span><span class="kn">import</span> <span class="n">should_trace_op</span>
+
+    <span class="k">if</span> <span class="n">tracer</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">should_trace_op</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">op_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">process_method</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">process_method</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_process</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.tracer</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">check_tracer_collect_complete</span><span class="p">,</span>
+            <span class="n">collect_for_filter</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Check if collection is already complete (early exit for performance)</span>
+        <span class="k">if</span> <span class="n">check_tracer_collect_complete</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">op_name</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">process_method</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_batched_op</span><span class="p">:</span>
+            <span class="c1"># Batched processing: process returns iterable of booleans</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">process_method</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">results_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="k">else</span> <span class="n">results</span>
+
+            <span class="c1"># Collect filtered samples</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">num_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">check_tracer_collect_complete</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">op_name</span><span class="p">):</span>
+                    <span class="k">break</span>
+
+                <span class="n">should_keep</span> <span class="o">=</span> <span class="n">results_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">results_list</span><span class="p">)</span> <span class="k">else</span> <span class="kc">True</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">should_keep</span><span class="p">:</span>
+                    <span class="n">sample_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">sample</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">}</span>
+                    <span class="n">collect_for_filter</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">op_name</span><span class="p">,</span> <span class="n">sample_dict</span><span class="p">,</span> <span class="n">should_keep</span><span class="p">)</span>
+
+            <span class="c1"># return the results_list because the map object results</span>
+            <span class="c1"># has been calculated and empty when getting results_list</span>
+            <span class="k">return</span> <span class="n">results_list</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Single sample processing</span>
+            <span class="n">should_keep</span> <span class="o">=</span> <span class="n">process_method</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="c1"># Collect filtered sample</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">check_tracer_collect_complete</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">op_name</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">should_keep</span><span class="p">:</span>
+                <span class="n">collect_for_filter</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">op_name</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">should_keep</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">should_keep</span>
+
+    <span class="k">return</span> <span class="n">wrapped_process</span></div>
+
+
+
+<div class="viewcode-block" id="catch_map_single_exception">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.catch_map_single_exception">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">catch_map_single_exception</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">return_sample</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">skip_op_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">op_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For single-map sample-level fault tolerance.</span>
+<span class="sd">    The input sample is expected batch_size = 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">op_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">op_name</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="vm">__name__</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_batched</span><span class="p">(</span><span class="n">sample</span><span class="p">):</span>
+        <span class="n">val_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">first_val</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">val_iter</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first_val</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">first_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">first_val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="n">first_len</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">val_iter</span><span class="p">)</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+    <span class="nd">@convert_arrow_to_python</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_batched</span><span class="p">(</span><span class="n">sample</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">sample</span> <span class="o">=</span> <span class="n">convert_dict_list_to_list_dict</span><span class="p">(</span><span class="n">sample</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">return_sample</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">convert_list_dict_to_dict_list</span><span class="p">([</span><span class="n">res</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="p">[</span><span class="n">res</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_op_error</span><span class="p">:</span>
+                    <span class="k">raise</span>
+                <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+
+                <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An error occurred in </span><span class="si">{</span><span class="n">op_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> -- </span><span class="si">{</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">sample</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+                <span class="n">ret</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">ret</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">source_file</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">return</span> <span class="n">ret</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># without fault tolerance</span>
+            <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+
+<div class="viewcode-block" id="OPMetaClass">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.OPMetaClass">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OPMetaClass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">_init_args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">_init_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="k">return</span> <span class="n">instance</span></div>
+
+
+
+<div class="viewcode-block" id="OP">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.OP">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OP</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">OPMetaClass</span><span class="p">):</span>
+    <span class="c1"># the name of this operator. Automatically set by the registry</span>
+    <span class="n">_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="c1"># the accelerator to run this operator. Either &quot;cpu&quot; or &quot;cuda&quot;</span>
+    <span class="n">_accelerator</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span>
+
+    <span class="c1"># whether this operator is a batched operator</span>
+    <span class="n">_batched_op</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># extra requirements for this operator. Should be:</span>
+    <span class="c1">#   1. a list of packages</span>
+    <span class="c1">#   2. a string of the path to the requirements.txt file</span>
+    <span class="n">_requirements</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="OP.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.OP.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Base class of operators.</span>
+
+<span class="sd">        :param text_key: the key name of field that stores sample texts</span>
+<span class="sd">            to be processed.</span>
+<span class="sd">        :param image_key: the key name of field that stores sample image list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param audio_key: the key name of field that stores sample audio list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param video_key: the key name of field that stores sample video list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param image_bytes_key: the key name of field that stores sample image bytes list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param query_key: the key name of field that stores sample queries</span>
+<span class="sd">        :param response_key: the key name of field that stores responses</span>
+<span class="sd">        :param history_key: the key name of field that stores history of</span>
+<span class="sd">            queries and responses</span>
+<span class="sd">        :param index_key: index the samples before process if not None</span>
+<span class="sd">        :param system_key: the key name of field that stores system prompts</span>
+<span class="sd">        :param instruction_key: the key name of field that stores instruction</span>
+<span class="sd">        :param index_key: the key name of field that stores index</span>
+<span class="sd">        :param batch_size: the batch size for processing</span>
+<span class="sd">        :param work_dir: the working directory for this operator</span>
+<span class="sd">        :param skip_op_error: whether to skip the error when processing samples</span>
+
+<span class="sd">        # Ray related parameters</span>
+<span class="sd">        :param num_cpus: number of CPUs required for this operator, only used when</span>
+<span class="sd">            running in Ray mode</span>
+<span class="sd">        :param num_gpus: number of GPUs required for this operator, only used when</span>
+<span class="sd">            running in Ray mode</span>
+<span class="sd">        :param memory: memory size required for this operator, only used when</span>
+<span class="sd">            running in Ray mode</span>
+<span class="sd">        :param runtime_env: runtime environment for this operator, only used when</span>
+<span class="sd">            running in Ray mode. More details can be found in Ray documentation.</span>
+<span class="sd">        :param ray_execution_mode: execution mode in Ray, can be &quot;actor&quot; or &quot;task&quot; or None,</span>
+<span class="sd">            if None, the &quot;actor&quot; mode is used when the operator is a CUDA operator,</span>
+<span class="sd">            and the &quot;task&quot; mode is used if the operator is a CPU operator.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># init data keys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text_key&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image_key&quot;</span><span class="p">,</span> <span class="s2">&quot;images&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">audio_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;audio_key&quot;</span><span class="p">,</span> <span class="s2">&quot;audios&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;video_key&quot;</span><span class="p">,</span> <span class="s2">&quot;videos&quot;</span><span class="p">)</span>
+
+        <span class="c1"># extra mm bytes keys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_bytes_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image_bytes_key&quot;</span><span class="p">,</span> <span class="s2">&quot;image_bytes&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">system_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;system_key&quot;</span><span class="p">,</span> <span class="s2">&quot;system&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instruction_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;instruction_key&quot;</span><span class="p">,</span> <span class="s2">&quot;instruction&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prompt_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prompt_key&quot;</span><span class="p">,</span> <span class="s2">&quot;prompt&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;query_key&quot;</span><span class="p">,</span> <span class="s2">&quot;query&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;response_key&quot;</span><span class="p">,</span> <span class="s2">&quot;response&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;history_key&quot;</span><span class="p">,</span> <span class="s2">&quot;history&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">index_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;index_key&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;work_dir&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># for unittest, do not skip the error.</span>
+        <span class="c1"># It would be set to be True in config init.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skip_op_error</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;skip_op_error&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auto_op_parallelism</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;auto_op_parallelism&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># whether to enable batch processing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_mode</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;batch_mode&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># whether the model can be accelerated using cuda</span>
+        <span class="n">_accelerator</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;accelerator&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_accelerator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accelerator</span> <span class="o">=</span> <span class="n">_accelerator</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accelerator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accelerator</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">accelerator</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;batch_size&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;batch_size&quot;</span><span class="p">,</span> <span class="n">DEFAULT_BATCH_SIZE</span><span class="p">)</span>
+
+        <span class="c1"># parameters to determine the number of procs for this op</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_op_parallelism</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_proc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;num_proc&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_proc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;num_proc&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># -1 means automatic calculation of concurrency</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cpu_required</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cpu_required&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gpu_required</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;gpu_required&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mem_required</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mem_required&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mem_required</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mem_required</span> <span class="o">=</span> <span class="n">size_to_bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mem_required</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">3</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_cpus</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;num_cpus&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_gpus</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;num_gpus&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;memory&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="n">size_to_bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">3</span>
+        <span class="c1"># Optional[Union[Dict[str, Any], &quot;RuntimeEnv&quot;]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runtime_env</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;runtime_env&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ray_execution_mode</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ray_execution_mode&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">ray_execution_mode</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;actor&quot;</span><span class="p">,</span> <span class="s2">&quot;task&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Local import to avoid logger being serialized in multiprocessing</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpu_required</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;The argument ``cpu_required`` will be deprecated. Please specify argument ``num_cpus`` instead.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_cpus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">num_cpus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpu_required</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpu_required</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;The argument ``gpu_required`` will be deprecated. Please specify argument ``num_gpus`` instead.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_gpus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">num_gpus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpu_required</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mem_required</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;The argument ``mem_required`` will be deprecated. Please specify argument ``memory`` instead.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mem_required</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">turbo</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;turbo&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># nested wrappers</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">wrap_func_with_nested_access</span>
+
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;process&quot;</span><span class="p">,</span> <span class="s2">&quot;compute_stats&quot;</span><span class="p">,</span> <span class="s2">&quot;compute_hash&quot;</span><span class="p">]:</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">method</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+                <span class="n">method</span> <span class="o">=</span> <span class="n">wrap_func_with_nested_access</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OP.get_env_spec">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.OP.get_env_spec">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_env_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OPEnvSpec</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+
+        <span class="n">auto_analyzed_requirements</span> <span class="o">=</span> <span class="n">analyze_lazy_loaded_requirements_for_code_file</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">op_requirements_to_op_env_spec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_requirements</span><span class="p">,</span> <span class="n">auto_analyzed_requirements</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OP.use_auto_proc">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.OP.use_auto_proc">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">use_auto_proc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_ray_mode</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_ray_actor</span><span class="p">():</span>  <span class="c1"># ray task</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_proc</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_proc</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_proc</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="OP.is_batched_op">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.OP.is_batched_op">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_batched_op</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_mode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_mode</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batched_op</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Op [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">] is implemented as a batched op, &quot;</span> <span class="sa">f</span><span class="s2">&quot;but batch_mode is set to False.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batched_op</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_mode</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batched_op</span></div>
+
+
+<div class="viewcode-block" id="OP.use_ray_actor">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.OP.use_ray_actor">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">use_ray_actor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ray_execution_mode</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ray_execution_mode</span> <span class="o">==</span> <span class="s2">&quot;actor&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="OP.process">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.OP.process">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="OP.use_cuda">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.OP.use_cuda">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">use_cuda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">accelerator</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span> <span class="ow">and</span> <span class="n">is_cuda_available</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="OP.runtime_np">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.OP.runtime_np">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">runtime_np</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Local import to avoid logger being serialized in multiprocessing</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_op_parallelism</span><span class="p">:</span>
+            <span class="n">op_proc</span> <span class="o">=</span> <span class="n">calculate_np</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_cpus</span> <span class="ow">or</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_gpus</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_auto_proc</span><span class="p">():</span>
+                <span class="n">op_proc</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">op_proc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_proc</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">op_proc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_proc</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Op [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">] running with number of procs:</span><span class="si">{</span><span class="n">op_proc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">op_proc</span></div>
+
+
+<div class="viewcode-block" id="OP.remove_extra_parameters">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.OP.remove_extra_parameters">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_extra_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        at the beginning of the init of the mapper op, call</span>
+<span class="sd">        self.remove_extra_parameters(locals())</span>
+<span class="sd">        to get the init parameter dict of the op for convenience</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">param_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)}</span>
+            <span class="n">param_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;self&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">param_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">param_dict</span></div>
+
+
+<div class="viewcode-block" id="OP.add_parameters">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.OP.add_parameters">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_parameter_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_param_dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        add parameters for each sample, need to keep extra_param_dict</span>
+<span class="sd">        and init_parameter_dict unchanged.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">related_parameters</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">init_parameter_dict</span><span class="p">)</span>
+        <span class="n">related_parameters</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra_param_dict</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">related_parameters</span></div>
+
+
+<div class="viewcode-block" id="OP.run">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.OP.run">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">NestedDataset</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">NestedDataset</span><span class="p">):</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">NestedDataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="c1"># add meta field for OPs that produce tags</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_same_content_to_new_column</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">in</span> <span class="n">TAGGING_OPS</span><span class="o">.</span><span class="n">modules</span> <span class="ow">and</span> <span class="n">Fields</span><span class="o">.</span><span class="n">meta</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">features</span><span class="p">:</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                <span class="n">add_same_content_to_new_column</span><span class="p">,</span>
+                <span class="n">fn_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;new_column_name&quot;</span><span class="p">:</span> <span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="s2">&quot;initial_value&quot;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="n">num_proc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime_np</span><span class="p">(),</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Adding new column for meta&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="c1"># add stats field for Filters that produce stats</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Filter</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">NON_STATS_FILTERS</span><span class="o">.</span><span class="n">modules</span>
+            <span class="ow">and</span> <span class="n">Fields</span><span class="o">.</span><span class="n">stats</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">features</span>
+        <span class="p">):</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                <span class="n">add_same_content_to_new_column</span><span class="p">,</span>
+                <span class="n">fn_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;new_column_name&quot;</span><span class="p">:</span> <span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">,</span> <span class="s2">&quot;initial_value&quot;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="n">num_proc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime_np</span><span class="p">(),</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Adding new column for stats&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">features</span><span class="p">:</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">add_index</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+                <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">index_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
+                <span class="k">return</span> <span class="n">sample</span>
+
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">add_index</span><span class="p">,</span> <span class="n">with_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dataset</span></div>
+
+
+<div class="viewcode-block" id="OP.empty_history">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.OP.empty_history">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">empty_history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_ray_mode</span><span class="p">():</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Mapper">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mapper</span><span class="p">(</span><span class="n">OP</span><span class="p">):</span>
+<div class="viewcode-block" id="Mapper.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Base class that conducts data editing.</span>
+
+<span class="sd">        :param text_key: the key name of field that stores sample texts</span>
+<span class="sd">            to be processed.</span>
+<span class="sd">        :param image_key: the key name of field that stores sample image list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param audio_key: the key name of field that stores sample audio list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param video_key: the key name of field that stores sample video list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param image_bytes_key: the key name of field that stores sample image bytes list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param query_key: the key name of field that stores sample queries</span>
+<span class="sd">        :param response_key: the key name of field that stores responses</span>
+<span class="sd">        :param history_key: the key name of field that stores history of</span>
+<span class="sd">            queries and responses</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Mapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># runtime wrappers</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_batched_op</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">catch_map_batches_exception</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process_batched</span><span class="p">,</span> <span class="n">skip_op_error</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skip_op_error</span><span class="p">,</span> <span class="n">op_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">catch_map_single_exception</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process_single</span><span class="p">,</span> <span class="n">skip_op_error</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skip_op_error</span><span class="p">,</span> <span class="n">op_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+            <span class="p">)</span></div>
+
+
+    <span class="c1"># set the process method is not allowed to be overridden</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">not_allowed_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;process&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">method_name</span> <span class="ow">in</span> <span class="n">not_allowed_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">method_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Method </span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2"> cannot be overridden by subclass &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">. Please implement </span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2">_single &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;or </span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2">_batched.&quot;</span>
+                <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Mapper.process_batched">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper.process_batched">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_batched</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">first_key</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">keys</span><span class="p">))</span>
+        <span class="n">num_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">first_key</span><span class="p">])</span>
+
+        <span class="n">new_keys</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
+            <span class="n">this_sample</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">samples</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">}</span>
+            <span class="n">res_sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_single</span><span class="p">(</span><span class="n">this_sample</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">res_keys</span> <span class="o">=</span> <span class="n">res_sample</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">res_keys</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_keys</span><span class="p">:</span>
+                        <span class="n">new_keys</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="p">[]})</span>
+                    <span class="n">new_keys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res_sample</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">samples</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">res_sample</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">new_keys</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">samples</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="k">return</span> <span class="n">samples</span></div>
+
+
+<div class="viewcode-block" id="Mapper.process_single">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper.process_single">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For sample level, sample --&gt; sample</span>
+
+<span class="sd">        :param sample: sample to process</span>
+<span class="sd">        :return: processed sample</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Mapper.run">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper.run">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">exporter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tracer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Mapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+
+        <span class="c1"># Wrap process method with tracer for sample-level collection</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.tracer</span><span class="w"> </span><span class="kn">import</span> <span class="n">should_trace_op</span>
+
+        <span class="n">original_process</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">tracer</span> <span class="ow">and</span> <span class="n">should_trace_op</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">):</span>
+            <span class="c1"># Store original process method</span>
+            <span class="n">original_process</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span>
+            <span class="c1"># Wrap with tracer</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">wrap_mapper_with_tracer</span><span class="p">(</span>
+                <span class="n">original_process</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_key</span><span class="p">,</span> <span class="n">tracer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_batched_op</span><span class="p">()</span>
+            <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">new_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">,</span>
+                <span class="n">num_proc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime_np</span><span class="p">(),</span>
+                <span class="n">with_rank</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">(),</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">desc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+</span> <span class="s2">&quot;_process&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="c1"># Restore original process method</span>
+            <span class="k">if</span> <span class="n">tracer</span> <span class="ow">and</span> <span class="n">should_trace_op</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span> <span class="ow">and</span> <span class="n">original_process</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">original_process</span>
+
+        <span class="n">free_models</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">new_dataset</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Filter">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Filter">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Filter</span><span class="p">(</span><span class="n">OP</span><span class="p">):</span>
+<div class="viewcode-block" id="Filter.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Filter.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Base class that removes specific info.</span>
+
+<span class="sd">        :param text_key: the key name of field that stores sample texts</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param image_key: the key name of field that stores sample image list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param audio_key: the key name of field that stores sample audio list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param video_key: the key name of field that stores sample video list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param image_bytes_key: the key name of field that stores sample image bytes list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param query_key: the key name of field that stores sample queries</span>
+<span class="sd">        :param response_key: the key name of field that stores responses</span>
+<span class="sd">        :param history_key: the key name of field that stores history of</span>
+<span class="sd">            queries and responses</span>
+
+<span class="sd">        :param min_closed_interval: whether the min_val of the specified filter range is a closed interval. It&#39;s True</span>
+<span class="sd">            by default.</span>
+<span class="sd">        :param max_closed_interval: whether the max_val of the specified filter range is a closed interval. It&#39;s True</span>
+<span class="sd">            by default.</span>
+<span class="sd">        :param reversed_range: whether to reverse the target range [min_val, max_val] to (-∞, min_val) or (max_val, +∞).</span>
+<span class="sd">            It&#39;s False by default.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Filter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stats_export_path</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stats_export_path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># filter strategy related</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_closed_interval</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;min_closed_interval&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_closed_interval</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_closed_interval&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reversed_range</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reversed_range&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reversed_range</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_closed_interval</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_closed_interval</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_closed_interval</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_closed_interval</span>
+
+        <span class="c1"># runtime wrappers</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_batched_op</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute_stats</span> <span class="o">=</span> <span class="n">catch_map_batches_exception</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">compute_stats_batched</span><span class="p">,</span> <span class="n">skip_op_error</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skip_op_error</span><span class="p">,</span> <span class="n">op_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">catch_map_batches_exception</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process_batched</span><span class="p">,</span> <span class="n">skip_op_error</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skip_op_error</span><span class="p">,</span> <span class="n">op_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute_stats</span> <span class="o">=</span> <span class="n">catch_map_single_exception</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">compute_stats_single</span><span class="p">,</span> <span class="n">skip_op_error</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skip_op_error</span><span class="p">,</span> <span class="n">op_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">catch_map_single_exception</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process_single</span><span class="p">,</span> <span class="n">return_sample</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">skip_op_error</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skip_op_error</span><span class="p">,</span> <span class="n">op_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+            <span class="p">)</span></div>
+
+
+    <span class="c1"># set the process method is not allowed to be overridden</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">not_allowed_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;compute_stats&quot;</span><span class="p">,</span> <span class="s2">&quot;process&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">method_name</span> <span class="ow">in</span> <span class="n">not_allowed_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">method_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Method </span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2"> cannot be overridden by subclass &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">. Please implement </span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2">_single &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;or </span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2">_batched.&quot;</span>
+                <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_stats</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Filter.get_keep_boolean">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Filter.get_keep_boolean">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_keep_boolean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">min_val</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_val</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">res_bool</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">min_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">res_bool</span> <span class="o">=</span> <span class="n">res_bool</span> <span class="ow">and</span> <span class="p">(</span><span class="n">val</span> <span class="o">&gt;=</span> <span class="n">min_val</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_closed_interval</span> <span class="k">else</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="n">min_val</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">max_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">res_bool</span> <span class="o">=</span> <span class="n">res_bool</span> <span class="ow">and</span> <span class="p">(</span><span class="n">val</span> <span class="o">&lt;=</span> <span class="n">max_val</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_closed_interval</span> <span class="k">else</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="n">max_val</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reversed_range</span><span class="p">:</span>
+            <span class="n">res_bool</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">res_bool</span>
+        <span class="k">return</span> <span class="n">res_bool</span></div>
+
+
+<div class="viewcode-block" id="Filter.compute_stats_batched">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Filter.compute_stats_batched">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_stats_batched</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">num_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_samples</span><span class="p">):</span>
+            <span class="n">this_sample</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">samples</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">}</span>
+            <span class="n">res_sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_stats_single</span><span class="p">(</span><span class="n">this_sample</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">samples</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">res_sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;context&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;context&quot;</span><span class="p">]:</span>
+                <span class="n">samples</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">context</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">res_sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">context</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">samples</span></div>
+
+
+<div class="viewcode-block" id="Filter.process_batched">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Filter.process_batched">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_batched</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">stat</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_single</span><span class="p">({</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">:</span> <span class="n">stat</span><span class="p">}),</span> <span class="n">samples</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="Filter.compute_stats_single">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Filter.compute_stats_single">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_stats_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute stats for the sample which is used as a metric to decide</span>
+<span class="sd">        whether to filter this sample.</span>
+
+<span class="sd">        :param sample: input sample.</span>
+<span class="sd">        :param context: whether to store context information of intermediate</span>
+<span class="sd">            vars in the sample temporarily.</span>
+<span class="sd">        :return: sample with computed stats</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Filter.process_single">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Filter.process_single">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For sample level, sample --&gt; Boolean.</span>
+
+<span class="sd">        :param sample: sample to decide whether to filter</span>
+<span class="sd">        :return: true for keeping and false for filtering</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Filter.run">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Filter.run">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">exporter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tracer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduce</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Filter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="n">new_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute_stats</span><span class="p">,</span>
+            <span class="n">num_proc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime_np</span><span class="p">(),</span>
+            <span class="n">with_rank</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">(),</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+</span> <span class="s2">&quot;_compute_stats&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">exporter</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">stats_export_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">exporter</span><span class="o">.</span><span class="n">export_compute_stats</span><span class="p">(</span><span class="n">new_dataset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stats_export_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">reduce</span><span class="p">:</span>
+            <span class="c1"># Wrap process method with tracer for sample-level collection</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.tracer</span><span class="w"> </span><span class="kn">import</span> <span class="n">should_trace_op</span>
+
+            <span class="n">original_process</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">tracer</span> <span class="ow">and</span> <span class="n">should_trace_op</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">):</span>
+                <span class="c1"># Store original process method</span>
+                <span class="n">original_process</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span>
+                <span class="c1"># Wrap with tracer</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">wrap_filter_with_tracer</span><span class="p">(</span><span class="n">original_process</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">tracer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_batched_op</span><span class="p">())</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">new_dataset</span> <span class="o">=</span> <span class="n">new_dataset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime_np</span><span class="p">(),</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+</span> <span class="s2">&quot;_process&quot;</span>
+                <span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="c1"># Restore original process method</span>
+                <span class="k">if</span> <span class="n">tracer</span> <span class="ow">and</span> <span class="n">should_trace_op</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span> <span class="ow">and</span> <span class="n">original_process</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">original_process</span>
+
+        <span class="n">free_models</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">new_dataset</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Deduplicator">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Deduplicator">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Deduplicator</span><span class="p">(</span><span class="n">OP</span><span class="p">):</span>
+<div class="viewcode-block" id="Deduplicator.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Deduplicator.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Base class that conducts deduplication.</span>
+
+<span class="sd">        :param text_key: the key name of field that stores sample texts</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param image_key: the key name of field that stores sample image list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param audio_key: the key name of field that stores sample audio list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param video_key: the key name of field that stores sample video list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param image_bytes_key: the key name of field that stores sample image bytes list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param query_key: the key name of field that stores sample queries</span>
+<span class="sd">        :param response_key: the key name of field that stores responses</span>
+<span class="sd">        :param history_key: the key name of field that stores history of</span>
+<span class="sd">            queries and responses</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Deduplicator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># runtime wrappers</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_batched_op</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute_hash</span> <span class="o">=</span> <span class="n">catch_map_batches_exception</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">compute_hash</span><span class="p">,</span> <span class="n">skip_op_error</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skip_op_error</span><span class="p">,</span> <span class="n">op_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute_hash</span> <span class="o">=</span> <span class="n">catch_map_single_exception</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">compute_hash</span><span class="p">,</span> <span class="n">skip_op_error</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skip_op_error</span><span class="p">,</span> <span class="n">op_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Deduplicator.compute_hash">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Deduplicator.compute_hash">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute hash values for the sample.</span>
+
+<span class="sd">        :param sample: input sample</span>
+<span class="sd">        :return: sample with computed hash value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Deduplicator.process">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Deduplicator.process">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">show_num</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For doc-level, dataset --&gt; dataset.</span>
+
+<span class="sd">        :param dataset: input dataset</span>
+<span class="sd">        :param show_num: number of traced samples used when tracer is</span>
+<span class="sd">            open.</span>
+<span class="sd">        :return: deduplicated dataset and the sampled duplicate pairs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Deduplicator.run">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Deduplicator.run">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">exporter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tracer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduce</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Deduplicator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="n">new_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute_hash</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime_np</span><span class="p">(),</span> <span class="n">with_rank</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">(),</span> <span class="n">desc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+</span> <span class="s2">&quot;_compute_hash&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">reduce</span><span class="p">:</span>
+            <span class="n">show_num</span> <span class="o">=</span> <span class="n">tracer</span><span class="o">.</span><span class="n">show_num</span> <span class="k">if</span> <span class="n">tracer</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="n">new_dataset</span><span class="p">,</span> <span class="n">dup_pairs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">new_dataset</span><span class="p">,</span> <span class="n">show_num</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tracer</span><span class="p">:</span>
+                <span class="n">tracer</span><span class="o">.</span><span class="n">trace_deduplicator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">dup_pairs</span><span class="p">)</span>
+        <span class="n">free_models</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">new_dataset</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Selector">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Selector">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Selector</span><span class="p">(</span><span class="n">OP</span><span class="p">):</span>
+<div class="viewcode-block" id="Selector.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Selector.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Base class that conducts selection in dataset-level.</span>
+
+<span class="sd">        :param text_key: the key name of field that stores sample texts</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param image_key: the key name of field that stores sample image list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param audio_key: the key name of field that stores sample audio list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param video_key: the key name of field that stores sample video list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param image_bytes_key: the key name of field that stores sample image bytes list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param query_key: the key name of field that stores sample queries</span>
+<span class="sd">        :param response_key: the key name of field that stores responses</span>
+<span class="sd">        :param history_key: the key name of field that stores history of</span>
+<span class="sd">            queries and responses</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Selector</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Selector.process">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Selector.process">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Dataset --&gt; dataset.</span>
+
+<span class="sd">        :param dataset: input dataset</span>
+<span class="sd">        :return: selected dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Selector.run">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Selector.run">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">exporter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tracer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Selector</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="n">new_dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tracer</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Selector OPs are not supported for tracing for now.&quot;</span><span class="p">)</span>
+        <span class="n">free_models</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">new_dataset</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Grouper">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Grouper">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Grouper</span><span class="p">(</span><span class="n">OP</span><span class="p">):</span>
+<div class="viewcode-block" id="Grouper.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Grouper.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Base class that group samples.</span>
+
+<span class="sd">        :param text_key: the key name of field that stores sample texts</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param image_key: the key name of field that stores sample image list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param audio_key: the key name of field that stores sample audio list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param video_key: the key name of field that stores sample video list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param image_bytes_key: the key name of field that stores sample image bytes list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param query_key: the key name of field that stores sample queries</span>
+<span class="sd">        :param response_key: the key name of field that stores responses</span>
+<span class="sd">        :param history_key: the key name of field that stores history of</span>
+<span class="sd">            queries and responses</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Grouper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Grouper.process">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Grouper.process">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Dataset --&gt; dataset.</span>
+
+<span class="sd">        :param dataset: input dataset</span>
+<span class="sd">        :return: dataset of batched samples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Grouper.run">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Grouper.run">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">exporter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tracer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Grouper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="n">batched_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">NestedDataset</span>
+
+        <span class="n">new_dataset</span> <span class="o">=</span> <span class="n">NestedDataset</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="n">batched_samples</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tracer</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Grouper OPs are not supported for tracing for now.&quot;</span><span class="p">)</span>
+        <span class="n">free_models</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">new_dataset</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Aggregator">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Aggregator">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Aggregator</span><span class="p">(</span><span class="n">OP</span><span class="p">):</span>
+<div class="viewcode-block" id="Aggregator.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Aggregator.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Base class that group samples.</span>
+
+<span class="sd">        :param text_key: the key name of field that stores sample texts</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param image_key: the key name of field that stores sample image list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param audio_key: the key name of field that stores sample audio list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param video_key: the key name of field that stores sample video list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param image_bytes_key: the key name of field that stores sample image bytes list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param query_key: the key name of field that stores sample queries</span>
+<span class="sd">        :param response_key: the key name of field that stores responses</span>
+<span class="sd">        :param history_key: the key name of field that stores history of</span>
+<span class="sd">            queries and responses</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">catch_map_single_exception</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process_single</span><span class="p">,</span> <span class="n">skip_op_error</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">skip_op_error</span><span class="p">,</span> <span class="n">op_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Aggregator.process_single">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Aggregator.process_single">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For sample level, batched sample --&gt; sample,</span>
+<span class="sd">        the input must be the output of some Grouper OP.</span>
+
+<span class="sd">        :param sample: batched sample to aggregate</span>
+<span class="sd">        :return: aggregated sample</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="Aggregator.run">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Aggregator.run">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">exporter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tracer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Aggregator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="c1"># add batched meta field for OPs that produce aggregations</span>
+        <span class="k">if</span> <span class="n">Fields</span><span class="o">.</span><span class="n">batch_meta</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">features</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_same_content_to_new_column</span>
+
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                <span class="n">add_same_content_to_new_column</span><span class="p">,</span>
+                <span class="n">fn_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;new_column_name&quot;</span><span class="p">:</span> <span class="n">Fields</span><span class="o">.</span><span class="n">batch_meta</span><span class="p">,</span> <span class="s2">&quot;initial_value&quot;</span><span class="p">:</span> <span class="p">{}},</span>
+                <span class="n">num_proc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime_np</span><span class="p">(),</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Adding new column for aggregation&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">new_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">,</span>
+            <span class="n">num_proc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime_np</span><span class="p">(),</span>
+            <span class="n">with_rank</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">(),</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">+</span> <span class="s2">&quot;_process&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">tracer</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Aggregator OPs are not supported for tracing for now.&quot;</span><span class="p">)</span>
+        <span class="n">free_models</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">new_dataset</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Pipeline">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Pipeline">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Pipeline</span><span class="p">(</span><span class="n">OP</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for Operators that represent a data processing pipeline.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Pipeline.__init__">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Pipeline.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Base class of operators.</span>
+
+<span class="sd">        :param text_key: the key name of field that stores sample texts</span>
+<span class="sd">            to be processed.</span>
+<span class="sd">        :param image_key: the key name of field that stores sample image list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param audio_key: the key name of field that stores sample audio list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param video_key: the key name of field that stores sample video list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param image_bytes_key: the key name of field that stores sample image bytes list</span>
+<span class="sd">            to be processed</span>
+<span class="sd">        :param query_key: the key name of field that stores sample queries</span>
+<span class="sd">        :param response_key: the key name of field that stores responses</span>
+<span class="sd">        :param history_key: the key name of field that stores history of</span>
+<span class="sd">            queries and responses</span>
+<span class="sd">        :param index_key: index the samples before process if not None</span>
+<span class="sd">        :param batch_size: the batch size for processing</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Pipeline</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Pipeline.run">
+<a class="viewcode-back" href="../../../api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Pipeline.run">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

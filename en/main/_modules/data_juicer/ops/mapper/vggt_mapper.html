@@ -1,0 +1,837 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer.ops.mapper.vggt_mapper &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/ops/mapper/vggt_mapper';</script>
+    <script src="../../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../../_static/icon.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/ops/mapper/vggt_mapper.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/ops/mapper/vggt_mapper_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/ops/mapper/vggt_mapper.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/ops/mapper/vggt_mapper.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/ops/mapper/vggt_mapper_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/ops/mapper/vggt_mapper.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer.ops.mapper.vggt_mapper</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for data_juicer.ops.mapper.vggt_mapper</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">PositiveInt</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">data_juicer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.load</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_ops</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.cache_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">DATA_JUICER_ASSETS_CACHE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fields</span><span class="p">,</span> <span class="n">MetaKeys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.mm_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpecialTokens</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.model_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_model</span><span class="p">,</span> <span class="n">prepare_model</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..base_op</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPERATORS</span><span class="p">,</span> <span class="n">Mapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..op_fusion</span><span class="w"> </span><span class="kn">import</span> <span class="n">LOADED_VIDEOS</span>
+
+<span class="n">OP_NAME</span> <span class="o">=</span> <span class="s2">&quot;vggt_mapper&quot;</span>
+
+<span class="n">torch</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;torch&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="VggtMapper">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.VggtMapper">[docs]</a>
+<span class="nd">@OPERATORS</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">OP_NAME</span><span class="p">)</span>
+<span class="nd">@LOADED_VIDEOS</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">OP_NAME</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VggtMapper</span><span class="p">(</span><span class="n">Mapper</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Input a video of a single scene, and use VGGT to extract information including Camera</span>
+<span class="sd">    Pose, Depth Maps, Point Maps, and 3D Point Tracks.</span>
+
+<span class="sd">    - The operator processes a video and extracts frames based on the specified frame number</span>
+<span class="sd">      and duration.</span>
+<span class="sd">    - It uses the VGGT model to analyze the extracted frames and generate various outputs</span>
+<span class="sd">      such as camera parameters, depth maps, point maps, and 3D point tracks.</span>
+<span class="sd">    - If 3D point tracks are required, the user must provide query points in the format [x,</span>
+<span class="sd">      y], relative to the top-left corner.</span>
+<span class="sd">    - The results are stored in the sample&#39;s metadata under the specified tag field name,</span>
+<span class="sd">      which defaults to &#39;vggt_tags&#39;.</span>
+<span class="sd">    - The operator can output camera parameters, depth maps, point maps from projection,</span>
+<span class="sd">      point maps from unprojection, and 3D point tracks, depending on the configuration.</span>
+<span class="sd">    - The VGGT model is loaded from the provided path, and the operator runs in CUDA mode if</span>
+<span class="sd">      available.&quot;&quot;&quot;</span>
+
+    <span class="n">_accelerator</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span>
+
+<div class="viewcode-block" id="VggtMapper.__init__">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.VggtMapper.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">vggt_model_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;facebook/VGGT-1B&quot;</span><span class="p">,</span>
+        <span class="n">frame_num</span><span class="p">:</span> <span class="n">PositiveInt</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">tag_field_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MetaKeys</span><span class="o">.</span><span class="n">vggt_tags</span><span class="p">,</span>
+        <span class="n">frame_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DATA_JUICER_ASSETS_CACHE</span><span class="p">,</span>
+        <span class="n">if_output_camera_parameters</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">if_output_depth_maps</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">if_output_point_maps_from_projection</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">if_output_point_maps_from_unprojection</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">if_output_point_tracks</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization method.</span>
+
+<span class="sd">        :param vggt_model_path: The path to the VGGT model.</span>
+<span class="sd">        :param frame_num: The number of frames to be extracted uniformly from</span>
+<span class="sd">            the video. If it&#39;s 1, only the middle frame will be extracted. If</span>
+<span class="sd">            it&#39;s 2, only the first and the last frames will be extracted. If</span>
+<span class="sd">            it&#39;s larger than 2, in addition to the first and the last frames,</span>
+<span class="sd">            other frames will be extracted uniformly within the video duration.</span>
+<span class="sd">            If &quot;duration&quot; &gt; 0, frame_num is the number of frames per segment.</span>
+<span class="sd">        :param duration: The duration of each segment in seconds.</span>
+<span class="sd">            If 0, frames are extracted from the entire video.</span>
+<span class="sd">            If duration &gt; 0, the video is segmented into multiple segments</span>
+<span class="sd">            based on duration, and frames are extracted from each segment.</span>
+<span class="sd">        :param tag_field_name: The field name to store the tags. It&#39;s</span>
+<span class="sd">            &quot;vggt_tags&quot; in default.</span>
+<span class="sd">        :param frame_dir: Output directory to save extracted frames.</span>
+<span class="sd">        :param if_output_camera_parameters: Determines whether to output</span>
+<span class="sd">            camera parameters.</span>
+<span class="sd">        :param if_output_depth_maps: Determines whether to output</span>
+<span class="sd">            depth maps.</span>
+<span class="sd">        :param if_output_point_maps_from_projection: Determines whether to</span>
+<span class="sd">            output point maps directly inferred by VGGT.</span>
+<span class="sd">        :param if_output_point_maps_from_unprojection: Determines whether to</span>
+<span class="sd">            output point maps constructed from depth maps and camera parameters.</span>
+<span class="sd">        :param if_output_point_tracks: Determines whether to output point tracks.</span>
+<span class="sd">            If point tracks are required, the user should provide a list where</span>
+<span class="sd">            each element consists of 2D point coordinates (list shape: (N, 2)).</span>
+<span class="sd">            The point coordinates should be specified in the format [x, y],</span>
+<span class="sd">            relative to the top-left corner, where x/y values are non-normalized.</span>
+<span class="sd">        :param args: extra args</span>
+<span class="sd">        :param kwargs: extra args</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_extract_frames_mapper_args</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;frame_sampling_method&quot;</span><span class="p">:</span> <span class="s2">&quot;uniform&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;frame_num&quot;</span><span class="p">:</span> <span class="n">frame_num</span><span class="p">,</span>
+            <span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="n">duration</span><span class="p">,</span>
+            <span class="s2">&quot;frame_dir&quot;</span><span class="p">:</span> <span class="n">frame_dir</span><span class="p">,</span>
+            <span class="s2">&quot;frame_key&quot;</span><span class="p">:</span> <span class="n">MetaKeys</span><span class="o">.</span><span class="n">video_frames</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fused_ops</span> <span class="o">=</span> <span class="n">load_ops</span><span class="p">([{</span><span class="s2">&quot;video_extract_frames_mapper&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_extract_frames_mapper_args</span><span class="p">}])</span>
+
+        <span class="n">vggt_repo_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATA_JUICER_ASSETS_CACHE</span><span class="p">,</span> <span class="s2">&quot;vggt&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">vggt_repo_path</span><span class="p">):</span>
+            <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;git&quot;</span><span class="p">,</span> <span class="s2">&quot;clone&quot;</span><span class="p">,</span> <span class="s2">&quot;https://github.com/facebookresearch/vggt.git&quot;</span><span class="p">,</span> <span class="n">vggt_repo_path</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vggt_repo_path</span><span class="p">)</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">vggt.utils.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">unproject_depth_map_to_point_map</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">vggt.utils.load_fn</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_and_preprocess_images</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">vggt.utils.pose_enc</span><span class="w"> </span><span class="kn">import</span> <span class="n">pose_encoding_to_extri_intri</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_and_preprocess_images</span> <span class="o">=</span> <span class="n">load_and_preprocess_images</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pose_encoding_to_extri_intri</span> <span class="o">=</span> <span class="n">pose_encoding_to_extri_intri</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unproject_depth_map_to_point_map</span> <span class="o">=</span> <span class="n">unproject_depth_map_to_point_map</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame_num</span> <span class="o">=</span> <span class="n">frame_num</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="n">duration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span> <span class="o">=</span> <span class="n">tag_field_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame_dir</span> <span class="o">=</span> <span class="n">frame_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">()</span> <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">get_device_capability</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">8</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">float16</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_key</span> <span class="o">=</span> <span class="n">prepare_model</span><span class="p">(</span><span class="n">model_type</span><span class="o">=</span><span class="s2">&quot;vggt&quot;</span><span class="p">,</span> <span class="n">model_path</span><span class="o">=</span><span class="n">vggt_model_path</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">if_output_camera_parameters</span> <span class="o">=</span> <span class="n">if_output_camera_parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">if_output_depth_maps</span> <span class="o">=</span> <span class="n">if_output_depth_maps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">if_output_point_maps_from_projection</span> <span class="o">=</span> <span class="n">if_output_point_maps_from_projection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">if_output_point_maps_from_unprojection</span> <span class="o">=</span> <span class="n">if_output_point_maps_from_unprojection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">if_output_point_tracks</span> <span class="o">=</span> <span class="n">if_output_point_tracks</span></div>
+
+
+<div class="viewcode-block" id="VggtMapper.process_single">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.VggtMapper.process_single">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="c1"># check if it&#39;s generated already</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">sample</span>
+
+        <span class="c1"># there is no video in this sample</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sample</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">video_key</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="c1"># load videos</span>
+        <span class="n">ds_list</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">SpecialTokens</span><span class="o">.</span><span class="n">video</span><span class="p">,</span> <span class="s2">&quot;videos&quot;</span><span class="p">:</span> <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">video_key</span><span class="p">]}]</span>
+
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">data_juicer</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NestedDataset</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="n">ds_list</span><span class="p">)</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fused_ops</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+
+        <span class="n">vggt_model</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_key</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">())</span>
+
+        <span class="n">frames_root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">video_key</span><span class="p">][</span><span class="mi">0</span><span class="p">]))[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">frame_names</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">frames_root</span><span class="p">)</span>
+        <span class="n">frames_path</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">frames_root</span><span class="p">,</span> <span class="n">frame_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">frame_name</span> <span class="ow">in</span> <span class="n">frame_names</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">rank</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">images</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_and_preprocess_images</span><span class="p">(</span><span class="n">frames_path</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cuda:</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">images</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_and_preprocess_images</span><span class="p">(</span><span class="n">frames_path</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">autocast</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">):</span>
+                <span class="n">images</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+                <span class="n">aggregated_tokens_list</span><span class="p">,</span> <span class="n">ps_idx</span> <span class="o">=</span> <span class="n">vggt_model</span><span class="o">.</span><span class="n">aggregator</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+
+        <span class="c1"># Predict Cameras</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">if_output_camera_parameters</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">if_output_point_maps_from_unprojection</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="n">pose_enc</span> <span class="o">=</span> <span class="n">vggt_model</span><span class="o">.</span><span class="n">camera_head</span><span class="p">(</span><span class="n">aggregated_tokens_list</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="c1"># Extrinsic and intrinsic matrices, following OpenCV convention (camera from world)</span>
+                <span class="n">extrinsic</span><span class="p">,</span> <span class="n">intrinsic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pose_encoding_to_extri_intri</span><span class="p">(</span><span class="n">pose_enc</span><span class="p">,</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">extrinsic</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">intrinsic</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Predict Depth Maps</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">if_output_depth_maps</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">if_output_point_maps_from_unprojection</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="n">depth_map</span><span class="p">,</span> <span class="n">depth_conf</span> <span class="o">=</span> <span class="n">vggt_model</span><span class="o">.</span><span class="n">depth_head</span><span class="p">(</span><span class="n">aggregated_tokens_list</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">ps_idx</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">depth_map</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">depth_conf</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Predict Point Maps</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">if_output_point_maps_from_projection</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="n">point_map</span><span class="p">,</span> <span class="n">point_conf</span> <span class="o">=</span> <span class="n">vggt_model</span><span class="o">.</span><span class="n">point_head</span><span class="p">(</span><span class="n">aggregated_tokens_list</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">ps_idx</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">point_map</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">point_conf</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Construct 3D Points from Depth Maps and Cameras</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">if_output_point_maps_from_unprojection</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="c1"># which usually leads to more accurate 3D points than point map branch</span>
+                <span class="n">point_maps_from_unprojection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unproject_depth_map_to_point_map</span><span class="p">(</span>
+                    <span class="n">depth_map</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">extrinsic</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">intrinsic</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">point_maps_from_unprojection</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Predict Tracks</span>
+        <span class="c1"># If point track output is required, users must provide a list of non-normalized [x, y]</span>
+        <span class="c1"># coordinates (shape (N, 2)) relative to the top-left corner.</span>
+        <span class="c1"># The tracking is done in 4 iterations. The last iteration should be the best one.</span>
+        <span class="n">query_points</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;query_points&quot;</span><span class="p">)</span>
+        <span class="c1"># choose your own points to track, with shape (N, 2) for one scene</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">if_output_point_tracks</span> <span class="ow">and</span> <span class="n">query_points</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">query_points</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">rank</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">query_points_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">query_points</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;cuda:</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">query_points_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">query_points</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+                <span class="n">track_list</span><span class="p">,</span> <span class="n">vis_score</span><span class="p">,</span> <span class="n">conf_score</span> <span class="o">=</span> <span class="n">vggt_model</span><span class="o">.</span><span class="n">track_head</span><span class="p">(</span>
+                    <span class="n">aggregated_tokens_list</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">ps_idx</span><span class="p">,</span> <span class="n">query_points</span><span class="o">=</span><span class="n">query_points_tensor</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">track_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">vis_score</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">conf_score</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span><span class="p">][</span><span class="s2">&quot;frames_folder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">frames_root</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span><span class="p">][</span><span class="s2">&quot;frames_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">frames_path</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span><span class="p">][</span><span class="s2">&quot;camera_parameters&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;extrinsic&quot;</span><span class="p">:</span> <span class="n">extrinsic</span><span class="p">,</span> <span class="s2">&quot;intrinsic&quot;</span><span class="p">:</span> <span class="n">intrinsic</span><span class="p">}</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span><span class="p">][</span><span class="s2">&quot;depth_maps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;depth_map&quot;</span><span class="p">:</span> <span class="n">depth_map</span><span class="p">,</span> <span class="s2">&quot;depth_conf&quot;</span><span class="p">:</span> <span class="n">depth_conf</span><span class="p">}</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span><span class="p">][</span><span class="s2">&quot;point_maps_from_projection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;point_map&quot;</span><span class="p">:</span> <span class="n">point_map</span><span class="p">,</span>
+            <span class="s2">&quot;point_conf&quot;</span><span class="p">:</span> <span class="n">point_conf</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span><span class="p">][</span><span class="s2">&quot;point_maps_from_unprojection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;point_maps_from_unprojection&quot;</span><span class="p">:</span> <span class="n">point_maps_from_unprojection</span>
+        <span class="p">}</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span><span class="p">][</span><span class="s2">&quot;point_tracks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;query_points&quot;</span><span class="p">:</span> <span class="n">query_points</span><span class="p">,</span>
+            <span class="s2">&quot;track_list&quot;</span><span class="p">:</span> <span class="n">track_list</span><span class="p">,</span>
+            <span class="s2">&quot;vis_score&quot;</span><span class="p">:</span> <span class="n">vis_score</span><span class="p">,</span>
+            <span class="s2">&quot;conf_score&quot;</span><span class="p">:</span> <span class="n">conf_score</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">sample</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

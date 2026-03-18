@@ -1,0 +1,814 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>视频生成测评工具 &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'tools/mm_eval/inception_metrics/README_ZH';</script>
+    <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" />
+    <link rel="next" title="VBench metrics" href="../vbench_metrics/README_ZH.html" />
+    <link rel="prev" title="Label Studio Service Utility" href="../../humanops/README.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/tools/mm_eval/inception_metrics/README.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/tools/mm_eval/inception_metrics/README_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/tools/mm_eval/inception_metrics/README_ZH.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="当前页面">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/tools/mm_eval/inception_metrics/README.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/tools/mm_eval/inception_metrics/README_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/tools/mm_eval/inception_metrics/README_ZH.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="章节导航">
+  <p class="bd-links__title" role="heading" aria-level="1">章节导航</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">教程</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/tutorial/DJ-Cookbook_ZH.html">DJ-Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/tutorial/Installation_ZH.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/tutorial/QuickStart_ZH.html">快速上手</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">帮助文档</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/Operators.html">Operator Schemas 算子提要</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/DatasetCfg_ZH.html">数据集配置指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/BadDataExhibition_ZH.html">“坏”数据展览</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/DJ_SORA_ZH.html">DJ-SORA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/DJ_service_ZH.html">DJ_服务化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/DeveloperGuide_ZH.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/Distributed_ZH.html">Data-Juicer 分布式数据处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/JobManagement_ZH.html">作业管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/PartitionAndCheckpoint_ZH.html">分区处理与检查点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/awesome_llm_data.html">Awesome Data-Model Co-Development of MLLMs </a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">算子</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/operators/aggregator/index.html">Aggregator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/operators/deduplicator/index.html">Deduplicator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/operators/filter/index.html">Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/operators/mapper/index.html">Mapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/operators/formatter/index.html">Formatter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/operators/grouper/index.html">Grouper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/operators/selector/index.html">Selector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../docs/operators/pipeline/index.html">Pipeline</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">demos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../demos/README_ZH.html">演示</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../demos/auto_evaluation_helm/README_ZH.html">自动化评测：HELM 评测及可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../demos/process_video_on_ray/data/Note.html">Note for dataset path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../demos/role_playing_system_prompt/README_ZH.html">为LLM构造角色扮演的system prompt</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">工具</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../distributed_deduplication/README_ZH.html">分布式模糊去重工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../evaluator/README_ZH.html">Auto Evaluation Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../evaluator/gpt_eval/README_ZH.html">GPT EVAL：使用 OpenAI API 评测大模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../evaluator/recorder/README_ZH.html">Evaluation Results Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fmt_conversion/README_ZH.html">格式转换工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fmt_conversion/multimodal/README_ZH.html">多模态工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fmt_conversion/post_tuning_dialog/README_ZH.html">后微调工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../humanops/README.html">Label Studio Service Utility</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">视频生成测评工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vbench_metrics/README_ZH.html">VBench metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../postprocess/README_ZH.html">Postprocess tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../preprocess/README_ZH.html">预处理工具</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">第三方</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../thirdparty/LLM_ecosystems/README_ZH.html">大语言模型生态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../thirdparty/models/README_ZH.html">第三方模型库</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../docs_index_ZH.html" class="nav-link">文档</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">视频生成测评工具</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="id1">
+<h1>视频生成测评工具<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h1>
+<p>此文件夹包含一些测评脚本，用于测评模型生成的视频。</p>
+<section id="id2">
+<h2>用法<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
+<p>使用 <a class="reference external" href="https://github.com/fengrui-z/data-juicer/blob/main/tools/mm_eval/inception_metrics/calc_metrics_for_videos.py">calc_metrics_for_videos.py</a> 计算生成视频集的FVD或ISV</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>tools/video_metrics/calc_metrics_for_videos.py<span class="w">        </span><span class="se">\</span>
+<span class="w">    </span>--fake_data_path<span class="w">    </span>&lt;fake_data_path&gt;<span class="w">        </span><span class="se">\</span>
+<span class="w">    </span>--real_data_path<span class="w">    </span>&lt;real_data_path&gt;<span class="w">        </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--fake_mm_dir<span class="w">      </span>&lt;fake_mm_dir&gt;<span class="o">]</span><span class="w">          </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--real_mm_dir<span class="w">      </span>&lt;real_mm_dir&gt;<span class="o">]</span><span class="w">          </span><span class="se">\</span>
+<span class="w">    </span>--metric<span class="w">            </span>&lt;metric&gt;<span class="w">                </span><span class="se">\</span>
+<span class="w">    </span><span class="o">[</span>--detector_path<span class="w">    </span>&lt;detector_path&gt;<span class="o">]</span><span class="w">        </span><span class="se">\</span>
+<span class="w">    </span>--result_path<span class="w">       </span>&lt;result_path&gt;<span class="w">           </span><span class="se">\</span>
+<span class="w">    </span>--num_runs<span class="w">          </span>&lt;num_runs&gt;<span class="w">              </span><span class="se">\</span>
+<span class="w">    </span>--height<span class="w">            </span>&lt;height&gt;<span class="w">                </span><span class="se">\</span>
+<span class="w">    </span>--width<span class="w">             </span>&lt;width&gt;<span class="w">                 </span><span class="se">\</span>
+<span class="w">    </span>--replace_cache<span class="w">     </span>&lt;replace_cache&gt;<span class="w">         </span><span class="se">\</span>
+<span class="w">    </span>--verbose<span class="w">           </span>&lt;verbose&gt;<span class="w">               </span><span class="se">\</span>
+<span class="w">    </span>--seed<span class="w">              </span>&lt;seed&gt;
+
+<span class="c1"># get help</span>
+python<span class="w"> </span>tools/video_metrics/calc_metrics_for_videos.py<span class="w"> </span>--help
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">fake_data_path</span></code>: 生成数据集的路径。目前只支持 <code class="docutils literal notranslate"><span class="pre">jsonl</span></code> 格式。每个sample的视频路径放在<code class="docutils literal notranslate"><span class="pre">videos</span></code>关键词下的列表里。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">real_data_path</span></code>: 真实数据集的路径。目前只支持 <code class="docutils literal notranslate"><span class="pre">jsonl</span></code> 格式。每个sample的视频路径放在<code class="docutils literal notranslate"><span class="pre">videos</span></code>关键词下的列表里。计算FVD、FID、KID和PR时需要。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fake_mm_dir</span></code>: 存储生成视频的目录。如果不是none，在fake_data_path下的jonl文件中的路径为相对它的相对路径，否则为绝对路径。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">real_mm_dir</span></code>: 存储真实视频的目录。如果不是none，在real_data_path下的jonl文件中的路径为相对它的相对路径，否则为绝对路径。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">metric</span></code>: 测评的名称, 目前支持<code class="docutils literal notranslate"><span class="pre">fvd2048_16f</span></code>、<code class="docutils literal notranslate"><span class="pre">fvd2048_128f</span></code>、<code class="docutils literal notranslate"><span class="pre">fvd2048_128f_subsample8f</span></code>、<code class="docutils literal notranslate"><span class="pre">isv2048_ucf</span></code>、<code class="docutils literal notranslate"><span class="pre">prv2048_3n_16f</span></code>、<code class="docutils literal notranslate"><span class="pre">fid50k</span></code>、<code class="docutils literal notranslate"><span class="pre">kid50k</span></code>、<code class="docutils literal notranslate"><span class="pre">is50k</span></code>、<code class="docutils literal notranslate"><span class="pre">pr50k_3n</span></code>。</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">fvd2048_16f</span></code>: 计算Frechet Video Distance (FVD)，在数据集中采样2048次，每次采样连续的16帧。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fvd2048_128f</span></code>: 计算Frechet Video Distance (FVD)，在数据集中采样2048次，每次采样连续的128帧。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fvd2048_128f_subsample8f</span></code>: 计算Frechet Video Distance (FVD)，在数据集中采样2048次，每次采样16帧，每帧间隔8帧。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">isv2048_ucf</span></code>: 计算Inception Score of Videos (ISV)，在数据集中采样2048次，每次采样连续的16帧，分成10份计算IS，返回均值和方差。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">prv2048_3n_16f</span></code>: 计算Precision/Recall of Videos (PRV)，在数据集中采样2048次，每次采样连续的16帧，采用第4近邻的特征距离来评估特征分布</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fid50k</span></code>: 计算视频帧的Frechet Inception Distance (FID)，从生成数据集中最多采样50000帧。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kid50k</span></code>: 计算视频帧的Kernel Inception Distance (KID)，从生成数据集中最多采样50000帧，并将得到的特征拆分成100份来计算KID，返回其均值。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is50k</span></code>: 计算视频帧的Inception Score(IS)，从生成数据集中最多采样50000帧，并将得到的特征拆分成10份来计算IS，返回其均值和方差。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pr50k_3n</span></code>: 计算视频的Precision/Recall (PR)，从生成数据集中最多采样50000帧，采用第4近邻的特征距离来评估特征分布。</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">detector_path</span></code>: metric对应的视频分类模型的路径，如果为None则自动从网上下载。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">result_path</span></code>: 结果存储路径，<code class="docutils literal notranslate"><span class="pre">jsonl</span></code> 格式。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_runs</span></code>: 测评次数，大于1时最终结果会取平均。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">height</span></code>: 每一帧测评时resize到这个高度</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">width</span></code>: 每一帧测评时resize到这个宽度</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">replace_cache</span></code>: 是否覆盖cache重新计算</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code>: 是否打log</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">seed</span></code>: 随机种子</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>指标介绍<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h2>
+<section id="fvd">
+<h3>FVD<a class="headerlink" href="#fvd" title="链接到此标题。">#</a></h3>
+<p>Frechet Video Distance (FVD)<sup><a class="reference internal" href="#reference"><span class="xref myst">1</span></a></sup>衡量了从真实数据集和生成数据集中提取的视频特征的分布距离。视频特征是由视频分类器提取的。视频分类器是一个在Kinetics-400数据集上训练的I3D模型，包含400种人类动作类别。</p>
+</section>
+<section id="kvd">
+<h3>KVD<a class="headerlink" href="#kvd" title="链接到此标题。">#</a></h3>
+<p>Kernel Video Distance (KVD)是视频版本的Frechet Inception Distance (FID)<sup><a class="reference internal" href="#reference"><span class="xref myst">3</span></a></sup>，它从视频中提取特征，使用了一个在包含400种人类动作类别的Kinetics-400数据集上训练的I3D模型。</p>
+</section>
+<section id="isv">
+<h3>ISV<a class="headerlink" href="#isv" title="链接到此标题。">#</a></h3>
+<p>Inception Score of Videos (ISV)<sup><a class="reference internal" href="#reference"><span class="xref myst">2</span></a></sup>基于生成视频的质量和多样性进行评估，其中更偏向于多样性。ISV利用了在UCF101动作识别数据集上训练的C3D视频分类模型，通过计算每个视频分类预测的负熵之和来评估质量。多样性则是通过预测概率分布的平均值的熵来衡量的。</p>
+</section>
+<section id="prv">
+<h3>PRV<a class="headerlink" href="#prv" title="链接到此标题。">#</a></h3>
+<p>Precision/Recall of Videos (PRV)<sup><a class="reference internal" href="#reference"><span class="xref myst">5</span></a></sup>通过在特征空间中划定到k个最近领特征的距离内的区域，来估计视频特征的分布。然后，通过确定样本是否落在真实数据集和生成数据集的分布内，来评估视频生成的精确度和召回率。这些特征是从Kinetics-400数据集上训练的包含400个人类动作类别的I3D模型中提取的。
+Precision/Recall of Videos (PRV)是视频版本的Precision/Recall (PR)<sup><a class="reference internal" href="#reference"><span class="xref myst">5</span></a></sup>，它从视频中提取特征，使用了一个在包含400种人类动作类别的Kinetics-400数据集上训练的I3D模型。</p>
+</section>
+<section id="fid">
+<h3>FID<a class="headerlink" href="#fid" title="链接到此标题。">#</a></h3>
+<p>Frechet Inception Distance (FID)<sup><a class="reference internal" href="#reference"><span class="xref myst">3</span></a></sup>与FVD的方法类似，这里提取的是每一帧的特征，模型采用在ImageNet上训练的图像分类模型。</p>
+</section>
+<section id="kid">
+<h3>KID<a class="headerlink" href="#kid" title="链接到此标题。">#</a></h3>
+<p>Kernel Inception Distance (KID)<sup><a class="reference internal" href="#reference"><span class="xref myst">4</span></a></sup>类似于FID，通过多次抽样计算帧特征的平方最大均值差异来量化两组视频之间的差异。不同于FID，KID是无偏估计，采用三阶核函数，更一致地符合人类感知。所应用的图像分类模型与FID中所应用的模型相同。</p>
+</section>
+<section id="is">
+<h3>IS<a class="headerlink" href="#is" title="链接到此标题。">#</a></h3>
+<p>Inception Score (IS)<sup><a class="reference internal" href="#reference"><span class="xref myst">2</span></a></sup>与ISV的方法类似，这里提利用了模型对每一帧的分类预测，模型采用在ImageNet上训练的图像分类模型。</p>
+</section>
+<section id="pr">
+<h3>PR<a class="headerlink" href="#pr" title="链接到此标题。">#</a></h3>
+<p>The Precision/Recall (PR)<sup><a class="reference internal" href="#reference"><span class="xref myst">5</span></a></sup>通过在视频帧的特征空间中划定到k个最近领特征的距离内的区域，来估计视频特征的分布。然后，通过确定样本帧是否落在真实数据集和生成数据集的分布内，来评估视频生成帧的精确度和召回率。这些特征是从ILSVRC-2012上训练的VGG图像分类模型<sup><a class="reference internal" href="#reference"><span class="xref myst">6</span></a></sup>中提取的。</p>
+<h2 id="reference">参考文献：</h2>
+<ul class="simple">
+<li><p>[1] Unterthiner, Thomas, et al. &quot;Towards accurate generative models of video: A new metric &amp; challenges.&quot; arXiv preprint arXiv:1812.01717 (2018).</p></li>
+<li><p>[2] Salimans, Tim, et al. &quot;Improved techniques for training gans.&quot; Advances in neural information processing systems 29 (2016).</p></li>
+<li><p>[3] Heusel, Martin, et al. &quot;Gans trained by a two time-scale update rule converge to a local nash equilibrium.&quot; Advances in neural information processing systems 30 (2017).</p></li>
+<li><p>[4] Bińkowski, Mikołaj, et al. &quot;Demystifying mmd gans.&quot; arXiv preprint arXiv:1801.01401 (2018).</p></li>
+<li><p>[5] Kynkäänniemi, Tuomas, et al. &quot;Improved precision and recall metric for assessing generative models.&quot; Advances in neural information processing systems 32 (2019).</p></li>
+<li><p>[6] Simonyan, Karen, and Andrew Zisserman. &quot;Very deep convolutional networks for large-scale image recognition.&quot; arXiv preprint arXiv:1409.1556 (2014).</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../../humanops/README.html"
+       title="上一页">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">上一页</p>
+        <p class="prev-next-title">Label Studio Service Utility</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../vbench_metrics/README_ZH.html"
+       title="下一页">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">下一页</p>
+        <p class="prev-next-title">VBench metrics</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">用法</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">指标介绍</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fvd">FVD</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#kvd">KVD</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#isv">ISV</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prv">PRV</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fid">FID</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#kid">KID</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#is">IS</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pr">PR</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/tools/mm_eval/inception_metrics/README_ZH.md.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
