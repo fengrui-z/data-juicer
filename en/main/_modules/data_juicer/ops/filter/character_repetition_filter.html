@@ -583,16 +583,15 @@
                 <span class="n">samples_stats</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">char_rep_ratio</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
                 <span class="k">continue</span>
 
-            <span class="n">freq_char_ngrams</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">freq_char_ngrams</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">num_no_rep_char_ngrams</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">el</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">freq_char_ngrams</span> <span class="k">if</span> <span class="n">el</span> <span class="o">==</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">freq_char_ngrams</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">freq_char_ngrams</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">num_no_rep_char_ngrams</span> <span class="o">=</span> <span class="n">freq_char_ngrams</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">num_rep_char_ngrams</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
                 <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freq_char_ngrams</span><span class="p">))),</span>
                 <span class="nb">len</span><span class="p">(</span><span class="n">freq_char_ngrams</span><span class="p">)</span> <span class="o">-</span> <span class="n">num_no_rep_char_ngrams</span><span class="p">,</span>
             <span class="p">)</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">freq_char_ngrams</span><span class="p">)</span>
             <span class="n">samples_stats</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">char_rep_ratio</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">freq_char_ngrams</span><span class="p">[:</span><span class="n">num_rep_char_ngrams</span><span class="p">])</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">freq_char_ngrams</span><span class="p">))</span>
-                <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">freq_char_ngrams</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
-                <span class="k">else</span> <span class="mf">0.0</span>
+                <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">freq_char_ngrams</span><span class="p">[:</span><span class="n">num_rep_char_ngrams</span><span class="p">])</span> <span class="o">/</span> <span class="n">total</span><span class="p">)</span> <span class="k">if</span> <span class="n">total</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">samples</span></div>

@@ -619,6 +619,653 @@
 
 
 
+<div class="viewcode-block" id="build_base_parser">
+<a class="viewcode-back" href="../../../api/data_juicer.config.config.html#data_juicer.config.build_base_parser">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_base_parser</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="n">default_env</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default_config_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">usage</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
+
+    <span class="c1"># required but mutually exclusive args group</span>
+    <span class="n">required_group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">required_group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">ActionConfigFile</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to a dj basic configuration file.&quot;</span><span class="p">)</span>
+    <span class="n">required_group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--auto&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to use an auto analyzing &quot;</span>
+        <span class="s2">&quot;strategy instead of a specific data &quot;</span>
+        <span class="s2">&quot;recipe. If a specific config file is &quot;</span>
+        <span class="s2">&quot;given by --config arg, this arg is &quot;</span>
+        <span class="s2">&quot;disabled. Only available for Analyzer.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--auto_num&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">PositiveInt</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The number of samples to be analyzed &quot;</span> <span class="s2">&quot;automatically. It&#39;s 1000 in default.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--hpo_config&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to a configuration file when using auto-HPO tool.&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--data_probe_algo&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Sampling algorithm to use. Options are &quot;uniform&quot;, &#39;</span>
+        <span class="s1">&#39;&quot;frequency_specified_field_selector&quot;, or &#39;</span>
+        <span class="s1">&#39;&quot;topk_specified_field_selector&quot;. Default is &quot;uniform&quot;. Only &#39;</span>
+        <span class="s2">&quot;used for dataset sampling&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--data_probe_ratio&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">ClosedUnitInterval</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The ratio of the sample size to the original dataset size. &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;Default is 1.0 (no sampling). Only used for dataset sampling&quot;</span><span class="p">,</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># basic global paras with extended type hints</span>
+    <span class="c1"># e.g., files can be mode include flags</span>
+    <span class="c1"># &quot;fr&quot;: &quot;path to a file that exists and is readable&quot;)</span>
+    <span class="c1"># &quot;fc&quot;: &quot;path to a file that can be created if it does not exist&quot;)</span>
+    <span class="c1"># &quot;dw&quot;: &quot;path to a directory that exists and is writeable&quot;)</span>
+    <span class="c1"># &quot;dc&quot;: &quot;path to a directory that can be created if it does not exist&quot;)</span>
+    <span class="c1"># &quot;drw&quot;: &quot;path to a directory that exists and is readable and writeable&quot;)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--project_name&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;hello_world&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Name of your data process project.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--executor_type&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;ray&quot;</span><span class="p">,</span> <span class="s2">&quot;ray_partitioned&quot;</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Type of executor, support &quot;default&quot;, &quot;ray&quot;, or &quot;ray_partitioned&quot;.&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--dataset_path&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to datasets with optional weights(0.0-1.0), 1.0 as &quot;</span>
+        <span class="s2">&quot;default. Accepted format:&lt;w1&gt; dataset1-path &lt;w2&gt; dataset2-path &quot;</span>
+        <span class="s2">&quot;&lt;w3&gt; dataset3-path ...&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--dataset&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span> <span class="n">Dict</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Dataset setting to define local/remote datasets; could be a &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;dict or a list of dicts; refer to &quot;</span>
+        <span class="s2">&quot;https://datajuicer.github.io/data-juicer/en/main/docs/DatasetCfg.html for more &quot;</span>
+        <span class="s2">&quot;detailed examples&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--generated_dataset_config&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">Dict</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Configuration used to create a dataset. &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;The dataset will be created from this configuration if provided. &quot;</span>
+        <span class="s2">&quot;It must contain the `type` field to specify the dataset name.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--validators&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List of validators to apply to the dataset. Each validator &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;must have a `type` field specifying the validator type.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--load_dataset_kwargs&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">Dict</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Extra keyword arguments passed through to the underlying &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;datasets.load_dataset() call. Useful for format-specific &quot;</span>
+        <span class="s2">&quot;options such as chunksize (JSON), columns (Parquet), or &quot;</span>
+        <span class="s2">&quot;delimiter (CSV). See the HuggingFace Datasets docs for &quot;</span>
+        <span class="s2">&quot;available options.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--work_dir&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to a work directory to store outputs during Data-Juicer &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;running. It&#39;s the directory where export_path is at in default.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--export_path&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;./outputs/hello_world/hello_world.jsonl&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to export and save the output processed dataset. The &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;directory to store the processed dataset will be the work &quot;</span>
+        <span class="s2">&quot;directory of this process.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--export_type&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The export format type. If it&#39;s not specified, Data-Juicer will parse from the export_path. The &quot;</span>
+        <span class="s2">&quot;supported types can be found in Exporter._router() for standalone mode and &quot;</span>
+        <span class="s2">&quot;RayExporter._SUPPORTED_FORMATS for ray mode&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--export_shard_size&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">NonNegativeInt</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Shard size of exported dataset in Byte. In default, it&#39;s 0, &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;which means export the whole dataset into only one file. If &quot;</span>
+        <span class="s2">&quot;it&#39;s set a positive number, the exported dataset will be split &quot;</span>
+        <span class="s2">&quot;into several sub-dataset shards, and the max size of each shard &quot;</span>
+        <span class="s2">&quot;won&#39;t larger than the export_shard_size&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--export_in_parallel&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to export the result dataset in parallel to a single &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;file, which usually takes less time. It only works when &quot;</span>
+        <span class="s2">&quot;export_shard_size is 0, and its default number of processes is &quot;</span>
+        <span class="s2">&quot;the same as the argument np. **Notice**: If it&#39;s True, &quot;</span>
+        <span class="s2">&quot;sometimes exporting in parallel might require much more time &quot;</span>
+        <span class="s2">&quot;due to the IO blocking, especially for very large datasets. &quot;</span>
+        <span class="s2">&quot;When this happens, False is a better choice, although it takes &quot;</span>
+        <span class="s2">&quot;more time.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--export_extra_args&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">Dict</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Other optional arguments for exporting in dict. For example, the key mapping info for exporting &quot;</span>
+        <span class="s2">&quot;the WebDataset format.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--export_aws_credentials&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">Dict</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Export-specific AWS credentials for S3 export. If export_path is S3 and this is not provided, &quot;</span>
+        <span class="s2">&quot;an error will be raised. Should contain aws_access_key_id, aws_secret_access_key, aws_region, &quot;</span>
+        <span class="s2">&quot;and optionally aws_session_token and endpoint_url.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--keep_stats_in_res_ds&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to keep the computed stats in the result dataset. If &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;it&#39;s False, the intermediate fields to store the stats &quot;</span>
+        <span class="s2">&quot;computed by Filters will be removed. Default: False.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--keep_hashes_in_res_ds&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to keep the computed hashes in the result dataset. If &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;it&#39;s False, the intermediate fields to store the hashes &quot;</span>
+        <span class="s2">&quot;computed by Deduplicators will be removed. Default: False.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--np&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">PositiveInt</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of processes to process dataset.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--text_keys&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Key name of field where the sample texts to be processed, e.g., &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;`text`, `text.instruction`, `text.output`, ... Note: currently, &quot;</span>
+        <span class="s2">&quot;we support specify only ONE key for each op, for cases &quot;</span>
+        <span class="s2">&quot;requiring multiple keys, users can specify the op multiple &quot;</span>
+        <span class="s2">&quot;times.  We will only use the first key of `text_keys` when you &quot;</span>
+        <span class="s2">&quot;set multiple keys.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--image_key&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;images&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Key name of field to store the list of sample image paths.&quot;</span><span class="p">,</span>  <span class="c1"># noqa: E251</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--image_bytes_key&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;image_bytes&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Key name of field to store the list of sample image bytes.&quot;</span><span class="p">,</span>  <span class="c1"># noqa: E251</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--image_special_token&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">SpecialTokens</span><span class="o">.</span><span class="n">image</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The special token that represents an image in the text. In &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s1">&#39;default, it</span><span class="se">\&#39;</span><span class="s1">s &quot;&lt;__dj__image&gt;&quot;. You can specify your own special&#39;</span>
+        <span class="s2">&quot; token according to your input dataset.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--audio_key&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;audios&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Key name of field to store the list of sample audio paths.&quot;</span><span class="p">,</span>  <span class="c1"># noqa: E251</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--audio_special_token&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">SpecialTokens</span><span class="o">.</span><span class="n">audio</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The special token that represents an audio in the text. In &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s1">&#39;default, it</span><span class="se">\&#39;</span><span class="s1">s &quot;&lt;__dj__audio&gt;&quot;. You can specify your own special&#39;</span>
+        <span class="s2">&quot; token according to your input dataset.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--video_key&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;videos&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Key name of field to store the list of sample video paths.&quot;</span><span class="p">,</span>  <span class="c1"># noqa: E251</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--video_special_token&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">SpecialTokens</span><span class="o">.</span><span class="n">video</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The special token that represents a video in the text. In &quot;</span>
+        <span class="s1">&#39;default, it</span><span class="se">\&#39;</span><span class="s1">s &quot;&lt;__dj__video&gt;&quot;. You can specify your own special&#39;</span>
+        <span class="s2">&quot; token according to your input dataset.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--eoc_special_token&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">SpecialTokens</span><span class="o">.</span><span class="n">eoc</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The special token that represents the end of a chunk in the &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s1">&#39;text. In default, it</span><span class="se">\&#39;</span><span class="s1">s &quot;&lt;|__dj__eoc|&gt;&quot;. You can specify your &#39;</span>
+        <span class="s2">&quot;own special token according to your input dataset.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--suffixes&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Suffixes of files that will be found and loaded. If not set, we &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;will find all suffix files, and select a suitable formatter &quot;</span>
+        <span class="s2">&quot;with the most files as default.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--turbo&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enable Turbo mode to maximize processing speed when batch size &quot;</span> <span class="s2">&quot;is 1.&quot;</span><span class="p">,</span>  <span class="c1"># noqa: E251</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--skip_op_error&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Skip errors in OPs caused by unexpected invalid samples.&quot;</span><span class="p">,</span>  <span class="c1"># noqa: E251</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--use_cache&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to use the cache management of huggingface datasets. It &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;might take up lots of disk space when using cache&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--ds_cache_dir&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Cache dir for HuggingFace datasets. In default it&#39;s the same &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;as the environment variable `HF_DATASETS_CACHE`, whose default &quot;</span>
+        <span class="s1">&#39;value is usually &quot;~/.cache/huggingface/datasets&quot;. If this &#39;</span>
+        <span class="s2">&quot;argument is set to a valid path by users, it will override the &quot;</span>
+        <span class="s2">&quot;default cache dir. Modifying this arg might also affect the other two&quot;</span>
+        <span class="s2">&quot; paths to store downloaded and extracted datasets that depend on &quot;</span>
+        <span class="s2">&quot;`HF_DATASETS_CACHE`&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--cache_compress&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The compression method of the cache file, which can be&quot;</span>
+        <span class="s1">&#39;specified in [&quot;gzip&quot;, &quot;zstd&quot;, &quot;lz4&quot;]. If this parameter is&#39;</span>
+        <span class="s2">&quot;None, the cache file will not be compressed.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--open_monitor&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to open the monitor to trace resource utilization for &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;each OP during data processing. It&#39;s True in default.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--use_checkpoint&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to use the checkpoint management to save the latest &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;version of dataset to work dir when processing. Rerun the same &quot;</span>
+        <span class="s2">&quot;config will reload the checkpoint and skip ops before it. Cache &quot;</span>
+        <span class="s2">&quot;will be disabled when it is true . If args of ops before the &quot;</span>
+        <span class="s2">&quot;checkpoint are changed, all ops will be rerun from the &quot;</span>
+        <span class="s2">&quot;beginning.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># Enhanced checkpoint configuration for PartitionedRayExecutor</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--checkpoint.enabled&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enable enhanced checkpointing for PartitionedRayExecutor&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--checkpoint.strategy&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;every_n_ops&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;every_op&quot;</span><span class="p">,</span> <span class="s2">&quot;every_partition&quot;</span><span class="p">,</span> <span class="s2">&quot;every_n_ops&quot;</span><span class="p">,</span> <span class="s2">&quot;manual&quot;</span><span class="p">,</span> <span class="s2">&quot;disabled&quot;</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Checkpoint strategy: every_n_ops (default, balanced), every_op (max protection), &quot;</span>
+        <span class="s2">&quot;manual (after specific ops), disabled (best performance)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--checkpoint.n_ops&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of operations between checkpoints for every_n_ops strategy. &quot;</span>
+        <span class="s2">&quot;Default 5 balances fault tolerance with Ray optimization.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--checkpoint.op_names&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List of operation names to checkpoint for manual strategy&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># Event logging configuration</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--event_logging.enabled&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enable event logging for job tracking and resumption&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># Logging configuration</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--max_log_size_mb&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Maximum log file size in MB before rotation&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--backup_count&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of backup log files to keep&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># Storage configuration</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--event_log_dir&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Separate directory for event logs (fast storage)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--checkpoint_dir&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Separate directory for checkpoints (large storage)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># Job management</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--job_id&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Custom job ID for resumption and tracking. If not provided, a unique ID will be auto-generated.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--temp_dir&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to the temp directory to store intermediate caches when &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;cache is disabled. In default it&#39;s None, so the temp dir will &quot;</span>
+        <span class="s2">&quot;be specified by system. NOTICE: you should be caution when &quot;</span>
+        <span class="s2">&quot;setting this argument because it might cause unexpected program &quot;</span>
+        <span class="s2">&quot;behaviors when this path is set to an unsafe directory.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--open_tracer&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to open the tracer to trace samples changed during &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;process. It might take more time when opening tracer.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--op_list_to_trace&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Which ops will be traced by tracer. If it&#39;s empty, all ops in &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;cfg.process will be traced. Only available when open_tracer is &quot;</span>
+        <span class="s2">&quot;true.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--trace_num&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of samples extracted by tracer to show the dataset &quot;</span>
+        <span class="s2">&quot;difference before and after a op. Only available when &quot;</span>
+        <span class="s2">&quot;open_tracer is true.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--trace_keys&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List of field names to include in trace output. If set, the &quot;</span>
+        <span class="s2">&quot;specified fields&#39; values will be included in each trace entry. &quot;</span>
+        <span class="s2">&quot;Only available when open_tracer is true.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--open_insight_mining&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to open insight mining to trace the OP-wise stats/tags &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;changes during process. It might take more time when opening &quot;</span>
+        <span class="s2">&quot;insight mining.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--op_list_to_mine&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Which OPs will be applied on the dataset to mine the insights &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;in their stats changes. Only those OPs that produce stats or &quot;</span>
+        <span class="s2">&quot;meta are valid. If it&#39;s empty, all OPs that produce stats and &quot;</span>
+        <span class="s2">&quot;meta will be involved. Only available when open_insight_mining &quot;</span>
+        <span class="s2">&quot;is true.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--min_common_dep_num_to_combine&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The minimum number of common dependencies required to determine whether to merge two operation &quot;</span>
+        <span class="s2">&quot;environment specifications. If set to -1, it means no combination of operation environments, where &quot;</span>
+        <span class="s2">&quot;every OP has its own runtime environment during processing without any merging. If set to &gt;= 0, &quot;</span>
+        <span class="s2">&quot;environments of OPs that share at least min_common_dep_num_to_combine common dependencies will be &quot;</span>
+        <span class="s2">&quot;merged. It will open the operator environment manager to automatically analyze and merge runtime &quot;</span>
+        <span class="s2">&quot;environment for different OPs. It helps different OPs share and reuse the same runtime environment to &quot;</span>
+        <span class="s2">&quot;reduce resource utilization. It&#39;s -1 in default. Only available in ray mode. &quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--conflict_resolve_strategy&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;split&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;split&quot;</span><span class="p">,</span> <span class="s2">&quot;overwrite&quot;</span><span class="p">,</span> <span class="s2">&quot;latest&quot;</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Strategy for resolving dependency conflicts, default is &#39;split&#39; strategy. &#39;split&#39;: Keep the two &quot;</span>
+        <span class="s2">&quot;specs split when there is a conflict. &#39;overwrite&#39;: Overwrite the existing dependency with one &quot;</span>
+        <span class="s2">&quot;from the later OP. &#39;latest&#39;: Use the latest version of all specified dependency versions. &quot;</span>
+        <span class="s2">&quot;Only available when min_common_dep_num_to_combine &gt;= 0.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--op_fusion&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to fuse operators that share the same intermediate &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;variables automatically. Op fusion might reduce the memory &quot;</span>
+        <span class="s2">&quot;requirements slightly but speed up the whole process.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--fusion_strategy&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;probe&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;OP fusion strategy. Support [&quot;greedy&quot;, &quot;probe&quot;] now. &quot;greedy&quot; &#39;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;means keep the basic OP order and put the fused OP to the last &quot;</span>
+        <span class="s1">&#39;of each fused OP group. &quot;probe&quot; means Data-Juicer will probe &#39;</span>
+        <span class="s2">&quot;the running speed for each OP at the beginning and reorder the &quot;</span>
+        <span class="s2">&quot;OPs and fused OPs according to their probed speed (fast to &quot;</span>
+        <span class="s1">&#39;slow). It</span><span class="se">\&#39;</span><span class="s1">s &quot;probe&quot; in default.&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--adaptive_batch_size&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to use adaptive batch sizes for each OP according to &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;the probed results. It&#39;s False in default.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--process&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List of several operators with their arguments, these ops will &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;be applied to dataset in order&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--percentiles&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Percentiles to analyze the dataset distribution. Only used in &quot;</span> <span class="s2">&quot;Analysis.&quot;</span><span class="p">,</span>  <span class="c1"># noqa: E251</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--export_original_dataset&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;whether to export the original dataset with stats. If you only &quot;</span>  <span class="c1"># noqa: E251</span>
+        <span class="s2">&quot;need the stats of the dataset, setting it to false could speed &quot;</span>
+        <span class="s2">&quot;up the exporting.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--save_stats_in_one_file&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to save all stats to only one file. Only used in &quot;</span> <span class="s2">&quot;Analysis.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--ray_address&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The address of the Ray cluster.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Partitioning configuration for PartitionedRayExecutor</span>
+    <span class="c1"># Support both flat and nested partition configuration</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--partition_size&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of samples per partition for PartitionedRayExecutor (legacy flat config)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--max_partition_size_mb&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Maximum partition size in MB for PartitionedRayExecutor (legacy flat config)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--preserve_intermediate_data&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Preserve intermediate data for debugging (legacy flat config)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># partition configuration</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--partition.mode&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;manual&quot;</span><span class="p">,</span> <span class="s2">&quot;auto&quot;</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Partition mode: manual (specify num_of_partitions) or auto (use partition size optimizer)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--partition.num_of_partitions&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of partitions for manual mode (ignored in auto mode)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--partition.target_size_mb&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Target partition size in MB for auto mode (128, 256, 512, or 1024). &quot;</span>
+        <span class="s2">&quot;Controls how large each partition should be. Smaller = more checkpoints &amp; better recovery, &quot;</span>
+        <span class="s2">&quot;larger = less overhead. Default 256MB balances memory safety and efficiency.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Resource optimization configuration</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--resource_optimization.auto_configure&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enable automatic optimization of partition size, worker count, and other resource-dependent settings (nested resource_optimization config)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Intermediate storage configuration</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--intermediate_storage.preserve_intermediate_data&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Preserve intermediate data for debugging (nested intermediate_storage config)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--intermediate_storage.cleanup_temp_files&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Clean up temporary files after processing (nested intermediate_storage config)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--intermediate_storage.cleanup_on_success&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Clean up intermediate files even on successful completion (nested intermediate_storage config)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--intermediate_storage.retention_policy&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;keep_all&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;keep_all&quot;</span><span class="p">,</span> <span class="s2">&quot;keep_failed_only&quot;</span><span class="p">,</span> <span class="s2">&quot;cleanup_all&quot;</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;File retention policy (nested intermediate_storage config)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--intermediate_storage.max_retention_days&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Maximum retention days for files (nested intermediate_storage config)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Intermediate storage format configuration</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--intermediate_storage.format&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;parquet&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;parquet&quot;</span><span class="p">,</span> <span class="s2">&quot;arrow&quot;</span><span class="p">,</span> <span class="s2">&quot;jsonl&quot;</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Storage format for checkpoints and intermediate data (nested intermediate_storage config)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--intermediate_storage.compression&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;snappy&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;snappy&quot;</span><span class="p">,</span> <span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Compression format for storage files (nested intermediate_storage config)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--intermediate_storage.write_partitions&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to write intermediate partition files to disk (nested intermediate_storage config). Set to false for better performance when intermediate files aren&#39;t needed.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--partition_dir&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Directory to store partition files. Supports </span><span class="si">{work_dir}</span><span class="s2"> placeholder. If not set, defaults to </span><span class="si">{work_dir}</span><span class="s2">/partitions.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--custom-operator-paths&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Paths to custom operator scripts or directories.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--debug&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to run in debug mode.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--auto_op_parallelism&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to automatically set operator parallelism.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+
 <div class="viewcode-block" id="init_configs">
 <a class="viewcode-back" href="../../../api/data_juicer.config.config.html#data_juicer.config.init_configs">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">init_configs</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">which_entry</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">load_configs_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -639,651 +1286,7 @@
         <span class="n">args</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
     <span class="k">with</span> <span class="n">timing_context</span><span class="p">(</span><span class="s2">&quot;Total config initialization time&quot;</span><span class="p">):</span>
         <span class="k">with</span> <span class="n">timing_context</span><span class="p">(</span><span class="s2">&quot;Initializing parser&quot;</span><span class="p">):</span>
-            <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="n">default_env</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default_config_files</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">usage</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
-
-            <span class="c1"># required but mutually exclusive args group</span>
-            <span class="n">required_group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">required_group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--config&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">ActionConfigFile</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to a dj basic configuration file.&quot;</span>
-            <span class="p">)</span>
-            <span class="n">required_group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--auto&quot;</span><span class="p">,</span>
-                <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Weather to use an auto analyzing &quot;</span>
-                <span class="s2">&quot;strategy instead of a specific data &quot;</span>
-                <span class="s2">&quot;recipe. If a specific config file is &quot;</span>
-                <span class="s2">&quot;given by --config arg, this arg is &quot;</span>
-                <span class="s2">&quot;disabled. Only available for Analyzer.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--auto_num&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">PositiveInt</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The number of samples to be analyzed &quot;</span> <span class="s2">&quot;automatically. It&#39;s 1000 in default.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--hpo_config&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to a configuration file when using auto-HPO tool.&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--data_probe_algo&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Sampling algorithm to use. Options are &quot;uniform&quot;, &#39;</span>
-                <span class="s1">&#39;&quot;frequency_specified_field_selector&quot;, or &#39;</span>
-                <span class="s1">&#39;&quot;topk_specified_field_selector&quot;. Default is &quot;uniform&quot;. Only &#39;</span>
-                <span class="s2">&quot;used for dataset sampling&quot;</span><span class="p">,</span>
-                <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--data_probe_ratio&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">ClosedUnitInterval</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The ratio of the sample size to the original dataset size. &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;Default is 1.0 (no sampling). Only used for dataset sampling&quot;</span><span class="p">,</span>
-                <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span>
-
-            <span class="c1"># basic global paras with extended type hints</span>
-            <span class="c1"># e.g., files can be mode include flags</span>
-            <span class="c1"># &quot;fr&quot;: &quot;path to a file that exists and is readable&quot;)</span>
-            <span class="c1"># &quot;fc&quot;: &quot;path to a file that can be created if it does not exist&quot;)</span>
-            <span class="c1"># &quot;dw&quot;: &quot;path to a directory that exists and is writeable&quot;)</span>
-            <span class="c1"># &quot;dc&quot;: &quot;path to a directory that can be created if it does not exist&quot;)</span>
-            <span class="c1"># &quot;drw&quot;: &quot;path to a directory that exists and is readable and writeable&quot;)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--project_name&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;hello_world&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Name of your data process project.&quot;</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--executor_type&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
-                <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;ray&quot;</span><span class="p">,</span> <span class="s2">&quot;ray_partitioned&quot;</span><span class="p">],</span>
-                <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Type of executor, support &quot;default&quot;, &quot;ray&quot;, or &quot;ray_partitioned&quot;.&#39;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--dataset_path&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to datasets with optional weights(0.0-1.0), 1.0 as &quot;</span>
-                <span class="s2">&quot;default. Accepted format:&lt;w1&gt; dataset1-path &lt;w2&gt; dataset2-path &quot;</span>
-                <span class="s2">&quot;&lt;w3&gt; dataset3-path ...&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--dataset&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span> <span class="n">Dict</span><span class="p">],</span>
-                <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Dataset setting to define local/remote datasets; could be a &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;dict or a list of dicts; refer to &quot;</span>
-                <span class="s2">&quot;https://datajuicer.github.io/data-juicer/en/main/docs/DatasetCfg.html for more &quot;</span>
-                <span class="s2">&quot;detailed examples&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--generated_dataset_config&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">Dict</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Configuration used to create a dataset. &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;The dataset will be created from this configuration if provided. &quot;</span>
-                <span class="s2">&quot;It must contain the `type` field to specify the dataset name.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--validators&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span>
-                <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List of validators to apply to the dataset. Each validator &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;must have a `type` field specifying the validator type.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--load_dataset_kwargs&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">Dict</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Extra keyword arguments passed through to the underlying &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;datasets.load_dataset() call. Useful for format-specific &quot;</span>
-                <span class="s2">&quot;options such as chunksize (JSON), columns (Parquet), or &quot;</span>
-                <span class="s2">&quot;delimiter (CSV). See the HuggingFace Datasets docs for &quot;</span>
-                <span class="s2">&quot;available options.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--work_dir&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to a work directory to store outputs during Data-Juicer &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;running. It&#39;s the directory where export_path is at in default.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--export_path&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;./outputs/hello_world/hello_world.jsonl&quot;</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to export and save the output processed dataset. The &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;directory to store the processed dataset will be the work &quot;</span>
-                <span class="s2">&quot;directory of this process.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--export_type&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The export format type. If it&#39;s not specified, Data-Juicer will parse from the export_path. The &quot;</span>
-                <span class="s2">&quot;supported types can be found in Exporter._router() for standalone mode and &quot;</span>
-                <span class="s2">&quot;RayExporter._SUPPORTED_FORMATS for ray mode&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--export_shard_size&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">NonNegativeInt</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Shard size of exported dataset in Byte. In default, it&#39;s 0, &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;which means export the whole dataset into only one file. If &quot;</span>
-                <span class="s2">&quot;it&#39;s set a positive number, the exported dataset will be split &quot;</span>
-                <span class="s2">&quot;into several sub-dataset shards, and the max size of each shard &quot;</span>
-                <span class="s2">&quot;won&#39;t larger than the export_shard_size&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--export_in_parallel&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to export the result dataset in parallel to a single &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;file, which usually takes less time. It only works when &quot;</span>
-                <span class="s2">&quot;export_shard_size is 0, and its default number of processes is &quot;</span>
-                <span class="s2">&quot;the same as the argument np. **Notice**: If it&#39;s True, &quot;</span>
-                <span class="s2">&quot;sometimes exporting in parallel might require much more time &quot;</span>
-                <span class="s2">&quot;due to the IO blocking, especially for very large datasets. &quot;</span>
-                <span class="s2">&quot;When this happens, False is a better choice, although it takes &quot;</span>
-                <span class="s2">&quot;more time.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--export_extra_args&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">Dict</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="p">{},</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Other optional arguments for exporting in dict. For example, the key mapping info for exporting &quot;</span>
-                <span class="s2">&quot;the WebDataset format.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--export_aws_credentials&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">Dict</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Export-specific AWS credentials for S3 export. If export_path is S3 and this is not provided, &quot;</span>
-                <span class="s2">&quot;an error will be raised. Should contain aws_access_key_id, aws_secret_access_key, aws_region, &quot;</span>
-                <span class="s2">&quot;and optionally aws_session_token and endpoint_url.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--keep_stats_in_res_ds&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to keep the computed stats in the result dataset. If &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;it&#39;s False, the intermediate fields to store the stats &quot;</span>
-                <span class="s2">&quot;computed by Filters will be removed. Default: False.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--keep_hashes_in_res_ds&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to keep the computed hashes in the result dataset. If &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;it&#39;s False, the intermediate fields to store the hashes &quot;</span>
-                <span class="s2">&quot;computed by Deduplicators will be removed. Default: False.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--np&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">PositiveInt</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of processes to process dataset.&quot;</span><span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--text_keys&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
-                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Key name of field where the sample texts to be processed, e.g., &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;`text`, `text.instruction`, `text.output`, ... Note: currently, &quot;</span>
-                <span class="s2">&quot;we support specify only ONE key for each op, for cases &quot;</span>
-                <span class="s2">&quot;requiring multiple keys, users can specify the op multiple &quot;</span>
-                <span class="s2">&quot;times.  We will only use the first key of `text_keys` when you &quot;</span>
-                <span class="s2">&quot;set multiple keys.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--image_key&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;images&quot;</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Key name of field to store the list of sample image paths.&quot;</span><span class="p">,</span>  <span class="c1"># noqa: E251</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--image_bytes_key&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;image_bytes&quot;</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Key name of field to store the list of sample image bytes.&quot;</span><span class="p">,</span>  <span class="c1"># noqa: E251</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--image_special_token&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="n">SpecialTokens</span><span class="o">.</span><span class="n">image</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The special token that represents an image in the text. In &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s1">&#39;default, it</span><span class="se">\&#39;</span><span class="s1">s &quot;&lt;__dj__image&gt;&quot;. You can specify your own special&#39;</span>
-                <span class="s2">&quot; token according to your input dataset.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--audio_key&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;audios&quot;</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Key name of field to store the list of sample audio paths.&quot;</span><span class="p">,</span>  <span class="c1"># noqa: E251</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--audio_special_token&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="n">SpecialTokens</span><span class="o">.</span><span class="n">audio</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The special token that represents an audio in the text. In &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s1">&#39;default, it</span><span class="se">\&#39;</span><span class="s1">s &quot;&lt;__dj__audio&gt;&quot;. You can specify your own special&#39;</span>
-                <span class="s2">&quot; token according to your input dataset.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--video_key&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;videos&quot;</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Key name of field to store the list of sample video paths.&quot;</span><span class="p">,</span>  <span class="c1"># noqa: E251</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--video_special_token&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="n">SpecialTokens</span><span class="o">.</span><span class="n">video</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The special token that represents a video in the text. In &quot;</span>
-                <span class="s1">&#39;default, it</span><span class="se">\&#39;</span><span class="s1">s &quot;&lt;__dj__video&gt;&quot;. You can specify your own special&#39;</span>
-                <span class="s2">&quot; token according to your input dataset.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--eoc_special_token&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="n">SpecialTokens</span><span class="o">.</span><span class="n">eoc</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The special token that represents the end of a chunk in the &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s1">&#39;text. In default, it</span><span class="se">\&#39;</span><span class="s1">s &quot;&lt;|__dj__eoc|&gt;&quot;. You can specify your &#39;</span>
-                <span class="s2">&quot;own special token according to your input dataset.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--suffixes&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
-                <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Suffixes of files that will be find and loaded. If not set, we &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;will find all suffix files, and select a suitable formatter &quot;</span>
-                <span class="s2">&quot;with the most files as default.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--turbo&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enable Turbo mode to maximize processing speed when batch size &quot;</span> <span class="s2">&quot;is 1.&quot;</span><span class="p">,</span>  <span class="c1"># noqa: E251</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--skip_op_error&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Skip errors in OPs caused by unexpected invalid samples.&quot;</span><span class="p">,</span>  <span class="c1"># noqa: E251</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--use_cache&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to use the cache management of huggingface datasets. It &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;might take up lots of disk space when using cache&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--ds_cache_dir&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Cache dir for HuggingFace datasets. In default it&#39;s the same &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;as the environment variable `HF_DATASETS_CACHE`, whose default &quot;</span>
-                <span class="s1">&#39;value is usually &quot;~/.cache/huggingface/datasets&quot;. If this &#39;</span>
-                <span class="s2">&quot;argument is set to a valid path by users, it will override the &quot;</span>
-                <span class="s2">&quot;default cache dir. Modifying this arg might also affect the other two&quot;</span>
-                <span class="s2">&quot; paths to store downloaded and extracted datasets that depend on &quot;</span>
-                <span class="s2">&quot;`HF_DATASETS_CACHE`&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--cache_compress&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The compression method of the cache file, which can be&quot;</span>
-                <span class="s1">&#39;specified in [&quot;gzip&quot;, &quot;zstd&quot;, &quot;lz4&quot;]. If this parameter is&#39;</span>
-                <span class="s2">&quot;None, the cache file will not be compressed.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--open_monitor&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to open the monitor to trace resource utilization for &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;each OP during data processing. It&#39;s True in default.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--use_checkpoint&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to use the checkpoint management to save the latest &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;version of dataset to work dir when processing. Rerun the same &quot;</span>
-                <span class="s2">&quot;config will reload the checkpoint and skip ops before it. Cache &quot;</span>
-                <span class="s2">&quot;will be disabled when it is true . If args of ops before the &quot;</span>
-                <span class="s2">&quot;checkpoint are changed, all ops will be rerun from the &quot;</span>
-                <span class="s2">&quot;beginning.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="c1"># Enhanced checkpoint configuration for PartitionedRayExecutor</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--checkpoint.enabled&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enable enhanced checkpointing for PartitionedRayExecutor&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--checkpoint.strategy&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;every_n_ops&quot;</span><span class="p">,</span>
-                <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;every_op&quot;</span><span class="p">,</span> <span class="s2">&quot;every_partition&quot;</span><span class="p">,</span> <span class="s2">&quot;every_n_ops&quot;</span><span class="p">,</span> <span class="s2">&quot;manual&quot;</span><span class="p">,</span> <span class="s2">&quot;disabled&quot;</span><span class="p">],</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Checkpoint strategy: every_n_ops (default, balanced), every_op (max protection), &quot;</span>
-                <span class="s2">&quot;manual (after specific ops), disabled (best performance)&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--checkpoint.n_ops&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of operations between checkpoints for every_n_ops strategy. &quot;</span>
-                <span class="s2">&quot;Default 5 balances fault tolerance with Ray optimization.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--checkpoint.op_names&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-                <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List of operation names to checkpoint for manual strategy&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="c1"># Event logging configuration</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--event_logging.enabled&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enable event logging for job tracking and resumption&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="c1"># Logging configuration</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--max_log_size_mb&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Maximum log file size in MB before rotation&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--backup_count&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of backup log files to keep&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="c1"># Storage configuration</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--event_log_dir&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Separate directory for event logs (fast storage)&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--checkpoint_dir&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Separate directory for checkpoints (large storage)&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="c1"># Job management</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--job_id&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Custom job ID for resumption and tracking. If not provided, a unique ID will be auto-generated.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--temp_dir&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to the temp directory to store intermediate caches when &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;cache is disabled. In default it&#39;s None, so the temp dir will &quot;</span>
-                <span class="s2">&quot;be specified by system. NOTICE: you should be caution when &quot;</span>
-                <span class="s2">&quot;setting this argument because it might cause unexpected program &quot;</span>
-                <span class="s2">&quot;behaviors when this path is set to an unsafe directory.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--open_tracer&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to open the tracer to trace samples changed during &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;process. It might take more time when opening tracer.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--op_list_to_trace&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-                <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Which ops will be traced by tracer. If it&#39;s empty, all ops in &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;cfg.process will be traced. Only available when open_tracer is &quot;</span>
-                <span class="s2">&quot;true.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--trace_num&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of samples extracted by tracer to show the dataset &quot;</span>
-                <span class="s2">&quot;difference before and after a op. Only available when &quot;</span>
-                <span class="s2">&quot;open_tracer is true.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--trace_keys&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-                <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List of field names to include in trace output. If set, the &quot;</span>
-                <span class="s2">&quot;specified fields&#39; values will be included in each trace entry. &quot;</span>
-                <span class="s2">&quot;Only available when open_tracer is true.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--open_insight_mining&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to open insight mining to trace the OP-wise stats/tags &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;changes during process. It might take more time when opening &quot;</span>
-                <span class="s2">&quot;insight mining.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--op_list_to_mine&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-                <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Which OPs will be applied on the dataset to mine the insights &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;in their stats changes. Only those OPs that produce stats or &quot;</span>
-                <span class="s2">&quot;meta are valid. If it&#39;s empty, all OPs that produce stats and &quot;</span>
-                <span class="s2">&quot;meta will be involved. Only available when filter_list_to_mine &quot;</span>
-                <span class="s2">&quot;is true.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--min_common_dep_num_to_combine&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The minimum number of common dependencies required to determine whether to merge two operation &quot;</span>
-                <span class="s2">&quot;environment specifications. If set to -1, it means no combination of operation environments, where &quot;</span>
-                <span class="s2">&quot;every OP has its own runtime environment during processing without any merging. If set to &gt;= 0, &quot;</span>
-                <span class="s2">&quot;environments of OPs that share at least min_common_dep_num_to_combine common dependencies will be &quot;</span>
-                <span class="s2">&quot;merged. It will open the operator environment manager to automatically analyze and merge runtime &quot;</span>
-                <span class="s2">&quot;environment for different OPs. It helps different OPs share and reuse the same runtime environment to &quot;</span>
-                <span class="s2">&quot;reduce resource utilization. It&#39;s -1 in default. Only available in ray mode. &quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--conflict_resolve_strategy&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;split&quot;</span><span class="p">,</span>
-                <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;split&quot;</span><span class="p">,</span> <span class="s2">&quot;overwrite&quot;</span><span class="p">,</span> <span class="s2">&quot;latest&quot;</span><span class="p">],</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Strategy for resolving dependency conflicts, default is &#39;split&#39; strategy. &#39;split&#39;: Keep the two &quot;</span>
-                <span class="s2">&quot;specs split when there is a conflict. &#39;overwrite&#39;: Overwrite the existing dependency with one &quot;</span>
-                <span class="s2">&quot;from the later OP. &#39;latest&#39;: Use the latest version of all specified dependency versions. &quot;</span>
-                <span class="s2">&quot;Only available when min_common_dep_num_to_combine &gt;= 0.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--op_fusion&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to fuse operators that share the same intermediate &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;variables automatically. Op fusion might reduce the memory &quot;</span>
-                <span class="s2">&quot;requirements slightly but speed up the whole process.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--fusion_strategy&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;probe&quot;</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s1">&#39;OP fusion strategy. Support [&quot;greedy&quot;, &quot;probe&quot;] now. &quot;greedy&quot; &#39;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;means keep the basic OP order and put the fused OP to the last &quot;</span>
-                <span class="s1">&#39;of each fused OP group. &quot;probe&quot; means Data-Juicer will probe &#39;</span>
-                <span class="s2">&quot;the running speed for each OP at the beginning and reorder the &quot;</span>
-                <span class="s2">&quot;OPs and fused OPs according to their probed speed (fast to &quot;</span>
-                <span class="s1">&#39;slow). It</span><span class="se">\&#39;</span><span class="s1">s &quot;probe&quot; in default.&#39;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--adaptive_batch_size&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to use adaptive batch sizes for each OP according to &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;the probed results. It&#39;s False in default.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--process&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span>
-                <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List of several operators with their arguments, these ops will &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;be applied to dataset in order&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--percentiles&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
-                <span class="n">default</span><span class="o">=</span><span class="p">[],</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Percentiles to analyze the dataset distribution. Only used in &quot;</span> <span class="s2">&quot;Analysis.&quot;</span><span class="p">,</span>  <span class="c1"># noqa: E251</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--export_original_dataset&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;whether to export the original dataset with stats. If you only &quot;</span>  <span class="c1"># noqa: E251</span>
-                <span class="s2">&quot;need the stats of the dataset, setting it to false could speed &quot;</span>
-                <span class="s2">&quot;up the exporting..&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--save_stats_in_one_file&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to save all stats to only one file. Only used in &quot;</span> <span class="s2">&quot;Analysis.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--ray_address&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The address of the Ray cluster.&quot;</span><span class="p">)</span>
-
-            <span class="c1"># Partitioning configuration for PartitionedRayExecutor</span>
-            <span class="c1"># Support both flat and nested partition configuration</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--partition_size&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of samples per partition for PartitionedRayExecutor (legacy flat config)&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--max_partition_size_mb&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Maximum partition size in MB for PartitionedRayExecutor (legacy flat config)&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--preserve_intermediate_data&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Preserve intermediate data for debugging (legacy flat config)&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-
-            <span class="c1"># partition configuration</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--partition.mode&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
-                <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;manual&quot;</span><span class="p">,</span> <span class="s2">&quot;auto&quot;</span><span class="p">],</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Partition mode: manual (specify num_of_partitions) or auto (use partition size optimizer)&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--partition.num_of_partitions&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of partitions for manual mode (ignored in auto mode)&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--partition.target_size_mb&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Target partition size in MB for auto mode (128, 256, 512, or 1024). &quot;</span>
-                <span class="s2">&quot;Controls how large each partition should be. Smaller = more checkpoints &amp; better recovery, &quot;</span>
-                <span class="s2">&quot;larger = less overhead. Default 256MB balances memory safety and efficiency.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-
-            <span class="c1"># Resource optimization configuration</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--resource_optimization.auto_configure&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Enable automatic optimization of partition size, worker count, and other resource-dependent settings (nested resource_optimization config)&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-
-            <span class="c1"># Intermediate storage configuration</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--intermediate_storage.preserve_intermediate_data&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Preserve intermediate data for debugging (nested intermediate_storage config)&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--intermediate_storage.cleanup_temp_files&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Clean up temporary files after processing (nested intermediate_storage config)&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--intermediate_storage.cleanup_on_success&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Clean up intermediate files even on successful completion (nested intermediate_storage config)&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--intermediate_storage.retention_policy&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;keep_all&quot;</span><span class="p">,</span>
-                <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;keep_all&quot;</span><span class="p">,</span> <span class="s2">&quot;keep_failed_only&quot;</span><span class="p">,</span> <span class="s2">&quot;cleanup_all&quot;</span><span class="p">],</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;File retention policy (nested intermediate_storage config)&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--intermediate_storage.max_retention_days&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Maximum retention days for files (nested intermediate_storage config)&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-
-            <span class="c1"># Intermediate storage format configuration</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--intermediate_storage.format&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;parquet&quot;</span><span class="p">,</span>
-                <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;parquet&quot;</span><span class="p">,</span> <span class="s2">&quot;arrow&quot;</span><span class="p">,</span> <span class="s2">&quot;jsonl&quot;</span><span class="p">],</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Storage format for checkpoints and intermediate data (nested intermediate_storage config)&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--intermediate_storage.compression&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="s2">&quot;snappy&quot;</span><span class="p">,</span>
-                <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;snappy&quot;</span><span class="p">,</span> <span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">],</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Compression format for storage files (nested intermediate_storage config)&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--intermediate_storage.write_partitions&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to write intermediate partition files to disk (nested intermediate_storage config). Set to false for better performance when intermediate files aren&#39;t needed.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--partition_dir&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Directory to store partition files. Supports </span><span class="si">{work_dir}</span><span class="s2"> placeholder. If not set, defaults to </span><span class="si">{work_dir}</span><span class="s2">/partitions.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--custom-operator-paths&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Paths to custom operator scripts or directories.&quot;</span>
-            <span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--debug&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to run in debug mode.&quot;</span><span class="p">)</span>
-            <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-                <span class="s2">&quot;--auto_op_parallelism&quot;</span><span class="p">,</span>
-                <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
-                <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to automatically set operator parallelism.&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="n">parser</span> <span class="o">=</span> <span class="n">build_base_parser</span><span class="p">()</span>
             <span class="c1"># Filter out non-essential arguments for initial parsing</span>
             <span class="n">essential_args</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">if</span> <span class="n">args</span><span class="p">:</span>

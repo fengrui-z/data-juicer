@@ -514,7 +514,7 @@
   <h1>Source code for data_juicer.tools.op_search</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python3</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Operator Searcher - A tool for filtering Data-Juicer operators by tags</span>
+<span class="sd">Operator Searcher - A tool for filtering and searching Data-Juicer operators</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
@@ -523,6 +523,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">docstring_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rank_bm25</span><span class="w"> </span><span class="kn">import</span> <span class="n">BM25Okapi</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.format.formatter</span><span class="w"> </span><span class="kn">import</span> <span class="n">FORMATTERS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPERATORS</span>
@@ -629,25 +630,16 @@
 
 
 
-<span class="c1"># def analyze_tag_from_code(content, op_name):</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
-<span class="c1">#     Analyze the tags for the OP from the given code.</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
-<span class="c1">#     tags = []</span>
-<span class="c1">#     op_prefix = op_name.split(&#39;_&#39;)[0]</span>
-
-<span class="c1">#     tags.extend(analyze_modality_tag(content, op_prefix))</span>
-<span class="c1">#     tags.extend(analyze_resource_tag(content))</span>
-<span class="c1">#     tags.extend(analyze_model_tags(content))</span>
-<span class="c1">#     return tags</span>
-
-
 <div class="viewcode-block" id="analyze_tag_with_inheritance">
 <a class="viewcode-back" href="../../../api/data_juicer.tools.op_search.html#data_juicer.tools.op_search.analyze_tag_with_inheritance">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">analyze_tag_with_inheritance</span><span class="p">(</span><span class="n">op_cls</span><span class="p">,</span> <span class="n">analyze_func</span><span class="p">,</span> <span class="n">default_tags</span><span class="o">=</span><span class="p">[],</span> <span class="n">other_parm</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">analyze_tag_with_inheritance</span><span class="p">(</span><span class="n">op_cls</span><span class="p">,</span> <span class="n">analyze_func</span><span class="p">,</span> <span class="n">default_tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">other_parm</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Universal inheritance chain label analysis function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">default_tags</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">default_tags</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">other_parm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">other_parm</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="n">mro_classes</span> <span class="o">=</span> <span class="n">op_cls</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
     <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">mro_classes</span><span class="p">:</span>
@@ -707,7 +699,7 @@
 
 <div class="viewcode-block" id="OPRecord.__init__">
 <a class="viewcode-back" href="../../../api/data_juicer.tools.op_search.html#data_juicer.tools.op_search.OPRecord.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">op_cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">op_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">op_cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">op_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">op_type</span> <span class="ow">or</span> <span class="n">op_cls</span><span class="o">.</span><span class="vm">__module__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">op_type_list</span><span class="p">:</span>
@@ -808,35 +800,198 @@
             <span class="n">all_ops_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">FORMATTERS</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scan_specified_ops</span><span class="p">(</span><span class="n">all_ops_list</span><span class="p">)</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_searchable_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">OPRecord</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Concatenate specified fields of an OPRecord into a single</span>
+<span class="sd">        searchable text string.&quot;&quot;&quot;</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Simple whitespace + underscore tokenizer for BM25 indexing.&quot;&quot;&quot;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="c1"># Split on whitespace and underscores, keep only alphanumeric tokens</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[\s_\-/,;:.()\[\]</span><span class="si">{}</span><span class="s2">]+&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">token</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">token</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_filter_by_tags_and_type</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">records</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OPRecord</span><span class="p">],</span>
+        <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">op_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">match_all</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">OPRecord</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply tag and type filtering to a list of OPRecords.&quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">op_type</span> <span class="ow">and</span> <span class="n">record</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">op_type</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">tags</span><span class="p">:</span>
+                <span class="n">normalized_tags</span> <span class="o">=</span> <span class="p">[</span><span class="n">tag</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">match_all</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">tag</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">tags</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">normalized_tags</span><span class="p">):</span>
+                        <span class="k">continue</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">tag</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">tags</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">normalized_tags</span><span class="p">):</span>
+                        <span class="k">continue</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span>
+
 <div class="viewcode-block" id="OPSearcher.search">
 <a class="viewcode-back" href="../../../api/data_juicer.tools.op_search.html#data_juicer.tools.op_search.OPSearcher.search">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">op_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">match_all</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">op_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">match_all</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Search operators by criteria</span>
+<span class="sd">        Search operators by tag and type criteria.</span>
+
 <span class="sd">        :param tags: List of tags to match</span>
 <span class="sd">        :param op_type: Operator type (mapper/filter/etc)</span>
-<span class="sd">        :param match_all: True requires matching all tags, False matches any tag</span>
-<span class="sd">        :return: List of matched operator records</span>
+<span class="sd">        :param match_all: True requires matching all tags, False matches any</span>
+<span class="sd">        :return: List of matched operator record dicts</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filtered</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_by_tags_and_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">op_records</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">op_type</span><span class="p">,</span> <span class="n">match_all</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">record</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">filtered</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="OPSearcher.search_by_regex">
+<a class="viewcode-back" href="../../../api/data_juicer.tools.op_search.html#data_juicer.tools.op_search.OPSearcher.search_by_regex">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">search_by_regex</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">op_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">match_all</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Search operators using a Python regex pattern.</span>
+
+<span class="sd">        The pattern is matched against the specified fields of each operator.</span>
+<span class="sd">        If the query is not a valid regex, an empty list is returned.</span>
+
+<span class="sd">        :param query: Regex pattern to search for</span>
+<span class="sd">        :param fields: List of OPRecord fields to search in.</span>
+<span class="sd">            Defaults to [&quot;name&quot;, &quot;desc&quot;, &quot;param_desc&quot;]</span>
+<span class="sd">        :param tags: Optional tag filter applied before regex search</span>
+<span class="sd">        :param op_type: Optional type filter applied before regex search</span>
+<span class="sd">        :param match_all: Tag matching mode (all vs any)</span>
+<span class="sd">        :return: List of matched operator record dicts</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">fields</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;desc&quot;</span><span class="p">,</span> <span class="s2">&quot;param_desc&quot;</span><span class="p">]</span>
+
+        <span class="n">candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_by_tags_and_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">op_records</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">op_type</span><span class="p">,</span> <span class="n">match_all</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">re</span><span class="o">.</span><span class="n">error</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid regex pattern &#39;</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">op_records</span><span class="p">:</span>
-            <span class="c1"># Filter by type</span>
-            <span class="k">if</span> <span class="n">op_type</span> <span class="ow">and</span> <span class="n">record</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">op_type</span><span class="p">:</span>
-                <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="n">searchable_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_searchable_text</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">searchable_text</span><span class="p">):</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">results</span></div>
 
-            <span class="c1"># Filter by tags</span>
-            <span class="k">if</span> <span class="n">tags</span><span class="p">:</span>
-                <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="n">tag</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">match_all</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">tag</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">tags</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">):</span>
-                        <span class="k">continue</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">tag</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">tags</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">):</span>
-                        <span class="k">continue</span>
 
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_bm25_index</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">records</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">OPRecord</span><span class="p">],</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build or rebuild the BM25 index from the given records and fields.</span>
+
+<span class="sd">        Caches the BM25Okapi instance, the tokenized corpus, and the</span>
+<span class="sd">        corresponding records so that repeated queries do not re-index.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">corpus_tokens</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_searchable_text</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+            <span class="n">corpus_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bm25_index</span> <span class="o">=</span> <span class="n">BM25Okapi</span><span class="p">(</span><span class="n">corpus_tokens</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bm25_records</span> <span class="o">=</span> <span class="n">records</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bm25_fields_key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OPSearcher.search_by_bm25">
+<a class="viewcode-back" href="../../../api/data_juicer.tools.op_search.html#data_juicer.tools.op_search.OPSearcher.search_by_bm25">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">search_by_bm25</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">score_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">op_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">match_all</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Search operators using BM25 keyword matching via rank_bm25.</span>
+
+<span class="sd">        Uses the BM25Okapi algorithm from the ``rank_bm25`` library to</span>
+<span class="sd">        rank operators by relevance to a natural language query. The</span>
+<span class="sd">        index is built lazily on first call and cached for subsequent</span>
+<span class="sd">        queries.</span>
+
+<span class="sd">        :param query: Natural language query string</span>
+<span class="sd">        :param fields: List of OPRecord fields to index.</span>
+<span class="sd">            Defaults to [&quot;name&quot;, &quot;desc&quot;, &quot;param_desc&quot;]</span>
+<span class="sd">        :param top_k: Maximum number of results to return</span>
+<span class="sd">        :param score_threshold: Minimum BM25 score to include a result.</span>
+<span class="sd">            Results with scores at or below this threshold are excluded.</span>
+<span class="sd">            Defaults to 0.0.</span>
+<span class="sd">        :param tags: Optional tag filter applied before BM25 ranking</span>
+<span class="sd">        :param op_type: Optional type filter applied before BM25 ranking</span>
+<span class="sd">        :param match_all: Tag matching mode (all vs any)</span>
+<span class="sd">        :return: List of matched operator record dicts, sorted by</span>
+<span class="sd">            BM25 score descending</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">fields</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;desc&quot;</span><span class="p">,</span> <span class="s2">&quot;param_desc&quot;</span><span class="p">]</span>
+
+        <span class="n">candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_by_tags_and_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">op_records</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">op_type</span><span class="p">,</span> <span class="n">match_all</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="c1"># Rebuild index when candidates or fields change</span>
+        <span class="n">fields_key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+        <span class="n">candidate_ids</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">)</span>
+        <span class="n">need_rebuild</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_bm25_index&quot;</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bm25_index</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_bm25_fields_key&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="n">fields_key</span>
+            <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_bm25_candidate_ids&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="n">candidate_ids</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">need_rebuild</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_build_bm25_index</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bm25_candidate_ids</span> <span class="o">=</span> <span class="n">candidate_ids</span>
+
+        <span class="n">query_tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenize</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">query_tokens</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">record</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">[:</span><span class="n">top_k</span><span class="p">]]</span>
+
+        <span class="n">scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bm25_index</span><span class="o">.</span><span class="n">get_scores</span><span class="p">(</span><span class="n">query_tokens</span><span class="p">)</span>
+
+        <span class="n">ranked_indices</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">scores</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">ranked_indices</span><span class="p">[:</span><span class="n">top_k</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">scores</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">score_threshold</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bm25_records</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+
         <span class="k">return</span> <span class="n">results</span></div>
 
 
@@ -849,10 +1004,10 @@
 
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../../api/data_juicer.tools.op_search.html#data_juicer.tools.op_search.main">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="n">op_type</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">op_type</span><span class="p">):</span>
     <span class="n">searcher</span> <span class="o">=</span> <span class="n">OPSearcher</span><span class="p">(</span><span class="n">include_formatter</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">results</span> <span class="o">=</span> <span class="n">searcher</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span> <span class="n">op_type</span><span class="o">=</span><span class="n">op_type</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">searcher</span><span class="o">.</span><span class="n">search_by_bm25</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span> <span class="n">op_type</span><span class="o">=</span><span class="n">op_type</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="si">}</span><span class="s2"> operators:&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
@@ -872,7 +1027,7 @@
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">tags</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">op_type</span> <span class="o">=</span> <span class="s2">&quot;formatter&quot;</span>
-    <span class="n">main</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="n">op_type</span><span class="o">=</span><span class="n">op_type</span><span class="p">)</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span> <span class="n">op_type</span><span class="o">=</span><span class="n">op_type</span><span class="p">)</span>
 </pre></div>
 
                 </article>

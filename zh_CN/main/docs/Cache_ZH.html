@@ -1,0 +1,1096 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>缓存管理 &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/Cache_ZH';</script>
+    <script src="../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../_static/icon.png"/>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="DJ-SORA" href="DJ_SORA_ZH.html" />
+    <link rel="prev" title="“坏”数据展览" href="BadDataExhibition_ZH.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../en/main/docs/Cache.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../zh_CN/main/docs/Cache_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../main/docs/Cache_ZH.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="当前页面">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../en/main/docs/Cache.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../zh_CN/main/docs/Cache_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../main/docs/Cache_ZH.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="章节导航">
+  <p class="bd-links__title" role="heading" aria-level="1">章节导航</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">教程</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="tutorial/DJ-Cookbook_ZH.html">DJ-Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/Installation_ZH.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/QuickStart_ZH.html">快速上手</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">帮助文档</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="Operators.html">Operator Schemas 算子提要</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DatasetCfg_ZH.html">数据集配置指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BadDataExhibition_ZH.html">“坏”数据展览</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">缓存管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DJ_SORA_ZH.html">DJ-SORA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DJ_service_ZH.html">DJ_服务化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DeveloperGuide_ZH.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Distributed_ZH.html">Data-Juicer 分布式数据处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Export_ZH.html">数据集导出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="JobManagement_ZH.html">作业管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PartitionAndCheckpoint_ZH.html">分区处理与检查点</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tracing_ZH.html">数据追踪</a></li>
+<li class="toctree-l1"><a class="reference internal" href="awesome_llm_data.html">Awesome Data-Model Co-Development of MLLMs </a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">算子</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="operators/aggregator/index.html">Aggregator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/deduplicator/index.html">Deduplicator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/filter/index.html">Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/mapper/index.html">Mapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/formatter/index.html">Formatter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/grouper/index.html">Grouper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/selector/index.html">Selector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/pipeline/index.html">Pipeline</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">demos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../demos/README_ZH.html">演示</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/auto_evaluation_helm/README_ZH.html">自动化评测：HELM 评测及可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/process_video_on_ray/data/Note.html">Note for dataset path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/role_playing_system_prompt/README_ZH.html">为LLM构造角色扮演的system prompt</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">工具</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../tools/distributed_deduplication/README_ZH.html">分布式模糊去重工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/README_ZH.html">Auto Evaluation Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/gpt_eval/README_ZH.html">GPT EVAL：使用 OpenAI API 评测大模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/recorder/README_ZH.html">Evaluation Results Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/README_ZH.html">格式转换工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/multimodal/README_ZH.html">多模态工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/post_tuning_dialog/README_ZH.html">后微调工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/humanops/README.html">Label Studio Service Utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/mm_eval/inception_metrics/README_ZH.html">视频生成测评工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/mm_eval/vbench_metrics/README_ZH.html">VBench metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/postprocess/README_ZH.html">Postprocess tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/preprocess/README_ZH.html">预处理工具</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">第三方</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../thirdparty/LLM_ecosystems/README_ZH.html">大语言模型生态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../thirdparty/models/README_ZH.html">第三方模型库</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../docs_index_ZH.html" class="nav-link">文档</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">缓存管理</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="id1">
+<h1>缓存管理<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h1>
+<p>本文档描述 DataJuicer 的缓存管理系统，包括 HuggingFace 数据集缓存、缓存目录配置、缓存压缩和临时存储。</p>
+<section id="id2">
+<h2>概述<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
+<p>DataJuicer 提供了基于 HuggingFace Datasets 的缓存机制来避免重复计算。启用后，每个算子根据以下内容生成具有唯一 <strong>fingerprint（指纹）</strong> 的缓存文件：</p>
+<ul class="simple">
+<li><p>输入数据的指纹</p></li>
+<li><p>算子名称和参数</p></li>
+<li><p>处理函数的哈希值</p></li>
+</ul>
+<p>即：相同输入 + 相同算子配置 = 相同指纹 = 缓存命中。因此在相同数据上重新运行相同的管道时会跳过已计算的步骤。更多细节请参考我们的论文：<a class="reference external" href="https://arxiv.org/abs/2309.02033">Data-Juicer: A One-Stop Data Processing System for Large Language Models</a> 。</p>
+<p>缓存系统还提供：</p>
+<ul class="simple">
+<li><p><strong>可配置的缓存目录</strong>，通过环境变量或配置选项设置</p></li>
+<li><p><strong>缓存压缩</strong>，减少大规模数据集的磁盘占用</p></li>
+<li><p><strong>临时存储</strong>，用于非缓存模式下的中间文件</p></li>
+<li><p><strong>细粒度缓存控制</strong>，通过上下文管理器和装饰器实现</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>配置<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h2>
+<section id="id4">
+<h3>基本缓存设置<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">use_cache</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">           </span><span class="c1"># 启用/禁用 HuggingFace 数据集缓存</span>
+<span class="nt">ds_cache_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w">         </span><span class="c1"># 自定义缓存目录（覆盖 HF_DATASETS_CACHE）</span>
+<span class="nt">cache_compress</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w">       </span><span class="c1"># 压缩方法：&#39;gzip&#39;、&#39;zstd&#39;、&#39;lz4&#39; 或 null</span>
+<span class="nt">temp_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w">             </span><span class="c1"># 缓存禁用时的中间文件临时目录</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3>命令行<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 启用缓存（默认）</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--use_cache<span class="w"> </span><span class="nb">true</span>
+
+<span class="c1"># 禁用缓存</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--use_cache<span class="w"> </span><span class="nb">false</span>
+
+<span class="c1"># 启用缓存压缩</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--cache_compress<span class="w"> </span>zstd
+
+<span class="c1"># 自定义缓存目录</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--ds_cache_dir<span class="w"> </span>/fast-storage/dj-cache
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id6">
+<h2>缓存目录结构<a class="headerlink" href="#id6" title="链接到此标题。">#</a></h2>
+<p>DataJuicer 通过环境变量控制的层级目录结构来组织缓存文件：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>~/.cache/                              # CACHE_HOME（默认）
+└── data_juicer/                       # DATA_JUICER_CACHE_HOME
+    ├── assets/                        # DATA_JUICER_ASSETS_CACHE
+    │   └── （提取的帧、停用词、标记词等）
+    └── models/                        # DATA_JUICER_MODELS_CACHE
+        └── （下载的模型文件）
+</pre></div>
+</div>
+<section id="id7">
+<h3>环境变量<a class="headerlink" href="#id7" title="链接到此标题。">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>变量</p></th>
+<th class="head"><p>默认值</p></th>
+<th class="head"><p>描述</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CACHE_HOME</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">~/.cache</span></code></p></td>
+<td><p>根缓存目录</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DATA_JUICER_CACHE_HOME</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$CACHE_HOME/data_juicer</span></code></p></td>
+<td><p>DataJuicer 缓存根目录</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DATA_JUICER_ASSETS_CACHE</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$DATA_JUICER_CACHE_HOME/assets</span></code></p></td>
+<td><p>资产缓存（帧、词表等）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DATA_JUICER_MODELS_CACHE</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$DATA_JUICER_CACHE_HOME/models</span></code></p></td>
+<td><p>下载的模型缓存</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DATA_JUICER_EXTERNAL_MODELS_HOME</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>外部模型目录</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>通过设置环境变量覆盖默认值：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DATA_JUICER_CACHE_HOME</span><span class="o">=</span>/data/dj-cache
+<span class="nb">export</span><span class="w"> </span><span class="nv">DATA_JUICER_MODELS_CACHE</span><span class="o">=</span>/models/dj-models
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id8">
+<h2>缓存压缩<a class="headerlink" href="#id8" title="链接到此标题。">#</a></h2>
+<p>对于大规模数据集（数十 GB 或更大），缓存文件可能占用大量磁盘空间。缓存压缩通过在每个算子完成后压缩中间缓存文件来减少存储需求。</p>
+<section id="id9">
+<h3>支持的算法<a class="headerlink" href="#id9" title="链接到此标题。">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>算法</p></th>
+<th class="head"><p>依赖库</p></th>
+<th class="head"><p>速度</p></th>
+<th class="head"><p>压缩率</p></th>
+<th class="head"><p>推荐场景</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">zstd</span></code></p></td>
+<td><p>zstandard</p></td>
+<td><p>快</p></td>
+<td><p>高</p></td>
+<td><p>通用场景（默认）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lz4</span></code></p></td>
+<td><p>lz4</p></td>
+<td><p>最快</p></td>
+<td><p>中等</p></td>
+<td><p>速度敏感的工作负载</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gzip</span></code></p></td>
+<td><p>gzip</p></td>
+<td><p>慢</p></td>
+<td><p>高</p></td>
+<td><p>需要兼容性的场景</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id10">
+<h3>配置<a class="headerlink" href="#id10" title="链接到此标题。">#</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">use_cache</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">cache_compress</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">zstd</span><span class="w">    </span><span class="c1"># 启用 zstd 压缩</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--cache_compress<span class="w"> </span>zstd
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h3>多进程压缩<a class="headerlink" href="#id11" title="链接到此标题。">#</a></h3>
+<p>缓存压缩支持并行处理。压缩工作进程数由 <code class="docutils literal notranslate"><span class="pre">np</span></code> 参数控制：</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">np</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span><span class="w">                   </span><span class="c1"># 并行工作进程数（也用于压缩）</span>
+<span class="nt">cache_compress</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">zstd</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="api">
+<h2>缓存控制 API<a class="headerlink" href="#api" title="链接到此标题。">#</a></h2>
+<section id="datasetcachecontrol">
+<h3>DatasetCacheControl<a class="headerlink" href="#datasetcachecontrol" title="链接到此标题。">#</a></h3>
+<p>上下文管理器，用于在特定范围内临时启用或禁用 HuggingFace 数据集缓存：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.cache_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetCacheControl</span>
+
+<span class="c1"># 临时禁用缓存</span>
+<span class="k">with</span> <span class="n">DatasetCacheControl</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="c1"># 此处的操作不会使用缓存</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">my_function</span><span class="p">)</span>
+
+<span class="c1"># 临时启用缓存</span>
+<span class="k">with</span> <span class="n">DatasetCacheControl</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="c1"># 此处的操作会使用缓存</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">my_function</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="dataset-cache-control">
+<h3>dataset_cache_control 装饰器<a class="headerlink" href="#dataset-cache-control" title="链接到此标题。">#</a></h3>
+<p>用于需要控制缓存状态的函数的装饰器：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.cache_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataset_cache_control</span>
+
+<span class="nd">@dataset_cache_control</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_without_cache</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">my_function</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="compressionoff">
+<h3>CompressionOff<a class="headerlink" href="#compressionoff" title="链接到此标题。">#</a></h3>
+<p>上下文管理器，用于临时禁用缓存压缩：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.compress</span><span class="w"> </span><span class="kn">import</span> <span class="n">CompressionOff</span>
+
+<span class="k">with</span> <span class="n">CompressionOff</span><span class="p">():</span>
+    <span class="c1"># 此范围内缓存压缩被禁用</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">my_function</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="compressmanager">
+<h3>CompressManager<a class="headerlink" href="#compressmanager" title="链接到此标题。">#</a></h3>
+<p>底层 API，用于手动压缩/解压：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.compress</span><span class="w"> </span><span class="kn">import</span> <span class="n">CompressManager</span>
+
+<span class="n">manager</span> <span class="o">=</span> <span class="n">CompressManager</span><span class="p">(</span><span class="n">compressor_format</span><span class="o">=</span><span class="s2">&quot;zstd&quot;</span><span class="p">)</span>
+
+<span class="c1"># 压缩文件</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="s2">&quot;input.arrow&quot;</span><span class="p">,</span> <span class="s2">&quot;input.arrow.zstd&quot;</span><span class="p">)</span>
+
+<span class="c1"># 解压文件</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="s2">&quot;input.arrow.zstd&quot;</span><span class="p">,</span> <span class="s2">&quot;input.arrow&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="cachecompressmanager">
+<h3>CacheCompressManager<a class="headerlink" href="#cachecompressmanager" title="链接到此标题。">#</a></h3>
+<p>高层 API，用于管理 HuggingFace 数据集缓存压缩：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.compress</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheCompressManager</span>
+
+<span class="n">manager</span> <span class="o">=</span> <span class="n">CacheCompressManager</span><span class="p">(</span><span class="n">compressor_format</span><span class="o">=</span><span class="s2">&quot;zstd&quot;</span><span class="p">)</span>
+
+<span class="c1"># 压缩前一个数据集的缓存文件</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">prev_ds</span><span class="o">=</span><span class="n">previous_dataset</span><span class="p">,</span> <span class="n">this_ds</span><span class="o">=</span><span class="n">current_dataset</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="c1"># 解压数据集的缓存文件</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">ds</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="c1"># 清理所有压缩的缓存文件</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">cleanup_cache_files</span><span class="p">(</span><span class="n">ds</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id12">
+<h2>缓存与检查点<a class="headerlink" href="#id12" title="链接到此标题。">#</a></h2>
+<p>缓存和检查点是互斥的——启用检查点会自动禁用缓存：</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>特性</p></th>
+<th class="head"><p>缓存</p></th>
+<th class="head"><p>检查点</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>用途</strong></p></td>
+<td><p>加速相同配置的重复运行</p></td>
+<td><p>故障恢复和断点续跑</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>粒度</strong></p></td>
+<td><p>每个算子的结果</p></td>
+<td><p>完整数据集快照</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>存储位置</strong></p></td>
+<td><p>HuggingFace 缓存目录</p></td>
+<td><p>工作目录</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>恢复方式</strong></p></td>
+<td><p>自动（基于哈希）</p></td>
+<td><p>手动（基于配置）</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>压缩</strong></p></td>
+<td><p>支持（<code class="docutils literal notranslate"><span class="pre">cache_compress</span></code>）</p></td>
+<td><p>不适用</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>场景</strong></p></td>
+<td><p>迭代开发、参数调优</p></td>
+<td><p>长时间运行的生产任务</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># 缓存模式（默认）</span>
+<span class="nt">use_cache</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">use_checkpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+
+<span class="c1"># 检查点模式（缓存自动禁用）</span>
+<span class="nt">use_cache</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">           </span><span class="c1"># 将被覆盖为 false</span>
+<span class="nt">use_checkpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h2>缓存禁用与临时目录<a class="headerlink" href="#id13" title="链接到此标题。">#</a></h2>
+<p>当 <code class="docutils literal notranslate"><span class="pre">use_cache:</span> <span class="pre">false</span></code> 或启用检查点（<code class="docutils literal notranslate"><span class="pre">use_checkpoint:</span> <span class="pre">true</span></code>）时，HuggingFace 数据集缓存会被完全禁用。此时，DataJuicer 会将算子处理过程中产生的中间文件写入一个临时目录，并在处理完成后自动清理。<code class="docutils literal notranslate"><span class="pre">temp_dir</span></code> 参数用于指定这些中间文件的存放位置。</p>
+<section id="id14">
+<h3>行为说明<a class="headerlink" href="#id14" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p><strong>默认值为 <code class="docutils literal notranslate"><span class="pre">null</span></code></strong>：此时由操作系统决定临时目录位置（通常为 <code class="docutils literal notranslate"><span class="pre">/tmp</span></code>），等价于 Python 的 <code class="docutils literal notranslate"><span class="pre">tempfile.gettempdir()</span></code> 返回值。</p></li>
+<li><p><strong>禁用缓存时自动生效</strong>：只要缓存被禁用，<code class="docutils literal notranslate"><span class="pre">temp_dir</span></code> 就会被设置为 Python <code class="docutils literal notranslate"><span class="pre">tempfile</span></code> 模块的全局临时目录（<code class="docutils literal notranslate"><span class="pre">tempfile.tempdir</span></code>），影响整个进程中所有通过 <code class="docutils literal notranslate"><span class="pre">tempfile</span></code> 创建的临时文件。</p></li>
+<li><p><strong>缓存压缩自动禁用</strong>：禁用缓存后，<code class="docutils literal notranslate"><span class="pre">cache_compress</span></code> 配置会被自动忽略并置为 <code class="docutils literal notranslate"><span class="pre">null</span></code>。</p></li>
+</ul>
+</section>
+<section id="id15">
+<h3>配置示例<a class="headerlink" href="#id15" title="链接到此标题。">#</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">use_cache</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">temp_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/dj-temp</span><span class="w">    </span><span class="c1"># 指定临时目录，null 则由系统决定</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--use_cache<span class="w"> </span><span class="nb">false</span><span class="w"> </span>--temp_dir<span class="w"> </span>/data/dj-temp
+</pre></div>
+</div>
+</section>
+<section id="id16">
+<h3>安全须知<a class="headerlink" href="#id16" title="链接到此标题。">#</a></h3>
+<blockquote>
+<div><p><strong>请谨慎设置 <code class="docutils literal notranslate"><span class="pre">temp_dir</span></code>，错误的路径可能导致不可预期的程序行为。</strong></p>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>不要指向系统关键目录</strong>（如 <code class="docutils literal notranslate"><span class="pre">/</span></code>、<code class="docutils literal notranslate"><span class="pre">/usr</span></code>、<code class="docutils literal notranslate"><span class="pre">/etc</span></code>），因为临时文件的自动清理可能误删重要文件。</p></li>
+<li><p><strong>不要指向已有重要数据的目录</strong>，临时文件写入和清理操作可能与现有文件产生冲突。</p></li>
+<li><p><strong>确保目录有足够的磁盘空间</strong>：禁用缓存时，中间文件会在处理过程中动态写入和删除，峰值占用约等于单个算子输出的数据量。</p></li>
+<li><p><strong>目录不存在时会自动创建</strong>：若指定路径不存在，DataJuicer 会自动调用 <code class="docutils literal notranslate"><span class="pre">os.makedirs</span></code> 创建该目录。</p></li>
+</ul>
+</section>
+</section>
+<section id="id17">
+<h2>性能考虑<a class="headerlink" href="#id17" title="链接到此标题。">#</a></h2>
+<section id="id18">
+<h3>何时启用缓存<a class="headerlink" href="#id18" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p><strong>启用</strong>：迭代开发中频繁重新运行管道且仅有少量更改时</p></li>
+<li><p><strong>启用</strong>：算子计算成本高，希望跳过已计算步骤时</p></li>
+<li><p><strong>禁用</strong>：一次性处理，避免磁盘开销</p></li>
+</ul>
+</section>
+<section id="id19">
+<h3>何时启用压缩<a class="headerlink" href="#id19" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p><strong>启用</strong>：数据集大小超过数十 GB 且磁盘空间有限时</p></li>
+<li><p><strong>启用</strong> <code class="docutils literal notranslate"><span class="pre">zstd</span></code>：速度和压缩率的最佳平衡</p></li>
+<li><p><strong>启用</strong> <code class="docutils literal notranslate"><span class="pre">lz4</span></code>：压缩速度至关重要时</p></li>
+<li><p><strong>禁用</strong>：磁盘空间充足且希望最大化处理速度时</p></li>
+</ul>
+</section>
+</section>
+<section id="id20">
+<h2>故障排除<a class="headerlink" href="#id20" title="链接到此标题。">#</a></h2>
+<p><strong>缓存文件占用过多磁盘空间：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 检查缓存目录大小</span>
+du<span class="w"> </span>-sh<span class="w"> </span>~/.cache/data_juicer/
+
+<span class="c1"># 启用压缩</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--cache_compress<span class="w"> </span>zstd
+</pre></div>
+</div>
+<p><strong>过期缓存导致意外结果：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 清除 HuggingFace 数据集缓存</span>
+rm<span class="w"> </span>-rf<span class="w"> </span>~/.cache/huggingface/datasets/
+
+<span class="c1"># 或指定一个新的缓存目录</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--ds_cache_dir<span class="w"> </span>/tmp/fresh-cache
+</pre></div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="BadDataExhibition_ZH.html"
+       title="上一页">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">上一页</p>
+        <p class="prev-next-title">“坏”数据展览</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="DJ_SORA_ZH.html"
+       title="下一页">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">下一页</p>
+        <p class="prev-next-title">DJ-SORA</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">概述</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">配置</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">基本缓存设置</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">命令行</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">缓存目录结构</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">环境变量</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">缓存压缩</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">支持的算法</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">配置</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">多进程压缩</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api">缓存控制 API</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datasetcachecontrol">DatasetCacheControl</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset-cache-control">dataset_cache_control 装饰器</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compressionoff">CompressionOff</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compressmanager">CompressManager</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cachecompressmanager">CacheCompressManager</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">缓存与检查点</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">缓存禁用与临时目录</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">行为说明</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">配置示例</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">安全须知</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">性能考虑</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">何时启用缓存</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id19">何时启用压缩</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id20">故障排除</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/docs/Cache_ZH.md.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

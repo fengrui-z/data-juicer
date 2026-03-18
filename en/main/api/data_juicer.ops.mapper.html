@@ -3383,6 +3383,147 @@ call error or output parsing error.</p></li>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.LatexFigureContextExtractorMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.</span></span><span class="sig-name descname"><span class="pre">LatexFigureContextExtractorMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/latex_figure_context_extractor_mapper.html#LatexFigureContextExtractorMapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.LatexFigureContextExtractorMapper" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Extracts figures and their citing context from LaTeX source.</p>
+<p>This operator parses figure environments from a paper’s LaTeX
+source, extracts each figure’s caption, label, and image path(s),
+and finds the prose paragraphs that cite each figure.  It fans out
+one paper row into N figure rows (one per figure or subfigure).
+<strong>Samples that contain no figures with images are dropped from
+the output.</strong></p>
+<dl class="simple">
+<dt>Supported figure environments: figure, figure*, wrapfigure,</dt><dd><p>subfigure (environment), subfigure (command),
+subfloat (command, subfig package).</p>
+</dd>
+<dt>Supported caption commands: caption, caption*,</dt><dd><p>subcaption, captionof{figure}.</p>
+</dd>
+</dl>
+<p>Figures without includegraphics are skipped.  Subfigures
+inherit citing paragraphs from their parent figure’s label.</p>
+<p>Output fields (in addition to all input fields):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;image_key&gt;</span></code> (default <code class="docutils literal notranslate"><span class="pre">images</span></code>, inherited from base
+class): list of image paths from <code class="docutils literal notranslate"><span class="pre">\includegraphics</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;caption_key&gt;</span></code> (default <code class="docutils literal notranslate"><span class="pre">caption</span></code>): figure caption text.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;label_key&gt;</span></code> (default <code class="docutils literal notranslate"><span class="pre">label</span></code>): LaTeX label string.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;context_key&gt;</span></code> (default <code class="docutils literal notranslate"><span class="pre">citing_paragraphs</span></code>): list of
+paragraphs that cite this figure.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;parent_caption_key&gt;</span></code> (default <code class="docutils literal notranslate"><span class="pre">parent_caption</span></code>): parent
+figure caption (subfigures only; empty for standalone figures).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;parent_label_key&gt;</span></code> (default <code class="docutils literal notranslate"><span class="pre">parent_label</span></code>): parent
+figure label (subfigures only; empty for standalone figures).</p></li>
+</ul>
+<p>Note: this operator expects the full LaTeX source as a single
+string.  It does <strong>not</strong> resolve <code class="docutils literal notranslate"><span class="pre">\input</span></code> or <code class="docutils literal notranslate"><span class="pre">\include</span></code>
+directives.  If your documents span multiple <code class="docutils literal notranslate"><span class="pre">.tex</span></code> files,
+concatenate them into a single text field before applying this
+mapper.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.LatexFigureContextExtractorMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">citation_commands</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paragraph_separator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\n\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'caption'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'label'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'citing_paragraphs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_caption_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'parent_caption'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_label_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'parent_label'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/latex_figure_context_extractor_mapper.html#LatexFigureContextExtractorMapper.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.LatexFigureContextExtractorMapper.__init__" title="Link to this definition">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>citation_commands</strong> – LaTeX reference commands to search
+for when finding citing paragraphs. Defaults to
+[’ref’, ‘cref’, ‘Cref’, ‘autoref’].
+Comma-separated label lists (e.g. <code class="docutils literal notranslate"><span class="pre">\cref{fig:a,fig:b}</span></code>)
+are handled automatically.</p></li>
+<li><p><strong>paragraph_separator</strong> – Pattern for splitting LaTeX text
+into paragraphs. Defaults to ‘nn’.</p></li>
+<li><p><strong>caption_key</strong> – Output field name for the figure caption.</p></li>
+<li><p><strong>label_key</strong> – Output field name for the LaTeX label.</p></li>
+<li><p><strong>context_key</strong> – Output field name for citing paragraphs.</p></li>
+<li><p><strong>parent_caption_key</strong> – Output field name for the parent
+figure’s caption. For subfigures this carries the parent
+figure environment’s caption; for standalone figures it
+is an empty string.</p></li>
+<li><p><strong>parent_label_key</strong> – Output field name for the parent
+figure’s label. Useful for grouping subfigures that
+belong to the same figure environment. Empty string for
+standalone figures.</p></li>
+<li><p><strong>args</strong> – extra args</p></li>
+<li><p><strong>kwargs</strong> – extra args.  Notably <code class="docutils literal notranslate"><span class="pre">text_key</span></code> (default
+<code class="docutils literal notranslate"><span class="pre">'text'</span></code>) controls which input field contains the LaTeX
+source, and <code class="docutils literal notranslate"><span class="pre">image_key</span></code> (default <code class="docutils literal notranslate"><span class="pre">'images'</span></code>) controls
+the output field name for extracted image paths.  Both
+are inherited from the base <code class="docutils literal notranslate"><span class="pre">OP</span></code> class.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.LatexFigureContextExtractorMapper.process_batched">
+<span class="sig-name descname"><span class="pre">process_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/latex_figure_context_extractor_mapper.html#LatexFigureContextExtractorMapper.process_batched"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.LatexFigureContextExtractorMapper.process_batched" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.LatexMergeTexMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.</span></span><span class="sig-name descname"><span class="pre">LatexMergeTexMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/latex_merge_tex_mapper.html#LatexMergeTexMapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.LatexMergeTexMapper" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Extracts and concatenates all <code class="docutils literal notranslate"><span class="pre">.tex</span></code> files from a compressed
+LaTeX project archive into a single text field.</p>
+<p>Supported archive formats: <code class="docutils literal notranslate"><span class="pre">.tar</span></code>, <code class="docutils literal notranslate"><span class="pre">.tar.gz</span></code> / <code class="docutils literal notranslate"><span class="pre">.tgz</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">.zip</span></code>.  Plain <code class="docutils literal notranslate"><span class="pre">.gz</span></code> (single-file gzip) is <strong>not</strong>
+supported because gzip archives carry no filename metadata,
+making it impossible to verify that the content is actually a
+<code class="docutils literal notranslate"><span class="pre">.tex</span></code> file.</p>
+<p>All <code class="docutils literal notranslate"><span class="pre">.tex</span></code> files found inside the archive are read in-memory and
+joined with a configurable separator.  No ordering or
+deduplication is applied.</p>
+<p>This operator is typically placed before LaTeX-processing operators
+such as <code class="docutils literal notranslate"><span class="pre">remove_comments_mapper</span></code>, <code class="docutils literal notranslate"><span class="pre">expand_macro_mapper</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">latex_figure_context_extractor_mapper</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.LatexMergeTexMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compressed_file_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'compressed_file'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\n\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_file_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">52428800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_total_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">104857600</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/latex_merge_tex_mapper.html#LatexMergeTexMapper.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.LatexMergeTexMapper.__init__" title="Link to this definition">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>compressed_file_key</strong> – Field name that stores the archive
+file path.</p></li>
+<li><p><strong>separator</strong> – String used to join the contents of multiple
+<code class="docutils literal notranslate"><span class="pre">.tex</span></code> files.</p></li>
+<li><p><strong>max_file_size</strong> – Maximum allowed uncompressed size in bytes
+for a single <code class="docutils literal notranslate"><span class="pre">.tex</span></code> entry inside the archive.  Entries
+exceeding this limit are skipped with a warning.  Set to
+<code class="docutils literal notranslate"><span class="pre">None</span></code> or <code class="docutils literal notranslate"><span class="pre">0</span></code> to disable the check.</p></li>
+<li><p><strong>max_total_size</strong> – Maximum allowed cumulative size in bytes
+for all extracted <code class="docutils literal notranslate"><span class="pre">.tex</span></code> content combined.  Once this
+limit is reached, remaining files in the archive are
+skipped with a warning.  Set to <code class="docutils literal notranslate"><span class="pre">None</span></code> or <code class="docutils literal notranslate"><span class="pre">0</span></code> to
+disable the check.</p></li>
+<li><p><strong>args</strong> – extra args</p></li>
+<li><p><strong>kwargs</strong> – extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.LatexMergeTexMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/latex_merge_tex_mapper.html#LatexMergeTexMapper.process_single"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.LatexMergeTexMapper.process_single" title="Link to this definition">#</a></dt>
+<dd><p>For sample level, sample –&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> – sample to process</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="data_juicer.ops.mapper.MllmMapper">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.</span></span><span class="sig-name descname"><span class="pre">MllmMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/mllm_mapper.html#MllmMapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.MllmMapper" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
@@ -4450,7 +4591,7 @@ enabled, special characters (all except Chinese, letters, and numbers) are ignor
 checking for duplicates. The resulting text is reassembled with unique sentences.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="data_juicer.ops.mapper.RemoveRepeatSentencesMapper.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lowercase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_special_character</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_repeat_sentence_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/remove_repeat_sentences_mapper.html#RemoveRepeatSentencesMapper.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.RemoveRepeatSentencesMapper.__init__" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lowercase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_special_character</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_repeat_sentence_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tokenizer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/remove_repeat_sentences_mapper.html#RemoveRepeatSentencesMapper.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.RemoveRepeatSentencesMapper.__init__" title="Link to this definition">#</a></dt>
 <dd><p>Initialization method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -4464,6 +4605,11 @@ numbers.</p></li>
 length will not be deduplicated. If ignore_special_character is
 set to True, then special characters are not included in this
 length.</p></li>
+<li><p><strong>tokenizer</strong> – Custom sentence tokenizer. Can be a callable
+that takes a string and returns a list of sentence strings,
+or a lambda string for YAML configs (e.g.
+<code class="docutils literal notranslate"><span class="pre">&quot;lambda</span> <span class="pre">text:</span> <span class="pre">__import__('nltk').sent_tokenize(text)&quot;</span></code>).
+If None, uses the built-in regex-based splitter.</p></li>
 <li><p><strong>args</strong> – extra args</p></li>
 <li><p><strong>kwargs</strong> – extra args</p></li>
 </ul>
@@ -7212,6 +7358,16 @@ comprehensive list of whitespace characters, which can be found at
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.ImageTaggingVLMMapper.__init__"><code class="docutils literal notranslate"><span class="pre">ImageTaggingVLMMapper.__init__()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.ImageTaggingVLMMapper.parse_output"><code class="docutils literal notranslate"><span class="pre">ImageTaggingVLMMapper.parse_output()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.ImageTaggingVLMMapper.process_single"><code class="docutils literal notranslate"><span class="pre">ImageTaggingVLMMapper.process_single()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.LatexFigureContextExtractorMapper"><code class="docutils literal notranslate"><span class="pre">LatexFigureContextExtractorMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.LatexFigureContextExtractorMapper.__init__"><code class="docutils literal notranslate"><span class="pre">LatexFigureContextExtractorMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.LatexFigureContextExtractorMapper.process_batched"><code class="docutils literal notranslate"><span class="pre">LatexFigureContextExtractorMapper.process_batched()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.LatexMergeTexMapper"><code class="docutils literal notranslate"><span class="pre">LatexMergeTexMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.LatexMergeTexMapper.__init__"><code class="docutils literal notranslate"><span class="pre">LatexMergeTexMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.LatexMergeTexMapper.process_single"><code class="docutils literal notranslate"><span class="pre">LatexMergeTexMapper.process_single()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.MllmMapper"><code class="docutils literal notranslate"><span class="pre">MllmMapper</span></code></a><ul class="nav section-nav flex-column">

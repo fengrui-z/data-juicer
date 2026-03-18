@@ -520,6 +520,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_init_configs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.analyzer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Analyzer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.executor</span><span class="w"> </span><span class="kn">import</span> <span class="n">DefaultExecutor</span>
 
 <span class="n">DEFAULT_OUTPUT_DIR</span> <span class="o">=</span> <span class="s2">&quot;./outputs&quot;</span>
@@ -561,6 +562,25 @@
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
         <span class="n">error_msg</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Occur error when executing Data-Juicer: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="execute_analyze">
+<a class="viewcode-back" href="../../../api/data_juicer.tools.mcp_tool.html#data_juicer.tools.mcp_tool.execute_analyze">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">execute_analyze</span><span class="p">(</span><span class="n">dj_cfg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+
+    <span class="k">try</span><span class="p">:</span>
+
+        <span class="n">dj_cfg</span> <span class="o">=</span> <span class="n">add_extra_cfg</span><span class="p">(</span><span class="n">dj_cfg</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DJ analyzer config in MCP server: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">dj_cfg</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">dj_cfg</span> <span class="o">=</span> <span class="n">get_init_configs</span><span class="p">(</span><span class="n">dj_cfg</span><span class="p">,</span> <span class="n">load_configs_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">analyzer</span> <span class="o">=</span> <span class="n">Analyzer</span><span class="p">(</span><span class="n">dj_cfg</span><span class="p">)</span>
+        <span class="n">analyzer</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="n">analysis_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dj_cfg</span><span class="p">[</span><span class="s2">&quot;work_dir&quot;</span><span class="p">],</span> <span class="s2">&quot;analysis&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Analysis complete. &quot;</span> <span class="sa">f</span><span class="s2">&quot;Analysis results (stats, figures) are saved in: </span><span class="si">{</span><span class="n">analysis_path</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Occur error when executing Data-Juicer Analyzer: </span><span class="si">{</span><span class="n">error_msg</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 </pre></div>
 

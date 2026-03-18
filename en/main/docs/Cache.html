@@ -1,0 +1,1094 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Cache Management &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/Cache';</script>
+    <script src="../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../_static/icon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="DJ-SORA" href="DJ_SORA.html" />
+    <link rel="prev" title="“Bad” Data Exhibition" href="BadDataExhibition.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../en/main/docs/Cache.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../zh_CN/main/docs/Cache_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../main/docs/Cache.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../en/main/docs/Cache.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../zh_CN/main/docs/Cache_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../main/docs/Cache.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="tutorial/DJ-Cookbook.html">DJ-Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/Installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/QuickStart.html">Quick Start</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">docs</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="Operators.html">Operator Schemas 算子提要</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DatasetCfg.html">Dataset Configuration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BadDataExhibition.html">“Bad” Data Exhibition</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Cache Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DJ_SORA.html">DJ-SORA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DJ_service.html">DJ_service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DeveloperGuide.html">How-to Guide for Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Distributed.html">Distributed Data Processing in Data-Juicer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Export.html">Dataset Export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="JobManagement.html">Job Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PartitionAndCheckpoint.html">Partitioned Processing with Checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tracing.html">Data Tracing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="awesome_llm_data.html">Awesome Data-Model Co-Development of MLLMs </a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">operators</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="operators/aggregator/index.html">Aggregator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/deduplicator/index.html">Deduplicator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/filter/index.html">Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/mapper/index.html">Mapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/formatter/index.html">Formatter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/grouper/index.html">Grouper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/selector/index.html">Selector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/pipeline/index.html">Pipeline</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">demos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../demos/README.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/process_video_on_ray/data/Note.html">Note for dataset path</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">tools</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../tools/distributed_deduplication/README.html">Distributed Fuzzy Deduplication Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/README.html">Auto Evaluation Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/gpt_eval/README.html">GPT EVAL: Evaluate your model with OpenAI API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/recorder/README.html">Evaluation Results Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/README.html">Format Conversion Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/multimodal/README.html">Multimodal Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/post_tuning_dialog/README.html">Post Tuning Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/humanops/README.html">Label Studio Service Utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/mm_eval/inception_metrics/README.html">Metrics for video generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/mm_eval/vbench_metrics/README.html">VBench metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/postprocess/README.html">Postprocess tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/preprocess/README.html">Preprocess Tools</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">thirdparty</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../thirdparty/LLM_ecosystems/README.html">LLM Ecosystems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../thirdparty/models/README.html">Third-party Model Library</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../docs_index.html" class="nav-link">DOCS</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Cache Management</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="cache-management">
+<h1>Cache Management<a class="headerlink" href="#cache-management" title="Link to this heading">#</a></h1>
+<p>This document describes DataJuicer’s cache management system, including HuggingFace dataset caching, cache directory configuration, cache compression, and temporary storage.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>DataJuicer provides a caching mechanism based on HuggingFace Datasets to avoid redundant computation. When enabled, each operator generates cache files with a unique <strong>fingerprint</strong> based on:</p>
+<ul class="simple">
+<li><p>The fingerprint of the input data</p></li>
+<li><p>The operator name and parameters</p></li>
+<li><p>The hash of the processing function</p></li>
+</ul>
+<p>That is: same input + same operator configuration = same fingerprint = cache hit. Therefore, re-running the same pipeline on the same data will skip already-computed steps. For more details, please refer to our paper: <a class="reference external" href="https://arxiv.org/abs/2309.02033">Data-Juicer: A One-Stop Data Processing System for Large Language Models</a>.</p>
+<p>The cache system also provides:</p>
+<ul class="simple">
+<li><p><strong>Configurable cache directories</strong> via environment variables or config options</p></li>
+<li><p><strong>Cache compression</strong> to reduce disk usage for large-scale datasets</p></li>
+<li><p><strong>Temporary storage</strong> for intermediate files in non-cache mode</p></li>
+<li><p><strong>Fine-grained cache control</strong> via context managers and decorators</p></li>
+</ul>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h2>
+<section id="basic-cache-settings">
+<h3>Basic Cache Settings<a class="headerlink" href="#basic-cache-settings" title="Link to this heading">#</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">use_cache</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">           </span><span class="c1"># Enable/disable HuggingFace dataset caching</span>
+<span class="nt">ds_cache_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w">         </span><span class="c1"># Custom cache directory (overrides HF_DATASETS_CACHE)</span>
+<span class="nt">cache_compress</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w">       </span><span class="c1"># Compression method: &#39;gzip&#39;, &#39;zstd&#39;, &#39;lz4&#39;, or null</span>
+<span class="nt">temp_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w">             </span><span class="c1"># Temp directory for intermediate files when cache is disabled</span>
+</pre></div>
+</div>
+</section>
+<section id="command-line">
+<h3>Command Line<a class="headerlink" href="#command-line" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Enable caching (default)</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--use_cache<span class="w"> </span><span class="nb">true</span>
+
+<span class="c1"># Disable caching</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--use_cache<span class="w"> </span><span class="nb">false</span>
+
+<span class="c1"># Enable cache compression</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--cache_compress<span class="w"> </span>zstd
+
+<span class="c1"># Custom cache directory</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--ds_cache_dir<span class="w"> </span>/fast-storage/dj-cache
+</pre></div>
+</div>
+</section>
+</section>
+<section id="cache-directory-structure">
+<h2>Cache Directory Structure<a class="headerlink" href="#cache-directory-structure" title="Link to this heading">#</a></h2>
+<p>DataJuicer organizes cache files in a hierarchical directory structure controlled by environment variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>~/.cache/                              # CACHE_HOME (default)
+└── data_juicer/                       # DATA_JUICER_CACHE_HOME
+    ├── assets/                        # DATA_JUICER_ASSETS_CACHE
+    │   └── (extracted frames, stopwords, flagged words, etc.)
+    └── models/                        # DATA_JUICER_MODELS_CACHE
+        └── (downloaded model files)
+</pre></div>
+</div>
+<section id="environment-variables">
+<h3>Environment Variables<a class="headerlink" href="#environment-variables" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CACHE_HOME</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">~/.cache</span></code></p></td>
+<td><p>Root cache directory</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DATA_JUICER_CACHE_HOME</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$CACHE_HOME/data_juicer</span></code></p></td>
+<td><p>DataJuicer cache root</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DATA_JUICER_ASSETS_CACHE</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$DATA_JUICER_CACHE_HOME/assets</span></code></p></td>
+<td><p>Assets cache (frames, word lists, etc.)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DATA_JUICER_MODELS_CACHE</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">$DATA_JUICER_CACHE_HOME/models</span></code></p></td>
+<td><p>Downloaded models cache</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DATA_JUICER_EXTERNAL_MODELS_HOME</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>External models directory</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Override defaults by setting environment variables:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DATA_JUICER_CACHE_HOME</span><span class="o">=</span>/data/dj-cache
+<span class="nb">export</span><span class="w"> </span><span class="nv">DATA_JUICER_MODELS_CACHE</span><span class="o">=</span>/models/dj-models
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml
+</pre></div>
+</div>
+</section>
+</section>
+<section id="cache-compression">
+<h2>Cache Compression<a class="headerlink" href="#cache-compression" title="Link to this heading">#</a></h2>
+<p>For large-scale datasets (tens of GB or more), cache files can consume significant disk space. Cache compression reduces storage requirements by compressing intermediate cache files after each operator completes.</p>
+<section id="supported-algorithms">
+<h3>Supported Algorithms<a class="headerlink" href="#supported-algorithms" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Algorithm</p></th>
+<th class="head"><p>Library</p></th>
+<th class="head"><p>Speed</p></th>
+<th class="head"><p>Compression Ratio</p></th>
+<th class="head"><p>Recommended For</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">zstd</span></code></p></td>
+<td><p>zstandard</p></td>
+<td><p>Fast</p></td>
+<td><p>High</p></td>
+<td><p>General use (default)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lz4</span></code></p></td>
+<td><p>lz4</p></td>
+<td><p>Fastest</p></td>
+<td><p>Moderate</p></td>
+<td><p>Speed-critical workloads</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gzip</span></code></p></td>
+<td><p>gzip</p></td>
+<td><p>Slow</p></td>
+<td><p>High</p></td>
+<td><p>Compatibility needs</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id1">
+<h3>Configuration<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">use_cache</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">cache_compress</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">zstd</span><span class="w">    </span><span class="c1"># Enable zstd compression</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--cache_compress<span class="w"> </span>zstd
+</pre></div>
+</div>
+</section>
+<section id="multi-process-compression">
+<h3>Multi-Process Compression<a class="headerlink" href="#multi-process-compression" title="Link to this heading">#</a></h3>
+<p>Cache compression supports parallel processing. The number of compression worker processes is controlled by the <code class="docutils literal notranslate"><span class="pre">np</span></code> parameter:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">np</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span><span class="w">                   </span><span class="c1"># Number of parallel workers (also used for compression)</span>
+<span class="nt">cache_compress</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">zstd</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="cache-control-api">
+<h2>Cache Control API<a class="headerlink" href="#cache-control-api" title="Link to this heading">#</a></h2>
+<section id="datasetcachecontrol">
+<h3>DatasetCacheControl<a class="headerlink" href="#datasetcachecontrol" title="Link to this heading">#</a></h3>
+<p>A context manager to temporarily enable or disable HuggingFace dataset caching within a specific scope:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.cache_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetCacheControl</span>
+
+<span class="c1"># Temporarily disable caching</span>
+<span class="k">with</span> <span class="n">DatasetCacheControl</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="c1"># Operations here will not use cache</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">my_function</span><span class="p">)</span>
+
+<span class="c1"># Temporarily enable caching</span>
+<span class="k">with</span> <span class="n">DatasetCacheControl</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="c1"># Operations here will use cache</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">my_function</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="dataset-cache-control-decorator">
+<h3>dataset_cache_control Decorator<a class="headerlink" href="#dataset-cache-control-decorator" title="Link to this heading">#</a></h3>
+<p>A decorator for functions that need to control cache state:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.cache_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataset_cache_control</span>
+
+<span class="nd">@dataset_cache_control</span><span class="p">(</span><span class="n">on</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_without_cache</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">my_function</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="compressionoff">
+<h3>CompressionOff<a class="headerlink" href="#compressionoff" title="Link to this heading">#</a></h3>
+<p>A context manager to temporarily disable cache compression:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.compress</span><span class="w"> </span><span class="kn">import</span> <span class="n">CompressionOff</span>
+
+<span class="k">with</span> <span class="n">CompressionOff</span><span class="p">():</span>
+    <span class="c1"># Cache compression is disabled in this scope</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">my_function</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="compressmanager">
+<h3>CompressManager<a class="headerlink" href="#compressmanager" title="Link to this heading">#</a></h3>
+<p>Low-level API for manual compression/decompression:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.compress</span><span class="w"> </span><span class="kn">import</span> <span class="n">CompressManager</span>
+
+<span class="n">manager</span> <span class="o">=</span> <span class="n">CompressManager</span><span class="p">(</span><span class="n">compressor_format</span><span class="o">=</span><span class="s2">&quot;zstd&quot;</span><span class="p">)</span>
+
+<span class="c1"># Compress a file</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="s2">&quot;input.arrow&quot;</span><span class="p">,</span> <span class="s2">&quot;input.arrow.zstd&quot;</span><span class="p">)</span>
+
+<span class="c1"># Decompress a file</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="s2">&quot;input.arrow.zstd&quot;</span><span class="p">,</span> <span class="s2">&quot;input.arrow&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="cachecompressmanager">
+<h3>CacheCompressManager<a class="headerlink" href="#cachecompressmanager" title="Link to this heading">#</a></h3>
+<p>High-level API for managing HuggingFace dataset cache compression:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.compress</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheCompressManager</span>
+
+<span class="n">manager</span> <span class="o">=</span> <span class="n">CacheCompressManager</span><span class="p">(</span><span class="n">compressor_format</span><span class="o">=</span><span class="s2">&quot;zstd&quot;</span><span class="p">)</span>
+
+<span class="c1"># Compress previous dataset&#39;s cache files</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">prev_ds</span><span class="o">=</span><span class="n">previous_dataset</span><span class="p">,</span> <span class="n">this_ds</span><span class="o">=</span><span class="n">current_dataset</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="c1"># Decompress cache files for a dataset</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">ds</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="c1"># Clean up all compressed cache files</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">cleanup_cache_files</span><span class="p">(</span><span class="n">ds</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="cache-vs-checkpoint">
+<h2>Cache vs Checkpoint<a class="headerlink" href="#cache-vs-checkpoint" title="Link to this heading">#</a></h2>
+<p>Cache and checkpoint are mutually exclusive — enabling checkpoint automatically disables cache:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>Cache</p></th>
+<th class="head"><p>Checkpoint</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Purpose</strong></p></td>
+<td><p>Accelerate repeated runs with same configuration</p></td>
+<td><p>Fault recovery and resumption</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Granularity</strong></p></td>
+<td><p>Per-operator result</p></td>
+<td><p>Full dataset snapshot</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Storage Location</strong></p></td>
+<td><p>HuggingFace cache directory</p></td>
+<td><p>Work directory</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Recovery Method</strong></p></td>
+<td><p>Automatic (hash-based)</p></td>
+<td><p>Manual (config-based)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Compression</strong></p></td>
+<td><p>Supported (<code class="docutils literal notranslate"><span class="pre">cache_compress</span></code>)</p></td>
+<td><p>Not applicable</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Scenario</strong></p></td>
+<td><p>Iterative development, parameter tuning</p></td>
+<td><p>Long-running production tasks</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Cache mode (default)</span>
+<span class="nt">use_cache</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">use_checkpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+
+<span class="c1"># Checkpoint mode (cache auto-disabled)</span>
+<span class="nt">use_cache</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">           </span><span class="c1"># Will be overridden to false</span>
+<span class="nt">use_checkpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</section>
+<section id="disabling-cache-and-temporary-directory">
+<h2>Disabling Cache and Temporary Directory<a class="headerlink" href="#disabling-cache-and-temporary-directory" title="Link to this heading">#</a></h2>
+<p>When <code class="docutils literal notranslate"><span class="pre">use_cache:</span> <span class="pre">false</span></code> or checkpoint mode is enabled (<code class="docutils literal notranslate"><span class="pre">use_checkpoint:</span> <span class="pre">true</span></code>), HuggingFace dataset caching is fully disabled. In this mode, DataJuicer writes intermediate files produced during operator processing to a temporary directory, and cleans them up automatically when processing completes. The <code class="docutils literal notranslate"><span class="pre">temp_dir</span></code> parameter controls where these intermediate files are stored.</p>
+<section id="behavior">
+<h3>Behavior<a class="headerlink" href="#behavior" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Defaults to <code class="docutils literal notranslate"><span class="pre">null</span></code></strong>: When not set, the operating system determines the temporary directory location (typically <code class="docutils literal notranslate"><span class="pre">/tmp</span></code>), equivalent to Python’s <code class="docutils literal notranslate"><span class="pre">tempfile.gettempdir()</span></code>.</p></li>
+<li><p><strong>Takes effect automatically when cache is disabled</strong>: Once caching is disabled, <code class="docutils literal notranslate"><span class="pre">temp_dir</span></code> is applied as the global temporary directory for the entire process via Python’s <code class="docutils literal notranslate"><span class="pre">tempfile.tempdir</span></code>, affecting all temporary files created through <code class="docutils literal notranslate"><span class="pre">tempfile</span></code> in the process.</p></li>
+<li><p><strong>Cache compression is automatically disabled</strong>: When caching is disabled, <code class="docutils literal notranslate"><span class="pre">cache_compress</span></code> is automatically ignored and reset to <code class="docutils literal notranslate"><span class="pre">null</span></code>.</p></li>
+</ul>
+</section>
+<section id="id2">
+<h3>Configuration<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">use_cache</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">temp_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/dj-temp</span><span class="w">    </span><span class="c1"># Custom temp directory; null means system default</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--use_cache<span class="w"> </span><span class="nb">false</span><span class="w"> </span>--temp_dir<span class="w"> </span>/data/dj-temp
+</pre></div>
+</div>
+</section>
+<section id="safety-notes">
+<h3>Safety Notes<a class="headerlink" href="#safety-notes" title="Link to this heading">#</a></h3>
+<blockquote>
+<div><p><strong>Set <code class="docutils literal notranslate"><span class="pre">temp_dir</span></code> with caution — an unsafe path can cause unexpected program behavior.</strong></p>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>Do not point to critical system directories</strong> (e.g., <code class="docutils literal notranslate"><span class="pre">/</span></code>, <code class="docutils literal notranslate"><span class="pre">/usr</span></code>, <code class="docutils literal notranslate"><span class="pre">/etc</span></code>). Automatic cleanup of temporary files may accidentally delete important files.</p></li>
+<li><p><strong>Do not point to directories containing important data</strong>. Temporary file writes and cleanup operations may conflict with existing files.</p></li>
+<li><p><strong>Ensure sufficient disk space</strong>: When cache is disabled, intermediate files are written and deleted dynamically during processing. Peak disk usage is approximately equal to the output size of a single operator.</p></li>
+<li><p><strong>The directory is created automatically if it does not exist</strong>: DataJuicer calls <code class="docutils literal notranslate"><span class="pre">os.makedirs</span></code> to create the specified path if it is missing.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">temp_dir</span></code> affects the entire process’s <code class="docutils literal notranslate"><span class="pre">tempfile</span></code> behavior</strong>: Because it sets the global <code class="docutils literal notranslate"><span class="pre">tempfile.tempdir</span></code> variable, this setting influences all components in the process that rely on <code class="docutils literal notranslate"><span class="pre">tempfile</span></code>, including third-party libraries.</p></li>
+</ul>
+</section>
+</section>
+<section id="performance-considerations">
+<h2>Performance Considerations<a class="headerlink" href="#performance-considerations" title="Link to this heading">#</a></h2>
+<section id="when-to-enable-cache">
+<h3>When to Enable Cache<a class="headerlink" href="#when-to-enable-cache" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Enable</strong>: For iterative development where you frequently re-run pipelines with minor changes</p></li>
+<li><p><strong>Enable</strong>: When operators are computationally expensive and you want to skip already-computed steps</p></li>
+<li><p><strong>Disable</strong>: For one-shot processing to avoid disk overhead</p></li>
+</ul>
+</section>
+<section id="when-to-enable-compression">
+<h3>When to Enable Compression<a class="headerlink" href="#when-to-enable-compression" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Enable</strong>: When dataset size exceeds tens of GB and disk space is limited</p></li>
+<li><p><strong>Enable</strong> <code class="docutils literal notranslate"><span class="pre">zstd</span></code>: For the best balance of speed and compression ratio</p></li>
+<li><p><strong>Enable</strong> <code class="docutils literal notranslate"><span class="pre">lz4</span></code>: When compression speed is critical</p></li>
+<li><p><strong>Disable</strong>: When disk space is abundant and you want maximum processing speed</p></li>
+</ul>
+</section>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">#</a></h2>
+<p><strong>Cache files consuming too much disk space:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check cache directory size</span>
+du<span class="w"> </span>-sh<span class="w"> </span>~/.cache/data_juicer/
+
+<span class="c1"># Enable compression</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--cache_compress<span class="w"> </span>zstd
+</pre></div>
+</div>
+<p><strong>Stale cache causing unexpected results:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clear HuggingFace dataset cache</span>
+rm<span class="w"> </span>-rf<span class="w"> </span>~/.cache/huggingface/datasets/
+
+<span class="c1"># Or specify a fresh cache directory</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--ds_cache_dir<span class="w"> </span>/tmp/fresh-cache
+</pre></div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="BadDataExhibition.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">“Bad” Data Exhibition</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="DJ_SORA.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">DJ-SORA</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-cache-settings">Basic Cache Settings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-line">Command Line</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cache-directory-structure">Cache Directory Structure</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-variables">Environment Variables</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cache-compression">Cache Compression</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-algorithms">Supported Algorithms</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Configuration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-process-compression">Multi-Process Compression</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cache-control-api">Cache Control API</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datasetcachecontrol">DatasetCacheControl</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset-cache-control-decorator">dataset_cache_control Decorator</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compressionoff">CompressionOff</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compressmanager">CompressManager</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cachecompressmanager">CacheCompressManager</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cache-vs-checkpoint">Cache vs Checkpoint</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#disabling-cache-and-temporary-directory">Disabling Cache and Temporary Directory</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#behavior">Behavior</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Configuration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-notes">Safety Notes</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-considerations">Performance Considerations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-enable-cache">When to Enable Cache</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-enable-compression">When to Enable Compression</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/docs/Cache.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

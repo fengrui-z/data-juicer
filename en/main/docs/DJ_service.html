@@ -477,12 +477,15 @@
 <li class="toctree-l1"><a class="reference internal" href="Operators.html">Operator Schemas 算子提要</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DatasetCfg.html">Dataset Configuration Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BadDataExhibition.html">“Bad” Data Exhibition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cache.html">Cache Management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DJ_SORA.html">DJ-SORA</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">DJ_service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DeveloperGuide.html">How-to Guide for Developers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Distributed.html">Distributed Data Processing in Data-Juicer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Export.html">Dataset Export</a></li>
 <li class="toctree-l1"><a class="reference internal" href="JobManagement.html">Job Management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PartitionAndCheckpoint.html">Partitioned Processing with Checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tracing.html">Data Tracing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="awesome_llm_data.html">Awesome Data-Model Co-Development of MLLMs </a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">operators</span></p>
@@ -674,40 +677,90 @@
 <li><p>Recipe-Flow: Allows filtering operators by type and tags, and supports combining multiple operators into a data recipe for execution.</p></li>
 <li><p>Granular-Operators: Provides each operator as an independent tool, allowing you to flexibly specify a list of operators to use via environment variables, thus building a customized data processing pipeline.</p></li>
 </ul>
-<p>Please note that the Data-Juicer MCP server is currently in early development. Its features and available tools may change and expand as we continue to develop and improve the server.</p>
-<p>The server supports two deployment methods: <strong>stdio</strong> and <strong>SSE</strong>. The <strong>stdio</strong> method does not support multiprocessing. If you require multiprocessing or multithreading capabilities, you must use the <strong>SSE</strong> deployment method. Configuration details for each method are provided below.</p>
+<p>Please note that the Data-Juicer MCP server features and available tools may change and expand as we continue to develop and improve the server.</p>
+<p>The server supports two deployment methods: <strong>stdio</strong> and <strong>streamable-http</strong>. The <strong>stdio</strong> method does not support multiprocessing. If you require multiprocessing or multithreading capabilities, you must use the <strong>streamable-http</strong> deployment method. Configuration details for each method are provided below.</p>
 </section>
 <section id="recipe-flow">
 <h3>Recipe-Flow<a class="headerlink" href="#recipe-flow" title="Link to this heading">#</a></h3>
-<ol class="arabic simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">get_data_processing_ops</span></code></p>
+<p>The Recipe-Flow mode provides the following MCP tools:</p>
+<section id="search-ops">
+<h4>1. search_ops<a class="headerlink" href="#search-ops" title="Link to this heading">#</a></h4>
 <ul class="simple">
-<li><p>Retrieves a list of available data processing operators based on the specified type and tags (if unspecified, returns all operators)</p></li>
+<li><p>Search for available data processing operators with multiple search modes</p></li>
 <li><p>Input:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">op_type</span></code> (str, optional): The type of data processing operator to retrieve</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">tags</span></code> (List[str], optional): A list of tags to filter operators</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">query</span></code> (str, optional): Search query string. Required for “keyword” and “bm25” modes</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">op_type</span></code> (str, optional): The type of data processing operator to filter by (aggregator / deduplicator / filter / grouper / mapper / selector / pipeline)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tags</span></code> (List[str], optional): A list of tags to filter operators (Modality: text / image / audio / video / multimodal; Resource: cpu / gpu; Model: api / vllm / hf)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">match_all</span></code> (bool): Whether all specified tags must match. Default is True</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">search_mode</span></code> (str): Search strategy — “tags” (filter by type and tags, default), “regex” (regex pattern matching), or “bm25” (BM25 text relevance ranking)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">top_k</span></code> (int): Maximum number of results for “bm25” mode. Default is 10</p></li>
 </ul>
 </li>
-<li><p>Returns: A dictionary containing details about the available operators</p></li>
+<li><p>Returns: A dictionary containing details about the matched operators</p></li>
 </ul>
-</li>
-<li><p><code class="docutils literal notranslate"><span class="pre">run_data_recipe</span></code></p>
+</section>
+<section id="get-global-config-schema">
+<h4>2. get_global_config_schema<a class="headerlink" href="#get-global-config-schema" title="Link to this heading">#</a></h4>
 <ul class="simple">
-<li><p>Executes a data recipe</p></li>
+<li><p>Dynamically retrieves the full schema of all available global configuration options (parameter name, type, default value, description)</p></li>
+<li><p>No input parameters required</p></li>
+<li><p>Returns: A config schema dictionary, useful for discovering what options can be passed to <code class="docutils literal notranslate"><span class="pre">run_data_recipe</span></code> and <code class="docutils literal notranslate"><span class="pre">analyze_dataset</span></code> via the <code class="docutils literal notranslate"><span class="pre">extra_config</span></code> parameter</p></li>
+</ul>
+</section>
+<section id="get-dataset-load-strategies">
+<h4>3. get_dataset_load_strategies<a class="headerlink" href="#get-dataset-load-strategies" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Dynamically retrieves all available dataset loading strategies and their configuration rules</p></li>
+<li><p>No input parameters required</p></li>
+<li><p>Returns: Information about each strategy including executor_type, data_type, data_source, required/optional fields, etc. Useful for understanding how to configure the <code class="docutils literal notranslate"><span class="pre">dataset</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">run_data_recipe</span></code> and <code class="docutils literal notranslate"><span class="pre">analyze_dataset</span></code> for different data sources (local files, HuggingFace, S3, etc.)</p></li>
+</ul>
+</section>
+<section id="run-data-recipe">
+<h4>4. run_data_recipe<a class="headerlink" href="#run-data-recipe" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Executes a data processing recipe (equivalent to <code class="docutils literal notranslate"><span class="pre">dj-process</span></code>)</p></li>
 <li><p>Input:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">dataset_path</span></code> (str): The path to the dataset to be processed</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">process</span></code> (List[Dict]): A list of processing steps to execute, where each dictionary contains an operator name and a parameter dictionary</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">export_path</span></code> (str, optional): The path to export the dataset to. Default is None, meaning the dataset will be exported to ‘./outputs’</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">process</span></code> (List[Dict]): A list of processing steps to execute, where each dictionary contains an operator name and its parameter dictionary</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dataset_path</span></code> (str, optional): The path to the dataset to be processed (simple mode for local files)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dataset</span></code> (Dict, optional): Advanced dataset configuration supporting multiple data sources. Format: <code class="docutils literal notranslate"><span class="pre">{&quot;configs&quot;:</span> <span class="pre">[{&quot;type&quot;:</span> <span class="pre">&quot;local&quot;,</span> <span class="pre">&quot;path&quot;:</span> <span class="pre">&quot;...&quot;}],</span> <span class="pre">&quot;max_sample_num&quot;:</span> <span class="pre">10000}</span></code>. Use <code class="docutils literal notranslate"><span class="pre">get_dataset_load_strategies</span></code> to discover available options</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export_path</span></code> (str, optional): The path to export the processed dataset. Default is None, exporting to ‘./outputs’</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">np</span></code> (int): Number of processes to use. Default is 1</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">extra_config</span></code> (Dict, optional): Additional global configuration options. Use <code class="docutils literal notranslate"><span class="pre">get_global_config_schema</span></code> to discover all available options. Example: <code class="docutils literal notranslate"><span class="pre">{&quot;open_tracer&quot;:</span> <span class="pre">true,</span> <span class="pre">&quot;trace_num&quot;:</span> <span class="pre">20,</span> <span class="pre">&quot;op_fusion&quot;:</span> <span class="pre">true}</span></code></p></li>
 </ul>
 </li>
 <li><p>Returns: A string representing the execution result</p></li>
 </ul>
+</section>
+<section id="analyze-dataset">
+<h4>5. analyze_dataset<a class="headerlink" href="#analyze-dataset" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Analyzes dataset quality distribution (equivalent to <code class="docutils literal notranslate"><span class="pre">dj-analyze</span></code>)</p></li>
+<li><p>Computes statistics for specified filter/tagging operators, performs overall analysis, column-wise analysis, and correlation analysis, generating stats tables and distribution figures</p></li>
+<li><p>Input:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">process</span></code> (List[Dict]): A list of filter/tagging operators to compute stats for</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dataset_path</span></code> (str, optional): The path to the dataset to be analyzed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dataset</span></code> (Dict, optional): Advanced dataset configuration (same as <code class="docutils literal notranslate"><span class="pre">run_data_recipe</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export_path</span></code> (str, optional): The path to export the analysis results</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">np</span></code> (int): Number of processes to use. Default is 1</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">percentiles</span></code> (List[float], optional): Percentiles for distribution analysis. Default is [0.25, 0.5, 0.75]</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">extra_config</span></code> (Dict, optional): Additional global configuration options (same as <code class="docutils literal notranslate"><span class="pre">run_data_recipe</span></code>)</p></li>
+</ul>
 </li>
+<li><p>Returns: A string indicating where the analysis results are saved</p></li>
+</ul>
+</section>
+<section id="typical-workflow">
+<h4>Typical Workflow<a class="headerlink" href="#typical-workflow" title="Link to this heading">#</a></h4>
+<ol class="arabic simple">
+<li><p><strong>Search operators</strong>: Call <code class="docutils literal notranslate"><span class="pre">search_ops</span></code> to find suitable operators (supports tag filtering, keyword search, or BM25 natural language search)</p></li>
+<li><p><strong>Discover configuration</strong>: Optionally call <code class="docutils literal notranslate"><span class="pre">get_global_config_schema</span></code> and <code class="docutils literal notranslate"><span class="pre">get_dataset_load_strategies</span></code> to discover available configuration options and data sources</p></li>
+<li><p><strong>Analyze dataset</strong>: Call <code class="docutils literal notranslate"><span class="pre">analyze_dataset</span></code> to analyze dataset quality distribution and determine appropriate filter thresholds</p></li>
+<li><p><strong>Execute processing</strong>: Based on the analysis results, call <code class="docutils literal notranslate"><span class="pre">run_data_recipe</span></code> to execute the actual data processing</p></li>
 </ol>
-<p>For specific data processing requests, the MCP client should first call <code class="docutils literal notranslate"><span class="pre">get_data_processing_ops</span></code> to obtain relevant operator information, select the operators that meet the requirements, and then call <code class="docutils literal notranslate"><span class="pre">run_data_recipe</span></code> to execute the chosen operator combination.</p>
+</section>
 </section>
 <section id="granular-operators">
 <h3>Granular-Operators<a class="headerlink" href="#granular-operators" title="Link to this heading">#</a></h3>
@@ -834,19 +887,19 @@ text_pair_similarity_filter
 </ul>
 </section>
 </section>
-<section id="sse">
-<h4>SSE<a class="headerlink" href="#sse" title="Link to this heading">#</a></h4>
-<p>To use SSE deployment, first start the MCP server separately.</p>
+<section id="streamable-http">
+<h4>streamable-http<a class="headerlink" href="#streamable-http" title="Link to this heading">#</a></h4>
+<p>To use streamable-http deployment, first start the MCP server separately.</p>
 <ol class="arabic">
 <li><p>Run the MCP server: Execute the MCP server script and specify the port number:</p>
 <ul>
 <li><p>Using uvx:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uvx<span class="w"> </span>--from<span class="w"> </span>git+https://github.com/datajuicer/data-juicer<span class="w"> </span>dj-mcp<span class="w"> </span>&lt;MODE:<span class="w"> </span>recipe-flow/granular-ops&gt;<span class="w"> </span>--transport<span class="w"> </span>sse<span class="w"> </span>--port<span class="w"> </span><span class="m">8080</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uvx<span class="w"> </span>--from<span class="w"> </span>git+https://github.com/datajuicer/data-juicer<span class="w"> </span>dj-mcp<span class="w"> </span>&lt;MODE:<span class="w"> </span>recipe-flow/granular-ops&gt;<span class="w"> </span>--transport<span class="w"> </span>streamable-http<span class="w"> </span>--port<span class="w"> </span><span class="m">8080</span>
 </pre></div>
 </div>
 </li>
 <li><p>Local execution:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>dj-mcp<span class="w"> </span>&lt;MODE:<span class="w"> </span>recipe-flow/granular-ops&gt;<span class="w"> </span>--transport<span class="w"> </span>sse<span class="w"> </span>--port<span class="w"> </span><span class="m">8080</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>run<span class="w"> </span>dj-mcp<span class="w"> </span>&lt;MODE:<span class="w"> </span>recipe-flow/granular-ops&gt;<span class="w"> </span>--transport<span class="w"> </span>streamable-http<span class="w"> </span>--port<span class="w"> </span><span class="m">8080</span>
 </pre></div>
 </div>
 </li>
@@ -856,7 +909,7 @@ text_pair_similarity_filter
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;DJ_MCP&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://127.0.0.1:8080/sse&quot;</span>
+<span class="w">      </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://127.0.0.1:8080/mcp&quot;</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
@@ -866,8 +919,8 @@ text_pair_similarity_filter
 </ol>
 <p>Notes:</p>
 <ul class="simple">
-<li><p>URL: The <code class="docutils literal notranslate"><span class="pre">url</span></code> should point to the SSE endpoint of the running server (typically <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:&lt;port&gt;/sse</span></code>). Adjust the port number if a different value was used when starting the server.</p></li>
-<li><p>Separate server process: The SSE server must be running before the MCP client attempts to connect.</p></li>
+<li><p>URL: The <code class="docutils literal notranslate"><span class="pre">url</span></code> should point to the mcp endpoint of the running server (typically <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:&lt;port&gt;/mcp</span></code>). Adjust the port number if a different value was used when starting the server.</p></li>
+<li><p>Separate server process: The streamable-http server must be running before the MCP client attempts to connect.</p></li>
 <li><p>Firewall: Ensure the firewall allows connections to the specified port.</p></li>
 </ul>
 </section>
@@ -940,7 +993,15 @@ text_pair_similarity_filter
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mcp-server">MCP Server</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recipe-flow">Recipe-Flow</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recipe-flow">Recipe-Flow</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#search-ops">1. search_ops</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#get-global-config-schema">2. get_global_config_schema</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#get-dataset-load-strategies">3. get_dataset_load_strategies</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#run-data-recipe">4. run_data_recipe</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#analyze-dataset">5. analyze_dataset</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#typical-workflow">Typical Workflow</a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#granular-operators">Granular-Operators</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#stdio">stdio</a><ul class="nav section-nav flex-column">
@@ -948,7 +1009,7 @@ text_pair_similarity_filter
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#local-installation">Local Installation</a></li>
 </ul>
 </li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sse">SSE</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#streamable-http">streamable-http</a></li>
 </ul>
 </li>
 </ul>

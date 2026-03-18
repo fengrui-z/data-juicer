@@ -564,13 +564,35 @@
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="n">opencv_contrib_python_exist_code</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;show&quot;</span><span class="p">,</span> <span class="s2">&quot;opencv-contrib-python&quot;</span><span class="p">])</span>
-        <span class="c1"># This is written to fix version issues with Numpy</span>
-        <span class="k">if</span> <span class="n">opencv_contrib_python_exist_code</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># not exist</span>
+        <span class="c1"># check if only opencv-contrib-python is installed</span>
+        <span class="n">opencv_packages</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">installed_opencv</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">opencv_packages</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;opencv&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="c1"># if not, uninstall all opencv-related modules and reinstall opencv-contrib-python</span>
+        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">installed_opencv</span><span class="p">)</span> <span class="o">!=</span> <span class="p">{</span><span class="s2">&quot;opencv-contrib-python&quot;</span><span class="p">}:</span>
+            <span class="c1"># uninstall all opencv-related modules</span>
+            <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="s2">&quot;pip&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;uninstall&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;-y&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;opencv-python&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;opencv-python-headless&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;opencv-contrib-python&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;opencv-contrib-python-headless&quot;</span><span class="p">,</span>
+                <span class="p">],</span>
+                <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># reinstall opencv-contrib-python</span>
             <span class="n">LazyLoader</span><span class="o">.</span><span class="n">check_packages</span><span class="p">([</span><span class="s2">&quot;opencv-contrib-python&quot;</span><span class="p">])</span>
+
+            <span class="c1"># fix the version of numpy</span>
             <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="s2">&quot;numpy==1.26.4&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+        <span class="n">cv2</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;cv2&quot;</span><span class="p">,</span> <span class="s2">&quot;opencv-contrib-python&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">VideoCapture</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">CAP_PROP_FRAME_HEIGHT</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">CAP_PROP_FRAME_HEIGHT</span>

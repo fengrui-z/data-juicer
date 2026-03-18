@@ -1,0 +1,1023 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>数据追踪 &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/Tracing_ZH';</script>
+    <script src="../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../_static/icon.png"/>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="Awesome Data-Model Co-Development of MLLMs" href="awesome_llm_data.html" />
+    <link rel="prev" title="分区处理与检查点" href="PartitionAndCheckpoint_ZH.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../en/main/docs/Tracing.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../zh_CN/main/docs/Tracing_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../main/docs/Tracing_ZH.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="当前页面">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../en/main/docs/Tracing.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../zh_CN/main/docs/Tracing_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../main/docs/Tracing_ZH.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="章节导航">
+  <p class="bd-links__title" role="heading" aria-level="1">章节导航</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">教程</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="tutorial/DJ-Cookbook_ZH.html">DJ-Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/Installation_ZH.html">安装</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/QuickStart_ZH.html">快速上手</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">帮助文档</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="Operators.html">Operator Schemas 算子提要</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DatasetCfg_ZH.html">数据集配置指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BadDataExhibition_ZH.html">“坏”数据展览</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Cache_ZH.html">缓存管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DJ_SORA_ZH.html">DJ-SORA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DJ_service_ZH.html">DJ_服务化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DeveloperGuide_ZH.html">开发者指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Distributed_ZH.html">Data-Juicer 分布式数据处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Export_ZH.html">数据集导出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="JobManagement_ZH.html">作业管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PartitionAndCheckpoint_ZH.html">分区处理与检查点</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">数据追踪</a></li>
+<li class="toctree-l1"><a class="reference internal" href="awesome_llm_data.html">Awesome Data-Model Co-Development of MLLMs </a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">算子</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="operators/aggregator/index.html">Aggregator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/deduplicator/index.html">Deduplicator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/filter/index.html">Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/mapper/index.html">Mapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/formatter/index.html">Formatter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/grouper/index.html">Grouper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/selector/index.html">Selector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operators/pipeline/index.html">Pipeline</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">demos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../demos/README_ZH.html">演示</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/auto_evaluation_helm/README_ZH.html">自动化评测：HELM 评测及可视化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/process_video_on_ray/data/Note.html">Note for dataset path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/role_playing_system_prompt/README_ZH.html">为LLM构造角色扮演的system prompt</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">工具</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../tools/distributed_deduplication/README_ZH.html">分布式模糊去重工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/README_ZH.html">Auto Evaluation Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/gpt_eval/README_ZH.html">GPT EVAL：使用 OpenAI API 评测大模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/evaluator/recorder/README_ZH.html">Evaluation Results Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/README_ZH.html">格式转换工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/multimodal/README_ZH.html">多模态工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fmt_conversion/post_tuning_dialog/README_ZH.html">后微调工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/humanops/README.html">Label Studio Service Utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/mm_eval/inception_metrics/README_ZH.html">视频生成测评工具</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/mm_eval/vbench_metrics/README_ZH.html">VBench metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/postprocess/README_ZH.html">Postprocess tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/preprocess/README_ZH.html">预处理工具</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">第三方</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../thirdparty/LLM_ecosystems/README_ZH.html">大语言模型生态</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../thirdparty/models/README_ZH.html">第三方模型库</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../docs_index_ZH.html" class="nav-link">文档</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">数据追踪</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="id1">
+<h1>数据追踪<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h1>
+<p>本文档描述 DataJuicer 的追踪系统，用于跟踪数据处理过程中样本级别的变化。</p>
+<section id="id2">
+<h2>概述<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
+<p>Tracer 记录每个算子在处理管道中如何修改、过滤或去重各个样本。这对以下场景非常有用：</p>
+<ul class="simple">
+<li><p><strong>调试</strong> — 理解特定样本为何被修改或删除</p></li>
+<li><p><strong>质量保证</strong> — 验证算子是否按预期工作</p></li>
+<li><p><strong>审计</strong> — 维护数据转换的记录</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>配置<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h2>
+<section id="id4">
+<h3>基本设置<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">open_tracer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">        </span><span class="c1"># 启用/禁用追踪</span>
+<span class="nt">op_list_to_trace</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span><span class="w">      </span><span class="c1"># 要追踪的算子列表（空 = 所有算子）</span>
+<span class="nt">trace_num</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w">             </span><span class="c1"># 每个算子最多收集的样本数</span>
+<span class="nt">trace_keys</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span><span class="w">            </span><span class="c1"># 追踪输出中包含的额外字段</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3>命令行<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 启用所有算子的追踪</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--open_tracer<span class="w"> </span><span class="nb">true</span>
+
+<span class="c1"># 仅追踪特定算子</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--open_tracer<span class="w"> </span><span class="nb">true</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--op_list_to_trace<span class="w"> </span>clean_email_mapper,words_num_filter
+
+<span class="c1"># 每个算子收集更多样本</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--open_tracer<span class="w"> </span><span class="nb">true</span><span class="w"> </span>--trace_num<span class="w"> </span><span class="m">50</span>
+
+<span class="c1"># 在追踪输出中包含额外字段</span>
+dj-process<span class="w"> </span>--config<span class="w"> </span>config.yaml<span class="w"> </span>--open_tracer<span class="w"> </span><span class="nb">true</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--trace_keys<span class="w"> </span>sample_id,source_file
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id6">
+<h2>输出结构<a class="headerlink" href="#id6" title="链接到此标题。">#</a></h2>
+<p>追踪结果存储在工作目录的 <code class="docutils literal notranslate"><span class="pre">trace/</span></code> 子目录中：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>{work_dir}/
+└── trace/
+    ├── sample_trace-clean_email_mapper.jsonl
+    ├── sample_trace-words_num_filter.jsonl
+    ├── duplicate-document_deduplicator.jsonl
+    └── ...
+</pre></div>
+</div>
+<p>每个追踪文件为 JSONL 格式（每行一个 JSON 对象），内容因算子类型而异。</p>
+</section>
+<section id="id7">
+<h2>追踪的算子类型<a class="headerlink" href="#id7" title="链接到此标题。">#</a></h2>
+<section id="mapper">
+<h3>Mapper 追踪<a class="headerlink" href="#mapper" title="链接到此标题。">#</a></h3>
+<p>对于 Mapper 算子，Tracer 记录文本内容发生变化的样本。每条记录包含：</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>字段</p></th>
+<th class="head"><p>描述</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">original_text</span></code></p></td>
+<td><p>Mapper 处理前的文本</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">processed_text</span></code></p></td>
+<td><p>Mapper 处理后的文本</p></td>
+</tr>
+<tr class="row-even"><td><p><em>trace_keys 字段</em></p></td>
+<td><p>配置的 <code class="docutils literal notranslate"><span class="pre">trace_keys</span></code> 对应的值</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>输出示例（<code class="docutils literal notranslate"><span class="pre">sample_trace-clean_email_mapper.jsonl</span></code>）：</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;original_text&quot;</span><span class="p">:</span><span class="s2">&quot;联系我们 user@example.com 获取详情。&quot;</span><span class="p">,</span><span class="nt">&quot;processed_text&quot;</span><span class="p">:</span><span class="s2">&quot;联系我们  获取详情。&quot;</span><span class="p">}</span>
+<span class="p">{</span><span class="nt">&quot;original_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;邮箱：admin@test.org&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;processed_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;邮箱：&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>仅收集文本实际发生变化的样本，未变化的样本会被跳过。</p>
+</section>
+<section id="filter">
+<h3>Filter 追踪<a class="headerlink" href="#filter" title="链接到此标题。">#</a></h3>
+<p>对于 Filter 算子，Tracer 记录被<strong>过滤掉</strong>（删除）的样本。每条记录包含完整的样本数据。</p>
+<p>输出示例（<code class="docutils literal notranslate"><span class="pre">sample_trace-words_num_filter.jsonl</span></code>）：</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Too short.&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;__dj__stats__&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;words_num&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">}}</span>
+<span class="p">{</span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Also brief.&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;__dj__stats__&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;words_num&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">}}</span>
+</pre></div>
+</div>
+<p>仅收集被过滤掉的样本，通过过滤器的样本会被跳过。</p>
+</section>
+<section id="deduplicator">
+<h3>Deduplicator 追踪<a class="headerlink" href="#deduplicator" title="链接到此标题。">#</a></h3>
+<p>对于 Deduplicator 算子，Tracer 记录近似重复的样本对。每条记录包含：</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>字段</p></th>
+<th class="head"><p>描述</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dup1</span></code></p></td>
+<td><p>重复对中的第一个样本</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dup2</span></code></p></td>
+<td><p>重复对中的第二个样本</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>输出示例（<code class="docutils literal notranslate"><span class="pre">duplicate-document_deduplicator.jsonl</span></code>）：</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;dup1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;这是一段重复的文本。&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;dup2&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;这是一段重复的文本。&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id8">
+<h2>样本收集行为<a class="headerlink" href="#id8" title="链接到此标题。">#</a></h2>
+<p>Tracer 使用高效的<strong>样本级收集</strong>方式：</p>
+<ol class="arabic simple">
+<li><p>每个算子在处理过程中最多收集 <code class="docutils literal notranslate"><span class="pre">trace_num</span></code> 个样本</p></li>
+<li><p>收集到足够样本后提前停止</p></li>
+<li><p>在默认模式下，收集是<strong>线程安全</strong>的，使用多进程锁</p></li>
+<li><p>在 Ray 模式下，每个 Worker 有自己的 Tracer 实例（无需加锁）</p></li>
+</ol>
+<p>这种设计最大限度地减少了性能开销——Tracer 不会比较整个数据集，而是在处理过程中实时捕获变化。</p>
+</section>
+<section id="trace-keys">
+<h2>trace_keys<a class="headerlink" href="#trace-keys" title="链接到此标题。">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">trace_keys</span></code> 选项允许在追踪输出中包含原始样本的额外字段。这对于识别哪些样本受到影响非常有用：</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">open_tracer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">trace_keys</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sample_id</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">source_file</span>
+</pre></div>
+</div>
+<p>使用此配置，Mapper 追踪条目将包含：</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;sample_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;doc_00042&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;source_file&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;corpus_part1.jsonl&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;original_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;原始内容...&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;processed_text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;处理后的内容...&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="api">
+<h2>API 参考<a class="headerlink" href="#api" title="链接到此标题。">#</a></h2>
+<section id="tracer">
+<h3>Tracer（默认模式）<a class="headerlink" href="#tracer" title="链接到此标题。">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.tracer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tracer</span>
+
+<span class="n">tracer</span> <span class="o">=</span> <span class="n">Tracer</span><span class="p">(</span>
+    <span class="n">work_dir</span><span class="o">=</span><span class="s2">&quot;./outputs&quot;</span><span class="p">,</span>
+    <span class="n">op_list_to_trace</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;clean_email_mapper&quot;</span><span class="p">,</span> <span class="s2">&quot;words_num_filter&quot;</span><span class="p">],</span>
+    <span class="n">show_num</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">trace_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sample_id&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># 检查某个算子是否需要追踪</span>
+<span class="n">tracer</span><span class="o">.</span><span class="n">should_trace_op</span><span class="p">(</span><span class="s2">&quot;clean_email_mapper&quot;</span><span class="p">)</span>  <span class="c1"># True</span>
+
+<span class="c1"># 检查是否已收集足够的样本</span>
+<span class="n">tracer</span><span class="o">.</span><span class="n">is_collection_complete</span><span class="p">(</span><span class="s2">&quot;clean_email_mapper&quot;</span><span class="p">)</span>  <span class="c1"># False</span>
+
+<span class="c1"># 收集 Mapper 样本</span>
+<span class="n">tracer</span><span class="o">.</span><span class="n">collect_mapper_sample</span><span class="p">(</span>
+    <span class="n">op_name</span><span class="o">=</span><span class="s2">&quot;clean_email_mapper&quot;</span><span class="p">,</span>
+    <span class="n">original_sample</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;邮箱：a@b.com&quot;</span><span class="p">},</span>
+    <span class="n">processed_sample</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;邮箱：&quot;</span><span class="p">},</span>
+    <span class="n">text_key</span><span class="o">=</span><span class="s2">&quot;text&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># 收集 Filter 样本</span>
+<span class="n">tracer</span><span class="o">.</span><span class="n">collect_filter_sample</span><span class="p">(</span>
+    <span class="n">op_name</span><span class="o">=</span><span class="s2">&quot;words_num_filter&quot;</span><span class="p">,</span>
+    <span class="n">sample</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;太短&quot;</span><span class="p">},</span>
+    <span class="n">should_keep</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="raytracer">
+<h3>RayTracer（分布式模式）<a class="headerlink" href="#raytracer" title="链接到此标题。">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.tracer.ray_tracer</span><span class="w"> </span><span class="kn">import</span> <span class="n">RayTracer</span>
+
+<span class="c1"># RayTracer 是一个 Ray Actor — 通过 Ray 创建</span>
+<span class="n">tracer</span> <span class="o">=</span> <span class="n">RayTracer</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span>
+    <span class="n">work_dir</span><span class="o">=</span><span class="s2">&quot;./outputs&quot;</span><span class="p">,</span>
+    <span class="n">op_list_to_trace</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># 追踪所有算子</span>
+    <span class="n">show_num</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">trace_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sample_id&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># 远程方法调用</span>
+<span class="n">ray</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tracer</span><span class="o">.</span><span class="n">collect_mapper_sample</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span>
+    <span class="n">op_name</span><span class="o">=</span><span class="s2">&quot;clean_email_mapper&quot;</span><span class="p">,</span>
+    <span class="n">original_sample</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;邮箱：a@b.com&quot;</span><span class="p">},</span>
+    <span class="n">processed_sample</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;邮箱：&quot;</span><span class="p">},</span>
+    <span class="n">text_key</span><span class="o">=</span><span class="s2">&quot;text&quot;</span>
+<span class="p">))</span>
+
+<span class="c1"># 最终化并导出所有追踪结果</span>
+<span class="n">ray</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tracer</span><span class="o">.</span><span class="n">finalize_traces</span><span class="o">.</span><span class="n">remote</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h3>辅助函数<a class="headerlink" href="#id9" title="链接到此标题。">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">data_juicer.core.tracer</span></code> 模块提供了模式无关的辅助函数：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.tracer</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">should_trace_op</span><span class="p">,</span>
+    <span class="n">check_tracer_collect_complete</span><span class="p">,</span>
+    <span class="n">collect_for_mapper</span><span class="p">,</span>
+    <span class="n">collect_for_filter</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># 这些函数自动处理默认模式和 Ray 模式</span>
+<span class="n">should_trace_op</span><span class="p">(</span><span class="n">tracer_instance</span><span class="p">,</span> <span class="s2">&quot;clean_email_mapper&quot;</span><span class="p">)</span>
+<span class="n">check_tracer_collect_complete</span><span class="p">(</span><span class="n">tracer_instance</span><span class="p">,</span> <span class="s2">&quot;clean_email_mapper&quot;</span><span class="p">)</span>
+<span class="n">collect_for_mapper</span><span class="p">(</span><span class="n">tracer_instance</span><span class="p">,</span> <span class="s2">&quot;op_name&quot;</span><span class="p">,</span> <span class="n">original</span><span class="p">,</span> <span class="n">processed</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">)</span>
+<span class="n">collect_for_filter</span><span class="p">(</span><span class="n">tracer_instance</span><span class="p">,</span> <span class="s2">&quot;op_name&quot;</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">should_keep</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id10">
+<h2>性能考虑<a class="headerlink" href="#id10" title="链接到此标题。">#</a></h2>
+<section id="id11">
+<h3>开销<a class="headerlink" href="#id11" title="链接到此标题。">#</a></h3>
+<ul class="simple">
+<li><p>当 <code class="docutils literal notranslate"><span class="pre">trace_num</span></code> 较小时（默认：10），追踪的额外开销极小</p></li>
+<li><p>一旦某个算子收集了 <code class="docutils literal notranslate"><span class="pre">trace_num</span></code> 个样本，就不再进行进一步收集</p></li>
+<li><p>主要成本是 Mapper 中原始文本与处理后文本的比较</p></li>
+</ul>
+</section>
+<section id="id12">
+<h3>建议<a class="headerlink" href="#id12" title="链接到此标题。">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>场景</p></th>
+<th class="head"><p>推荐设置</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>开发/调试</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">open_tracer:</span> <span class="pre">true</span></code>，<code class="docutils literal notranslate"><span class="pre">trace_num:</span> <span class="pre">10-50</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>生产运行</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">open_tracer:</span> <span class="pre">false</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>审计特定算子</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">open_tracer:</span> <span class="pre">true</span></code>，<code class="docutils literal notranslate"><span class="pre">op_list_to_trace:</span> <span class="pre">[特定算子]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>大规模追踪</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">open_tracer:</span> <span class="pre">true</span></code>，<code class="docutils literal notranslate"><span class="pre">trace_num:</span> <span class="pre">100</span></code>，指定 <code class="docutils literal notranslate"><span class="pre">op_list_to_trace</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="id13">
+<h2>故障排除<a class="headerlink" href="#id13" title="链接到此标题。">#</a></h2>
+<p><strong>没有生成追踪文件：</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 验证追踪器是否启用</span>
+grep<span class="w"> </span><span class="s2">&quot;open_tracer&quot;</span><span class="w"> </span>config.yaml
+
+<span class="c1"># 检查追踪目录是否存在</span>
+ls<span class="w"> </span>-la<span class="w"> </span>./outputs/<span class="o">{</span>work_dir<span class="o">}</span>/trace/
+</pre></div>
+</div>
+<p><strong>追踪文件为空：</strong></p>
+<ul class="simple">
+<li><p>对于 Mapper：算子可能没有修改任何样本</p></li>
+<li><p>对于 Filter：算子可能没有过滤掉任何样本</p></li>
+<li><p>检查日志中是否有类似 &quot;Datasets before and after op [X] are all the same&quot; 的警告</p></li>
+</ul>
+<p><strong>追踪文件中样本太少：</strong></p>
+<ul class="simple">
+<li><p>增加 <code class="docutils literal notranslate"><span class="pre">trace_num</span></code> 以收集更多样本</p></li>
+<li><p>数据集中变化/过滤的样本可能少于 <code class="docutils literal notranslate"><span class="pre">trace_num</span></code></p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="PartitionAndCheckpoint_ZH.html"
+       title="上一页">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">上一页</p>
+        <p class="prev-next-title">分区处理与检查点</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="awesome_llm_data.html"
+       title="下一页">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">下一页</p>
+        <p class="prev-next-title">Awesome Data-Model Co-Development of MLLMs </p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">概述</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">配置</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">基本设置</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">命令行</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">输出结构</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">追踪的算子类型</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mapper">Mapper 追踪</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#filter">Filter 追踪</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deduplicator">Deduplicator 追踪</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">样本收集行为</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trace-keys">trace_keys</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api">API 参考</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tracer">Tracer（默认模式）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#raytracer">RayTracer（分布式模式）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">辅助函数</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">性能考虑</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">开销</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">建议</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">故障排除</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>本页</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/docs/Tracing_ZH.md.txt"
+            rel="nofollow">显示源代码</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
