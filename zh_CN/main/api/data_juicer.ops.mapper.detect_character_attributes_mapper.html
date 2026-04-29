@@ -514,8 +514,52 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-detect-character-attributes-mapper-module">
-<h1>data_juicer.ops.mapper.detect_character_attributes_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-detect-character-attributes-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.detect_character_attributes_mapper">
+<span id="data-juicer-ops-mapper-detect-character-attributes-mapper-module"></span><h1>data_juicer.ops.mapper.detect_character_attributes_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.detect_character_attributes_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.detect_character_attributes_mapper.DetectCharacterAttributesMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.detect_character_attributes_mapper.</span></span><span class="sig-name descname"><span class="pre">DetectCharacterAttributesMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/detect_character_attributes_mapper.html#DetectCharacterAttributesMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.detect_character_attributes_mapper.DetectCharacterAttributesMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Takes an image, a caption, and main character names as input to extract the characters' attributes.</p>
+<p>Extracts and classifies attributes of main characters in an image using a combination of
+object detection, image-text matching, and language model inference. It first locates the
+main characters in the image using YOLOE and then uses a Hugging Face tokenizer and a
+LLaMA-based model to classify each character into categories like 'object', 'animal',
+'person', 'text', or 'other'. The operator also extracts detailed features such as color,
+material, and action for each character. The final output includes bounding boxes and a
+list of characteristics for each main character. The results are stored in the
+'main_character_attributes_list' field under the 'meta' key.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.detect_character_attributes_mapper.DetectCharacterAttributesMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detect_character_locations_mapper_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/detect_character_attributes_mapper.html#DetectCharacterAttributesMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.detect_character_attributes_mapper.DetectCharacterAttributesMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>detect_character_locations_mapper_args</strong> -- Arguments for detect_character_locations_mapper_args.
+Controls the threshold for locating the main character.
+Default empty dict will use fixed values: default mllm_mapper_args,
+default image_text_matching_filter_args, yoloe_path=&quot;yoloe-11l-seg.pt&quot;,
+iou_threshold=0.7, matching_score_threshold=0.4,</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.detect_character_attributes_mapper.DetectCharacterAttributesMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/detect_character_attributes_mapper.html#DetectCharacterAttributesMapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.detect_character_attributes_mapper.DetectCharacterAttributesMapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +582,22 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.detect_character_attributes_mapper.DetectCharacterAttributesMapper"><code class="docutils literal notranslate"><span class="pre">DetectCharacterAttributesMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.detect_character_attributes_mapper.DetectCharacterAttributesMapper.__init__"><code class="docutils literal notranslate"><span class="pre">DetectCharacterAttributesMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.detect_character_attributes_mapper.DetectCharacterAttributesMapper.process_single"><code class="docutils literal notranslate"><span class="pre">DetectCharacterAttributesMapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

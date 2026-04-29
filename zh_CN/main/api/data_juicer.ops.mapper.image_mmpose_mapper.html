@@ -514,8 +514,74 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-image-mmpose-mapper-module">
-<h1>data_juicer.ops.mapper.image_mmpose_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-image-mmpose-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.image_mmpose_mapper">
+<span id="data-juicer-ops-mapper-image-mmpose-mapper-module"></span><h1>data_juicer.ops.mapper.image_mmpose_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.image_mmpose_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.image_mmpose_mapper.ImageMMPoseMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.image_mmpose_mapper.</span></span><span class="sig-name descname"><span class="pre">ImageMMPoseMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/image_mmpose_mapper.html#ImageMMPoseMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.image_mmpose_mapper.ImageMMPoseMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Mapper to perform human keypoint detection inference using MMPose models.
+It requires three essential components for model initialization:
+- deploy_cfg (str): Path to the deployment configuration file (defines inference settings)
+- model_cfg (str): Path to the model configuration file (specifies model architecture)
+- model_files (List[str]): Model weight files including pre-trained weights and parameters</p>
+<p>The implementation follows the official MMPose deployment guidelines from MMDeploy.
+For detailed configuration requirements and usage examples, refer to:
+<a class="github reference external" href="https://github.com/open-mmlab/mmdeploy/blob/main/docs/en/04-supported-codebases/mmpose.md">open-mmlab/mmdeploy</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.image_mmpose_mapper.ImageMMPoseMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deploy_cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pose_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pose_info'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visualization_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/image_mmpose_mapper.html#ImageMMPoseMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.image_mmpose_mapper.ImageMMPoseMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.
+:param deploy_cfg: MMPose deployment config file.
+:param model_cfg: MMPose model config file.
+:param model_files: Path to the model weight files.
+:param pose_key: Key to store pose information.
+:param visualization_dir: Directory to save visualization results.
+:param args: extra args
+:param kwargs: extra args</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.image_mmpose_mapper.ImageMMPoseMapper.parse_and_filter">
+<span class="sig-name descname"><span class="pre">parse_and_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_sample</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/image_mmpose_mapper.html#ImageMMPoseMapper.parse_and_filter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.image_mmpose_mapper.ImageMMPoseMapper.parse_and_filter" title="链接到此定义。">#</a></dt>
+<dd><p>Extract elements necessary to represent a prediction into a
+dictionary.</p>
+<p>It's better to contain only basic data elements such as strings and
+numbers in order to guarantee it's json-serializable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_sample</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">PoseDataSample</span></code>) -- Predictions of the model.</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>Prediction results.</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.image_mmpose_mapper.ImageMMPoseMapper.visualize_results">
+<span class="sig-name descname"><span class="pre">visualize_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/image_mmpose_mapper.html#ImageMMPoseMapper.visualize_results"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.image_mmpose_mapper.ImageMMPoseMapper.visualize_results" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.image_mmpose_mapper.ImageMMPoseMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/image_mmpose_mapper.html#ImageMMPoseMapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.image_mmpose_mapper.ImageMMPoseMapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +604,24 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.image_mmpose_mapper.ImageMMPoseMapper"><code class="docutils literal notranslate"><span class="pre">ImageMMPoseMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.image_mmpose_mapper.ImageMMPoseMapper.__init__"><code class="docutils literal notranslate"><span class="pre">ImageMMPoseMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.image_mmpose_mapper.ImageMMPoseMapper.parse_and_filter"><code class="docutils literal notranslate"><span class="pre">ImageMMPoseMapper.parse_and_filter()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.image_mmpose_mapper.ImageMMPoseMapper.visualize_results"><code class="docutils literal notranslate"><span class="pre">ImageMMPoseMapper.visualize_results()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.image_mmpose_mapper.ImageMMPoseMapper.process_single"><code class="docutils literal notranslate"><span class="pre">ImageMMPoseMapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

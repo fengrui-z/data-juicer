@@ -514,8 +514,83 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-filter-video-motion-score-ptlflow-filter-module">
-<h1>data_juicer.ops.filter.video_motion_score_ptlflow_filter module<a class="headerlink" href="#data-juicer-ops-filter-video-motion-score-ptlflow-filter-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.filter.video_motion_score_ptlflow_filter">
+<span id="data-juicer-ops-filter-video-motion-score-ptlflow-filter-module"></span><h1>data_juicer.ops.filter.video_motion_score_ptlflow_filter module<a class="headerlink" href="#module-data_juicer.ops.filter.video_motion_score_ptlflow_filter" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.video_motion_score_ptlflow_filter.VideoMotionScorePtlflowFilter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.filter.video_motion_score_ptlflow_filter.</span></span><span class="sig-name descname"><span class="pre">VideoMotionScorePtlflowFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/video_motion_score_ptlflow_filter.html#VideoMotionScorePtlflowFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.video_motion_score_ptlflow_filter.VideoMotionScorePtlflowFilter" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.filter.video_motion_score_filter.html#data_juicer.ops.filter.video_motion_score_filter.VideoMotionScoreFilter" title="data_juicer.ops.filter.video_motion_score_filter.VideoMotionScoreFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">VideoMotionScoreFilter</span></code></a></p>
+<p>Filter to keep samples with video motion scores from ptlflow within a specified range.</p>
+<p>This operator utilizes the ptlflow library (<a class="github reference external" href="https://github.com/hmorimitsu/ptlflow">hmorimitsu/ptlflow</a>) to
+predict optical flow between video frames. It keeps samples where the
+video motion score is within the given min and max score range. The motion score is
+computed based on the optical flow between frames, which is estimated using the models
+supported in ptlflow. The operator can sample frames at a specified FPS and apply
+transformations to the frames before computing the flow.</p>
+<ul class="simple">
+<li><p>The models in ptlflow is used to estimate the optical flow.</p></li>
+<li><p>Frames are preprocessed using a series of transformations including normalization and
+color channel flipping.</p></li>
+<li><p>The motion score is calculated from the optical flow data.</p></li>
+<li><p>The operator can be configured to filter based on any or all frames in the video.</p></li>
+<li><p>The device for model inference (CPU or CUDA) is automatically detected and set.</p></li>
+</ul>
+<p>For further details, refer to the official documentation:
+<a class="reference external" href="https://ptlflow.readthedocs.io/">https://ptlflow.readthedocs.io/</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.video_motion_score_ptlflow_filter.VideoMotionScorePtlflowFilter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.7976931348623157e+308</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dpflow'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ckpt_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'things'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_model_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_fps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">divisible</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">any_or_all</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'any'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">if_output_optical_flow</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optical_flow_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'video_optical_flow'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/video_motion_score_ptlflow_filter.html#VideoMotionScorePtlflowFilter.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.video_motion_score_ptlflow_filter.VideoMotionScorePtlflowFilter.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_score</strong> -- The minimum motion score to keep samples.</p></li>
+<li><p><strong>max_score</strong> -- The maximum motion score to keep samples.</p></li>
+<li><p><strong>frame_field</strong> -- the field name of video frames to compute motion score.
+If frame_field is None, extract frames from the video field.</p></li>
+<li><p><strong>sampling_fps</strong> -- The sampling rate in frames_per_second for
+optical flow calculations.</p></li>
+<li><p><strong>size</strong> -- Resize frames before computing optical flow. If size is a
+sequence like (h, w), frame size will be matched to this. If size
+is an int, smaller edge of frames will be matched to this number.
+i.e, if height &gt; width, then frame will be rescaled to (size *
+height / width, size). Default <cite>None</cite> to keep the original size.</p></li>
+<li><p><strong>max_size</strong> -- The maximum allowed for the longer edge of resized
+frames. If the longer edge of frames is greater than max_size after
+being resized according to size, size will be overruled so that the
+longer edge is equal to max_size. As a result, the smaller edge may
+be shorter than size. This is only supported if size is an int.</p></li>
+<li><p><strong>divisible</strong> -- The number that the dimensions must be divisible by.</p></li>
+<li><p><strong>relative</strong> -- If <cite>True</cite>, the optical flow magnitude is normalized to
+a [0, 1] range, relative to the frame's diagonal length.</p></li>
+<li><p><strong>any_or_all</strong> -- keep this sample with 'any' or 'all' strategy of
+all videos. 'any': keep this sample if any videos meet the
+condition. 'all': keep this sample only if all videos meet the
+condition.</p></li>
+<li><p><strong>if_output_optical_flow</strong> -- Determines whether to output
+the computed optical flows into the metas. The optical flows for each
+video will be stored in the shape of (num_frame, H, W, 2)</p></li>
+<li><p><strong>optical_flow_key</strong> -- The field name to store the optical flows. It's
+&quot;video_optical_flow&quot; in default.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.video_motion_score_ptlflow_filter.VideoMotionScorePtlflowFilter.setup_model">
+<span class="sig-name descname"><span class="pre">setup_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/video_motion_score_ptlflow_filter.html#VideoMotionScorePtlflowFilter.setup_model"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.video_motion_score_ptlflow_filter.VideoMotionScorePtlflowFilter.setup_model" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.video_motion_score_ptlflow_filter.VideoMotionScorePtlflowFilter.compute_flow">
+<span class="sig-name descname"><span class="pre">compute_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prev_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curr_frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/video_motion_score_ptlflow_filter.html#VideoMotionScorePtlflowFilter.compute_flow"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.video_motion_score_ptlflow_filter.VideoMotionScorePtlflowFilter.compute_flow" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +613,23 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.video_motion_score_ptlflow_filter.VideoMotionScorePtlflowFilter"><code class="docutils literal notranslate"><span class="pre">VideoMotionScorePtlflowFilter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.video_motion_score_ptlflow_filter.VideoMotionScorePtlflowFilter.__init__"><code class="docutils literal notranslate"><span class="pre">VideoMotionScorePtlflowFilter.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.video_motion_score_ptlflow_filter.VideoMotionScorePtlflowFilter.setup_model"><code class="docutils literal notranslate"><span class="pre">VideoMotionScorePtlflowFilter.setup_model()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.video_motion_score_ptlflow_filter.VideoMotionScorePtlflowFilter.compute_flow"><code class="docutils literal notranslate"><span class="pre">VideoMotionScorePtlflowFilter.compute_flow()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

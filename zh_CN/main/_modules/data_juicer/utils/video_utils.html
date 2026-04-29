@@ -533,11 +533,18 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">npt</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.mm_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">close_video</span><span class="p">,</span> <span class="n">cut_video_by_seconds</span>
 
 <span class="c1"># TODO: support cuda</span>
 
-<span class="n">av</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;av&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="setup_av">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.setup_av">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_av</span><span class="p">(</span><span class="n">mod</span><span class="p">):</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">PANIC</span><span class="p">)</span></div>
+
+
+
+<span class="n">av</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;av&quot;</span><span class="p">,</span> <span class="n">post_import</span><span class="o">=</span><span class="n">setup_av</span><span class="p">)</span>
 <span class="n">cv2</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;cv2&quot;</span><span class="p">)</span>
 <span class="n">decord</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;decord&quot;</span><span class="p">)</span>
 
@@ -872,6 +879,8 @@
 
         <span class="n">frames</span><span class="p">,</span> <span class="n">encoded_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">to_numpy</span><span class="p">)</span> <span class="ow">or</span> <span class="n">output_path</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.mm_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">cut_video_by_seconds</span>
+
             <span class="n">res</span> <span class="o">=</span> <span class="n">cut_video_by_seconds</span><span class="p">(</span>
                 <span class="n">input_video</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">container</span><span class="p">,</span>
                 <span class="n">output_video</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span>
@@ -913,6 +922,8 @@
 <div class="viewcode-block" id="AVReader.close">
 <a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.AVReader.close">[文档]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.mm_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">close_video</span>
+
         <span class="n">close_video</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">container</span><span class="p">)</span></div>
 </div>
 
@@ -1138,7 +1149,7 @@
                     <span class="s2">&quot;-i&quot;</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">video_path</span><span class="p">,</span>
                     <span class="s2">&quot;-vf&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;showinfo,select=eq(pict_type\,I)&quot;</span><span class="p">,</span>  <span class="c1"># noqa: W605</span>
+                    <span class="sa">r</span><span class="s2">&quot;showinfo,select=eq(pict_type\,I)&quot;</span><span class="p">,</span>  <span class="c1"># noqa: W605</span>
                     <span class="s2">&quot;-vsync&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;vfr&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
@@ -1152,7 +1163,7 @@
                     <span class="s2">&quot;-i&quot;</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">video_path</span><span class="p">,</span>
                     <span class="s2">&quot;-vf&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;showinfo,select=eq(pict_type\,I)&quot;</span><span class="p">,</span>  <span class="c1"># noqa: W605</span>
+                    <span class="sa">r</span><span class="s2">&quot;showinfo,select=eq(pict_type\,I)&quot;</span><span class="p">,</span>  <span class="c1"># noqa: W605</span>
                     <span class="s2">&quot;-vsync&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;vfr&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;-f&quot;</span><span class="p">,</span>

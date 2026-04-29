@@ -514,8 +514,53 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-filter-words-num-filter-module">
-<h1>data_juicer.ops.filter.words_num_filter module<a class="headerlink" href="#data-juicer-ops-filter-words-num-filter-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.filter.words_num_filter">
+<span id="data-juicer-ops-filter-words-num-filter-module"></span><h1>data_juicer.ops.filter.words_num_filter module<a class="headerlink" href="#module-data_juicer.ops.filter.words_num_filter" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.words_num_filter.WordsNumFilter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.filter.words_num_filter.</span></span><span class="sig-name descname"><span class="pre">WordsNumFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/words_num_filter.html#WordsNumFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.words_num_filter.WordsNumFilter" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Filter" title="data_juicer.ops.base_op.Filter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Filter</span></code></a></p>
+<p>Filter to keep samples with a total word count within a specified range.</p>
+<p>This operator filters samples based on the number of words they contain. It retains
+samples if their word count is within the given minimum and maximum limits. If
+tokenization is enabled, it uses a Hugging Face tokenizer to count words. The key metric
+<cite>num_words</cite> is computed and stored in the sample's stats under the <cite>num_words</cite> field. If
+the word count is already cached, it reuses the cached value to avoid redundant
+computation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.words_num_filter.WordsNumFilter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lang</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'en'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tokenization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">9223372036854775807</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/words_num_filter.html#WordsNumFilter.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.words_num_filter.WordsNumFilter.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lang</strong> -- sample in which language.</p></li>
+<li><p><strong>tokenization</strong> -- whether to use model to tokenize documents</p></li>
+<li><p><strong>min_num</strong> -- The min filter word number in this op, samples
+will be filtered if their word number is below this
+parameter.</p></li>
+<li><p><strong>max_num</strong> -- The max filter word number in this op, samples
+will be filtered if their word number exceeds this
+parameter.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.words_num_filter.WordsNumFilter.compute_stats_batched">
+<span class="sig-name descname"><span class="pre">compute_stats_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/words_num_filter.html#WordsNumFilter.compute_stats_batched"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.words_num_filter.WordsNumFilter.compute_stats_batched" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.words_num_filter.WordsNumFilter.process_batched">
+<span class="sig-name descname"><span class="pre">process_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/words_num_filter.html#WordsNumFilter.process_batched"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.words_num_filter.WordsNumFilter.process_batched" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +583,23 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.words_num_filter.WordsNumFilter"><code class="docutils literal notranslate"><span class="pre">WordsNumFilter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.words_num_filter.WordsNumFilter.__init__"><code class="docutils literal notranslate"><span class="pre">WordsNumFilter.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.words_num_filter.WordsNumFilter.compute_stats_batched"><code class="docutils literal notranslate"><span class="pre">WordsNumFilter.compute_stats_batched()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.words_num_filter.WordsNumFilter.process_batched"><code class="docutils literal notranslate"><span class="pre">WordsNumFilter.process_batched()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

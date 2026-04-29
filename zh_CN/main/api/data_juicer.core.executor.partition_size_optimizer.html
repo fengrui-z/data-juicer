@@ -514,8 +514,386 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-core-executor-partition-size-optimizer-module">
-<h1>data_juicer.core.executor.partition_size_optimizer module<a class="headerlink" href="#data-juicer-core-executor-partition-size-optimizer-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.core.executor.partition_size_optimizer">
+<span id="data-juicer-core-executor-partition-size-optimizer-module"></span><h1>data_juicer.core.executor.partition_size_optimizer module<a class="headerlink" href="#module-data_juicer.core.executor.partition_size_optimizer" title="链接到此标题。">#</a></h1>
+<p>Partition Size Optimizer for DataJuicer</p>
+<p>This module automatically configures optimal partition sizes based on:
+1. Data modality (text, image, audio, video, multimodal)
+2. Dataset characteristics (file sizes, complexity)
+3. Available system resources (CPU, memory, GPU)
+4. Processing pipeline complexity
+5. Ray cluster configuration</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ModalityType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.partition_size_optimizer.</span></span><span class="sig-name descname"><span class="pre">ModalityType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#ModalityType"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Supported data modalities.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ModalityType.TEXT">
+<span class="sig-name descname"><span class="pre">TEXT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'text'</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType.TEXT" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ModalityType.IMAGE">
+<span class="sig-name descname"><span class="pre">IMAGE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'image'</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType.IMAGE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ModalityType.AUDIO">
+<span class="sig-name descname"><span class="pre">AUDIO</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'audio'</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType.AUDIO" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ModalityType.VIDEO">
+<span class="sig-name descname"><span class="pre">VIDEO</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'video'</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType.VIDEO" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ModalityType.MULTIMODAL">
+<span class="sig-name descname"><span class="pre">MULTIMODAL</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'multimodal'</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType.MULTIMODAL" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.LocalResources">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.partition_size_optimizer.</span></span><span class="sig-name descname"><span class="pre">LocalResources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cpu_cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_memory_gb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_memory_gb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpu_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpu_memory_gb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disk_space_gb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#LocalResources"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Local system resources.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.LocalResources.cpu_cores">
+<span class="sig-name descname"><span class="pre">cpu_cores</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources.cpu_cores" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.LocalResources.available_memory_gb">
+<span class="sig-name descname"><span class="pre">available_memory_gb</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources.available_memory_gb" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.LocalResources.total_memory_gb">
+<span class="sig-name descname"><span class="pre">total_memory_gb</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources.total_memory_gb" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.LocalResources.gpu_count">
+<span class="sig-name descname"><span class="pre">gpu_count</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources.gpu_count" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.LocalResources.gpu_memory_gb">
+<span class="sig-name descname"><span class="pre">gpu_memory_gb</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources.gpu_memory_gb" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.LocalResources.disk_space_gb">
+<span class="sig-name descname"><span class="pre">disk_space_gb</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources.disk_space_gb" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.LocalResources.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cpu_cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_memory_gb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_memory_gb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpu_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpu_memory_gb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disk_space_gb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources.__init__" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ClusterResources">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.partition_size_optimizer.</span></span><span class="sig-name descname"><span class="pre">ClusterResources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_cpu_cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_memory_gb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_cpu_cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_memory_gb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpu_resources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#ClusterResources"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Ray cluster resources.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ClusterResources.num_nodes">
+<span class="sig-name descname"><span class="pre">num_nodes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources.num_nodes" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ClusterResources.total_cpu_cores">
+<span class="sig-name descname"><span class="pre">total_cpu_cores</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources.total_cpu_cores" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ClusterResources.total_memory_gb">
+<span class="sig-name descname"><span class="pre">total_memory_gb</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources.total_memory_gb" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ClusterResources.available_cpu_cores">
+<span class="sig-name descname"><span class="pre">available_cpu_cores</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources.available_cpu_cores" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ClusterResources.available_memory_gb">
+<span class="sig-name descname"><span class="pre">available_memory_gb</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources.available_memory_gb" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ClusterResources.gpu_resources">
+<span class="sig-name descname"><span class="pre">gpu_resources</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources.gpu_resources" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ClusterResources.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_cpu_cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_memory_gb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_cpu_cores</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_memory_gb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpu_resources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources.__init__" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.DataCharacteristics">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.partition_size_optimizer.</span></span><span class="sig-name descname"><span class="pre">DataCharacteristics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primary_modality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType" title="data_juicer.core.executor.partition_size_optimizer.ModalityType"><span class="pre">ModalityType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">modality_distribution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType" title="data_juicer.core.executor.partition_size_optimizer.ModalityType"><span class="pre">ModalityType</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg_text_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg_images_per_sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg_audio_per_sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg_video_per_sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_size_analyzed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_per_sample_mb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processing_complexity_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_skew_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#DataCharacteristics"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Data characteristics from sampling.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.primary_modality">
+<span class="sig-name descname"><span class="pre">primary_modality</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType" title="data_juicer.core.executor.partition_size_optimizer.ModalityType"><span class="pre">ModalityType</span></a></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.primary_modality" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.modality_distribution">
+<span class="sig-name descname"><span class="pre">modality_distribution</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType" title="data_juicer.core.executor.partition_size_optimizer.ModalityType"><span class="pre">ModalityType</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.modality_distribution" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.avg_text_length">
+<span class="sig-name descname"><span class="pre">avg_text_length</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.avg_text_length" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.avg_images_per_sample">
+<span class="sig-name descname"><span class="pre">avg_images_per_sample</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.avg_images_per_sample" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.avg_audio_per_sample">
+<span class="sig-name descname"><span class="pre">avg_audio_per_sample</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.avg_audio_per_sample" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.avg_video_per_sample">
+<span class="sig-name descname"><span class="pre">avg_video_per_sample</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.avg_video_per_sample" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.total_samples">
+<span class="sig-name descname"><span class="pre">total_samples</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.total_samples" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.sample_size_analyzed">
+<span class="sig-name descname"><span class="pre">sample_size_analyzed</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.sample_size_analyzed" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.memory_per_sample_mb">
+<span class="sig-name descname"><span class="pre">memory_per_sample_mb</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.memory_per_sample_mb" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.processing_complexity_score">
+<span class="sig-name descname"><span class="pre">processing_complexity_score</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.processing_complexity_score" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.data_skew_factor">
+<span class="sig-name descname"><span class="pre">data_skew_factor</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.data_skew_factor" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primary_modality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType" title="data_juicer.core.executor.partition_size_optimizer.ModalityType"><span class="pre">ModalityType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">modality_distribution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType" title="data_juicer.core.executor.partition_size_optimizer.ModalityType"><span class="pre">ModalityType</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg_text_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg_images_per_sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg_audio_per_sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg_video_per_sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_size_analyzed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_per_sample_mb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processing_complexity_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_skew_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.__init__" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ModalityConfig">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.partition_size_optimizer.</span></span><span class="sig-name descname"><span class="pre">ModalityConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType" title="data_juicer.core.executor.partition_size_optimizer.ModalityType"><span class="pre">ModalityType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_partition_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_partition_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_partition_size_mb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_multiplier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complexity_multiplier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#ModalityConfig"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Configuration for a specific modality.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ModalityConfig.modality">
+<span class="sig-name descname"><span class="pre">modality</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType" title="data_juicer.core.executor.partition_size_optimizer.ModalityType"><span class="pre">ModalityType</span></a></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig.modality" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ModalityConfig.default_partition_size">
+<span class="sig-name descname"><span class="pre">default_partition_size</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig.default_partition_size" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ModalityConfig.max_partition_size">
+<span class="sig-name descname"><span class="pre">max_partition_size</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig.max_partition_size" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ModalityConfig.max_partition_size_mb">
+<span class="sig-name descname"><span class="pre">max_partition_size_mb</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig.max_partition_size_mb" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ModalityConfig.memory_multiplier">
+<span class="sig-name descname"><span class="pre">memory_multiplier</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig.memory_multiplier" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ModalityConfig.complexity_multiplier">
+<span class="sig-name descname"><span class="pre">complexity_multiplier</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig.complexity_multiplier" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ModalityConfig.description">
+<span class="sig-name descname"><span class="pre">description</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig.description" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ModalityConfig.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType" title="data_juicer.core.executor.partition_size_optimizer.ModalityType"><span class="pre">ModalityType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_partition_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_partition_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_partition_size_mb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_multiplier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complexity_multiplier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig.__init__" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ResourceDetector">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.partition_size_optimizer.</span></span><span class="sig-name descname"><span class="pre">ResourceDetector</span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#ResourceDetector"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ResourceDetector" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Detect available system and cluster resources.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ResourceDetector.detect_local_resources">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">detect_local_resources</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources" title="data_juicer.core.executor.partition_size_optimizer.LocalResources"><span class="pre">LocalResources</span></a></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#ResourceDetector.detect_local_resources"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ResourceDetector.detect_local_resources" title="链接到此定义。">#</a></dt>
+<dd><p>Detect local system resources.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ResourceDetector.detect_ray_cluster">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">detect_ray_cluster</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources" title="data_juicer.core.executor.partition_size_optimizer.ClusterResources"><span class="pre">ClusterResources</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#ResourceDetector.detect_ray_cluster"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ResourceDetector.detect_ray_cluster" title="链接到此定义。">#</a></dt>
+<dd><p>Detect Ray cluster resources.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.ResourceDetector.calculate_optimal_worker_count">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">calculate_optimal_worker_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_resources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources" title="data_juicer.core.executor.partition_size_optimizer.LocalResources"><span class="pre">LocalResources</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_resources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources" title="data_juicer.core.executor.partition_size_optimizer.ClusterResources"><span class="pre">ClusterResources</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partition_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#ResourceDetector.calculate_optimal_worker_count"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.ResourceDetector.calculate_optimal_worker_count" title="链接到此定义。">#</a></dt>
+<dd><p>Calculate optimal number of Ray workers based on available resources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>local_resources</strong> -- Local system resources</p></li>
+<li><p><strong>cluster_resources</strong> -- Ray cluster resources (optional)</p></li>
+<li><p><strong>partition_size</strong> -- Size of each partition (for workload estimation)</p></li>
+<li><p><strong>total_samples</strong> -- Total number of samples (for workload estimation)</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>Optimal number of workers</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.partition_size_optimizer.</span></span><span class="sig-name descname"><span class="pre">PartitionSizeOptimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#PartitionSizeOptimizer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Automatically optimizes partition sizes based on data characteristics and available resources.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.calculate_target_partition_mb">
+<span class="sig-name descname"><span class="pre">calculate_target_partition_mb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">available_memory_gb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#PartitionSizeOptimizer.calculate_target_partition_mb"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.calculate_target_partition_mb" title="链接到此定义。">#</a></dt>
+<dd><p>Calculate target partition size in MB based on available memory and config.</p>
+<p>Uses config.partition.target_size_mb if available, otherwise falls back to
+dynamic sizing based on available memory (32MB - 256MB).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.MODALITY_CONFIGS">
+<span class="sig-name descname"><span class="pre">MODALITY_CONFIGS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{ModalityType.AUDIO:</span> <span class="pre">ModalityConfig(modality=&lt;ModalityType.AUDIO:</span> <span class="pre">'audio'&gt;,</span> <span class="pre">default_partition_size=1000,</span> <span class="pre">max_partition_size=4000,</span> <span class="pre">max_partition_size_mb=256,</span> <span class="pre">memory_multiplier=8.0,</span> <span class="pre">complexity_multiplier=5.0,</span> <span class="pre">description='Audio</span> <span class="pre">data</span> <span class="pre">-</span> <span class="pre">high</span> <span class="pre">memory</span> <span class="pre">usage,</span> <span class="pre">target</span> <span class="pre">256MB</span> <span class="pre">partitions</span> <span class="pre">(configurable)'),</span> <span class="pre">ModalityType.IMAGE:</span> <span class="pre">ModalityConfig(modality=&lt;ModalityType.IMAGE:</span> <span class="pre">'image'&gt;,</span> <span class="pre">default_partition_size=2000,</span> <span class="pre">max_partition_size=10000,</span> <span class="pre">max_partition_size_mb=256,</span> <span class="pre">memory_multiplier=5.0,</span> <span class="pre">complexity_multiplier=3.0,</span> <span class="pre">description='Image</span> <span class="pre">data</span> <span class="pre">-</span> <span class="pre">moderate</span> <span class="pre">memory</span> <span class="pre">usage,</span> <span class="pre">target</span> <span class="pre">256MB</span> <span class="pre">partitions</span> <span class="pre">(configurable)'),</span> <span class="pre">ModalityType.MULTIMODAL:</span> <span class="pre">ModalityConfig(modality=&lt;ModalityType.MULTIMODAL:</span> <span class="pre">'multimodal'&gt;,</span> <span class="pre">default_partition_size=1600,</span> <span class="pre">max_partition_size=6000,</span> <span class="pre">max_partition_size_mb=256,</span> <span class="pre">memory_multiplier=10.0,</span> <span class="pre">complexity_multiplier=8.0,</span> <span class="pre">description='Multimodal</span> <span class="pre">data</span> <span class="pre">-</span> <span class="pre">combination</span> <span class="pre">of</span> <span class="pre">multiple</span> <span class="pre">modalities,</span> <span class="pre">target</span> <span class="pre">256MB</span> <span class="pre">partitions</span> <span class="pre">(configurable)'),</span> <span class="pre">ModalityType.TEXT:</span> <span class="pre">ModalityConfig(modality=&lt;ModalityType.TEXT:</span> <span class="pre">'text'&gt;,</span> <span class="pre">default_partition_size=10000,</span> <span class="pre">max_partition_size=50000,</span> <span class="pre">max_partition_size_mb=256,</span> <span class="pre">memory_multiplier=1.0,</span> <span class="pre">complexity_multiplier=1.0,</span> <span class="pre">description='Text</span> <span class="pre">data</span> <span class="pre">-</span> <span class="pre">efficient</span> <span class="pre">processing,</span> <span class="pre">low</span> <span class="pre">memory</span> <span class="pre">usage,</span> <span class="pre">target</span> <span class="pre">256MB</span> <span class="pre">partitions</span> <span class="pre">(configurable)'),</span> <span class="pre">ModalityType.VIDEO:</span> <span class="pre">ModalityConfig(modality=&lt;ModalityType.VIDEO:</span> <span class="pre">'video'&gt;,</span> <span class="pre">default_partition_size=400,</span> <span class="pre">max_partition_size=2000,</span> <span class="pre">max_partition_size_mb=256,</span> <span class="pre">memory_multiplier=20.0,</span> <span class="pre">complexity_multiplier=15.0,</span> <span class="pre">description='Video</span> <span class="pre">data</span> <span class="pre">-</span> <span class="pre">very</span> <span class="pre">high</span> <span class="pre">memory</span> <span class="pre">usage,</span> <span class="pre">target</span> <span class="pre">256MB</span> <span class="pre">partitions</span> <span class="pre">(configurable)')}</span></span><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.MODALITY_CONFIGS" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#PartitionSizeOptimizer.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialize the optimizer with configuration.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.detect_modality">
+<span class="sig-name descname"><span class="pre">detect_modality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType" title="data_juicer.core.executor.partition_size_optimizer.ModalityType"><span class="pre">ModalityType</span></a></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#PartitionSizeOptimizer.detect_modality"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.detect_modality" title="链接到此定义。">#</a></dt>
+<dd><p>Detect the primary modality of a sample.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.analyze_dataset_characteristics">
+<span class="sig-name descname"><span class="pre">analyze_dataset_characteristics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics" title="data_juicer.core.executor.partition_size_optimizer.DataCharacteristics"><span class="pre">DataCharacteristics</span></a></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#PartitionSizeOptimizer.analyze_dataset_characteristics"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.analyze_dataset_characteristics" title="链接到此定义。">#</a></dt>
+<dd><p>Analyze dataset characteristics to inform partition sizing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.estimate_sample_size_mb">
+<span class="sig-name descname"><span class="pre">estimate_sample_size_mb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#PartitionSizeOptimizer.estimate_sample_size_mb"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.estimate_sample_size_mb" title="链接到此定义。">#</a></dt>
+<dd><p>Measure actual memory size of a sample in MB.</p>
+<p>Uses deep size calculation to include all nested objects (strings, lists, etc.)
+rather than just the shallow dict overhead.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.analyze_processing_complexity">
+<span class="sig-name descname"><span class="pre">analyze_processing_complexity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_pipeline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#PartitionSizeOptimizer.analyze_processing_complexity"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.analyze_processing_complexity" title="链接到此定义。">#</a></dt>
+<dd><p>Analyze the complexity of the processing pipeline using linear scoring.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.get_optimal_partition_size">
+<span class="sig-name descname"><span class="pre">get_optimal_partition_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_pipeline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#PartitionSizeOptimizer.get_optimal_partition_size"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.get_optimal_partition_size" title="链接到此定义。">#</a></dt>
+<dd><p>Get optimal partition size and max size based on data characteristics and available resources.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.calculate_resource_aware_partition_size">
+<span class="sig-name descname"><span class="pre">calculate_resource_aware_partition_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">characteristics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics" title="data_juicer.core.executor.partition_size_optimizer.DataCharacteristics"><span class="pre">DataCharacteristics</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_resources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources" title="data_juicer.core.executor.partition_size_optimizer.LocalResources"><span class="pre">LocalResources</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_resources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources" title="data_juicer.core.executor.partition_size_optimizer.ClusterResources"><span class="pre">ClusterResources</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complexity_multiplier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#PartitionSizeOptimizer.calculate_resource_aware_partition_size"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.calculate_resource_aware_partition_size" title="链接到此定义。">#</a></dt>
+<dd><p>Calculate partition size based on data characteristics and available resources.</p>
+<p>Primary goal: Target partition size based on config (default 256MB).
+Secondary goals: Ensure sufficient parallelism and respect resource constraints.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.calculate_text_partition_size_simple">
+<span class="sig-name descname"><span class="pre">calculate_text_partition_size_simple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">avg_text_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complexity_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_memory_mb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#PartitionSizeOptimizer.calculate_text_partition_size_simple"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.calculate_text_partition_size_simple" title="链接到此定义。">#</a></dt>
+<dd><p>Calculate text partition size targeting specified memory size.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.calculate_optimal_max_size_mb">
+<span class="sig-name descname"><span class="pre">calculate_optimal_max_size_mb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">characteristics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics" title="data_juicer.core.executor.partition_size_optimizer.DataCharacteristics"><span class="pre">DataCharacteristics</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_resources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources" title="data_juicer.core.executor.partition_size_optimizer.LocalResources"><span class="pre">LocalResources</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_resources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources" title="data_juicer.core.executor.partition_size_optimizer.ClusterResources"><span class="pre">ClusterResources</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complexity_multiplier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#PartitionSizeOptimizer.calculate_optimal_max_size_mb"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.calculate_optimal_max_size_mb" title="链接到此定义。">#</a></dt>
+<dd><p>Calculate optimal max partition size in MB based on available memory.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.get_partition_recommendations">
+<span class="sig-name descname"><span class="pre">get_partition_recommendations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_pipeline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#PartitionSizeOptimizer.get_partition_recommendations"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.get_partition_recommendations" title="链接到此定义。">#</a></dt>
+<dd><p>Get comprehensive partition recommendations.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.core.executor.partition_size_optimizer.auto_configure_resources">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.partition_size_optimizer.</span></span><span class="sig-name descname"><span class="pre">auto_configure_resources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_pipeline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/partition_size_optimizer.html#auto_configure_resources"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.partition_size_optimizer.auto_configure_resources" title="链接到此定义。">#</a></dt>
+<dd><p>Analyze dataset and return resource configuration recommendations.</p>
+<p>Does NOT mutate cfg - caller should apply recommendations as needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cfg</strong> -- Configuration object (read-only)</p></li>
+<li><p><strong>dataset</strong> -- Dataset to analyze</p></li>
+<li><p><strong>process_pipeline</strong> -- List of processing operations</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict with recommended resource configuration</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +916,93 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType"><code class="docutils literal notranslate"><span class="pre">ModalityType</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType.TEXT"><code class="docutils literal notranslate"><span class="pre">ModalityType.TEXT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType.IMAGE"><code class="docutils literal notranslate"><span class="pre">ModalityType.IMAGE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType.AUDIO"><code class="docutils literal notranslate"><span class="pre">ModalityType.AUDIO</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType.VIDEO"><code class="docutils literal notranslate"><span class="pre">ModalityType.VIDEO</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ModalityType.MULTIMODAL"><code class="docutils literal notranslate"><span class="pre">ModalityType.MULTIMODAL</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources"><code class="docutils literal notranslate"><span class="pre">LocalResources</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources.cpu_cores"><code class="docutils literal notranslate"><span class="pre">LocalResources.cpu_cores</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources.available_memory_gb"><code class="docutils literal notranslate"><span class="pre">LocalResources.available_memory_gb</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources.total_memory_gb"><code class="docutils literal notranslate"><span class="pre">LocalResources.total_memory_gb</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources.gpu_count"><code class="docutils literal notranslate"><span class="pre">LocalResources.gpu_count</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources.gpu_memory_gb"><code class="docutils literal notranslate"><span class="pre">LocalResources.gpu_memory_gb</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources.disk_space_gb"><code class="docutils literal notranslate"><span class="pre">LocalResources.disk_space_gb</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.LocalResources.__init__"><code class="docutils literal notranslate"><span class="pre">LocalResources.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources"><code class="docutils literal notranslate"><span class="pre">ClusterResources</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources.num_nodes"><code class="docutils literal notranslate"><span class="pre">ClusterResources.num_nodes</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources.total_cpu_cores"><code class="docutils literal notranslate"><span class="pre">ClusterResources.total_cpu_cores</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources.total_memory_gb"><code class="docutils literal notranslate"><span class="pre">ClusterResources.total_memory_gb</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources.available_cpu_cores"><code class="docutils literal notranslate"><span class="pre">ClusterResources.available_cpu_cores</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources.available_memory_gb"><code class="docutils literal notranslate"><span class="pre">ClusterResources.available_memory_gb</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources.gpu_resources"><code class="docutils literal notranslate"><span class="pre">ClusterResources.gpu_resources</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ClusterResources.__init__"><code class="docutils literal notranslate"><span class="pre">ClusterResources.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics"><code class="docutils literal notranslate"><span class="pre">DataCharacteristics</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.primary_modality"><code class="docutils literal notranslate"><span class="pre">DataCharacteristics.primary_modality</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.modality_distribution"><code class="docutils literal notranslate"><span class="pre">DataCharacteristics.modality_distribution</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.avg_text_length"><code class="docutils literal notranslate"><span class="pre">DataCharacteristics.avg_text_length</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.avg_images_per_sample"><code class="docutils literal notranslate"><span class="pre">DataCharacteristics.avg_images_per_sample</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.avg_audio_per_sample"><code class="docutils literal notranslate"><span class="pre">DataCharacteristics.avg_audio_per_sample</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.avg_video_per_sample"><code class="docutils literal notranslate"><span class="pre">DataCharacteristics.avg_video_per_sample</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.total_samples"><code class="docutils literal notranslate"><span class="pre">DataCharacteristics.total_samples</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.sample_size_analyzed"><code class="docutils literal notranslate"><span class="pre">DataCharacteristics.sample_size_analyzed</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.memory_per_sample_mb"><code class="docutils literal notranslate"><span class="pre">DataCharacteristics.memory_per_sample_mb</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.processing_complexity_score"><code class="docutils literal notranslate"><span class="pre">DataCharacteristics.processing_complexity_score</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.data_skew_factor"><code class="docutils literal notranslate"><span class="pre">DataCharacteristics.data_skew_factor</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.__init__"><code class="docutils literal notranslate"><span class="pre">DataCharacteristics.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig"><code class="docutils literal notranslate"><span class="pre">ModalityConfig</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig.modality"><code class="docutils literal notranslate"><span class="pre">ModalityConfig.modality</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig.default_partition_size"><code class="docutils literal notranslate"><span class="pre">ModalityConfig.default_partition_size</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig.max_partition_size"><code class="docutils literal notranslate"><span class="pre">ModalityConfig.max_partition_size</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig.max_partition_size_mb"><code class="docutils literal notranslate"><span class="pre">ModalityConfig.max_partition_size_mb</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig.memory_multiplier"><code class="docutils literal notranslate"><span class="pre">ModalityConfig.memory_multiplier</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig.complexity_multiplier"><code class="docutils literal notranslate"><span class="pre">ModalityConfig.complexity_multiplier</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig.description"><code class="docutils literal notranslate"><span class="pre">ModalityConfig.description</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ModalityConfig.__init__"><code class="docutils literal notranslate"><span class="pre">ModalityConfig.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ResourceDetector"><code class="docutils literal notranslate"><span class="pre">ResourceDetector</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ResourceDetector.detect_local_resources"><code class="docutils literal notranslate"><span class="pre">ResourceDetector.detect_local_resources()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ResourceDetector.detect_ray_cluster"><code class="docutils literal notranslate"><span class="pre">ResourceDetector.detect_ray_cluster()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.ResourceDetector.calculate_optimal_worker_count"><code class="docutils literal notranslate"><span class="pre">ResourceDetector.calculate_optimal_worker_count()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer"><code class="docutils literal notranslate"><span class="pre">PartitionSizeOptimizer</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.calculate_target_partition_mb"><code class="docutils literal notranslate"><span class="pre">PartitionSizeOptimizer.calculate_target_partition_mb()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.MODALITY_CONFIGS"><code class="docutils literal notranslate"><span class="pre">PartitionSizeOptimizer.MODALITY_CONFIGS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.__init__"><code class="docutils literal notranslate"><span class="pre">PartitionSizeOptimizer.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.detect_modality"><code class="docutils literal notranslate"><span class="pre">PartitionSizeOptimizer.detect_modality()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.analyze_dataset_characteristics"><code class="docutils literal notranslate"><span class="pre">PartitionSizeOptimizer.analyze_dataset_characteristics()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.estimate_sample_size_mb"><code class="docutils literal notranslate"><span class="pre">PartitionSizeOptimizer.estimate_sample_size_mb()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.analyze_processing_complexity"><code class="docutils literal notranslate"><span class="pre">PartitionSizeOptimizer.analyze_processing_complexity()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.get_optimal_partition_size"><code class="docutils literal notranslate"><span class="pre">PartitionSizeOptimizer.get_optimal_partition_size()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.calculate_resource_aware_partition_size"><code class="docutils literal notranslate"><span class="pre">PartitionSizeOptimizer.calculate_resource_aware_partition_size()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.calculate_text_partition_size_simple"><code class="docutils literal notranslate"><span class="pre">PartitionSizeOptimizer.calculate_text_partition_size_simple()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.calculate_optimal_max_size_mb"><code class="docutils literal notranslate"><span class="pre">PartitionSizeOptimizer.calculate_optimal_max_size_mb()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.get_partition_recommendations"><code class="docutils literal notranslate"><span class="pre">PartitionSizeOptimizer.get_partition_recommendations()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.partition_size_optimizer.auto_configure_resources"><code class="docutils literal notranslate"><span class="pre">auto_configure_resources()</span></code></a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

@@ -514,8 +514,136 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-core-adapter-module">
-<h1>data_juicer.core.adapter module<a class="headerlink" href="#data-juicer-core-adapter-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.core.adapter">
+<span id="data-juicer-core-adapter-module"></span><h1>data_juicer.core.adapter module<a class="headerlink" href="#module-data_juicer.core.adapter" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.adapter.Adapter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.adapter.</span></span><span class="sig-name descname"><span class="pre">Adapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/adapter.html#Adapter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.adapter.Adapter" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.adapter.Adapter.MAX_BATCH_SIZE">
+<span class="sig-name descname"><span class="pre">MAX_BATCH_SIZE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10000</span></span><a class="headerlink" href="#data_juicer.core.adapter.Adapter.MAX_BATCH_SIZE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.adapter.Adapter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/adapter.html#Adapter.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.adapter.Adapter.__init__" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.adapter.Adapter.execute_and_probe">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">execute_and_probe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operators</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/adapter.html#Adapter.execute_and_probe"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.adapter.Adapter.execute_and_probe" title="链接到此定义。">#</a></dt>
+<dd><p>Process the input dataset and probe related information for each OP in
+the specified operator list.</p>
+<p>For now, we support the following targets to probe:
+&quot;resource&quot;: resource utilization for each OP.
+&quot;speed&quot;: average processing speed for each OP.</p>
+<p>The probe result is a list and each item in the list is the probe
+result for each OP.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.adapter.Adapter.take_batch">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">take_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/adapter.html#Adapter.take_batch"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.adapter.Adapter.take_batch" title="链接到此定义。">#</a></dt>
+<dd><p>Split the dataset into batches based on configuration and load factor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> -- The dataset to be split</p></li>
+<li><p><strong>config</strong> -- Configuration settings, including batch size</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>An iterator of batches</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.adapter.Adapter.adapt_workloads">
+<span class="sig-name descname"><span class="pre">adapt_workloads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operators</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/adapter.html#Adapter.adapt_workloads"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.adapter.Adapter.adapt_workloads" title="链接到此定义。">#</a></dt>
+<dd><p>Manage the scheduling and load balancing for the dataset processing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> -- The dataset that needs to be processed</p></li>
+<li><p><strong>operators</strong> -- Operators in the data recipe</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.adapter.Adapter.probe_small_batch">
+<span class="sig-name descname"><span class="pre">probe_small_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operators</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/adapter.html#Adapter.probe_small_batch"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.adapter.Adapter.probe_small_batch" title="链接到此定义。">#</a></dt>
+<dd><p>Perform small batch pre-execution to probe available resources,
+current load and estimated OP speed, returning load factors and speed
+ranks for each OP.</p>
+<p>Notice: the probe should be run with cache enabled to avoid removing
+the cache files of the input dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> -- The dataset to pre-execute small batch on</p></li>
+<li><p><strong>operators</strong> -- The OP list to be pre-execution and probe</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of probe results for each OP and the length of data
+batch to probe.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.adapter.Adapter.batch_size_strategy">
+<span class="sig-name descname"><span class="pre">batch_size_strategy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">load_analysis_res</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_bs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">util_th</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/adapter.html#Adapter.batch_size_strategy"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.adapter.Adapter.batch_size_strategy" title="链接到此定义。">#</a></dt>
+<dd><p>Decide the batch size for each op according to their workload analysis
+result and expected utilization threshold. We need to guarantee that
+the resource utilization won't exceed the threshold. Now we only
+consider the buckets effect, which means the max batch size is decided
+by the max utilization of all types of resources except GPU util
+(decided by num_proc).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.adapter.Adapter.analyze_small_batch">
+<span class="sig-name descname"><span class="pre">analyze_small_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/adapter.html#Adapter.analyze_small_batch"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.adapter.Adapter.analyze_small_batch" title="链接到此定义。">#</a></dt>
+<dd><p>Perform small batch analysis to probe the current OP-wise stats/meta
+distributions. The analyzed results will be stored in the directory
+<cite>{work_dir}/insight_mining</cite>.</p>
+<p>Notice: the probe should be run with cache enabled to avoid removing
+the cache files of the input dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> -- The dataset to analyze small batch on</p></li>
+<li><p><strong>current_state</strong> -- A string to indicate the current state of the
+input dataset. It usually consists of a number of the index of the
+OP processed just now and the OP name, e.g. &quot;1_text_length_filter&quot;.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.adapter.Adapter.insight_mining">
+<span class="sig-name descname"><span class="pre">insight_mining</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pval_th</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/adapter.html#Adapter.insight_mining"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.adapter.Adapter.insight_mining" title="链接到此定义。">#</a></dt>
+<dd><p>Mining the insights from the OP-wise analysis results. For now, we use
+T-Test to check the significance of stats/meta changes before and after
+each OP processing. If the p-value is less than a given threshold
+(usually 0.05), we think the stats/meta changes are significant. The
+insight mining results will be stored in the file
+<cite>{work_dir}/insight_mining/insight_mining.json</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pval_th</strong> -- the threshold of p-value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +666,29 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.adapter.Adapter"><code class="docutils literal notranslate"><span class="pre">Adapter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.adapter.Adapter.MAX_BATCH_SIZE"><code class="docutils literal notranslate"><span class="pre">Adapter.MAX_BATCH_SIZE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.adapter.Adapter.__init__"><code class="docutils literal notranslate"><span class="pre">Adapter.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.adapter.Adapter.execute_and_probe"><code class="docutils literal notranslate"><span class="pre">Adapter.execute_and_probe()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.adapter.Adapter.take_batch"><code class="docutils literal notranslate"><span class="pre">Adapter.take_batch()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.adapter.Adapter.adapt_workloads"><code class="docutils literal notranslate"><span class="pre">Adapter.adapt_workloads()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.adapter.Adapter.probe_small_batch"><code class="docutils literal notranslate"><span class="pre">Adapter.probe_small_batch()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.adapter.Adapter.batch_size_strategy"><code class="docutils literal notranslate"><span class="pre">Adapter.batch_size_strategy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.adapter.Adapter.analyze_small_batch"><code class="docutils literal notranslate"><span class="pre">Adapter.analyze_small_batch()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.adapter.Adapter.insight_mining"><code class="docutils literal notranslate"><span class="pre">Adapter.insight_mining()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

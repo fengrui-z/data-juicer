@@ -514,8 +514,79 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-extract-event-mapper-module">
-<h1>data_juicer.ops.mapper.extract_event_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-extract-event-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.extract_event_mapper">
+<span id="data-juicer-ops-mapper-extract-event-mapper-module"></span><h1>data_juicer.ops.mapper.extract_event_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.extract_event_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.extract_event_mapper.</span></span><span class="sig-name descname"><span class="pre">ExtractEventMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/extract_event_mapper.html#ExtractEventMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Extracts events and relevant characters from the text.</p>
+<p>This operator uses an API model to summarize the text into multiple events and extract
+the relevant characters for each event. The summary and character extraction follow a
+predefined format. The operator retries the API call up to a specified number of times
+if there is an error. The extracted events and characters are stored in the meta field
+of the samples. If no events are found, the original samples are returned. The operator
+can optionally drop the original text after processing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.DEFAULT_SYSTEM_PROMPT">
+<span class="sig-name descname"><span class="pre">DEFAULT_SYSTEM_PROMPT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'给定一段文本，对文本的情节进行分点总结，并抽取与情节相关的人物。\n要求：\n-</span> <span class="pre">尽量不要遗漏内容，不要添加文本中没有的情节，符合原文事实\n-</span> <span class="pre">联系上下文说明前因后果，但仍然需要符合事实\n-</span> <span class="pre">不要包含主观看法\n-</span> <span class="pre">注意要尽可能保留文本的专有名词\n-</span> <span class="pre">注意相关人物需要在对应情节中出现\n-</span> <span class="pre">只抽取情节中的主要人物，不要遗漏情节的主要人物\n-</span> <span class="pre">总结格式如下：\n###</span> <span class="pre">情节1：\n-</span> <span class="pre">**情节描述**：</span> <span class="pre">...\n-</span> <span class="pre">**相关人物**：人物1，人物2，人物3，...\n###</span> <span class="pre">情节2：\n-</span> <span class="pre">**情节描述**：</span> <span class="pre">...\n-</span> <span class="pre">**相关人物**：人物1，人物2，...\n###</span> <span class="pre">情节3：\n-</span> <span class="pre">**情节描述**：</span> <span class="pre">...\n-</span> <span class="pre">**相关人物**：人物1，...\n...\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.DEFAULT_SYSTEM_PROMPT" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.DEFAULT_INPUT_TEMPLATE">
+<span class="sig-name descname"><span class="pre">DEFAULT_INPUT_TEMPLATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#</span> <span class="pre">文本\n```\n{text}\n```\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.DEFAULT_INPUT_TEMPLATE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.DEFAULT_OUTPUT_PATTERN">
+<span class="sig-name descname"><span class="pre">DEFAULT_OUTPUT_PATTERN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">\\#\\#\\#\\s*情节(\\d+)：\\s*\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">-\\s*\\*\\*情节描述\\*\\*\\s*：\\s*(.*?)\\s*\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">-\\s*\\*\\*相关人物\\*\\*\\s*：\\s*(.*?)(?=\\#\\#\\#|\\Z)\n</span>&#160;&#160;&#160; <span class="pre">'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.DEFAULT_OUTPUT_PATTERN" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'gpt-4o'</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="仅关键字参数分隔符 (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_desc_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'event_description'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relevant_char_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'relevant_characters'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_endpoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/extract_event_mapper.html#ExtractEventMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.
+:param api_model: API model name.
+:param event_desc_key: The key name to store the event descriptions</p>
+<blockquote>
+<div><p>in the meta field. It's &quot;event_description&quot; in default.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>relevant_char_key</strong> -- The field name to store the relevant
+characters to the events in the meta field. It's
+&quot;relevant_characters&quot; in default.</p></li>
+<li><p><strong>api_endpoint</strong> -- URL endpoint for the API.</p></li>
+<li><p><strong>response_path</strong> -- Path to extract content from the API response.
+Defaults to 'choices.0.message.content'.</p></li>
+<li><p><strong>system_prompt</strong> -- System prompt for the task.</p></li>
+<li><p><strong>input_template</strong> -- Template for building the model input.</p></li>
+<li><p><strong>output_pattern</strong> -- Regular expression for parsing model output.</p></li>
+<li><p><strong>try_num</strong> -- The number of retry attempts when there is an API
+call error or output parsing error.</p></li>
+<li><p><strong>drop_text</strong> -- If drop the text in the output.</p></li>
+<li><p><strong>model_params</strong> -- Parameters for initializing the API model.</p></li>
+<li><p><strong>sampling_params</strong> -- Extra parameters passed to the API call.
+e.g {'temperature': 0.9, 'top_p': 0.95}</p></li>
+<li><p><strong>kwargs</strong> -- Extra keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.parse_output">
+<span class="sig-name descname"><span class="pre">parse_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/extract_event_mapper.html#ExtractEventMapper.parse_output"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.parse_output" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.process_batched">
+<span class="sig-name descname"><span class="pre">process_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/extract_event_mapper.html#ExtractEventMapper.process_batched"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.process_batched" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +609,26 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper"><code class="docutils literal notranslate"><span class="pre">ExtractEventMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.DEFAULT_SYSTEM_PROMPT"><code class="docutils literal notranslate"><span class="pre">ExtractEventMapper.DEFAULT_SYSTEM_PROMPT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.DEFAULT_INPUT_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">ExtractEventMapper.DEFAULT_INPUT_TEMPLATE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.DEFAULT_OUTPUT_PATTERN"><code class="docutils literal notranslate"><span class="pre">ExtractEventMapper.DEFAULT_OUTPUT_PATTERN</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.__init__"><code class="docutils literal notranslate"><span class="pre">ExtractEventMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.parse_output"><code class="docutils literal notranslate"><span class="pre">ExtractEventMapper.parse_output()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_event_mapper.ExtractEventMapper.process_batched"><code class="docutils literal notranslate"><span class="pre">ExtractEventMapper.process_batched()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

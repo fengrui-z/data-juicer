@@ -608,7 +608,11 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">source_entity</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">target_entity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;source_entity and target_entity cannot be None&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;relation_identity_mapper: source_entity and target_entity must be set &quot;</span>
+                <span class="s2">&quot;(e.g. source_entity: 用户, target_entity: 助手); &quot;</span>
+                <span class="s2">&quot;see demos/agent/minimal_configs/07_entity_keyword.yaml&quot;</span>
+            <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">source_entity</span> <span class="o">=</span> <span class="n">source_entity</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_entity</span> <span class="o">=</span> <span class="n">target_entity</span>
@@ -642,6 +646,24 @@
             <span class="n">_</span><span class="p">,</span> <span class="n">relation</span> <span class="o">=</span> <span class="n">match</span>
             <span class="n">relation</span> <span class="o">=</span> <span class="n">relation</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
+        <span class="k">if</span> <span class="n">relation</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">relation</span>
+
+        <span class="c1"># Models (esp. fast chat APIs) often skip strict templates or use</span>
+        <span class="c1"># 「因此」/ half-width colons — try a light fallback before giving up.</span>
+        <span class="n">tail</span> <span class="o">=</span> <span class="p">(</span><span class="n">raw_output</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">tail</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()):</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+                <span class="sa">r</span><span class="s2">&quot;(?:所以|因此|故|可见).{0,48}?[：:]\s*(.+?)(?:\s*$)&quot;</span><span class="p">,</span>
+                <span class="n">line</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+                <span class="n">cand</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;。.&quot;&quot;</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">cand</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">cand</span>
         <span class="k">return</span> <span class="n">relation</span></div>
 
 
@@ -650,6 +672,10 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">process_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="ow">in</span> <span class="n">meta</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sample</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_entity</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_entity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">meta</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
             <span class="k">return</span> <span class="n">sample</span>
 
         <span class="n">client</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_key</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">)</span>

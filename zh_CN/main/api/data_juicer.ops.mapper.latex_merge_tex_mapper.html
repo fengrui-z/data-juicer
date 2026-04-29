@@ -514,8 +514,68 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-latex-merge-tex-mapper-module">
-<h1>data_juicer.ops.mapper.latex_merge_tex_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-latex-merge-tex-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.latex_merge_tex_mapper">
+<span id="data-juicer-ops-mapper-latex-merge-tex-mapper-module"></span><h1>data_juicer.ops.mapper.latex_merge_tex_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.latex_merge_tex_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.latex_merge_tex_mapper.LatexMergeTexMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.latex_merge_tex_mapper.</span></span><span class="sig-name descname"><span class="pre">LatexMergeTexMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/latex_merge_tex_mapper.html#LatexMergeTexMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.latex_merge_tex_mapper.LatexMergeTexMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Extracts and concatenates all <code class="docutils literal notranslate"><span class="pre">.tex</span></code> files from a compressed
+LaTeX project archive into a single text field.</p>
+<p>Supported archive formats: <code class="docutils literal notranslate"><span class="pre">.tar</span></code>, <code class="docutils literal notranslate"><span class="pre">.tar.gz</span></code> / <code class="docutils literal notranslate"><span class="pre">.tgz</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">.zip</span></code>.  Plain <code class="docutils literal notranslate"><span class="pre">.gz</span></code> (single-file gzip) is <strong>not</strong>
+supported because gzip archives carry no filename metadata,
+making it impossible to verify that the content is actually a
+<code class="docutils literal notranslate"><span class="pre">.tex</span></code> file.</p>
+<p>All <code class="docutils literal notranslate"><span class="pre">.tex</span></code> files found inside the archive are read in-memory and
+joined with a configurable separator.  No ordering or
+deduplication is applied.</p>
+<p>This operator is typically placed before LaTeX-processing operators
+such as <code class="docutils literal notranslate"><span class="pre">remove_comments_mapper</span></code>, <code class="docutils literal notranslate"><span class="pre">expand_macro_mapper</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">latex_figure_context_extractor_mapper</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.latex_merge_tex_mapper.LatexMergeTexMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compressed_file_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'compressed_file'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\n\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_file_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">52428800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_total_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">104857600</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/latex_merge_tex_mapper.html#LatexMergeTexMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.latex_merge_tex_mapper.LatexMergeTexMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>compressed_file_key</strong> -- Field name that stores the archive
+file path.</p></li>
+<li><p><strong>separator</strong> -- String used to join the contents of multiple
+<code class="docutils literal notranslate"><span class="pre">.tex</span></code> files.</p></li>
+<li><p><strong>max_file_size</strong> -- Maximum allowed uncompressed size in bytes
+for a single <code class="docutils literal notranslate"><span class="pre">.tex</span></code> entry inside the archive.  Entries
+exceeding this limit are skipped with a warning.  Set to
+<code class="docutils literal notranslate"><span class="pre">None</span></code> or <code class="docutils literal notranslate"><span class="pre">0</span></code> to disable the check.</p></li>
+<li><p><strong>max_total_size</strong> -- Maximum allowed cumulative size in bytes
+for all extracted <code class="docutils literal notranslate"><span class="pre">.tex</span></code> content combined.  Once this
+limit is reached, remaining files in the archive are
+skipped with a warning.  Set to <code class="docutils literal notranslate"><span class="pre">None</span></code> or <code class="docutils literal notranslate"><span class="pre">0</span></code> to
+disable the check.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.latex_merge_tex_mapper.LatexMergeTexMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/latex_merge_tex_mapper.html#LatexMergeTexMapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.latex_merge_tex_mapper.LatexMergeTexMapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +598,22 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.latex_merge_tex_mapper.LatexMergeTexMapper"><code class="docutils literal notranslate"><span class="pre">LatexMergeTexMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.latex_merge_tex_mapper.LatexMergeTexMapper.__init__"><code class="docutils literal notranslate"><span class="pre">LatexMergeTexMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.latex_merge_tex_mapper.LatexMergeTexMapper.process_single"><code class="docutils literal notranslate"><span class="pre">LatexMergeTexMapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

@@ -521,7 +521,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">av</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">PIL</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Audio</span><span class="p">,</span> <span class="n">Image</span>
@@ -531,11 +530,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_PREFIX</span><span class="p">,</span> <span class="n">SPECIAL_TOKEN_ENV_PREFIX</span><span class="p">,</span> <span class="n">Fields</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.file_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_suffix_to_filename</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.video_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_av</span>
 
 <span class="n">cv2</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;cv2&quot;</span><span class="p">,</span> <span class="s2">&quot;opencv-contrib-python&quot;</span><span class="p">)</span>
-
-<span class="c1"># suppress most warnings from av</span>
-<span class="n">av</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">set_level</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">PANIC</span><span class="p">)</span>
+<span class="n">av</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;av&quot;</span><span class="p">,</span> <span class="n">post_import</span><span class="o">=</span><span class="n">setup_av</span><span class="p">)</span>
 
 
 <span class="n">_DEFAULT_TOKEN_FORMATS</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
@@ -933,7 +931,7 @@
 
 <div class="viewcode-block" id="get_video_duration">
 <a class="viewcode-back" href="../../../api/data_juicer.utils.mm_utils.html#data_juicer.utils.mm_utils.get_video_duration">[文档]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_video_duration</span><span class="p">(</span><span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">InputContainer</span><span class="p">],</span> <span class="n">video_stream_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_video_duration</span><span class="p">(</span><span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;av.container.InputContainer&quot;</span><span class="p">],</span> <span class="n">video_stream_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the video&#39;s duration from the container</span>
 
@@ -963,7 +961,7 @@
 
 <div class="viewcode-block" id="get_decoded_frames_from_video">
 <a class="viewcode-back" href="../../../api/data_juicer.utils.mm_utils.html#data_juicer.utils.mm_utils.get_decoded_frames_from_video">[文档]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_decoded_frames_from_video</span><span class="p">(</span><span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">InputContainer</span><span class="p">],</span> <span class="n">video_stream_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_decoded_frames_from_video</span><span class="p">(</span><span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;av.container.InputContainer&quot;</span><span class="p">],</span> <span class="n">video_stream_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the video&#39;s frames from the container</span>
 
@@ -988,7 +986,7 @@
 <div class="viewcode-block" id="cut_video_by_seconds">
 <a class="viewcode-back" href="../../../api/data_juicer.utils.mm_utils.html#data_juicer.utils.mm_utils.cut_video_by_seconds">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">cut_video_by_seconds</span><span class="p">(</span>
-    <span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">InputContainer</span><span class="p">],</span>
+    <span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;av.container.InputContainer&quot;</span><span class="p">],</span>
     <span class="n">output_video</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">start_seconds</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">end_seconds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1107,7 +1105,7 @@
 
 <div class="viewcode-block" id="process_each_frame">
 <a class="viewcode-back" href="../../../api/data_juicer.utils.mm_utils.html#data_juicer.utils.mm_utils.process_each_frame">[文档]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">process_each_frame</span><span class="p">(</span><span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">InputContainer</span><span class="p">],</span> <span class="n">output_video</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">frame_func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_each_frame</span><span class="p">(</span><span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;av.container.InputContainer&quot;</span><span class="p">],</span> <span class="n">output_video</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">frame_func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Process each frame in video by replacing each frame by</span>
 <span class="sd">    `frame_func(frame)`.</span>
@@ -1174,7 +1172,7 @@
 
 <div class="viewcode-block" id="extract_key_frames_by_seconds">
 <a class="viewcode-back" href="../../../api/data_juicer.utils.mm_utils.html#data_juicer.utils.mm_utils.extract_key_frames_by_seconds">[文档]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">extract_key_frames_by_seconds</span><span class="p">(</span><span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">InputContainer</span><span class="p">],</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_key_frames_by_seconds</span><span class="p">(</span><span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;av.container.InputContainer&quot;</span><span class="p">],</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract key frames by seconds.</span>
 <span class="sd">    :param input_video: input video path or av.container.InputContainer.</span>
 <span class="sd">    :param duration: duration of each video split in seconds.</span>
@@ -1209,7 +1207,7 @@
 
 <div class="viewcode-block" id="extract_key_frames">
 <a class="viewcode-back" href="../../../api/data_juicer.utils.mm_utils.html#data_juicer.utils.mm_utils.extract_key_frames">[文档]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">extract_key_frames</span><span class="p">(</span><span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">InputContainer</span><span class="p">],</span> <span class="n">video_stream_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_key_frames</span><span class="p">(</span><span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;av.container.InputContainer&quot;</span><span class="p">],</span> <span class="n">video_stream_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract key frames from the input video. If there is no keyframes in the</span>
 <span class="sd">    video, return the first frame.</span>
@@ -1257,7 +1255,7 @@
 
 <div class="viewcode-block" id="get_key_frame_seconds">
 <a class="viewcode-back" href="../../../api/data_juicer.utils.mm_utils.html#data_juicer.utils.mm_utils.get_key_frame_seconds">[文档]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_key_frame_seconds</span><span class="p">(</span><span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">InputContainer</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_key_frame_seconds</span><span class="p">(</span><span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;av.container.InputContainer&quot;</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get seconds of key frames in the input video.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1271,7 +1269,7 @@
 <div class="viewcode-block" id="extract_video_frames_uniformly_by_seconds">
 <a class="viewcode-back" href="../../../api/data_juicer.utils.mm_utils.html#data_juicer.utils.mm_utils.extract_video_frames_uniformly_by_seconds">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">extract_video_frames_uniformly_by_seconds</span><span class="p">(</span>
-    <span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">InputContainer</span><span class="p">],</span> <span class="n">frame_num</span><span class="p">:</span> <span class="n">PositiveInt</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;av.container.InputContainer&quot;</span><span class="p">],</span> <span class="n">frame_num</span><span class="p">:</span> <span class="n">PositiveInt</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract video frames uniformly by seconds.</span>
 <span class="sd">    :param input_video: input video path or av.container.InputContainer.</span>
@@ -1310,7 +1308,7 @@
 <div class="viewcode-block" id="extract_video_frames_uniformly">
 <a class="viewcode-back" href="../../../api/data_juicer.utils.mm_utils.html#data_juicer.utils.mm_utils.extract_video_frames_uniformly">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">extract_video_frames_uniformly</span><span class="p">(</span>
-    <span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">InputContainer</span><span class="p">],</span>
+    <span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;av.container.InputContainer&quot;</span><span class="p">],</span>
     <span class="n">frame_num</span><span class="p">:</span> <span class="n">PositiveInt</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1437,7 +1435,7 @@
 <div class="viewcode-block" id="extract_audio_from_video">
 <a class="viewcode-back" href="../../../api/data_juicer.utils.mm_utils.html#data_juicer.utils.mm_utils.extract_audio_from_video">[文档]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">extract_audio_from_video</span><span class="p">(</span>
-    <span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">InputContainer</span><span class="p">],</span>
+    <span class="n">input_video</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;av.container.InputContainer&quot;</span><span class="p">],</span>
     <span class="n">output_audio</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">start_seconds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">end_seconds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1674,7 +1672,7 @@
 
 <div class="viewcode-block" id="close_video">
 <a class="viewcode-back" href="../../../api/data_juicer.utils.mm_utils.html#data_juicer.utils.mm_utils.close_video">[文档]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">close_video</span><span class="p">(</span><span class="n">container</span><span class="p">:</span> <span class="n">av</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">InputContainer</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">close_video</span><span class="p">(</span><span class="n">container</span><span class="p">:</span> <span class="s2">&quot;av.container.InputContainer&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Close the video stream and container to avoid memory leak.</span>
 

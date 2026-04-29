@@ -515,7 +515,6 @@
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">av</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">PositiveInt</span>
 
@@ -721,6 +720,9 @@
         <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">dilate</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">kernel</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_clean_watermark</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">watermark_mask</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.video_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_av</span>
+
+        <span class="n">av</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;av&quot;</span><span class="p">,</span> <span class="n">post_import</span><span class="o">=</span><span class="n">setup_av</span><span class="p">)</span>
         <span class="n">np_frame</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">to_ndarray</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;bgr24&quot;</span><span class="p">)</span>
         <span class="n">new_np_frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">inpaint</span><span class="p">(</span><span class="n">np_frame</span><span class="p">,</span> <span class="n">watermark_mask</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">INPAINT_NS</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">av</span><span class="o">.</span><span class="n">VideoFrame</span><span class="o">.</span><span class="n">from_ndarray</span><span class="p">(</span><span class="n">new_np_frame</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;bgr24&quot;</span><span class="p">)</span>

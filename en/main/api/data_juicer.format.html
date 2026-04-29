@@ -542,8 +542,11 @@
 <dt class="sig sig-object py" id="data_juicer.format.JsonFormatter">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.format.</span></span><span class="sig-name descname"><span class="pre">JsonFormatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffixes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/format/json_formatter.html#JsonFormatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.format.JsonFormatter" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="data_juicer.format.formatter.html#data_juicer.format.formatter.LocalFormatter" title="data_juicer.format.formatter.LocalFormatter"><code class="xref py py-class docutils literal notranslate"><span class="pre">LocalFormatter</span></code></a></p>
-<p>The class is used to load and format json-type files.</p>
-<p>Default suffixes is <cite>[‘.json’, ‘.jsonl’, ‘.json.gz’, ‘.jsonl.gz’, ‘.json.zst’, ‘.jsonl.zst’]</cite></p>
+<p>Load json-type files.</p>
+<p>Default suffixes include <code class="docutils literal notranslate"><span class="pre">.json</span></code>, <code class="docutils literal notranslate"><span class="pre">.jsonl</span></code>, gzip/zstd variants.</p>
+<p>Optional lenient JSONL: <code class="docutils literal notranslate"><span class="pre">load_jsonl_lenient:</span> <span class="pre">true</span></code> or env
+<code class="docutils literal notranslate"><span class="pre">DATA_JUICER_JSONL_LENIENT=1</span></code> streams jsonl-only inputs with stdlib
+<code class="xref py py-func docutils literal notranslate"><span class="pre">json.loads()</span></code>, skipping bad lines (avoids HF ujson for those files).</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="data_juicer.format.JsonFormatter.SUFFIXES">
 <span class="sig-name descname"><span class="pre">SUFFIXES</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['.json',</span> <span class="pre">'.jsonl',</span> <span class="pre">'.json.gz',</span> <span class="pre">'.jsonl.gz',</span> <span class="pre">'.json.zst',</span> <span class="pre">'.jsonl.zst']</span></span><a class="headerlink" href="#data_juicer.format.JsonFormatter.SUFFIXES" title="Link to this definition">#</a></dt>
@@ -560,6 +563,24 @@
 <li><p><strong>suffixes</strong> – files with specified suffixes to be processed</p></li>
 <li><p><strong>kwargs</strong> – extra args</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.format.JsonFormatter.load_dataset">
+<span class="sig-name descname"><span class="pre">load_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_proc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">global_cfg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/format/json_formatter.html#JsonFormatter.load_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.format.JsonFormatter.load_dataset" title="Link to this definition">#</a></dt>
+<dd><p>Load a dataset from dataset file or dataset directory, and unify its
+format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_proc</strong> – number of processes when loading the dataset</p></li>
+<li><p><strong>global_cfg</strong> – global cfg used in consequent processes,</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>formatted dataset</p>
 </dd>
 </dl>
 </dd></dl>
@@ -900,6 +921,7 @@ info</p></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.format.JsonFormatter"><code class="docutils literal notranslate"><span class="pre">JsonFormatter</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.format.JsonFormatter.SUFFIXES"><code class="docutils literal notranslate"><span class="pre">JsonFormatter.SUFFIXES</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.format.JsonFormatter.__init__"><code class="docutils literal notranslate"><span class="pre">JsonFormatter.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.format.JsonFormatter.load_dataset"><code class="docutils literal notranslate"><span class="pre">JsonFormatter.load_dataset()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.format.LocalFormatter"><code class="docutils literal notranslate"><span class="pre">LocalFormatter</span></code></a><ul class="nav section-nav flex-column">

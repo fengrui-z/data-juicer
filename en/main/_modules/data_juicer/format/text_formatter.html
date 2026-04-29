@@ -516,15 +516,50 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">pdfplumber</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">concatenate_datasets</span><span class="p">,</span> <span class="n">load_dataset</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">docx</span><span class="w"> </span><span class="kn">import</span> <span class="n">Document</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.cache_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">DATA_JUICER_CACHE_HOME</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.file_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_files_with_suffix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.formatter</span><span class="w"> </span><span class="kn">import</span> <span class="n">FORMATTERS</span><span class="p">,</span> <span class="n">LocalFormatter</span><span class="p">,</span> <span class="n">add_suffixes</span><span class="p">,</span> <span class="n">unify_format</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_decrypt_and_extract</span><span class="p">(</span><span class="n">data_file</span><span class="p">,</span> <span class="n">fernet_key_bytes</span><span class="p">,</span> <span class="n">extracted_filetype_path</span><span class="p">,</span> <span class="n">file_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Worker function for multiprocessing: decrypt *data_file* in-memory and</span>
+<span class="sd">    then extract its text to *extracted_filetype_path*.</span>
+
+<span class="sd">    This function is defined at module level so that it is picklable and can</span>
+<span class="sd">    be dispatched to a :class:`multiprocessing.Pool`.</span>
+
+<span class="sd">    :param data_file: path to the encrypted source file.</span>
+<span class="sd">    :param fernet_key_bytes: the raw Fernet key as :class:`bytes` (obtained</span>
+<span class="sd">        from ``fernet._signing_key`` + ``fernet._encryption_key`` is NOT</span>
+<span class="sd">        used here; instead we pass the original base-64 key bytes so that the</span>
+<span class="sd">        child process can reconstruct the :class:`~cryptography.fernet.Fernet`</span>
+<span class="sd">        instance independently).</span>
+<span class="sd">    :param extracted_filetype_path: directory where the extracted .txt file</span>
+<span class="sd">        will be written.</span>
+<span class="sd">    :param file_type: ``&quot;.docx&quot;`` or ``&quot;.pdf&quot;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">cryptography.fernet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fernet</span>
+
+    <span class="n">fernet</span> <span class="o">=</span> <span class="n">Fernet</span><span class="p">(</span><span class="n">fernet_key_bytes</span><span class="p">)</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">data_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+        <span class="n">encrypted_data</span> <span class="o">=</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">plaintext</span> <span class="o">=</span> <span class="n">fernet</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">encrypted_data</span><span class="p">)</span>
+    <span class="n">buf</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">plaintext</span><span class="p">)</span>
+    <span class="n">buf</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">data_file</span>
+
+    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;.docx&quot;</span><span class="p">:</span>
+        <span class="n">extract_txt_from_docx</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">extracted_filetype_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">extract_txt_from_pdf</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">extracted_filetype_path</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="extract_txt_from_docx">
@@ -533,12 +568,19 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract text from a docx file and save to target path.</span>
 
-<span class="sd">    :param fn: path to input pdf file</span>
+<span class="sd">    :param fn: path to input docx file, or a file-like object (e.g.</span>
+<span class="sd">        :class:`io.BytesIO`) for in-memory decrypted content.</span>
 <span class="sd">    :param tgt_path: path to save text file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">docx</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;docx&quot;</span><span class="p">,</span> <span class="s2">&quot;python-docx&quot;</span><span class="p">)</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">docx</span><span class="o">.</span><span class="n">Document</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
     <span class="n">text</span> <span class="o">=</span> <span class="p">[</span><span class="n">para</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">para</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">paragraphs</span> <span class="k">if</span> <span class="n">para</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
-    <span class="n">base_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.docx&quot;</span><span class="p">,</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
+    <span class="c1"># Derive the output filename from fn; fall back to a generic name for</span>
+    <span class="c1"># file-like objects that expose a .name attribute.</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">):</span>
+        <span class="n">base_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.docx&quot;</span><span class="p">,</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">base_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.docx&quot;</span><span class="p">,</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tgt_path</span><span class="p">,</span> <span class="n">base_fn</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">))</span></div>
 
@@ -550,9 +592,11 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract text from a pdf file and save to target path.</span>
 
-<span class="sd">    :param fn: path to input pdf file</span>
+<span class="sd">    :param fn: path to input pdf file, or a file-like object (e.g.</span>
+<span class="sd">        :class:`io.BytesIO`) for in-memory decrypted content.</span>
 <span class="sd">    :param tgt_path: path to save text file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pdfplumber</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;pdfplumber&quot;</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">pdfplumber</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span> <span class="k">as</span> <span class="n">pdf</span><span class="p">:</span>
         <span class="n">text</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">pdf</span><span class="o">.</span><span class="n">pages</span><span class="p">:</span>
@@ -567,7 +611,10 @@
                 <span class="n">page_text</span> <span class="o">=</span> <span class="n">page_text</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()[:</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">page_num</span><span class="p">)]</span>
             <span class="k">if</span> <span class="n">page_text</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
                 <span class="n">text</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">page_text</span><span class="p">)</span>
-        <span class="n">base_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">):</span>
+            <span class="n">base_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">base_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tgt_path</span><span class="p">,</span> <span class="n">base_fn</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">))</span></div>
 
@@ -693,6 +740,18 @@
             <span class="n">DATA_JUICER_CACHE_HOME</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_path</span><span class="p">))</span>
         <span class="p">)</span>
 
+        <span class="c1"># Determine whether to decrypt files in-memory before extraction.</span>
+        <span class="n">decrypt</span> <span class="o">=</span> <span class="n">global_cfg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">global_cfg</span><span class="p">,</span> <span class="s2">&quot;decrypt_after_reading&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">fernet</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">decrypt</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.encryption_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_fernet_key</span>
+
+            <span class="n">fernet</span> <span class="o">=</span> <span class="n">load_fernet_key</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">global_cfg</span><span class="p">,</span> <span class="s2">&quot;encryption_key_path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+        <span class="c1"># Resolve num_proc early so Pool() calls below use the correct value.</span>
+        <span class="n">_num_proc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;num_proc&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">num_proc</span> <span class="o">=</span> <span class="n">num_proc</span> <span class="ow">or</span> <span class="n">_num_proc</span>
+
         <span class="k">for</span> <span class="n">file_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="p">:</span>
             <span class="c1"># extract text from docx or pdf files, and save as txt type</span>
             <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;.docx&quot;</span> <span class="ow">or</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;.pdf&quot;</span><span class="p">:</span>
@@ -702,33 +761,93 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Extracting text from </span><span class="si">{}</span><span class="s2"> files...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_type</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)))</span>
 
                 <span class="n">extract_func</span> <span class="o">=</span> <span class="n">extract_txt_from_docx</span> <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;.docx&quot;</span> <span class="k">else</span> <span class="n">extract_txt_from_pdf</span>
-                <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">num_proc</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">data_file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="p">[</span><span class="n">file_type</span><span class="p">]:</span>
-                    <span class="n">pool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span>
-                        <span class="n">func</span><span class="o">=</span><span class="n">extract_func</span><span class="p">,</span>
-                        <span class="n">args</span><span class="o">=</span><span class="p">(</span>
-                            <span class="n">data_file</span><span class="p">,</span>
-                            <span class="n">extracted_filetype_path</span><span class="p">,</span>
-                        <span class="p">),</span>
-                    <span class="p">)</span>
-                <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-                <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">decrypt</span> <span class="ow">and</span> <span class="n">fernet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># Decrypt each file in-memory and extract text in parallel.</span>
+                    <span class="c1"># BytesIO objects are not picklable, so we pass the raw</span>
+                    <span class="c1"># Fernet key bytes to each worker; the worker reconstructs</span>
+                    <span class="c1"># its own Fernet instance and decrypts independently.</span>
+                    <span class="n">fernet_key_bytes</span> <span class="o">=</span> <span class="n">fernet</span><span class="o">.</span><span class="n">_signing_key</span> <span class="o">+</span> <span class="n">fernet</span><span class="o">.</span><span class="n">_encryption_key</span>
+                    <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">num_proc</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">data_file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="p">[</span><span class="n">file_type</span><span class="p">]:</span>
+                        <span class="n">pool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span>
+                            <span class="n">func</span><span class="o">=</span><span class="n">_decrypt_and_extract</span><span class="p">,</span>
+                            <span class="n">args</span><span class="o">=</span><span class="p">(</span>
+                                <span class="n">data_file</span><span class="p">,</span>
+                                <span class="n">fernet_key_bytes</span><span class="p">,</span>
+                                <span class="n">extracted_filetype_path</span><span class="p">,</span>
+                                <span class="n">file_type</span><span class="p">,</span>
+                            <span class="p">),</span>
+                        <span class="p">)</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">num_proc</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">data_file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="p">[</span><span class="n">file_type</span><span class="p">]:</span>
+                        <span class="n">pool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span>
+                            <span class="n">func</span><span class="o">=</span><span class="n">extract_func</span><span class="p">,</span>
+                            <span class="n">args</span><span class="o">=</span><span class="p">(</span>
+                                <span class="n">data_file</span><span class="p">,</span>
+                                <span class="n">extracted_filetype_path</span><span class="p">,</span>
+                            <span class="p">),</span>
+                        <span class="p">)</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                    <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Extracted text files are stored in directory &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">extracted_filetype_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
                 <span class="c1"># look for extracted txt files</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="p">[</span><span class="n">file_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">find_files_with_suffix</span><span class="p">(</span><span class="n">extracted_filetype_path</span><span class="p">,</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)[</span><span class="s2">&quot;.txt&quot;</span><span class="p">]</span>
 
         <span class="c1"># load text dataset, one text file as one sample</span>
-        <span class="n">_num_proc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;num_proc&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">num_proc</span> <span class="o">=</span> <span class="n">num_proc</span> <span class="ow">or</span> <span class="n">_num_proc</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading dataset with num_proc: </span><span class="si">{</span><span class="n">num_proc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">datasets</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span>
-            <span class="s2">&quot;text&quot;</span><span class="p">,</span>
-            <span class="n">data_files</span><span class="o">=</span><span class="p">{</span><span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="p">},</span>
-            <span class="n">sample_by</span><span class="o">=</span><span class="s2">&quot;document&quot;</span><span class="p">,</span>
-            <span class="n">num_proc</span><span class="o">=</span><span class="n">num_proc</span><span class="p">,</span>
-            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span>
-        <span class="p">)</span>
+
+        <span class="c1"># For plain text files (not PDF/DOCX), apply in-memory decryption via</span>
+        <span class="c1"># temporary files: decrypt to a NamedTemporaryFile, load, then delete.</span>
+        <span class="k">if</span> <span class="n">decrypt</span> <span class="ow">and</span> <span class="n">fernet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+
+            <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.encryption_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+                <span class="n">decrypt_file_to_bytes</span><span class="p">,</span>
+                <span class="n">get_secure_tmpdir</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">decrypted_data_files</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">tmp_paths</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">get_secure_tmpdir</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">ext</span><span class="p">,</span> <span class="n">paths</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1"># PDF/DOCX files have already been extracted to .txt above;</span>
+                <span class="c1"># the remaining types need decryption here.</span>
+                <span class="n">tmp_file_paths</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">decrypt_file_to_bytes</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">fernet</span><span class="p">)</span>
+                    <span class="n">suffix</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">p</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="n">tmp_dir</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp</span><span class="p">:</span>
+                        <span class="n">tmp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                        <span class="n">tmp_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                        <span class="n">tmp_file_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">decrypted_data_files</span><span class="p">[</span><span class="n">ext</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">tmp_file_paths</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">datasets</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span>
+                    <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+                    <span class="n">data_files</span><span class="o">=</span><span class="n">decrypted_data_files</span><span class="p">,</span>
+                    <span class="n">sample_by</span><span class="o">=</span><span class="s2">&quot;document&quot;</span><span class="p">,</span>
+                    <span class="n">num_proc</span><span class="o">=</span><span class="n">num_proc</span><span class="p">,</span>
+                    <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">tp</span> <span class="ow">in</span> <span class="n">tmp_paths</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tp</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                        <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">datasets</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span>
+                <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+                <span class="n">data_files</span><span class="o">=</span><span class="p">{</span><span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="p">},</span>
+                <span class="n">sample_by</span><span class="o">=</span><span class="s2">&quot;document&quot;</span><span class="p">,</span>
+                <span class="n">num_proc</span><span class="o">=</span><span class="n">num_proc</span><span class="p">,</span>
+                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="c1"># whether to add file suffix to dataset meta info</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_suffix</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Add suffix info into dataset...&quot;</span><span class="p">)</span>

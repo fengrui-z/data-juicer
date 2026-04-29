@@ -514,8 +514,85 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-filter-image-subplot-filter-module">
-<h1>data_juicer.ops.filter.image_subplot_filter module<a class="headerlink" href="#data-juicer-ops-filter-image-subplot-filter-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.filter.image_subplot_filter">
+<span id="data-juicer-ops-filter-image-subplot-filter-module"></span><h1>data_juicer.ops.filter.image_subplot_filter module<a class="headerlink" href="#module-data_juicer.ops.filter.image_subplot_filter" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.image_subplot_filter.ImageSubplotFilter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.filter.image_subplot_filter.</span></span><span class="sig-name descname"><span class="pre">ImageSubplotFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/image_subplot_filter.html#ImageSubplotFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.image_subplot_filter.ImageSubplotFilter" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Filter" title="data_juicer.ops.base_op.Filter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Filter</span></code></a></p>
+<p>Filter to detect and remove samples with images containing subplots.</p>
+<p>This filter uses Hough Line Transform to detect straight lines in images,
+which is particularly effective for detecting grid-like subplot layouts
+with perfectly straight edges.</p>
+<p>The algorithm works by:
+1. Converting images to grayscale and applying edge detection
+2. Using Hough Line Transform to detect straight lines
+3. Classifying lines as horizontal or vertical based on angle
+4. Counting lines that meet length and angle requirements
+5. Calculating confidence based on line counts and distribution</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.image_subplot_filter.ImageSubplotFilter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_horizontal_lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_vertical_lines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_confidence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">any_or_all</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'any'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">canny_threshold1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">70</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">canny_threshold2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">190</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hough_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">110</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_line_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">110</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_line_gap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">18</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle_tolerance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/image_subplot_filter.html#ImageSubplotFilter.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.image_subplot_filter.ImageSubplotFilter.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_horizontal_lines</strong> -- Minimum number of horizontal lines
+to consider an image as containing subplots.</p></li>
+<li><p><strong>min_vertical_lines</strong> -- Minimum number of vertical lines
+to consider an image as containing subplots.</p></li>
+<li><p><strong>min_confidence</strong> -- Minimum confidence score for filtering.
+Images with subplot confidence above this threshold will be
+considered as containing subplots.</p></li>
+<li><p><strong>any_or_all</strong> -- Strategy for multi-image samples. 'any' filters
+the sample if any image contains subplots. 'all' filters the
+sample only if all images contain subplots.</p></li>
+<li><p><strong>canny_threshold1</strong> -- First threshold for Canny edge detector.</p></li>
+<li><p><strong>canny_threshold2</strong> -- Second threshold for Canny edge detector.</p></li>
+<li><p><strong>hough_threshold</strong> -- Accumulator threshold for Hough transform.</p></li>
+<li><p><strong>min_line_length</strong> -- Minimum line length to be detected.</p></li>
+<li><p><strong>max_line_gap</strong> -- Maximum gap between line segments to be treated as a single line.</p></li>
+<li><p><strong>angle_tolerance</strong> -- Tolerance in degrees for classifying lines as horizontal/vertical.</p></li>
+<li><p><strong>args</strong> -- Extra args.</p></li>
+<li><p><strong>kwargs</strong> -- Extra args.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.image_subplot_filter.ImageSubplotFilter.compute_stats_single">
+<span class="sig-name descname"><span class="pre">compute_stats_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/image_subplot_filter.html#ImageSubplotFilter.compute_stats_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.image_subplot_filter.ImageSubplotFilter.compute_stats_single" title="链接到此定义。">#</a></dt>
+<dd><p>Detect subplots in images and compute statistics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> -- Single sample.</p></li>
+<li><p><strong>context</strong> -- Whether to store context information.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sample with computed statistics.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.image_subplot_filter.ImageSubplotFilter.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/image_subplot_filter.html#ImageSubplotFilter.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.image_subplot_filter.ImageSubplotFilter.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>Process single sample to determine if it should be filtered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- Single sample.</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>True for keeping, False for filtering.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +615,23 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.image_subplot_filter.ImageSubplotFilter"><code class="docutils literal notranslate"><span class="pre">ImageSubplotFilter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.image_subplot_filter.ImageSubplotFilter.__init__"><code class="docutils literal notranslate"><span class="pre">ImageSubplotFilter.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.image_subplot_filter.ImageSubplotFilter.compute_stats_single"><code class="docutils literal notranslate"><span class="pre">ImageSubplotFilter.compute_stats_single()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.image_subplot_filter.ImageSubplotFilter.process_single"><code class="docutils literal notranslate"><span class="pre">ImageSubplotFilter.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

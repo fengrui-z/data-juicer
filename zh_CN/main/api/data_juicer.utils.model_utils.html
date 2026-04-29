@@ -671,7 +671,10 @@ like tokenization or encoding. Defaults to False.</p></li>
 <li><p><strong>processor_config</strong> -- A dictionary containing configuration parameters
 for initializing a Hugging Face processor. It is only relevant if
 <cite>return_processor</cite> is set to True.</p></li>
-<li><p><strong>model_params</strong> -- Additional parameters for configuring the API model.</p></li>
+<li><p><strong>model_params</strong> -- Additional parameters for configuring the API model.
+Environment variables <code class="docutils literal notranslate"><span class="pre">OPENAI_BASE_URL</span></code> / <code class="docutils literal notranslate"><span class="pre">OPENAI_API_URL</span></code> and
+<code class="docutils literal notranslate"><span class="pre">OPENAI_API_KEY</span></code> / <code class="docutils literal notranslate"><span class="pre">DASHSCOPE_API_KEY</span></code> are merged when not set here
+(OpenAI-compatible / DashScope REST).</p></li>
 </ul>
 </dd>
 <dt class="field-even">返回<span class="colon">:</span></dt>
@@ -971,8 +974,13 @@ otherwise, only the processor is returned.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="data_juicer.utils.model_utils.update_sampling_params">
-<span class="sig-prename descclassname"><span class="pre">data_juicer.utils.model_utils.</span></span><span class="sig-name descname"><span class="pre">update_sampling_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampling_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretrained_model_name_or_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_vllm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/utils/model_utils.html#update_sampling_params"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.utils.model_utils.update_sampling_params" title="链接到此定义。">#</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">data_juicer.utils.model_utils.</span></span><span class="sig-name descname"><span class="pre">update_sampling_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampling_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretrained_model_name_or_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_vllm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fetch_generation_config_from_hf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/utils/model_utils.html#update_sampling_params"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.utils.model_utils.update_sampling_params" title="链接到此定义。">#</a></dt>
+<dd><p>Update sampling_params with max_tokens/max_new_tokens from model or defaults.</p>
+<p>When fetch_generation_config_from_hf is False (e.g. API-only models like
+gemini-2.5-flash via DashScope), skip HuggingFace GenerationConfig fetch to
+avoid connection errors. Default None means: fetch when enable_vllm or when
+pretrained_model_name_or_path looks like an HF path (contains /).</p>
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="data_juicer.utils.model_utils.MMLabModel">

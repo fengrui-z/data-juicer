@@ -514,8 +514,55 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-python-file-mapper-module">
-<h1>data_juicer.ops.mapper.python_file_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-python-file-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.python_file_mapper">
+<span id="data-juicer-ops-mapper-python-file-mapper-module"></span><h1>data_juicer.ops.mapper.python_file_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.python_file_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.python_file_mapper.PythonFileMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.python_file_mapper.</span></span><span class="sig-name descname"><span class="pre">PythonFileMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/python_file_mapper.html#PythonFileMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.python_file_mapper.PythonFileMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Executes a Python function defined in a file on input data.</p>
+<p>This operator loads a specified Python function from a given file and applies it to the
+input data. The function must take exactly one argument and return a dictionary. The
+operator can process data either sample by sample or in batches, depending on the
+<cite>batched</cite> parameter. If the file path is not provided, the operator acts as an identity
+function, returning the input sample unchanged. The function is loaded dynamically, and
+its name and file path are configurable. Important notes:
+- The file must be a valid Python file (<cite>.py</cite>).
+- The function must be callable and accept exactly one argument.
+- The function's return value must be a dictionary.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.python_file_mapper.PythonFileMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'process_single'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batched</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/python_file_mapper.html#PythonFileMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.python_file_mapper.PythonFileMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> -- The path to the Python file containing the function
+to be executed.</p></li>
+<li><p><strong>function_name</strong> -- The name of the function defined in the file
+to be executed.</p></li>
+<li><p><strong>batched</strong> -- A boolean indicating whether to process input data in
+batches.</p></li>
+<li><p><strong>kwargs</strong> -- Additional keyword arguments passed to the parent class.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.python_file_mapper.PythonFileMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/python_file_mapper.html#PythonFileMapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.python_file_mapper.PythonFileMapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>Invoke the loaded function with the provided sample.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.python_file_mapper.PythonFileMapper.process_batched">
+<span class="sig-name descname"><span class="pre">process_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/python_file_mapper.html#PythonFileMapper.process_batched"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.python_file_mapper.PythonFileMapper.process_batched" title="链接到此定义。">#</a></dt>
+<dd><p>Invoke the loaded function with the provided samples.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +585,23 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.python_file_mapper.PythonFileMapper"><code class="docutils literal notranslate"><span class="pre">PythonFileMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.python_file_mapper.PythonFileMapper.__init__"><code class="docutils literal notranslate"><span class="pre">PythonFileMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.python_file_mapper.PythonFileMapper.process_single"><code class="docutils literal notranslate"><span class="pre">PythonFileMapper.process_single()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.python_file_mapper.PythonFileMapper.process_batched"><code class="docutils literal notranslate"><span class="pre">PythonFileMapper.process_batched()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

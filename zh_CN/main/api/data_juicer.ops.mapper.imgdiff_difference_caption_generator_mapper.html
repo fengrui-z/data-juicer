@@ -514,8 +514,71 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-imgdiff-difference-caption-generator-mapper-module">
-<h1>data_juicer.ops.mapper.imgdiff_difference_caption_generator_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-imgdiff-difference-caption-generator-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.imgdiff_difference_caption_generator_mapper">
+<span id="data-juicer-ops-mapper-imgdiff-difference-caption-generator-mapper-module"></span><h1>data_juicer.ops.mapper.imgdiff_difference_caption_generator_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.imgdiff_difference_caption_generator_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.imgdiff_difference_caption_generator_mapper.Difference_Caption_Generator_Mapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.imgdiff_difference_caption_generator_mapper.</span></span><span class="sig-name descname"><span class="pre">Difference_Caption_Generator_Mapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/imgdiff_difference_caption_generator_mapper.html#Difference_Caption_Generator_Mapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.imgdiff_difference_caption_generator_mapper.Difference_Caption_Generator_Mapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Generates difference captions for bounding box regions in two images.</p>
+<p>This operator processes pairs of images and generates captions for the differences in
+their bounding box regions. It uses a multi-step process:
+- Describes the content of each bounding box region using a Hugging Face model.
+- Crops the bounding box regions from both images.
+- Checks if the cropped regions match the generated captions.
+- Determines if there are differences between the two captions.
+- Marks the difference area with a red box.
+- Generates difference captions for the marked areas.
+- The key metric is the similarity score between the captions, computed using a CLIP</p>
+<blockquote>
+<div><p>model.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>If no valid bounding boxes or differences are found, it returns empty captions and
+zeroed bounding boxes.</p></li>
+<li><p>Uses 'cuda' as the accelerator if any of the fused operations support it.</p></li>
+<li><p>Caches temporary images during processing and clears them afterward.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.imgdiff_difference_caption_generator_mapper.Difference_Caption_Generator_Mapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mllm_mapper_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_text_matching_filter_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_pair_similarity_filter_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/imgdiff_difference_caption_generator_mapper.html#Difference_Caption_Generator_Mapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.imgdiff_difference_caption_generator_mapper.Difference_Caption_Generator_Mapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mllm_mapper_args</strong> -- Arguments for multimodal language model mapper.
+Controls the generation of captions for bounding box regions. Default empty dict
+will use fixed values: max_new_tokens=256, temperature=0.2, top_p=None,
+num_beams=1, hf_model=&quot;llava-hf/llava-v1.6-vicuna-7b-hf&quot;.</p></li>
+<li><p><strong>image_text_matching_filter_args</strong> -- Arguments for image-text matching filter.
+Controls the matching between cropped regions and generated captions.
+Default empty dict will use fixed values: min_score=0.1, max_score=1.0,
+hf_blip=&quot;Salesforce/blip-itm-base-coco&quot;, num_proc=1.</p></li>
+<li><p><strong>text_pair_similarity_filter_args</strong> -- Arguments for text pair similarity filter.
+Controls the similarity comparison between caption pairs. Default empty dict
+will use fixed values: min_score=0.1, max_score=1.0,
+hf_clip=&quot;openai/clip-vit-base-patch32&quot;, text_key_second=&quot;target_text&quot;, num_proc=1.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.imgdiff_difference_caption_generator_mapper.Difference_Caption_Generator_Mapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/imgdiff_difference_caption_generator_mapper.html#Difference_Caption_Generator_Mapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.imgdiff_difference_caption_generator_mapper.Difference_Caption_Generator_Mapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +601,22 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.imgdiff_difference_caption_generator_mapper.Difference_Caption_Generator_Mapper"><code class="docutils literal notranslate"><span class="pre">Difference_Caption_Generator_Mapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.imgdiff_difference_caption_generator_mapper.Difference_Caption_Generator_Mapper.__init__"><code class="docutils literal notranslate"><span class="pre">Difference_Caption_Generator_Mapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.imgdiff_difference_caption_generator_mapper.Difference_Caption_Generator_Mapper.process_single"><code class="docutils literal notranslate"><span class="pre">Difference_Caption_Generator_Mapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

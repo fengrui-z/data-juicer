@@ -514,8 +514,167 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-core-executor-pipeline-dag-module">
-<h1>data_juicer.core.executor.pipeline_dag module<a class="headerlink" href="#data-juicer-core-executor-pipeline-dag-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.core.executor.pipeline_dag">
+<span id="data-juicer-core-executor-pipeline-dag-module"></span><h1>data_juicer.core.executor.pipeline_dag module<a class="headerlink" href="#module-data_juicer.core.executor.pipeline_dag" title="链接到此标题。">#</a></h1>
+<p>Pipeline DAG Representation for Data-Juicer Pipelines</p>
+<p>This module provides Pipeline DAG (Directed Acyclic Graph) representation
+for tracking execution state, dependencies, and monitoring.</p>
+<p>Refactored to:
+- Live in core/executor/ where it's actually used
+- Use dict nodes consistently (matching strategy output)
+- Share status enum with DAGNodeStatusTransition</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.DAGNodeStatus">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.pipeline_dag.</span></span><span class="sig-name descname"><span class="pre">DAGNodeStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/executor/pipeline_dag.html#DAGNodeStatus"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.DAGNodeStatus" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Status of a DAG node during execution.</p>
+<p>State machine transitions (enforced by DAGNodeStatusTransition):
+- pending -&gt; running (node starts execution)
+- pending -&gt; completed (skipped - already done in previous run)
+- running -&gt; completed (node finishes successfully)
+- running -&gt; failed (node fails)
+- failed -&gt; running (node retries)
+- completed is terminal (no transitions out)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.DAGNodeStatus.PENDING">
+<span class="sig-name descname"><span class="pre">PENDING</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'pending'</span></span><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.DAGNodeStatus.PENDING" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.DAGNodeStatus.RUNNING">
+<span class="sig-name descname"><span class="pre">RUNNING</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'running'</span></span><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.DAGNodeStatus.RUNNING" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.DAGNodeStatus.COMPLETED">
+<span class="sig-name descname"><span class="pre">COMPLETED</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'completed'</span></span><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.DAGNodeStatus.COMPLETED" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.DAGNodeStatus.FAILED">
+<span class="sig-name descname"><span class="pre">FAILED</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'failed'</span></span><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.DAGNodeStatus.FAILED" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.PipelineDAG">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.pipeline_dag.</span></span><span class="sig-name descname"><span class="pre">PipelineDAG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">work_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/executor/pipeline_dag.html#PipelineDAG"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Pipeline DAG representation and execution state tracker.</p>
+<p>Stores DAG nodes as dicts (matching strategy output format).
+Provides methods for state management, serialization, and visualization.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.PipelineDAG.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">work_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/executor/pipeline_dag.html#PipelineDAG.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialize the Pipeline DAG.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>work_dir</strong> -- Working directory for storing DAG execution plans</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.PipelineDAG.nodes">
+<span class="sig-name descname"><span class="pre">nodes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.nodes" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.PipelineDAG.edges">
+<span class="sig-name descname"><span class="pre">edges</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.edges" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.PipelineDAG.execution_plan">
+<span class="sig-name descname"><span class="pre">execution_plan</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.execution_plan" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.PipelineDAG.parallel_groups">
+<span class="sig-name descname"><span class="pre">parallel_groups</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.parallel_groups" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.PipelineDAG.save_execution_plan">
+<span class="sig-name descname"><span class="pre">save_execution_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dag_execution_plan.json'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/pipeline_dag.html#PipelineDAG.save_execution_plan"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.save_execution_plan" title="链接到此定义。">#</a></dt>
+<dd><p>Save the execution plan to file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> -- Name of the file to save the plan</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the saved file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.PipelineDAG.load_execution_plan">
+<span class="sig-name descname"><span class="pre">load_execution_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dag_execution_plan.json'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/pipeline_dag.html#PipelineDAG.load_execution_plan"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.load_execution_plan" title="链接到此定义。">#</a></dt>
+<dd><p>Load execution plan from file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> -- Name of the file to load the plan from</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if loaded successfully, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.PipelineDAG.mark_node_started">
+<span class="sig-name descname"><span class="pre">mark_node_started</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/pipeline_dag.html#PipelineDAG.mark_node_started"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.mark_node_started" title="链接到此定义。">#</a></dt>
+<dd><p>Mark a node as started (running).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.PipelineDAG.mark_node_completed">
+<span class="sig-name descname"><span class="pre">mark_node_completed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/pipeline_dag.html#PipelineDAG.mark_node_completed"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.mark_node_completed" title="链接到此定义。">#</a></dt>
+<dd><p>Mark a node as completed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.PipelineDAG.mark_node_failed">
+<span class="sig-name descname"><span class="pre">mark_node_failed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/pipeline_dag.html#PipelineDAG.mark_node_failed"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.mark_node_failed" title="链接到此定义。">#</a></dt>
+<dd><p>Mark a node as failed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.PipelineDAG.get_node_status">
+<span class="sig-name descname"><span class="pre">get_node_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#data_juicer.core.executor.pipeline_dag.DAGNodeStatus" title="data_juicer.core.executor.pipeline_dag.DAGNodeStatus"><span class="pre">DAGNodeStatus</span></a></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/pipeline_dag.html#PipelineDAG.get_node_status"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.get_node_status" title="链接到此定义。">#</a></dt>
+<dd><p>Get status of a node by ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node_id</strong> -- The node identifier</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>DAGNodeStatus of the node</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.PipelineDAG.get_ready_nodes">
+<span class="sig-name descname"><span class="pre">get_ready_nodes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/pipeline_dag.html#PipelineDAG.get_ready_nodes"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.get_ready_nodes" title="链接到此定义。">#</a></dt>
+<dd><p>Get list of nodes ready to execute (all dependencies completed).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.PipelineDAG.get_execution_summary">
+<span class="sig-name descname"><span class="pre">get_execution_summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/pipeline_dag.html#PipelineDAG.get_execution_summary"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.get_execution_summary" title="链接到此定义。">#</a></dt>
+<dd><p>Get execution summary statistics.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.pipeline_dag.PipelineDAG.visualize">
+<span class="sig-name descname"><span class="pre">visualize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/pipeline_dag.html#PipelineDAG.visualize"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.visualize" title="链接到此定义。">#</a></dt>
+<dd><p>Generate a string representation of the DAG for visualization.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +697,41 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.DAGNodeStatus"><code class="docutils literal notranslate"><span class="pre">DAGNodeStatus</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.DAGNodeStatus.PENDING"><code class="docutils literal notranslate"><span class="pre">DAGNodeStatus.PENDING</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.DAGNodeStatus.RUNNING"><code class="docutils literal notranslate"><span class="pre">DAGNodeStatus.RUNNING</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.DAGNodeStatus.COMPLETED"><code class="docutils literal notranslate"><span class="pre">DAGNodeStatus.COMPLETED</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.DAGNodeStatus.FAILED"><code class="docutils literal notranslate"><span class="pre">DAGNodeStatus.FAILED</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG"><code class="docutils literal notranslate"><span class="pre">PipelineDAG</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.__init__"><code class="docutils literal notranslate"><span class="pre">PipelineDAG.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.nodes"><code class="docutils literal notranslate"><span class="pre">PipelineDAG.nodes</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.edges"><code class="docutils literal notranslate"><span class="pre">PipelineDAG.edges</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.execution_plan"><code class="docutils literal notranslate"><span class="pre">PipelineDAG.execution_plan</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.parallel_groups"><code class="docutils literal notranslate"><span class="pre">PipelineDAG.parallel_groups</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.save_execution_plan"><code class="docutils literal notranslate"><span class="pre">PipelineDAG.save_execution_plan()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.load_execution_plan"><code class="docutils literal notranslate"><span class="pre">PipelineDAG.load_execution_plan()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.mark_node_started"><code class="docutils literal notranslate"><span class="pre">PipelineDAG.mark_node_started()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.mark_node_completed"><code class="docutils literal notranslate"><span class="pre">PipelineDAG.mark_node_completed()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.mark_node_failed"><code class="docutils literal notranslate"><span class="pre">PipelineDAG.mark_node_failed()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.get_node_status"><code class="docutils literal notranslate"><span class="pre">PipelineDAG.get_node_status()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.get_ready_nodes"><code class="docutils literal notranslate"><span class="pre">PipelineDAG.get_ready_nodes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.get_execution_summary"><code class="docutils literal notranslate"><span class="pre">PipelineDAG.get_execution_summary()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.pipeline_dag.PipelineDAG.visualize"><code class="docutils literal notranslate"><span class="pre">PipelineDAG.visualize()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

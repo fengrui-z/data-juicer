@@ -604,11 +604,11 @@
         <span class="n">score</span><span class="p">,</span> <span class="n">record</span><span class="p">,</span> <span class="n">tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_llm_analysis</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">rank</span><span class="p">)</span>
 
         <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">llm_difficulty_score</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
-        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">llm_difficulty_record</span><span class="p">]</span> <span class="o">=</span> <span class="n">record</span>
+        <span class="c1"># Normalize record to ensure stable Arrow schema (handles nested None values)</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">llm_difficulty_record</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_record</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">tags</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">tags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="c1"># Store all tags under a single fixed key to avoid dynamic key schema conflicts.</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">llm_difficulty_tags</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_tags_to_str</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">sample</span></div>
 

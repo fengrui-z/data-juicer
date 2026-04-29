@@ -514,8 +514,77 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-video-resize-aspect-ratio-mapper-module">
-<h1>data_juicer.ops.mapper.video_resize_aspect_ratio_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-video-resize-aspect-ratio-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.video_resize_aspect_ratio_mapper">
+<span id="data-juicer-ops-mapper-video-resize-aspect-ratio-mapper-module"></span><h1>data_juicer.ops.mapper.video_resize_aspect_ratio_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.video_resize_aspect_ratio_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.rescale">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.</span></span><span class="sig-name descname"><span class="pre">rescale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ori_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_resize_aspect_ratio_mapper.html#rescale"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.rescale" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.VideoResizeAspectRatioMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.</span></span><span class="sig-name descname"><span class="pre">VideoResizeAspectRatioMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_resize_aspect_ratio_mapper.html#VideoResizeAspectRatioMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.VideoResizeAspectRatioMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Resizes videos to fit within a specified aspect ratio range. This operator adjusts the
+dimensions of videos to ensure their aspect ratios fall within a defined range. It can
+either increase or decrease the video dimensions based on the specified strategy. The
+aspect ratio is calculated as width divided by height. If a video's aspect ratio is
+outside the given range, it will be resized to match the closest boundary (either the
+minimum or maximum ratio). The <cite>min_ratio</cite> and <cite>max_ratio</cite> should be provided as strings
+in the format &quot;9:21&quot; or &quot;9/21&quot;. The resizing process uses the <cite>ffmpeg</cite> library to handle
+the actual video scaling. Videos that do not need resizing are left unchanged. The
+operator supports saving the modified videos to a specified directory or the same
+directory as the input files.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.VideoResizeAspectRatioMapper.STRATEGY">
+<span class="sig-name descname"><span class="pre">STRATEGY</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['decrease',</span> <span class="pre">'increase']</span></span><a class="headerlink" href="#data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.VideoResizeAspectRatioMapper.STRATEGY" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.VideoResizeAspectRatioMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'9/21'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'21/9'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'increase'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_resize_aspect_ratio_mapper.html#VideoResizeAspectRatioMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.VideoResizeAspectRatioMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_ratio</strong> -- The minimum aspect ratio to enforce videos with
+an aspect ratio below <cite>min_ratio</cite> will be resized to match
+this minimum ratio. The ratio should be provided as a string
+in the format &quot;9:21&quot; or &quot;9/21&quot;.</p></li>
+<li><p><strong>max_ratio</strong> -- The maximum aspect ratio to enforce videos with
+an aspect ratio above <cite>max_ratio</cite> will be resized to match
+this maximum ratio. The ratio should be provided as a string
+in the format &quot;21:9&quot; or &quot;21/9&quot;.</p></li>
+<li><p><strong>strategy</strong> -- The resizing strategy to apply when adjusting the
+video dimensions. It can be either 'decrease' to reduce the
+dimension or 'increase' to enlarge it. Accepted values are
+['decrease', 'increase'].</p></li>
+<li><p><strong>save_dir</strong> -- The directory where generated video files will be stored.
+If not specified, outputs will be saved in the same directory as their corresponding input files.
+This path can alternatively be defined by setting the <cite>DJ_PRODUCED_DATA_DIR</cite> environment variable.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.VideoResizeAspectRatioMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_resize_aspect_ratio_mapper.html#VideoResizeAspectRatioMapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.VideoResizeAspectRatioMapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +607,24 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.rescale"><code class="docutils literal notranslate"><span class="pre">rescale()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.VideoResizeAspectRatioMapper"><code class="docutils literal notranslate"><span class="pre">VideoResizeAspectRatioMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.VideoResizeAspectRatioMapper.STRATEGY"><code class="docutils literal notranslate"><span class="pre">VideoResizeAspectRatioMapper.STRATEGY</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.VideoResizeAspectRatioMapper.__init__"><code class="docutils literal notranslate"><span class="pre">VideoResizeAspectRatioMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_resize_aspect_ratio_mapper.VideoResizeAspectRatioMapper.process_single"><code class="docutils literal notranslate"><span class="pre">VideoResizeAspectRatioMapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

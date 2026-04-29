@@ -514,8 +514,51 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-filter-special-characters-filter-module">
-<h1>data_juicer.ops.filter.special_characters_filter module<a class="headerlink" href="#data-juicer-ops-filter-special-characters-filter-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.filter.special_characters_filter">
+<span id="data-juicer-ops-filter-special-characters-filter-module"></span><h1>data_juicer.ops.filter.special_characters_filter module<a class="headerlink" href="#module-data_juicer.ops.filter.special_characters_filter" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.special_characters_filter.SpecialCharactersFilter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.filter.special_characters_filter.</span></span><span class="sig-name descname"><span class="pre">SpecialCharactersFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/special_characters_filter.html#SpecialCharactersFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.special_characters_filter.SpecialCharactersFilter" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Filter" title="data_juicer.ops.base_op.Filter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Filter</span></code></a></p>
+<p>Filter to keep samples with special-character ratio within a specific range.</p>
+<p>This operator filters out samples based on the ratio of special characters in the text.
+It keeps samples where the special-character ratio is within the specified minimum and
+maximum thresholds. The special-character ratio is computed as the number of special
+characters divided by the total number of characters in the text. If the
+'special_char_ratio' is already cached in the stats, it will be reused. Otherwise, it
+will be computed and stored in the 'special_char_ratio' field.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.special_characters_filter.SpecialCharactersFilter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/special_characters_filter.html#SpecialCharactersFilter.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.special_characters_filter.SpecialCharactersFilter.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_ratio</strong> -- The min filter ratio in this op, samples will
+be filtered if their special-char ratio is below this
+parameter.</p></li>
+<li><p><strong>max_ratio</strong> -- The max filter ratio in this op, samples will
+be filtered if their special-char ratio exceeds this
+parameter.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.special_characters_filter.SpecialCharactersFilter.compute_stats_batched">
+<span class="sig-name descname"><span class="pre">compute_stats_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/special_characters_filter.html#SpecialCharactersFilter.compute_stats_batched"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.special_characters_filter.SpecialCharactersFilter.compute_stats_batched" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.special_characters_filter.SpecialCharactersFilter.process_batched">
+<span class="sig-name descname"><span class="pre">process_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/special_characters_filter.html#SpecialCharactersFilter.process_batched"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.special_characters_filter.SpecialCharactersFilter.process_batched" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +581,23 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.special_characters_filter.SpecialCharactersFilter"><code class="docutils literal notranslate"><span class="pre">SpecialCharactersFilter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.special_characters_filter.SpecialCharactersFilter.__init__"><code class="docutils literal notranslate"><span class="pre">SpecialCharactersFilter.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.special_characters_filter.SpecialCharactersFilter.compute_stats_batched"><code class="docutils literal notranslate"><span class="pre">SpecialCharactersFilter.compute_stats_batched()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.special_characters_filter.SpecialCharactersFilter.process_batched"><code class="docutils literal notranslate"><span class="pre">SpecialCharactersFilter.process_batched()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

@@ -514,8 +514,113 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-filter-phrase-grounding-recall-filter-module">
-<h1>data_juicer.ops.filter.phrase_grounding_recall_filter module<a class="headerlink" href="#data-juicer-ops-filter-phrase-grounding-recall-filter-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.filter.phrase_grounding_recall_filter">
+<span id="data-juicer-ops-filter-phrase-grounding-recall-filter-module"></span><h1>data_juicer.ops.filter.phrase_grounding_recall_filter module<a class="headerlink" href="#module-data_juicer.ops.filter.phrase_grounding_recall_filter" title="链接到此标题。">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.phrase_grounding_recall_filter.find_noun_phrases">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.ops.filter.phrase_grounding_recall_filter.</span></span><span class="sig-name descname"><span class="pre">find_noun_phrases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">caption</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_tagger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer/ops/filter/phrase_grounding_recall_filter.html#find_noun_phrases"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.phrase_grounding_recall_filter.find_noun_phrases" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.phrase_grounding_recall_filter.remove_punctuation">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.ops.filter.phrase_grounding_recall_filter.</span></span><span class="sig-name descname"><span class="pre">remove_punctuation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/data_juicer/ops/filter/phrase_grounding_recall_filter.html#remove_punctuation"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.phrase_grounding_recall_filter.remove_punctuation" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.phrase_grounding_recall_filter.run_ner">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.ops.filter.phrase_grounding_recall_filter.</span></span><span class="sig-name descname"><span class="pre">run_ner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">caption</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos_tagger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/phrase_grounding_recall_filter.html#run_ner"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.phrase_grounding_recall_filter.run_ner" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.phrase_grounding_recall_filter.PhraseGroundingRecallFilter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.filter.phrase_grounding_recall_filter.</span></span><span class="sig-name descname"><span class="pre">PhraseGroundingRecallFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/phrase_grounding_recall_filter.html#PhraseGroundingRecallFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.phrase_grounding_recall_filter.PhraseGroundingRecallFilter" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Filter" title="data_juicer.ops.base_op.Filter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Filter</span></code></a></p>
+<p>Filter to keep samples based on the phrase grounding recall of phrases extracted from
+text in images.</p>
+<p>This operator uses a Hugging Face Owl-ViT model to locate phrases extracted from the
+text within the images. It keeps samples where the phrase grounding recall is within a
+specified range. The recall is computed by comparing the number of correctly located
+phrases to the total number of phrases. The operator can handle multiple images per text
+chunk and supports different strategies for reducing the recall values (e.g., average,
+max, min). It also allows for flipping images horizontally or vertically. The key metric
+'phrase_grounding_recall' is computed and stored in the sample's stats. If no images are
+present, the recall is set to an empty array.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.phrase_grounding_recall_filter.PhraseGroundingRecallFilter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hf_owlvit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'google/owlvit-base-patch32'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trust_remote_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_recall</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_recall</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">horizontal_flip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertical_flip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">any_or_all</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'any'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduce_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'avg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iou_thr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">large_area_ratio_thr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conf_thr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/phrase_grounding_recall_filter.html#PhraseGroundingRecallFilter.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.phrase_grounding_recall_filter.PhraseGroundingRecallFilter.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hf_owlvit</strong> -- Owl-ViT model name on huggingface to locate the
+phrases extracted from the text.</p></li>
+<li><p><strong>trust_remote_code</strong> -- whether to trust the remote code of HF models.</p></li>
+<li><p><strong>min_recall</strong> -- The min phrase grounding recall to keep samples.</p></li>
+<li><p><strong>max_recall</strong> -- The max phrase grounding recall to keep samples.</p></li>
+<li><p><strong>horizontal_flip</strong> -- Flip image horizontally (left to right).</p></li>
+<li><p><strong>vertical_flip</strong> -- Flip image vertically (top to bottom).</p></li>
+<li><p><strong>any_or_all</strong> -- keep this sample with 'any' or 'all' strategy of
+all images. 'any': keep this sample if any images meet the
+condition. 'all': keep this sample only if all images meet the
+condition.</p></li>
+<li><p><strong>reduce_mode</strong> -- reduce mode when one text corresponds to
+multiple images in a chunk.
+'avg': Take the average of multiple values
+'max': Take the max of multiple values
+'min': Take the min of multiple values</p></li>
+<li><p><strong>iou_thr</strong> -- the IoU threshold for NMS-like post-process. If two
+predicted bboxes are overlap with an IoU larger than this
+threshold, the bbox with less confidence will be removed. Default:
+0.5.</p></li>
+<li><p><strong>large_area_ratio_thr</strong> -- the area ratio threshold for filtering out
+those large predicted bboxes. If the area of a predicted bbox
+accounts for more than this ratio threshold of the whole image
+area, this bbox will be removed. Default: 0.95.</p></li>
+<li><p><strong>conf_thr</strong> -- the confidence score threshold for removing
+low-confidence bboxes. If the confidence score of a predicted bbox
+is lower than the threshold, this bbox will be removed. Default: 0.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.phrase_grounding_recall_filter.PhraseGroundingRecallFilter.compute_stats_single">
+<span class="sig-name descname"><span class="pre">compute_stats_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/phrase_grounding_recall_filter.html#PhraseGroundingRecallFilter.compute_stats_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.phrase_grounding_recall_filter.PhraseGroundingRecallFilter.compute_stats_single" title="链接到此定义。">#</a></dt>
+<dd><p>Compute stats for the sample which is used as a metric to decide
+whether to filter this sample.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> -- input sample.</p></li>
+<li><p><strong>context</strong> -- whether to store context information of intermediate
+vars in the sample temporarily.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>sample with computed stats</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.phrase_grounding_recall_filter.PhraseGroundingRecallFilter.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/phrase_grounding_recall_filter.html#PhraseGroundingRecallFilter.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.phrase_grounding_recall_filter.PhraseGroundingRecallFilter.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; Boolean.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to decide whether to filter</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>true for keeping and false for filtering</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +643,26 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.phrase_grounding_recall_filter.find_noun_phrases"><code class="docutils literal notranslate"><span class="pre">find_noun_phrases()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.phrase_grounding_recall_filter.remove_punctuation"><code class="docutils literal notranslate"><span class="pre">remove_punctuation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.phrase_grounding_recall_filter.run_ner"><code class="docutils literal notranslate"><span class="pre">run_ner()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.phrase_grounding_recall_filter.PhraseGroundingRecallFilter"><code class="docutils literal notranslate"><span class="pre">PhraseGroundingRecallFilter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.phrase_grounding_recall_filter.PhraseGroundingRecallFilter.__init__"><code class="docutils literal notranslate"><span class="pre">PhraseGroundingRecallFilter.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.phrase_grounding_recall_filter.PhraseGroundingRecallFilter.compute_stats_single"><code class="docutils literal notranslate"><span class="pre">PhraseGroundingRecallFilter.compute_stats_single()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.phrase_grounding_recall_filter.PhraseGroundingRecallFilter.process_single"><code class="docutils literal notranslate"><span class="pre">PhraseGroundingRecallFilter.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

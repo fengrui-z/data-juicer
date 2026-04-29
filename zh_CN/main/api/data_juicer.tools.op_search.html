@@ -514,8 +514,174 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-tools-op-search-module">
-<h1>data_juicer.tools.op_search module<a class="headerlink" href="#data-juicer-tools-op-search-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.tools.op_search">
+<span id="data-juicer-tools-op-search-module"></span><h1>data_juicer.tools.op_search module<a class="headerlink" href="#module-data_juicer.tools.op_search" title="链接到此标题。">#</a></h1>
+<p>Operator Searcher - A tool for filtering and searching Data-Juicer operators</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.get_source_path">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">get_source_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#get_source_path"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.get_source_path" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.find_test_by_searching_content">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">find_test_by_searching_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tests_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_class_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#find_test_by_searching_content"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.find_test_by_searching_content" title="链接到此定义。">#</a></dt>
+<dd><p>Fallback: brute-force search for test files containing the test class name.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.analyze_modality_tag">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">analyze_modality_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_prefix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#analyze_modality_tag"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.analyze_modality_tag" title="链接到此定义。">#</a></dt>
+<dd><p>Analyze the modality tag for the given code content string. Should be one
+of the &quot;Modality Tags&quot; in <cite>tagging_mappings.json</cite>. It makes the choice by
+finding the usages of attributes <cite>{modality}_key</cite> and the prefix of the OP
+name. If there are multiple modality keys are used, the 'multimodal' tag
+will be returned instead.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.analyze_resource_tag">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">analyze_resource_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#analyze_resource_tag"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.analyze_resource_tag" title="链接到此定义。">#</a></dt>
+<dd><p>Analyze resource tags by reading the class attribute_accelerator. Should be one
+of the &quot;Resource Tags&quot; in <cite>tagging_mappings.json</cite>. It makes the choice
+according to their assigning statement to attribute <cite>_accelerator</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.analyze_model_tags">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">analyze_model_tags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#analyze_model_tags"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.analyze_model_tags" title="链接到此定义。">#</a></dt>
+<dd><p>Analyze the model tag for the given code content string. SHOULD be one of
+the &quot;Model Tags&quot; in <cite>tagging_mappings.json</cite>. It makes the choice by finding
+the <cite>model_type</cite> arg in <cite>prepare_model</cite> method invocation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.analyze_tag_with_inheritance">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">analyze_tag_with_inheritance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analyze_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_parm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#analyze_tag_with_inheritance"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.analyze_tag_with_inheritance" title="链接到此定义。">#</a></dt>
+<dd><p>Universal inheritance chain label analysis function</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.analyze_tag_from_cls">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">analyze_tag_from_cls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#analyze_tag_from_cls"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.analyze_tag_from_cls" title="链接到此定义。">#</a></dt>
+<dd><p>Analyze the tags for the OP from the given cls.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.extract_param_docstring">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">extract_param_docstring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">docstring</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#extract_param_docstring"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.extract_param_docstring" title="链接到此定义。">#</a></dt>
+<dd><p>Extract parameter descriptions from __init__ method docstring.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.OPRecord">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">OPRecord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#OPRecord"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.OPRecord" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A record class for storing operator metadata</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.OPRecord.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#OPRecord.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.OPRecord.__init__" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.OPRecord.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#OPRecord.to_dict"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.OPRecord.to_dict" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.OPSearcher">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">OPSearcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specified_op_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_formatter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#OPSearcher"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.OPSearcher" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Operator search engine</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.OPSearcher.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specified_op_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_formatter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#OPSearcher.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.OPSearcher.__init__" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.OPSearcher.search">
+<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_all</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#OPSearcher.search"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.OPSearcher.search" title="链接到此定义。">#</a></dt>
+<dd><p>Search operators by tag and type criteria.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tags</strong> -- List of tags to match</p></li>
+<li><p><strong>op_type</strong> -- Operator type (mapper/filter/etc)</p></li>
+<li><p><strong>match_all</strong> -- True requires matching all tags, False matches any</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of matched operator record dicts</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.OPSearcher.search_by_regex">
+<span class="sig-name descname"><span class="pre">search_by_regex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_all</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#OPSearcher.search_by_regex"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.OPSearcher.search_by_regex" title="链接到此定义。">#</a></dt>
+<dd><p>Search operators using a Python regex pattern.</p>
+<p>The pattern is matched against the specified fields of each operator.
+If the query is not a valid regex, an empty list is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> -- Regex pattern to search for</p></li>
+<li><p><strong>fields</strong> -- List of OPRecord fields to search in.
+Defaults to [&quot;name&quot;, &quot;desc&quot;, &quot;param_desc&quot;]</p></li>
+<li><p><strong>tags</strong> -- Optional tag filter applied before regex search</p></li>
+<li><p><strong>op_type</strong> -- Optional type filter applied before regex search</p></li>
+<li><p><strong>match_all</strong> -- Tag matching mode (all vs any)</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of matched operator record dicts</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.OPSearcher.search_by_bm25">
+<span class="sig-name descname"><span class="pre">search_by_bm25</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_all</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#OPSearcher.search_by_bm25"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.OPSearcher.search_by_bm25" title="链接到此定义。">#</a></dt>
+<dd><p>Search operators using BM25 keyword matching via rank_bm25.</p>
+<p>Uses the BM25Okapi algorithm from the <code class="docutils literal notranslate"><span class="pre">rank_bm25</span></code> library to
+rank operators by relevance to a natural language query. The
+index is built lazily on first call and cached for subsequent
+queries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> -- Natural language query string</p></li>
+<li><p><strong>fields</strong> -- List of OPRecord fields to index.
+Defaults to [&quot;name&quot;, &quot;desc&quot;, &quot;param_desc&quot;]</p></li>
+<li><p><strong>top_k</strong> -- Maximum number of results to return</p></li>
+<li><p><strong>score_threshold</strong> -- Minimum BM25 score to include a result.
+Results with scores at or below this threshold are excluded.
+Defaults to 0.0.</p></li>
+<li><p><strong>tags</strong> -- Optional tag filter applied before BM25 ranking</p></li>
+<li><p><strong>op_type</strong> -- Optional type filter applied before BM25 ranking</p></li>
+<li><p><strong>match_all</strong> -- Tag matching mode (all vs any)</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of matched operator record dicts, sorted by
+BM25 score descending</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.OPSearcher.records_map">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">records_map</span></span><a class="headerlink" href="#data_juicer.tools.op_search.OPSearcher.records_map" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.main">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#main"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.main" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
 </section>
 
 
@@ -538,6 +704,39 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.get_source_path"><code class="docutils literal notranslate"><span class="pre">get_source_path()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.find_test_by_searching_content"><code class="docutils literal notranslate"><span class="pre">find_test_by_searching_content()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.analyze_modality_tag"><code class="docutils literal notranslate"><span class="pre">analyze_modality_tag()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.analyze_resource_tag"><code class="docutils literal notranslate"><span class="pre">analyze_resource_tag()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.analyze_model_tags"><code class="docutils literal notranslate"><span class="pre">analyze_model_tags()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.analyze_tag_with_inheritance"><code class="docutils literal notranslate"><span class="pre">analyze_tag_with_inheritance()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.analyze_tag_from_cls"><code class="docutils literal notranslate"><span class="pre">analyze_tag_from_cls()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.extract_param_docstring"><code class="docutils literal notranslate"><span class="pre">extract_param_docstring()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPRecord"><code class="docutils literal notranslate"><span class="pre">OPRecord</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPRecord.__init__"><code class="docutils literal notranslate"><span class="pre">OPRecord.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPRecord.to_dict"><code class="docutils literal notranslate"><span class="pre">OPRecord.to_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPSearcher"><code class="docutils literal notranslate"><span class="pre">OPSearcher</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPSearcher.__init__"><code class="docutils literal notranslate"><span class="pre">OPSearcher.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPSearcher.search"><code class="docutils literal notranslate"><span class="pre">OPSearcher.search()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPSearcher.search_by_regex"><code class="docutils literal notranslate"><span class="pre">OPSearcher.search_by_regex()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPSearcher.search_by_bm25"><code class="docutils literal notranslate"><span class="pre">OPSearcher.search_by_bm25()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPSearcher.records_map"><code class="docutils literal notranslate"><span class="pre">OPSearcher.records_map</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

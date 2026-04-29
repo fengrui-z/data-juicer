@@ -514,8 +514,96 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-text-tagging-by-prompt-mapper-module">
-<h1>data_juicer.ops.mapper.text_tagging_by_prompt_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-text-tagging-by-prompt-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.text_tagging_by_prompt_mapper">
+<span id="data-juicer-ops-mapper-text-tagging-by-prompt-mapper-module"></span><h1>data_juicer.ops.mapper.text_tagging_by_prompt_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.text_tagging_by_prompt_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.text_tagging_by_prompt_mapper.TextTaggingByPromptMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.text_tagging_by_prompt_mapper.</span></span><span class="sig-name descname"><span class="pre">TextTaggingByPromptMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/text_tagging_by_prompt_mapper.html#TextTaggingByPromptMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.text_tagging_by_prompt_mapper.TextTaggingByPromptMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Mapper to generate text tags using prompt with LLM.
+Other opensourced models with good instruction following ability
+also works.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.text_tagging_by_prompt_mapper.TextTaggingByPromptMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hf_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Qwen/Qwen2.5-7B-Instruct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trust_remote_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\n请对下面的example文本回复的任务类别进行检测,并进行分类。\n备选的分类包括：{tag_list}。\n只回复对应的分类,不回复其他内容。\nexample文本:\n{text}\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">['数学',</span> <span class="pre">'代码',</span> <span class="pre">'翻译',</span> <span class="pre">'角色扮演',</span> <span class="pre">'开放领域问答',</span> <span class="pre">'特定领域问答',</span> <span class="pre">'提取',</span> <span class="pre">'生成',</span> <span class="pre">'头脑风暴',</span> <span class="pre">'分类',</span> <span class="pre">'总结',</span> <span class="pre">'改写',</span> <span class="pre">'其他']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_vllm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tensor_parallel_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_model_len</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_num_seqs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/text_tagging_by_prompt_mapper.html#TextTaggingByPromptMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.text_tagging_by_prompt_mapper.TextTaggingByPromptMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><blockquote>
+<div><p>Initialization method.
+:param hf_model: Hugginface model id.
+:param trust_remote_code: passed to transformers
+:param prompt: the prompt used to generate text tags.
+:param tag_list: the list of tagging output options.
+:param enable_vllm: Whether to use vllm for inference acceleration.
+:param tensor_parallel_size: It is only valid when enable_vllm is True.</p>
+<blockquote>
+<div><p>The number of GPUs to use for distributed execution with tensor
+parallelism.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">param max_model_len<span class="colon">:</span></dt>
+<dd class="field-odd"><p>It is only valid when enable_vllm is True.
+Model context length. If unspecified, will be automatically
+derived from the model config.</p>
+</dd>
+<dt class="field-even">param max_num_seqs<span class="colon">:</span></dt>
+<dd class="field-even"><p>It is only valid when enable_vllm is True.
+Maximum number of sequences to be processed in a single iteration.</p>
+</dd>
+<dt class="field-odd">param model_params<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Parameters for model initialization.</p>
+</dd>
+<dt class="field-even">param sampling_params<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sampling parameters for text generation.
+e.g {'temperature': 0.9, 'top_p': 0.95}</p>
+</dd>
+<dt class="field-odd">param args<span class="colon">:</span></dt>
+<dd class="field-odd"><p>extra args</p>
+</dd>
+<dt class="field-even">param kwargs<span class="colon">:</span></dt>
+<dd class="field-even"><p>extra args</p>
+</dd>
+</dl>
+<p>The default data format parsed by this interface is as follows:
+Model Input:</p>
+<blockquote>
+<div><p>请对下面的example文本回复的任务类别进行检测，并进行分类。备选的分类包括：[&quot;数学&quot;，&quot;代码&quot;，&quot;翻译&quot;，&quot;角色扮演&quot;，&quot;开放领域问答&quot;，&quot;特定领域问答&quot;, &quot;提取&quot;, &quot;生成&quot;, &quot;头脑风暴&quot;, &quot;分类&quot;，&quot;总结&quot;，&quot;改写&quot;， &quot;其他&quot;]。只回复对应的分类，不回复其他内容。
+example文本:
+{</p>
+<blockquote>
+<div><p>&quot;instruction&quot;: &quot;找出方程 x2 - 3x = 0 的根。&quot;,
+&quot;input&quot;: &quot;&quot;,
+&quot;output&quot;: &quot;该方程可以写成 x(x-3)=0。</p>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<p>根据乘法原理，x = 0或x - 3 = 0。</p>
+<dl>
+<dt>因此，x1 = 0和x2 = 3是方程 x2 - 3x = 0 的两个根。&quot;</dt><dd><blockquote>
+<div><p>}</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Model Output:</dt><dd><p>数学</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.text_tagging_by_prompt_mapper.TextTaggingByPromptMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/text_tagging_by_prompt_mapper.html#TextTaggingByPromptMapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.text_tagging_by_prompt_mapper.TextTaggingByPromptMapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +626,22 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.text_tagging_by_prompt_mapper.TextTaggingByPromptMapper"><code class="docutils literal notranslate"><span class="pre">TextTaggingByPromptMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.text_tagging_by_prompt_mapper.TextTaggingByPromptMapper.__init__"><code class="docutils literal notranslate"><span class="pre">TextTaggingByPromptMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.text_tagging_by_prompt_mapper.TextTaggingByPromptMapper.process_single"><code class="docutils literal notranslate"><span class="pre">TextTaggingByPromptMapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

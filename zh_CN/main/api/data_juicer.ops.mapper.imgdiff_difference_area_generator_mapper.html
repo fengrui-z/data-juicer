@@ -514,8 +514,84 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-imgdiff-difference-area-generator-mapper-module">
-<h1>data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-imgdiff-difference-area-generator-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper">
+<span id="data-juicer-ops-mapper-imgdiff-difference-area-generator-mapper-module"></span><h1>data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.is_noun">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.</span></span><span class="sig-name descname"><span class="pre">is_noun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">word</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/imgdiff_difference_area_generator_mapper.html#is_noun"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.is_noun" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.compare_text_index">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.</span></span><span class="sig-name descname"><span class="pre">compare_text_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/imgdiff_difference_area_generator_mapper.html#compare_text_index"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.compare_text_index" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.iou_filter">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.</span></span><span class="sig-name descname"><span class="pre">iou_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iou_thresh</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/imgdiff_difference_area_generator_mapper.html#iou_filter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.iou_filter" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.Difference_Area_Generator_Mapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.</span></span><span class="sig-name descname"><span class="pre">Difference_Area_Generator_Mapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/imgdiff_difference_area_generator_mapper.html#Difference_Area_Generator_Mapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.Difference_Area_Generator_Mapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Generates and filters bounding boxes for image pairs based on similarity, segmentation,
+and text matching.</p>
+<p>This operator processes image pairs to identify and filter regions with significant
+differences. It uses a sequence of operations:
+- Filters out image pairs with large differences.
+- Segments the images to identify potential objects.
+- Crops sub-images based on bounding boxes.
+- Determines if the sub-images contain valid objects using image-text matching.
+- Filters out sub-images that are too similar.
+- Removes overlapping bounding boxes.
+- Uses Hugging Face models for similarity and text matching, and FastSAM for</p>
+<blockquote>
+<div><p>segmentation.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Caches intermediate results in <cite>DATA_JUICER_ASSETS_CACHE</cite>.</p></li>
+<li><p>Returns the filtered bounding boxes in the <cite>MetaKeys.bbox_tag</cite> field.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.Difference_Area_Generator_Mapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_pair_similarity_filter_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_segment_mapper_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_text_matching_filter_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/imgdiff_difference_area_generator_mapper.html#Difference_Area_Generator_Mapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.Difference_Area_Generator_Mapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_pair_similarity_filter_args</strong> -- Arguments for image pair similarity filter.
+Controls the similarity filtering between image pairs. Default empty dict will use
+fixed values: min_score_1=0.1, max_score_1=1.0, min_score_2=0.1, max_score_2=1.0,
+hf_clip=&quot;openai/clip-vit-base-patch32&quot;, num_proc=1.</p></li>
+<li><p><strong>image_segment_mapper_args</strong> -- Arguments for image segmentation mapper.
+Controls the image segmentation process. Default empty dict will use
+fixed values: imgsz=1024, conf=0.05, iou=0.5, model_path=&quot;FastSAM-x.pt&quot;.</p></li>
+<li><p><strong>image_text_matching_filter_args</strong> -- Arguments for image-text matching filter.
+Controls the matching between cropped image regions and text descriptions.
+Default empty dict will use fixed values: min_score=0.1, max_score=1.0,
+hf_blip=&quot;Salesforce/blip-itm-base-coco&quot;, num_proc=1.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.Difference_Area_Generator_Mapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/imgdiff_difference_area_generator_mapper.html#Difference_Area_Generator_Mapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.Difference_Area_Generator_Mapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +614,25 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.is_noun"><code class="docutils literal notranslate"><span class="pre">is_noun()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.compare_text_index"><code class="docutils literal notranslate"><span class="pre">compare_text_index()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.iou_filter"><code class="docutils literal notranslate"><span class="pre">iou_filter()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.Difference_Area_Generator_Mapper"><code class="docutils literal notranslate"><span class="pre">Difference_Area_Generator_Mapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.Difference_Area_Generator_Mapper.__init__"><code class="docutils literal notranslate"><span class="pre">Difference_Area_Generator_Mapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.imgdiff_difference_area_generator_mapper.Difference_Area_Generator_Mapper.process_single"><code class="docutils literal notranslate"><span class="pre">Difference_Area_Generator_Mapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

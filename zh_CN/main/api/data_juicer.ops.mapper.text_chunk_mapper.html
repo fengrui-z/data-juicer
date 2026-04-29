@@ -514,8 +514,72 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-text-chunk-mapper-module">
-<h1>data_juicer.ops.mapper.text_chunk_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-text-chunk-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.text_chunk_mapper">
+<span id="data-juicer-ops-mapper-text-chunk-mapper-module"></span><h1>data_juicer.ops.mapper.text_chunk_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.text_chunk_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.text_chunk_mapper.TextChunkMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.text_chunk_mapper.</span></span><span class="sig-name descname"><span class="pre">TextChunkMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/text_chunk_mapper.html#TextChunkMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.text_chunk_mapper.TextChunkMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Split input text into chunks based on specified criteria.</p>
+<ul class="simple">
+<li><p>Splits the input text into multiple chunks using a specified maximum length and a
+split pattern.</p></li>
+<li><p>If <cite>max_len</cite> is provided, the text is split into chunks with a maximum length of
+<cite>max_len</cite>.</p></li>
+<li><p>If <cite>split_pattern</cite> is provided, the text is split at occurrences of the pattern. If
+the length exceeds <cite>max_len</cite>, it will force a cut.</p></li>
+<li><p>The <cite>overlap_len</cite> parameter specifies the overlap length between consecutive chunks if
+the split does not occur at the pattern.</p></li>
+<li><p>Uses a Hugging Face tokenizer to calculate the text length in tokens if a tokenizer
+name is provided; otherwise, it uses the string length.</p></li>
+<li><p>Caches the following stats: 'chunk_count' (number of chunks generated for each
+sample).</p></li>
+<li><p>Raises a <cite>ValueError</cite> if both <cite>max_len</cite> and <cite>split_pattern</cite> are <cite>None</cite> or if
+<cite>overlap_len</cite> is greater than or equal to <cite>max_len</cite>.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.text_chunk_mapper.TextChunkMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_len</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\\n\\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap_len</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ge</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">ge</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tokenizer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trust_remote_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/text_chunk_mapper.html#TextChunkMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.text_chunk_mapper.TextChunkMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>max_len</strong> -- Split text into multi texts with this max len if not
+None.</p></li>
+<li><p><strong>split_pattern</strong> -- Make sure split in this pattern if it is not None
+and force cut if the length exceeds max_len.</p></li>
+<li><p><strong>overlap_len</strong> -- Overlap length of the split texts if not split in
+the split pattern.</p></li>
+<li><p><strong>tokenizer</strong> -- The tokenizer name of Hugging Face tokenizers.
+The text length will be calculate as the token num if it is
+offered. Otherwise, the text length equals to string length.
+Support tiktoken tokenizer (such as gpt-4o), dashscope tokenizer (
+such as qwen2.5-72b-instruct) and huggingface tokenizer.</p></li>
+<li><p><strong>trust_remote_code</strong> -- whether to trust the remote code of HF models.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.text_chunk_mapper.TextChunkMapper.recursively_chunk">
+<span class="sig-name descname"><span class="pre">recursively_chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/text_chunk_mapper.html#TextChunkMapper.recursively_chunk"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.text_chunk_mapper.TextChunkMapper.recursively_chunk" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.text_chunk_mapper.TextChunkMapper.get_text_chunks">
+<span class="sig-name descname"><span class="pre">get_text_chunks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/text_chunk_mapper.html#TextChunkMapper.get_text_chunks"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.text_chunk_mapper.TextChunkMapper.get_text_chunks" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.text_chunk_mapper.TextChunkMapper.process_batched">
+<span class="sig-name descname"><span class="pre">process_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/text_chunk_mapper.html#TextChunkMapper.process_batched"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.text_chunk_mapper.TextChunkMapper.process_batched" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +602,24 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.text_chunk_mapper.TextChunkMapper"><code class="docutils literal notranslate"><span class="pre">TextChunkMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.text_chunk_mapper.TextChunkMapper.__init__"><code class="docutils literal notranslate"><span class="pre">TextChunkMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.text_chunk_mapper.TextChunkMapper.recursively_chunk"><code class="docutils literal notranslate"><span class="pre">TextChunkMapper.recursively_chunk()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.text_chunk_mapper.TextChunkMapper.get_text_chunks"><code class="docutils literal notranslate"><span class="pre">TextChunkMapper.get_text_chunks()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.text_chunk_mapper.TextChunkMapper.process_batched"><code class="docutils literal notranslate"><span class="pre">TextChunkMapper.process_batched()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

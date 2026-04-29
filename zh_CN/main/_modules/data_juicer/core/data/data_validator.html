@@ -1,0 +1,1020 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer.core.data.data_validator &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/core/data/data_validator';</script>
+    <script src="../../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/core/data/data_validator.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/core/data/data_validator_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/core/data/data_validator.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/core/data/data_validator.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/core/data/data_validator_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/core/data/data_validator.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">模块代码</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer.core.data.data_validator</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>data_juicer.core.data.data_validator 源代码</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.data.dj_dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">DJDataset</span>
+
+
+<div class="viewcode-block" id="DataValidator">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.DataValidator">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataValidator</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for data validation&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DataValidator.__init__">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.DataValidator.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span></div>
+
+
+<div class="viewcode-block" id="DataValidator.validate">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.DataValidator.validate">[文档]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">DJDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate dataset content</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dataset: The dataset to validate</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            DataValidationError: If validation fails</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">DJDataset</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span><span class="s2">&quot;unsupported dataset type; must be a DJDataset&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DataValidationError">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.DataValidationError">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataValidationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom exception for data validation errors&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="DataValidatorRegistry">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.DataValidatorRegistry">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataValidatorRegistry</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Registry for data validators&quot;&quot;&quot;</span>
+
+    <span class="n">_validators</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">DataValidator</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="DataValidatorRegistry.register">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.DataValidatorRegistry.register">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">validator_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">validator_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">DataValidator</span><span class="p">]):</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_validators</span><span class="p">[</span><span class="n">validator_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">validator_class</span>
+            <span class="k">return</span> <span class="n">validator_class</span>
+
+        <span class="k">return</span> <span class="n">decorator</span></div>
+
+
+<div class="viewcode-block" id="DataValidatorRegistry.get_validator">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.DataValidatorRegistry.get_validator">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_validator</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">validator_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">DataValidator</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_validators</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">validator_type</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="BaseConversationValidator">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.BaseConversationValidator">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseConversationValidator</span><span class="p">(</span><span class="n">DataValidator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for conversation validators&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BaseConversationValidator.__init__">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.BaseConversationValidator.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_turns</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;min_turns&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_turns</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_turns&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sample_size&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseConversationValidator.validate">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.BaseConversationValidator.validate">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">DJDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Base validation for all conversation formats&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">validate_conversation</span><span class="p">(</span><span class="n">item</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseConversationValidator.validate_conversation">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.BaseConversationValidator.validate_conversation">[文档]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_conversation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate specific conversation format&quot;&quot;&quot;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SwiftMessagesValidator">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.SwiftMessagesValidator">[文档]</a>
+<span class="nd">@DataValidatorRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;swift_messages&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SwiftMessagesValidator</span><span class="p">(</span><span class="n">BaseConversationValidator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validator for Swift Messages conversation format.</span>
+
+<span class="sd">    This validator ensures conversations follow the Swift Messages format with</span>
+<span class="sd">    proper message structure and role assignments.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (Dict): Configuration dictionary containing:</span>
+<span class="sd">            min_turns (int, optional): Minimum number of messages.</span>
+<span class="sd">                Defaults to 1.</span>
+<span class="sd">            max_turns (int, optional): Maximum number of messages.</span>
+<span class="sd">                Defaults to 100.</span>
+<span class="sd">            sample_size (int, optional): Number of samples to validate.</span>
+<span class="sd">                Defaults to 100.</span>
+
+<span class="sd">    Example Format:</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;messages&quot;: [</span>
+<span class="sd">                    {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;&lt;system&gt;&quot;},</span>
+<span class="sd">                    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;&lt;query&gt;&quot;},</span>
+<span class="sd">                    {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;&lt;response&gt;&quot;},</span>
+<span class="sd">                    ...</span>
+<span class="sd">                ]</span>
+<span class="sd">            }</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        DataValidationError: If validation fails due to:</span>
+<span class="sd">            - Missing &#39;messages&#39; field</span>
+<span class="sd">            - Invalid message structure</span>
+<span class="sd">            - Invalid role values</span>
+<span class="sd">            - Missing content</span>
+<span class="sd">            - Message count outside allowed range</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SwiftMessagesValidator.validate_conversation">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.SwiftMessagesValidator.validate_conversation">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_conversation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;messages&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span><span class="s2">&quot;Missing &#39;messages&#39; field&quot;</span><span class="p">)</span>
+
+        <span class="n">messages</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span><span class="s2">&quot;&#39;messages&#39; must be an array&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_turns</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_turns</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Conversation must have between </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_turns</span><span class="si">}</span><span class="s2"> and &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_turns</span><span class="si">}</span><span class="s2"> messages&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># each message should have a role and content</span>
+        <span class="c1"># and role should be one of system, user, assistant</span>
+        <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;role&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">or</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span><span class="s2">&quot;Missing &#39;role&#39; field&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;role&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;assistant&quot;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span><span class="s2">&quot;Invalid &#39;role&#39; field&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;content&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">msg</span> <span class="ow">or</span> <span class="n">msg</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span><span class="s2">&quot;Missing &#39;content&#39; field&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DataJuicerFormatValidator">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.DataJuicerFormatValidator">[文档]</a>
+<span class="nd">@DataValidatorRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;dj_conversation&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataJuicerFormatValidator</span><span class="p">(</span><span class="n">BaseConversationValidator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validator for Data-Juicer default conversation format.</span>
+
+<span class="sd">    This validator ensures conversations follow the Data-Juicer format with</span>
+<span class="sd">    proper fields and structure.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (Dict): Configuration dictionary containing:</span>
+<span class="sd">            min_turns (int, optional): Minimum number of conversation turns.</span>
+<span class="sd">                Defaults to 1.</span>
+<span class="sd">            max_turns (int, optional): Maximum number of conversation turns.</span>
+<span class="sd">                Defaults to 100.</span>
+<span class="sd">            sample_size (int, optional): Number of samples to validate.</span>
+<span class="sd">                Defaults to 100.</span>
+
+<span class="sd">    Example Format:</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;system&quot;: &quot;&lt;system&gt;&quot;,  # Optional</span>
+<span class="sd">                &quot;instruction&quot;: &quot;&lt;query-inst&gt;&quot;,</span>
+<span class="sd">                &quot;query&quot;: &quot;&lt;query2&gt;&quot;,</span>
+<span class="sd">                &quot;response&quot;: &quot;&lt;response2&gt;&quot;,</span>
+<span class="sd">                &quot;history&quot;: [  # Optional</span>
+<span class="sd">                    [&quot;&lt;query1&gt;&quot;, &quot;&lt;response1&gt;&quot;],</span>
+<span class="sd">                    ...</span>
+<span class="sd">                ]</span>
+<span class="sd">            }</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        DataValidationError: If validation fails due to:</span>
+<span class="sd">            - Missing required fields</span>
+<span class="sd">            - Invalid field types</span>
+<span class="sd">            - Invalid conversation structure</span>
+<span class="sd">            - Turn count outside allowed range</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DataJuicerFormatValidator.validate_conversation">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.DataJuicerFormatValidator.validate_conversation">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_conversation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Validate system if present</span>
+        <span class="k">if</span> <span class="s2">&quot;system&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;system&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span><span class="s2">&quot;&#39;system&#39; must be string&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Validate required fields</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;instruction&quot;</span><span class="p">,</span> <span class="s2">&quot;query&quot;</span><span class="p">,</span> <span class="s2">&quot;response&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39; field&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">field</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39; must be string&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Validate history if present</span>
+        <span class="k">if</span> <span class="s2">&quot;history&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;history&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span><span class="s2">&quot;&#39;history&#39; must be an array&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Count total turns including current query/response</span>
+            <span class="n">total_turns</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;history&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_turns</span> <span class="o">&lt;=</span> <span class="n">total_turns</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_turns</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Conversation must have between </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_turns</span><span class="si">}</span><span class="s2"> and &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_turns</span><span class="si">}</span><span class="s2"> turns including history&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Validate each history turn</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">turn</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;history&quot;</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">turn</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">turn</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;History turn </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> must be [query, response] pair&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">turn</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Query in history turn </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> must be string&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">turn</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response in history turn </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> must be string&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CodeDataValidator">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.CodeDataValidator">[文档]</a>
+<span class="nd">@DataValidatorRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CodeDataValidator</span><span class="p">(</span><span class="n">DataValidator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validator for code data&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CodeDataValidator.__init__">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.CodeDataValidator.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">,</span> <span class="s2">&quot;language&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">supported_languages</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;supported_languages&quot;</span><span class="p">,</span> <span class="p">[])</span></div>
+
+
+<div class="viewcode-block" id="CodeDataValidator.validate">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.CodeDataValidator.validate">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">DJDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Implement code-specific validation logic...</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RequiredFieldsValidator">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.RequiredFieldsValidator">[文档]</a>
+<span class="nd">@DataValidatorRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;required_fields&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RequiredFieldsValidator</span><span class="p">(</span><span class="n">DataValidator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validator that checks for required fields in dataset.</span>
+
+<span class="sd">    This validator ensures that specified fields exist in the dataset and</span>
+<span class="sd">    optionally checks their types and missing value ratios.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (Dict): Configuration dictionary containing:</span>
+<span class="sd">            required_fields (List[str]): List of field names that must exist</span>
+<span class="sd">            field_types (Dict[str, type], optional): Map of field names to</span>
+<span class="sd">            expected types allow_missing (float, optional): Maximum ratio of</span>
+<span class="sd">            missing values allowed. Defaults to 0.0.</span>
+
+<span class="sd">    Example Config:</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;required_fields&quot;: [&quot;field1&quot;, &quot;field2&quot;],</span>
+<span class="sd">                &quot;field_types&quot;: {&quot;field1&quot;: str, &quot;field2&quot;: int},</span>
+<span class="sd">                &quot;allow_missing&quot;: 0.0</span>
+<span class="sd">            }</span>
+
+<span class="sd">        Or from YAML:</span>
+<span class="sd">        .. code-block:: yaml</span>
+
+<span class="sd">            field_types:</span>
+<span class="sd">              field1: &#39;str&#39;</span>
+<span class="sd">              field2: &#39;int&#39;</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        DataValidationError: If validation fails</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Mapping from type name strings to actual Python types</span>
+    <span class="n">TYPE_NAME_MAPPING</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;str&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s2">&quot;int&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;integer&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="s2">&quot;bool&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="s2">&quot;boolean&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="s2">&quot;list&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+        <span class="s2">&quot;dict&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="s2">&quot;tuple&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span>
+        <span class="s2">&quot;set&quot;</span><span class="p">:</span> <span class="nb">set</span><span class="p">,</span>
+        <span class="s2">&quot;bytes&quot;</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="RequiredFieldsValidator.__init__">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.RequiredFieldsValidator.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize validator with config</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            config: Dict containing:</span>
+<span class="sd">                - required_fields: List of field names that must exist</span>
+<span class="sd">                - field_types: Optional map of field names to expected types</span>
+<span class="sd">                  (can be type objects or type name strings)</span>
+<span class="sd">                - allow_missing: Optional float for max ratio missing allowed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">required_fields</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;required_fields&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">field_types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_field_types</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;field_types&quot;</span><span class="p">,</span> <span class="p">{}))</span>
+        <span class="c1"># Default no missing allowed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allow_missing</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;allow_missing&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sample_size&quot;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_field_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_types</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert field type specifications to actual Python type objects.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            field_types: Dictionary mapping field names to types (as type</span>
+<span class="sd">                objects or strings)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary mapping field names to Python type objects</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            DataValidationError: If an unknown type name string is provided</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">normalized</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">type_spec</span> <span class="ow">in</span> <span class="n">field_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">type_spec</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+                <span class="n">normalized</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_spec</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">type_spec</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">type_name</span> <span class="o">=</span> <span class="n">type_spec</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">type_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TYPE_NAME_MAPPING</span><span class="p">:</span>
+                    <span class="n">supported_types</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TYPE_NAME_MAPPING</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+                    <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Unknown type name &#39;</span><span class="si">{</span><span class="n">type_spec</span><span class="si">}</span><span class="s2">&#39; for field &quot;</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39;. Supported types: </span><span class="si">{</span><span class="n">supported_types</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                <span class="n">normalized</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TYPE_NAME_MAPPING</span><span class="p">[</span><span class="n">type_name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid type specification for field &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39;: &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;expected type object or string, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">type_spec</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">normalized</span>
+
+<div class="viewcode-block" id="RequiredFieldsValidator.validate">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.data.data_validator.html#data_juicer.core.data.data_validator.RequiredFieldsValidator.validate">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">DJDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate dataset has required fields with correct types</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dataset: NestedDataset or RayDataset to validate</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            DataValidationError: If validation fails</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+
+        <span class="c1"># Check if fields exist in dataset</span>
+        <span class="n">available_fields</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">schema</span><span class="p">()</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+        <span class="n">missing_fields</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">required_fields</span><span class="p">)</span> <span class="o">-</span> <span class="n">available_fields</span>
+        <span class="k">if</span> <span class="n">missing_fields</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset missing required fields: </span><span class="si">{</span><span class="n">missing_fields</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check field types and missing values</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">required_fields</span><span class="p">:</span>
+            <span class="c1"># Get expected type if specified</span>
+            <span class="n">expected_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_types</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+
+            <span class="c1"># Sample head part of data for validation</span>
+            <span class="n">sample_values</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span><span class="p">)</span>
+
+            <span class="c1"># Check for missing values</span>
+            <span class="n">missing_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sample_values</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">missing_ratio</span> <span class="o">=</span> <span class="n">missing_count</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_values</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">missing_ratio</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">allow_missing</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Field &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39; has </span><span class="si">{</span><span class="n">missing_ratio</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2"> missing values, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;exceeding allowed </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">allow_missing</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Check types if specified</span>
+            <span class="k">if</span> <span class="n">expected_type</span><span class="p">:</span>
+                <span class="n">invalid_types</span> <span class="o">=</span> <span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sample_values</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">expected_type</span><span class="p">)]</span>
+                <span class="k">if</span> <span class="n">invalid_types</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">DataValidationError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Field &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39; contains values of incorrect type. &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="n">expected_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="nb">set</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="vm">__name__</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">invalid_types</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -514,8 +514,52 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-filter-image-aspect-ratio-filter-module">
-<h1>data_juicer.ops.filter.image_aspect_ratio_filter module<a class="headerlink" href="#data-juicer-ops-filter-image-aspect-ratio-filter-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.filter.image_aspect_ratio_filter">
+<span id="data-juicer-ops-filter-image-aspect-ratio-filter-module"></span><h1>data_juicer.ops.filter.image_aspect_ratio_filter module<a class="headerlink" href="#module-data_juicer.ops.filter.image_aspect_ratio_filter" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.image_aspect_ratio_filter.ImageAspectRatioFilter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.filter.image_aspect_ratio_filter.</span></span><span class="sig-name descname"><span class="pre">ImageAspectRatioFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/image_aspect_ratio_filter.html#ImageAspectRatioFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.image_aspect_ratio_filter.ImageAspectRatioFilter" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Filter" title="data_juicer.ops.base_op.Filter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Filter</span></code></a></p>
+<p>Filter to keep samples with image aspect ratio within a specific range.</p>
+<p>The operator computes the aspect ratio for each image in the sample, defined as the
+width divided by the height (W / H). It caches the computed aspect ratios in the
+'aspect_ratios' field. Samples are kept if their images' aspect ratios fall within the
+specified minimum and maximum range. The 'any_or_all' parameter determines the strategy:
+'any' keeps samples if at least one image meets the criteria, while 'all' requires all
+images to meet the criteria. If no images are present in a sample, the sample is not
+filtered out.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.image_aspect_ratio_filter.ImageAspectRatioFilter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.333</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">any_or_all</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'any'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/image_aspect_ratio_filter.html#ImageAspectRatioFilter.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.image_aspect_ratio_filter.ImageAspectRatioFilter.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_ratio</strong> -- The min aspect ratio to keep samples.</p></li>
+<li><p><strong>max_ratio</strong> -- The max aspect ratio to keep samples.</p></li>
+<li><p><strong>any_or_all</strong> -- keep this sample with 'any' or 'all' strategy of
+all images. 'any': keep this sample if any images meet the
+condition. 'all': keep this sample only if all images meet the
+condition.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.image_aspect_ratio_filter.ImageAspectRatioFilter.compute_stats_batched">
+<span class="sig-name descname"><span class="pre">compute_stats_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/image_aspect_ratio_filter.html#ImageAspectRatioFilter.compute_stats_batched"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.image_aspect_ratio_filter.ImageAspectRatioFilter.compute_stats_batched" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.image_aspect_ratio_filter.ImageAspectRatioFilter.process_batched">
+<span class="sig-name descname"><span class="pre">process_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/image_aspect_ratio_filter.html#ImageAspectRatioFilter.process_batched"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.image_aspect_ratio_filter.ImageAspectRatioFilter.process_batched" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +582,23 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.image_aspect_ratio_filter.ImageAspectRatioFilter"><code class="docutils literal notranslate"><span class="pre">ImageAspectRatioFilter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.image_aspect_ratio_filter.ImageAspectRatioFilter.__init__"><code class="docutils literal notranslate"><span class="pre">ImageAspectRatioFilter.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.image_aspect_ratio_filter.ImageAspectRatioFilter.compute_stats_batched"><code class="docutils literal notranslate"><span class="pre">ImageAspectRatioFilter.compute_stats_batched()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.image_aspect_ratio_filter.ImageAspectRatioFilter.process_batched"><code class="docutils literal notranslate"><span class="pre">ImageAspectRatioFilter.process_batched()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

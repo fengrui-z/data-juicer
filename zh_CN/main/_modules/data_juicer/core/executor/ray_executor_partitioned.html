@@ -1,0 +1,1640 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer.core.executor.ray_executor_partitioned &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/core/executor/ray_executor_partitioned';</script>
+    <script src="../../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/core/executor/ray_executor_partitioned.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/core/executor/ray_executor_partitioned_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/core/executor/ray_executor_partitioned.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/core/executor/ray_executor_partitioned.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/core/executor/ray_executor_partitioned_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/core/executor/ray_executor_partitioned.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">模块代码</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer.core.executor.ray_executor_partitioned</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>data_juicer.core.executor.ray_executor_partitioned 源代码</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Simplified Partitioned Ray Executor for Large Dataset Processing</span>
+
+<span class="sd">This module implements a streamlined partitioned execution strategy for Ray mode that:</span>
+<span class="sd">2. Splits the dataset into manageable partitions using Ray&#39;s .split() method</span>
+<span class="sd">3. Processes each partition independently with Ray tasks</span>
+<span class="sd">4. Merges results back into a single dataset for export</span>
+<span class="sd">5. Supports convergence points for global operations (like deduplicators)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">jsonargparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">Namespace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">PositiveInt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.data.dataset_builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetBuilder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.data.ray_dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">RayDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.executor</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExecutorBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.executor.dag_execution_mixin</span><span class="w"> </span><span class="kn">import</span> <span class="n">DAGExecutionMixin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.executor.event_logging_mixin</span><span class="w"> </span><span class="kn">import</span> <span class="n">EventLoggingMixin</span><span class="p">,</span> <span class="n">EventType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.ray_exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">RayExporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_ops</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.op_fusion</span><span class="w"> </span><span class="kn">import</span> <span class="n">fuse_operators</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.ckpt_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">CheckpointStrategy</span><span class="p">,</span> <span class="n">RayCheckpointManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.config_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigAccessor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
+
+<span class="n">ray</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;ray&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="TempDirManager">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor_partitioned.html#data_juicer.core.executor.TempDirManager">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TempDirManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Context manager for temporary directory cleanup.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TempDirManager.__init__">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor_partitioned.html#data_juicer.core.executor.TempDirManager.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_dir</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">tmp_dir</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_dir</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Removing tmp dir </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_dir</span><span class="si">}</span><span class="s2"> ...&quot;</span><span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_dir</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Note: Using Ray Data&#39;s built-in map_batches for parallel processing instead of custom remote functions</span>
+
+
+<span class="c1"># Simplified classes for basic functionality</span>
+<div class="viewcode-block" id="PartitionResult">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor_partitioned.html#data_juicer.core.executor.PartitionResult">[文档]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PartitionResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple result container for partition processing.&quot;&quot;&quot;</span>
+
+    <span class="n">partition_id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">success</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="PartitionMetadata">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor_partitioned.html#data_juicer.core.executor.PartitionMetadata">[文档]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PartitionMetadata</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Metadata for a single partition to enable validation on resume.</span>
+
+<span class="sd">    Stores information about each partition that can be used to verify</span>
+<span class="sd">    that re-partitioning produces the same result on job resumption.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">partition_id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">row_count</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">first_row_hash</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># Hash of first row for validation</span>
+    <span class="n">last_row_hash</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># Hash of last row for validation</span>
+
+<div class="viewcode-block" id="PartitionMetadata.to_dict">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor_partitioned.html#data_juicer.core.executor.PartitionMetadata.to_dict">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PartitionMetadata.from_dict">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor_partitioned.html#data_juicer.core.executor.PartitionMetadata.from_dict">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PartitionMetadata&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PartitioningInfo">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor_partitioned.html#data_juicer.core.executor.PartitioningInfo">[文档]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PartitioningInfo</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Complete partitioning information for a job.</span>
+
+<span class="sd">    Stored alongside checkpoints to enable validation that re-partitioning</span>
+<span class="sd">    on resume produces identical partitions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">num_partitions</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">total_rows</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">partitions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PartitionMetadata</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">deterministic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Whether deterministic splitting was used</span>
+
+<div class="viewcode-block" id="PartitioningInfo.to_dict">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor_partitioned.html#data_juicer.core.executor.PartitioningInfo.to_dict">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;num_partitions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_partitions</span><span class="p">,</span>
+            <span class="s2">&quot;total_rows&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_rows</span><span class="p">,</span>
+            <span class="s2">&quot;deterministic&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">deterministic</span><span class="p">,</span>
+            <span class="s2">&quot;partitions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">partitions</span><span class="p">],</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="PartitioningInfo.from_dict">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor_partitioned.html#data_juicer.core.executor.PartitioningInfo.from_dict">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PartitioningInfo&quot;</span><span class="p">:</span>
+        <span class="n">partitions</span> <span class="o">=</span> <span class="p">[</span><span class="n">PartitionMetadata</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;partitions&quot;</span><span class="p">,</span> <span class="p">[])]</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">num_partitions</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;num_partitions&quot;</span><span class="p">],</span>
+            <span class="n">total_rows</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;total_rows&quot;</span><span class="p">],</span>
+            <span class="n">deterministic</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;deterministic&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="n">partitions</span><span class="o">=</span><span class="n">partitions</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PartitioningInfo.save">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor_partitioned.html#data_juicer.core.executor.PartitioningInfo.save">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save partitioning info to JSON file.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved partitioning info to </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PartitioningInfo.load">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor_partitioned.html#data_juicer.core.executor.PartitioningInfo.load">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;PartitioningInfo&quot;</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load partitioning info from JSON file.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to load partitioning info from </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PartitionedRayExecutor">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor_partitioned.html#data_juicer.core.executor.PartitionedRayExecutor">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PartitionedRayExecutor</span><span class="p">(</span><span class="n">ExecutorBase</span><span class="p">,</span> <span class="n">DAGExecutionMixin</span><span class="p">,</span> <span class="n">EventLoggingMixin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simplified Ray executor with dataset partitioning using .split().</span>
+
+<span class="sd">    Features:</span>
+<span class="sd">    - Single DatasetBuilder loads the full dataset</span>
+<span class="sd">    - Uses Ray&#39;s .split() method for partitioning</span>
+<span class="sd">    - Processes partitions in parallel with Ray tasks</span>
+<span class="sd">    - Supports convergence points for global operations</span>
+<span class="sd">    - Merges results back into a single dataset</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="PartitionedRayExecutor.__init__">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor_partitioned.html#data_juicer.core.executor.PartitionedRayExecutor.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Namespace</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the partitioned Ray executor.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">executor_type</span> <span class="o">=</span> <span class="s2">&quot;ray_partitioned&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">work_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;job_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># Initialize temporary directory for Ray operations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span><span class="p">,</span> <span class="s2">&quot;.tmp&quot;</span><span class="p">,</span> <span class="n">ray</span><span class="o">.</span><span class="n">get_runtime_context</span><span class="p">()</span><span class="o">.</span><span class="n">get_job_id</span><span class="p">())</span>
+
+        <span class="c1"># Initialize EventLoggingMixin for job management and event logging</span>
+        <span class="n">EventLoggingMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="p">)</span>
+
+        <span class="c1"># Initialize DAGExecutionMixin for AST/DAG functionality</span>
+        <span class="n">DAGExecutionMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># Override strategy methods for partitioned execution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_override_strategy_methods</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">datasetbuilder</span> <span class="o">=</span> <span class="n">DatasetBuilder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="n">executor_type</span><span class="o">=</span><span class="s2">&quot;ray&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Partition configuration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_configure_partitioning</span><span class="p">()</span>
+
+        <span class="c1"># Checkpoint configuration and manager initialization</span>
+        <span class="n">checkpoint_cfg</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;checkpoint&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">checkpoint_dir</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;checkpoint_dir&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span><span class="p">,</span> <span class="s2">&quot;checkpoints&quot;</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">checkpoint_cfg</span><span class="p">:</span>
+            <span class="c1"># Use ConfigAccessor to handle both dict and object configurations</span>
+            <span class="n">checkpoint_enabled</span> <span class="o">=</span> <span class="n">ConfigAccessor</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">checkpoint_cfg</span><span class="p">,</span> <span class="s2">&quot;enabled&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">strategy_str</span> <span class="o">=</span> <span class="n">ConfigAccessor</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">checkpoint_cfg</span><span class="p">,</span> <span class="s2">&quot;strategy&quot;</span><span class="p">,</span> <span class="s2">&quot;every_op&quot;</span><span class="p">)</span>
+            <span class="n">checkpoint_n_ops</span> <span class="o">=</span> <span class="n">ConfigAccessor</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">checkpoint_cfg</span><span class="p">,</span> <span class="s2">&quot;n_ops&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">checkpoint_op_names</span> <span class="o">=</span> <span class="n">ConfigAccessor</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">checkpoint_cfg</span><span class="p">,</span> <span class="s2">&quot;op_names&quot;</span><span class="p">,</span> <span class="p">[])</span>
+
+            <span class="c1"># Parse checkpoint strategy with validation</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">checkpoint_strategy</span> <span class="o">=</span> <span class="n">CheckpointStrategy</span><span class="p">(</span><span class="n">strategy_str</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown checkpoint strategy: </span><span class="si">{</span><span class="n">strategy_str</span><span class="si">}</span><span class="s2">, defaulting to EVERY_OP&quot;</span><span class="p">)</span>
+                <span class="n">checkpoint_strategy</span> <span class="o">=</span> <span class="n">CheckpointStrategy</span><span class="o">.</span><span class="n">EVERY_OP</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">checkpoint_enabled</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">checkpoint_strategy</span> <span class="o">=</span> <span class="n">CheckpointStrategy</span><span class="o">.</span><span class="n">DISABLED</span>
+            <span class="n">checkpoint_n_ops</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">checkpoint_op_names</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Initialize Ray checkpoint manager</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span> <span class="o">=</span> <span class="n">RayCheckpointManager</span><span class="p">(</span>
+            <span class="n">ckpt_dir</span><span class="o">=</span><span class="n">checkpoint_dir</span><span class="p">,</span>
+            <span class="n">checkpoint_enabled</span><span class="o">=</span><span class="n">checkpoint_enabled</span><span class="p">,</span>
+            <span class="n">checkpoint_strategy</span><span class="o">=</span><span class="n">checkpoint_strategy</span><span class="p">,</span>
+            <span class="n">checkpoint_n_ops</span><span class="o">=</span><span class="n">checkpoint_n_ops</span><span class="p">,</span>
+            <span class="n">checkpoint_op_names</span><span class="o">=</span><span class="n">checkpoint_op_names</span><span class="p">,</span>
+            <span class="n">event_logger</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checkpointing: </span><span class="si">{</span><span class="s1">&#39;enabled&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">checkpoint_enabled</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;disabled&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">checkpoint_enabled</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checkpoint strategy: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">checkpoint_strategy</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checkpoint directory: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Initialize RayExporter for final output</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Preparing exporter...&quot;</span><span class="p">)</span>
+        <span class="c1"># Prepare export extra args, including S3 credentials if export_path is S3</span>
+        <span class="n">export_extra_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">export_extra_args</span><span class="p">)</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;export_extra_args&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
+
+        <span class="c1"># If export_path is S3, extract AWS credentials with priority:</span>
+        <span class="c1"># 1. export_aws_credentials (export-specific)</span>
+        <span class="c1"># 2. dataset config (for backward compatibility)</span>
+        <span class="c1"># 3. environment variables (handled by exporter)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">export_path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;s3://&quot;</span><span class="p">):</span>
+            <span class="c1"># Pass export-specific credentials if provided.</span>
+            <span class="c1"># The RayExporter will handle falling back to environment variables or other credential mechanisms.</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;export_aws_credentials&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">export_aws_credentials</span><span class="p">:</span>
+                <span class="n">export_aws_creds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">export_aws_credentials</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">export_aws_creds</span><span class="p">,</span> <span class="s2">&quot;aws_access_key_id&quot;</span><span class="p">):</span>
+                    <span class="n">export_extra_args</span><span class="p">[</span><span class="s2">&quot;aws_access_key_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">export_aws_creds</span><span class="o">.</span><span class="n">aws_access_key_id</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">export_aws_creds</span><span class="p">,</span> <span class="s2">&quot;aws_secret_access_key&quot;</span><span class="p">):</span>
+                    <span class="n">export_extra_args</span><span class="p">[</span><span class="s2">&quot;aws_secret_access_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">export_aws_creds</span><span class="o">.</span><span class="n">aws_secret_access_key</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">export_aws_creds</span><span class="p">,</span> <span class="s2">&quot;aws_session_token&quot;</span><span class="p">):</span>
+                    <span class="n">export_extra_args</span><span class="p">[</span><span class="s2">&quot;aws_session_token&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">export_aws_creds</span><span class="o">.</span><span class="n">aws_session_token</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">export_aws_creds</span><span class="p">,</span> <span class="s2">&quot;aws_region&quot;</span><span class="p">):</span>
+                    <span class="n">export_extra_args</span><span class="p">[</span><span class="s2">&quot;aws_region&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">export_aws_creds</span><span class="o">.</span><span class="n">aws_region</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">export_aws_creds</span><span class="p">,</span> <span class="s2">&quot;endpoint_url&quot;</span><span class="p">):</span>
+                    <span class="n">export_extra_args</span><span class="p">[</span><span class="s2">&quot;endpoint_url&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">export_aws_creds</span><span class="o">.</span><span class="n">endpoint_url</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">exporter</span> <span class="o">=</span> <span class="n">RayExporter</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">export_path</span><span class="p">,</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;export_type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;export_shard_size&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="n">keep_stats_in_res_ds</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;keep_stats_in_res_ds&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+            <span class="n">keep_hashes_in_res_ds</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;keep_hashes_in_res_ds&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">encrypt_before_export</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;encrypt_before_export&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">encryption_key_path</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;encryption_key_path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="o">**</span><span class="n">export_extra_args</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_configure_partitioning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configure partitioning based on manual or auto mode.&quot;&quot;&quot;</span>
+        <span class="c1"># Get partition configuration</span>
+        <span class="n">partition_cfg</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;partition&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="c1"># Use ConfigAccessor to handle both dict and object configurations</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="n">ConfigAccessor</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">partition_cfg</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+        <span class="n">num_of_partitions</span> <span class="o">=</span> <span class="n">ConfigAccessor</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">partition_cfg</span><span class="p">,</span> <span class="s2">&quot;num_of_partitions&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">partition_size</span> <span class="o">=</span> <span class="n">ConfigAccessor</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">partition_cfg</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="mi">5000</span><span class="p">)</span>
+        <span class="n">max_size_mb</span> <span class="o">=</span> <span class="n">ConfigAccessor</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">partition_cfg</span><span class="p">,</span> <span class="s2">&quot;max_size_mb&quot;</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+
+        <span class="c1"># Fallback to legacy configuration if partition config is not available</span>
+        <span class="c1"># or if legacy num_partitions is explicitly set</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="n">partition_cfg</span>
+            <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;num_partitions&quot;</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;num_partitions&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;manual&quot;</span>
+            <span class="n">num_of_partitions</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;num_partitions&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">partition_cfg</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No partition configuration found, using legacy num_partitions&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Legacy num_partitions detected, overriding partition configuration&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">partition_mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_partitions</span> <span class="o">=</span> <span class="n">num_of_partitions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">partition_size</span> <span class="o">=</span> <span class="n">partition_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_size_mb</span> <span class="o">=</span> <span class="n">max_size_mb</span>
+
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;manual&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Manual partition mode: using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_partitions</span><span class="si">}</span><span class="s2"> partitions&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># auto mode</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Auto partition mode: will determine optimal partitioning based on data characteristics&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fallback partition size: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">partition_size</span><span class="si">}</span><span class="s2"> samples, max </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_size_mb</span><span class="si">}</span><span class="s2"> MB&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_configure_auto_partitioning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">ops</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configure partitioning using the partition size optimizer for auto mode.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.executor.partition_size_optimizer</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+                <span class="n">auto_configure_resources</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;🔧 Auto-configuring partition settings based on data characteristics...&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Use the partition size optimizer to determine optimal settings</span>
+            <span class="n">recommendations</span> <span class="o">=</span> <span class="n">auto_configure_resources</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span>
+
+            <span class="c1"># Update partition configuration based on recommendations</span>
+            <span class="n">recommended_size</span> <span class="o">=</span> <span class="n">ConfigAccessor</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">recommendations</span><span class="p">,</span> <span class="s2">&quot;recommended_partition_size&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition_size</span><span class="p">)</span>
+            <span class="n">recommended_max_size_mb</span> <span class="o">=</span> <span class="n">ConfigAccessor</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">recommendations</span><span class="p">,</span> <span class="s2">&quot;recommended_max_size_mb&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size_mb</span><span class="p">)</span>
+            <span class="n">recommended_workers</span> <span class="o">=</span> <span class="n">ConfigAccessor</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">recommendations</span><span class="p">,</span> <span class="s2">&quot;recommended_worker_count&quot;</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;np&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Calculate optimal number of partitions based on dataset size and recommended partition size</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">):</span>
+                    <span class="n">total_samples</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;__len__&quot;</span><span class="p">):</span>
+                    <span class="n">total_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">total_samples</span> <span class="o">=</span> <span class="mi">10000</span>  <span class="c1"># Fallback estimate</span>
+
+                <span class="c1"># Calculate number of partitions needed</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">num_partitions</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">total_samples</span> <span class="o">/</span> <span class="n">recommended_size</span><span class="p">))</span>
+
+                <span class="c1"># Cap partitions at 2x recommended workers (scales with cluster size)</span>
+                <span class="n">max_partitions</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">recommended_workers</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">num_partitions</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_partitions</span><span class="p">,</span> <span class="n">max_partitions</span><span class="p">)</span>
+
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;📊 Dataset analysis complete:&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Total samples: </span><span class="si">{</span><span class="n">total_samples</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Recommended partition size: </span><span class="si">{</span><span class="n">recommended_size</span><span class="si">}</span><span class="s2"> samples&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Calculated partitions: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_partitions</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Recommended max size: </span><span class="si">{</span><span class="n">recommended_max_size_mb</span><span class="si">}</span><span class="s2"> MB&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Recommended workers: </span><span class="si">{</span><span class="n">recommended_workers</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Update worker count if not already set</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;np&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">np</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">np</span> <span class="o">=</span> <span class="n">recommended_workers</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Updated worker count to: </span><span class="si">{</span><span class="n">recommended_workers</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not determine dataset size for partition calculation: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using fallback partition count: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_partitions</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not import partition size optimizer: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Falling back to manual partition configuration&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Auto partition configuration failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Falling back to manual partition configuration&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PartitionedRayExecutor.run">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor_partitioned.html#data_juicer.core.executor.PartitionedRayExecutor.run">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">load_data_np</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PositiveInt</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">skip_return</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the simplified partitioned dataset processing pipeline.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            load_data_np: Number of workers for loading dataset</span>
+<span class="sd">            skip_return: Whether to skip returning the dataset</span>
+<span class="sd">            job_id: Optional job ID to resume from checkpoints</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Processed dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Use TempDirManager to ensure cleanup of temporary files</span>
+        <span class="k">with</span> <span class="n">TempDirManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmp_dir</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_impl</span><span class="p">(</span><span class="n">load_data_np</span><span class="p">,</span> <span class="n">skip_return</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">load_data_np</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PositiveInt</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">skip_return</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Internal implementation of the run method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">job_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="c1"># Check if user provided a job_id (indicating resumption attempt)</span>
+        <span class="n">user_provided_job_id</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;_user_provided_job_id&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">user_provided_job_id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;🔄 User provided job_id: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="si">}</span><span class="s2"> - attempting to resume job&quot;</span><span class="p">)</span>
+            <span class="n">resume_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resume_job</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">resume_result</span> <span class="o">==</span> <span class="s2">&quot;completed&quot;</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;✅ Job is already completed - nothing to do&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># Exit gracefully</span>
+            <span class="k">elif</span> <span class="n">resume_result</span> <span class="o">==</span> <span class="s2">&quot;resuming&quot;</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;✅ Job resumption successful - will use existing checkpoints&quot;</span><span class="p">)</span>
+                <span class="n">is_resuming</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># resume_result == &quot;failed&quot;</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;❌ Job resumption failed - starting fresh&quot;</span><span class="p">)</span>
+                <span class="n">is_resuming</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;🚀 Starting new job with auto-generated job_id: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;🚀 Starting new job&quot;</span><span class="p">)</span>
+            <span class="n">is_resuming</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_resuming</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;🚀 Starting simplified partitioned processing...&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;🔄 Resuming partitioned processing from checkpoints...&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Log job start event</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_event</span><span class="p">(</span>
+            <span class="n">event_type</span><span class="o">=</span><span class="n">EventType</span><span class="o">.</span><span class="n">JOB_START</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="p">(</span>
+                <span class="s2">&quot;Starting partitioned dataset processing&quot;</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_resuming</span>
+                <span class="k">else</span> <span class="s2">&quot;Resuming partitioned dataset processing&quot;</span>
+            <span class="p">),</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;num_partitions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_partitions</span><span class="p">,</span>
+                <span class="s2">&quot;checkpoint_enabled&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">checkpoint_enabled</span><span class="p">,</span>
+                <span class="s2">&quot;is_resuming&quot;</span><span class="p">:</span> <span class="n">is_resuming</span><span class="p">,</span>
+                <span class="s2">&quot;job_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span><span class="p">,</span>
+                <span class="s2">&quot;user_provided_job_id&quot;</span><span class="p">:</span> <span class="n">user_provided_job_id</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Note: Config validation is handled in _resume_job() if resuming</span>
+
+        <span class="c1"># Load the full dataset using a single DatasetBuilder</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading dataset with single DatasetBuilder...&quot;</span><span class="p">)</span>
+
+        <span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasetbuilder</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">num_proc</span><span class="o">=</span><span class="n">load_data_np</span><span class="p">)</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">schema</span><span class="p">()</span><span class="o">.</span><span class="n">columns</span>
+
+        <span class="c1"># Prepare operations</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Preparing operations...&quot;</span><span class="p">)</span>
+        <span class="n">ops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_operators</span><span class="p">()</span>
+
+        <span class="c1"># Handle auto partition mode BEFORE initializing DAG</span>
+        <span class="c1"># (DAG needs final partition count)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">partition_mode</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_configure_auto_partitioning</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span>
+
+        <span class="c1"># Initialize DAG execution planning with final partition count</span>
+        <span class="c1"># Pass ops to avoid redundant loading</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_dag_execution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="n">ops</span><span class="o">=</span><span class="n">ops</span><span class="p">)</span>
+
+        <span class="c1"># Log job start with DAG context</span>
+        <span class="c1"># Handle both dataset_path (string) and dataset (dict) configurations</span>
+        <span class="n">dataset_info</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;dataset_path&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">dataset_path</span><span class="p">:</span>
+            <span class="n">dataset_info</span><span class="p">[</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">dataset_path</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">dataset</span><span class="p">:</span>
+            <span class="n">dataset_info</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">dataset</span>
+
+        <span class="n">job_config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="o">**</span><span class="n">dataset_info</span><span class="p">,</span>
+            <span class="s2">&quot;work_dir&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span><span class="p">,</span>
+            <span class="s2">&quot;executor_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">executor_type</span><span class="p">,</span>
+            <span class="s2">&quot;dag_node_count&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_dag</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_dag</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;dag_edge_count&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_dag</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_dag</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;parallel_groups_count&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_dag</span><span class="o">.</span><span class="n">parallel_groups</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_dag</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_job_start</span><span class="p">(</span><span class="n">job_config</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ops</span><span class="p">))</span>
+
+        <span class="c1"># Detect convergence points for global operations</span>
+        <span class="n">convergence_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detect_convergence_points</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">convergence_points</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found convergence points at operations: </span><span class="si">{</span><span class="n">convergence_points</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">final_dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_with_convergence</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">ops</span><span class="p">,</span> <span class="n">convergence_points</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No convergence points found, processing with simple partitioning&quot;</span><span class="p">)</span>
+            <span class="n">final_dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_with_simple_partitioning</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span>
+
+        <span class="c1"># Export final dataset</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Exporting final dataset...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exporter</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">final_dataset</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+
+        <span class="n">job_duration</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">job_start_time</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Job completed successfully in </span><span class="si">{</span><span class="n">job_duration</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;📁 Output saved to: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">export_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Log job completion with DAG context</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_job_complete</span><span class="p">(</span><span class="n">job_duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">export_path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">skip_return</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">final_dataset</span>
+
+<div class="viewcode-block" id="PartitionedRayExecutor.cleanup_temp_files">
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor_partitioned.html#data_juicer.core.executor.PartitionedRayExecutor.cleanup_temp_files">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup_temp_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Manually clean up temporary files from previous runs.&quot;&quot;&quot;</span>
+        <span class="n">tmp_base_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span><span class="p">,</span> <span class="s2">&quot;.tmp&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmp_base_dir</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cleaning up temporary files in </span><span class="si">{</span><span class="n">tmp_base_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">tmp_base_dir</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;✅ Temporary files cleaned up successfully&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No temporary files found to clean up&quot;</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_with_simple_partitioning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">RayDataset</span><span class="p">,</span> <span class="n">ops</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process dataset with real partitioning using Ray Data&#39;s split and union.</span>
+
+<span class="sd">        Uses deterministic splitting to ensure reproducible partitions for</span>
+<span class="sd">        checkpoint resumption.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Processing with real partitioning using Ray Data&#39;s split and union...&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Split the dataset deterministically with metadata collection</span>
+        <span class="n">partitions</span><span class="p">,</span> <span class="n">partitioning_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_dataset_deterministic</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Partitioning complete: </span><span class="si">{</span><span class="n">partitioning_info</span><span class="o">.</span><span class="n">num_partitions</span><span class="si">}</span><span class="s2"> partitions, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">partitioning_info</span><span class="o">.</span><span class="n">total_rows</span><span class="si">}</span><span class="s2"> total rows&quot;</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Process each partition separately with checkpointing</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Processing partitions with checkpointing support...&quot;</span><span class="p">)</span>
+        <span class="n">processed_partitions</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">partition</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">partitions</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing partition </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">partitions</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Log partition start event</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_event</span><span class="p">(</span>
+                <span class="n">event_type</span><span class="o">=</span><span class="n">EventType</span><span class="o">.</span><span class="n">PARTITION_START</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Starting processing of partition </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">partitions</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">partition_id</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Create a RayDataset wrapper for this partition</span>
+            <span class="n">partition_dataset</span> <span class="o">=</span> <span class="n">RayDataset</span><span class="p">(</span><span class="n">partition</span><span class="p">,</span> <span class="n">cfg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">)</span>
+
+            <span class="c1"># Apply operations with checkpointing support and DAG monitoring</span>
+            <span class="n">processed_partition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_with_checkpointing</span><span class="p">(</span><span class="n">partition_dataset</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">ops</span><span class="p">)</span>
+
+            <span class="c1"># Store the processed partition&#39;s data</span>
+            <span class="n">processed_partitions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">processed_partition</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="c1"># Log partition completion event</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_event</span><span class="p">(</span>
+                <span class="n">event_type</span><span class="o">=</span><span class="n">EventType</span><span class="o">.</span><span class="n">PARTITION_COMPLETE</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Completed processing of partition </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">partitions</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">partition_id</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Merge all processed partitions back into a single dataset</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Merging processed partitions...&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">processed_partitions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">merged_dataset</span> <span class="o">=</span> <span class="n">processed_partitions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Union all partitions</span>
+            <span class="n">merged_dataset</span> <span class="o">=</span> <span class="n">processed_partitions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">partition</span> <span class="ow">in</span> <span class="n">processed_partitions</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">merged_dataset</span> <span class="o">=</span> <span class="n">merged_dataset</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">partition</span><span class="p">)</span>
+
+        <span class="c1"># Return as RayDataset wrapper</span>
+        <span class="k">return</span> <span class="n">RayDataset</span><span class="p">(</span><span class="n">merged_dataset</span><span class="p">,</span> <span class="n">cfg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_with_convergence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">RayDataset</span><span class="p">,</span> <span class="n">ops</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span> <span class="n">convergence_points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process dataset with convergence support for global operations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Processing with convergence support for global operations...&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Find the first convergence point</span>
+        <span class="n">first_convergence</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">convergence_points</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;First convergence point at operation </span><span class="si">{</span><span class="n">first_convergence</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Split operations into pre-convergence and post-convergence</span>
+        <span class="n">pre_convergence_ops</span> <span class="o">=</span> <span class="n">ops</span><span class="p">[:</span><span class="n">first_convergence</span><span class="p">]</span>
+        <span class="n">post_convergence_ops</span> <span class="o">=</span> <span class="n">ops</span><span class="p">[</span><span class="n">first_convergence</span><span class="p">:]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pre-convergence operations: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pre_convergence_ops</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Post-convergence operations: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">post_convergence_ops</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Process partitions up to convergence point</span>
+        <span class="k">if</span> <span class="n">pre_convergence_ops</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Processing partitions up to convergence point...&quot;</span><span class="p">)</span>
+            <span class="n">processed_dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_with_simple_partitioning</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">pre_convergence_ops</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No pre-convergence operations, using original dataset...&quot;</span><span class="p">)</span>
+            <span class="n">processed_dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+
+        <span class="c1"># Merge partitions for global operations</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Merging partitions for global operations...&quot;</span><span class="p">)</span>
+        <span class="n">merged_dataset</span> <span class="o">=</span> <span class="n">processed_dataset</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="c1"># Process merged dataset with post-convergence operations</span>
+        <span class="k">if</span> <span class="n">post_convergence_ops</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Processing merged dataset with global operations...&quot;</span><span class="p">)</span>
+            <span class="n">merged_ray_dataset</span> <span class="o">=</span> <span class="n">RayDataset</span><span class="p">(</span><span class="n">merged_dataset</span><span class="p">,</span> <span class="n">cfg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">)</span>
+
+            <span class="c1"># Pre-execute DAG monitoring (log operation start events)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_dag</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pre_execute_operations_with_dag_monitoring</span><span class="p">(</span><span class="n">post_convergence_ops</span><span class="p">,</span> <span class="n">partition_id</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># Execute operations</span>
+            <span class="n">final_dataset</span> <span class="o">=</span> <span class="n">merged_ray_dataset</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">post_convergence_ops</span><span class="p">)</span>
+
+            <span class="c1"># Post-execute DAG monitoring (log operation completion events)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_dag</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_post_execute_operations_with_dag_monitoring</span><span class="p">(</span><span class="n">post_convergence_ops</span><span class="p">,</span> <span class="n">partition_id</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Global operations completed. Final dataset ready for export&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">final_dataset</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># No post-convergence operations, just return the merged result</span>
+            <span class="k">return</span> <span class="n">RayDataset</span><span class="p">(</span><span class="n">merged_dataset</span><span class="p">,</span> <span class="n">cfg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_with_checkpointing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">RayDataset</span><span class="p">,</span> <span class="n">partition_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ops</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RayDataset</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process dataset with checkpointing support.</span>
+<span class="sd">        Groups operations and checkpoints between groups based on strategy.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing partition </span><span class="si">{</span><span class="n">partition_id</span><span class="si">}</span><span class="s2"> with checkpointing support...&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">checkpoint_enabled</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checkpointing disabled, processing all operations at once for partition </span><span class="si">{</span><span class="n">partition_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Get input row count before processing</span>
+            <span class="n">input_rows</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+            <span class="c1"># Pre-execute DAG monitoring (log operation start events)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_dag</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pre_execute_operations_with_dag_monitoring</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span> <span class="n">partition_id</span><span class="o">=</span><span class="n">partition_id</span><span class="p">)</span>
+
+            <span class="c1"># Execute operations (lazy)</span>
+            <span class="n">processed_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">ops</span><span class="p">)</span>
+
+            <span class="c1"># Force materialization to get real execution (required for union anyway)</span>
+            <span class="n">processed_dataset</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">processed_dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">materialize</span><span class="p">()</span>
+
+            <span class="c1"># Get metrics after execution</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+            <span class="n">output_rows</span> <span class="o">=</span> <span class="n">processed_dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Partition </span><span class="si">{</span><span class="n">partition_id</span><span class="si">}</span><span class="s2">: Processed </span><span class="si">{</span><span class="n">input_rows</span><span class="si">}</span><span class="s2">→</span><span class="si">{</span><span class="n">output_rows</span><span class="si">}</span><span class="s2"> rows in </span><span class="si">{</span><span class="n">duration</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Post-execute DAG monitoring with real metrics</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_dag</span><span class="p">:</span>
+                <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="n">duration</span><span class="p">,</span> <span class="s2">&quot;input_rows&quot;</span><span class="p">:</span> <span class="n">input_rows</span><span class="p">,</span> <span class="s2">&quot;output_rows&quot;</span><span class="p">:</span> <span class="n">output_rows</span><span class="p">}</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_post_execute_operations_with_dag_monitoring</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span> <span class="n">partition_id</span><span class="o">=</span><span class="n">partition_id</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">processed_dataset</span>
+
+        <span class="c1"># check the latest checkpoint for the partition</span>
+        <span class="n">latest_checkpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">find_latest_checkpoint</span><span class="p">(</span><span class="n">partition_id</span><span class="p">)</span>
+
+        <span class="c1"># Group operations based on checkpoint strategy</span>
+        <span class="n">op_groups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">group_operations_for_checkpointing</span><span class="p">(</span><span class="n">ops</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Grouped </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ops</span><span class="p">)</span><span class="si">}</span><span class="s2"> operations into </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">op_groups</span><span class="p">)</span><span class="si">}</span><span class="s2"> groups for checkpointing&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detailed op groups: </span><span class="si">{</span><span class="n">op_groups</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">current_dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+
+        <span class="k">for</span> <span class="n">group_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">start_idx</span><span class="p">,</span> <span class="n">end_idx</span><span class="p">,</span> <span class="n">group_ops</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">op_groups</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Processing partition </span><span class="si">{</span><span class="n">partition_id</span><span class="si">}</span><span class="s2">, group </span><span class="si">{</span><span class="n">group_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">op_groups</span><span class="p">)</span><span class="si">}</span><span class="s2">: operations </span><span class="si">{</span><span class="n">start_idx</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">end_idx</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">latest_checkpoint</span> <span class="ow">and</span> <span class="n">latest_checkpoint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">end_idx</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Partition </span><span class="si">{</span><span class="n">partition_id</span><span class="si">}</span><span class="s2">: All operations in group </span><span class="si">{</span><span class="n">group_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> already processed (checkpoint at op </span><span class="si">{</span><span class="n">latest_checkpoint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, group ends at </span><span class="si">{</span><span class="n">end_idx</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">), skipping&quot;</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">latest_checkpoint</span> <span class="ow">and</span> <span class="n">latest_checkpoint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start_idx</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Partition </span><span class="si">{</span><span class="n">partition_id</span><span class="si">}</span><span class="s2">: Resuming from checkpoint at operation </span><span class="si">{</span><span class="n">latest_checkpoint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">current_dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span>
+                    <span class="n">latest_checkpoint</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">latest_checkpoint</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">partition_id</span><span class="p">,</span> <span class="n">cfg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">current_dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Partition </span><span class="si">{</span><span class="n">partition_id</span><span class="si">}</span><span class="s2">: Failed to load checkpoint, starting from beginning&quot;</span><span class="p">)</span>
+                    <span class="n">current_dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+                    <span class="n">group_ops</span> <span class="o">=</span> <span class="n">ops</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span>  <span class="c1"># Start from beginning of group</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Partition </span><span class="si">{</span><span class="n">partition_id</span><span class="si">}</span><span class="s2">: Will process </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">group_ops</span><span class="p">)</span><span class="si">}</span><span class="s2"> operations from beginning of group&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Partition </span><span class="si">{</span><span class="n">partition_id</span><span class="si">}</span><span class="s2">: Successfully loaded checkpoint, resuming from operation </span><span class="si">{</span><span class="n">latest_checkpoint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">group_ops</span> <span class="o">=</span> <span class="n">ops</span><span class="p">[</span><span class="n">latest_checkpoint</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">end_idx</span><span class="p">]</span>  <span class="c1"># Resume from checkpoint</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">group_ops</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Partition </span><span class="si">{</span><span class="n">partition_id</span><span class="si">}</span><span class="s2">: All operations in this group already processed, skipping&quot;</span>
+                        <span class="p">)</span>
+                        <span class="k">continue</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Partition </span><span class="si">{</span><span class="n">partition_id</span><span class="si">}</span><span class="s2">: Will process </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">group_ops</span><span class="p">)</span><span class="si">}</span><span class="s2"> remaining operations from checkpoint&quot;</span>
+                        <span class="p">)</span>
+
+            <span class="c1"># Process the group of operations</span>
+            <span class="k">if</span> <span class="n">group_ops</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Partition </span><span class="si">{</span><span class="n">partition_id</span><span class="si">}</span><span class="s2">: Processing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">group_ops</span><span class="p">)</span><span class="si">}</span><span class="s2"> operations in group </span><span class="si">{</span><span class="n">group_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Get input row count before processing</span>
+                <span class="n">input_rows</span> <span class="o">=</span> <span class="n">current_dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+                <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+                <span class="c1"># Pre-execute DAG monitoring (log operation start events)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_dag</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_pre_execute_operations_with_dag_monitoring</span><span class="p">(</span><span class="n">group_ops</span><span class="p">,</span> <span class="n">partition_id</span><span class="o">=</span><span class="n">partition_id</span><span class="p">)</span>
+
+                <span class="c1"># Execute operations (lazy)</span>
+                <span class="n">current_dataset</span> <span class="o">=</span> <span class="n">current_dataset</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">group_ops</span><span class="p">)</span>
+
+                <span class="c1"># Force materialization (required for checkpointing anyway)</span>
+                <span class="n">current_dataset</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">current_dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">materialize</span><span class="p">()</span>
+
+                <span class="c1"># Get metrics after execution</span>
+                <span class="n">duration</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+                <span class="n">output_rows</span> <span class="o">=</span> <span class="n">current_dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Partition </span><span class="si">{</span><span class="n">partition_id</span><span class="si">}</span><span class="s2">, group </span><span class="si">{</span><span class="n">group_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">: Processed </span><span class="si">{</span><span class="n">input_rows</span><span class="si">}</span><span class="s2">→</span><span class="si">{</span><span class="n">output_rows</span><span class="si">}</span><span class="s2"> rows in </span><span class="si">{</span><span class="n">duration</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Post-execute DAG monitoring with real metrics</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_dag</span><span class="p">:</span>
+                    <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="n">duration</span><span class="p">,</span> <span class="s2">&quot;input_rows&quot;</span><span class="p">:</span> <span class="n">input_rows</span><span class="p">,</span> <span class="s2">&quot;output_rows&quot;</span><span class="p">:</span> <span class="n">output_rows</span><span class="p">}</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_post_execute_operations_with_dag_monitoring</span><span class="p">(</span>
+                        <span class="n">group_ops</span><span class="p">,</span> <span class="n">partition_id</span><span class="o">=</span><span class="n">partition_id</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span>
+                    <span class="p">)</span>
+
+            <span class="c1"># Checkpoint after the last operation in the group</span>
+            <span class="k">if</span> <span class="n">group_ops</span><span class="p">:</span>
+                <span class="n">last_op_idx</span> <span class="o">=</span> <span class="n">end_idx</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">last_op_name</span> <span class="o">=</span> <span class="n">ops</span><span class="p">[</span><span class="n">last_op_idx</span><span class="p">]</span><span class="o">.</span><span class="n">_name</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">should_checkpoint</span><span class="p">(</span><span class="n">last_op_idx</span><span class="p">,</span> <span class="n">last_op_name</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Partition </span><span class="si">{</span><span class="n">partition_id</span><span class="si">}</span><span class="s2">: Creating checkpoint after operation </span><span class="si">{</span><span class="n">last_op_idx</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">last_op_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="c1"># Data already materialized above, safe to checkpoint</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span>
+                        <span class="n">current_dataset</span><span class="p">,</span> <span class="n">last_op_idx</span><span class="p">,</span> <span class="n">last_op_name</span><span class="p">,</span> <span class="n">partition_id</span><span class="p">,</span> <span class="n">cfg</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span>
+                    <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">current_dataset</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_work_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the work directory based on job_id.&quot;&quot;&quot;</span>
+        <span class="c1"># Check if the current work_dir already contains the job_id</span>
+        <span class="n">current_work_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking if current work_dir contains job_id: </span><span class="si">{</span><span class="n">current_work_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_work_dir</span><span class="p">):</span>
+            <span class="c1"># Current work_dir already contains job_id, check if it&#39;s a valid work directory</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Current work_dir contains job_id &#39;</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&#39;, checking if it&#39;s a valid work directory&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Check if this directory has events files (indicating it&#39;s a work directory)</span>
+            <span class="n">latest_events_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_logger</span><span class="o">.</span><span class="n">find_latest_events_file</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">current_work_dir</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">latest_events_file</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found events file in current work_dir: </span><span class="si">{</span><span class="n">latest_events_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_work_dir</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No events file found in current work_dir: </span><span class="si">{</span><span class="n">current_work_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No directory found containing job_id &#39;</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&#39; with events files&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_job_completion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">work_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the job is already completed.&quot;&quot;&quot;</span>
+        <span class="n">latest_events_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_logger</span><span class="o">.</span><span class="n">find_latest_events_file</span><span class="p">(</span><span class="n">work_dir</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">latest_events_file</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No events file found in work directory: </span><span class="si">{</span><span class="n">work_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">is_completed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">event_logger</span><span class="o">.</span><span class="n">check_job_completion</span><span class="p">(</span><span class="n">latest_events_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_completed</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Job </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2"> is already completed - no need to resume&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Job </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2"> is not completed - resumption possible&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">is_completed</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resume_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resume a job from checkpoints.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            &quot;completed&quot;: Job is already completed</span>
+<span class="sd">            &quot;resuming&quot;: Job can be resumed</span>
+<span class="sd">            &quot;failed&quot;: Job resumption failed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attempting to resume job: </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Find work directory</span>
+        <span class="n">work_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_work_directory</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">work_dir</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Work directory not found for job_id: </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;failed&quot;</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found work directory: </span><span class="si">{</span><span class="n">work_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check if config validation passed (done during config initialization)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;_same_yaml_config&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Config validation failed - configurations don&#39;t match&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;failed&quot;</span>
+
+        <span class="c1"># Check if job is already completed</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_job_completion</span><span class="p">(</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">job_id</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;completed&quot;</span>  <span class="c1"># Job already completed</span>
+
+        <span class="c1"># Update checkpoint directory to use the work directory&#39;s checkpoint directory</span>
+        <span class="n">work_checkpoint_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">work_dir</span><span class="p">,</span> <span class="s2">&quot;checkpoints&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">work_checkpoint_dir</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">ckpt_dir</span> <span class="o">=</span> <span class="n">work_checkpoint_dir</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using checkpoint directory from work directory: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No checkpoint directory found in work directory: </span><span class="si">{</span><span class="n">work_checkpoint_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="s2">&quot;resuming&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_operators</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare process operators.&quot;&quot;&quot;</span>
+        <span class="n">ops</span> <span class="o">=</span> <span class="n">load_ops</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">process</span><span class="p">)</span>
+
+        <span class="c1"># Check for op_fusion configuration with safe attribute access</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;op_fusion&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">op_fusion</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Start OP fusion and reordering with strategy [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">fusion_strategy</span><span class="si">}</span><span class="s2">]...&quot;</span><span class="p">)</span>
+            <span class="n">ops</span> <span class="o">=</span> <span class="n">fuse_operators</span><span class="p">(</span><span class="n">ops</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ops</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_override_strategy_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Override strategy methods for partitioned execution.&quot;&quot;&quot;</span>
+        <span class="c1"># Override DAG-related methods for partitioned execution</span>
+        <span class="c1"># Note: Partition count is determined by the executor (self.num_partitions),</span>
+        <span class="c1"># not by the DAG mixin, so we don&#39;t override _determine_partition_count here</span>
+        <span class="c1"># Note: _detect_convergence_points is reused from DAGExecutionMixin (no override needed)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_dag_node_for_operation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dag_node_for_operation_partitioned</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_dag_node_for_operation_partitioned</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">op_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">op_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">partition_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get DAG node ID for partitioned operation.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dag_execution_strategy</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dag_execution_strategy</span><span class="o">.</span><span class="n">get_dag_node_id</span><span class="p">(</span><span class="n">op_name</span><span class="p">,</span> <span class="n">op_idx</span><span class="p">,</span> <span class="n">partition_id</span><span class="o">=</span><span class="n">partition_id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># ========== Deterministic Partitioning Methods ==========</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_enable_deterministic_execution</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Enable deterministic execution order in Ray Data.</span>
+
+<span class="sd">        This ensures that split() produces the same partitions on re-runs,</span>
+<span class="sd">        which is critical for checkpoint resumption.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ctx</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataContext</span><span class="o">.</span><span class="n">get_current</span><span class="p">()</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">execution_options</span><span class="o">.</span><span class="n">preserve_order</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Enabled deterministic execution (preserve_order=True)&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not enable deterministic execution: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_row_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute a hash of a row for partition validation.</span>
+
+<span class="sd">        Uses a stable JSON serialization to ensure consistent hashing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Sort keys for deterministic serialization</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">row_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">row_str</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">16</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="c1"># Fallback for non-serializable rows</span>
+            <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">16</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_collect_partition_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partition</span><span class="p">,</span> <span class="n">partition_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PartitionMetadata</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Collect metadata from a partition for validation on resume.</span>
+
+<span class="sd">        Only collects first_row_hash (not last_row_hash) for efficiency.</span>
+<span class="sd">        Getting the last row requires take(all_rows) which is expensive.</span>
+<span class="sd">        First row hash + row count is sufficient for detecting most mismatches.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">row_count</span> <span class="o">=</span> <span class="n">partition</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+
+        <span class="c1"># Get first row for hashing (cheap operation)</span>
+        <span class="n">first_row_hash</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">first_rows</span> <span class="o">=</span> <span class="n">partition</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">first_rows</span><span class="p">:</span>
+                <span class="n">first_row_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_row_hash</span><span class="p">(</span><span class="n">first_rows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not compute row hash for partition </span><span class="si">{</span><span class="n">partition_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">PartitionMetadata</span><span class="p">(</span>
+            <span class="n">partition_id</span><span class="o">=</span><span class="n">partition_id</span><span class="p">,</span>
+            <span class="n">row_count</span><span class="o">=</span><span class="n">row_count</span><span class="p">,</span>
+            <span class="n">first_row_hash</span><span class="o">=</span><span class="n">first_row_hash</span><span class="p">,</span>
+            <span class="n">last_row_hash</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>  <span class="c1"># Skip last_row_hash for efficiency</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_partitioning_info_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the path to the partitioning info file.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="p">,</span> <span class="s2">&quot;partitioning_info.json&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_partitioning_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">PartitioningInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save partitioning info alongside checkpoints.&quot;&quot;&quot;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">info</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_partitioning_info_path</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_partitioning_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PartitioningInfo</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load partitioning info from checkpoint directory.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">PartitioningInfo</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_partitioning_info_path</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_partitions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partitions</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span> <span class="n">saved_info</span><span class="p">:</span> <span class="n">PartitioningInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that current partitions match saved partitioning info.</span>
+
+<span class="sd">        Returns True if partitions match (safe to use checkpoints),</span>
+<span class="sd">        False if there&#39;s a mismatch (must restart from scratch).</span>
+
+<span class="sd">        Validation checks:</span>
+<span class="sd">        1. Partition count matches</span>
+<span class="sd">        2. Row count per partition matches</span>
+<span class="sd">        3. First row hash matches (efficient validation)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">partitions</span><span class="p">)</span> <span class="o">!=</span> <span class="n">saved_info</span><span class="o">.</span><span class="n">num_partitions</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Partition count mismatch: current=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">partitions</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span> <span class="sa">f</span><span class="s2">&quot;saved=</span><span class="si">{</span><span class="n">saved_info</span><span class="o">.</span><span class="n">num_partitions</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">partition</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">partitions</span><span class="p">):</span>
+            <span class="n">current_count</span> <span class="o">=</span> <span class="n">partition</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+            <span class="n">saved_meta</span> <span class="o">=</span> <span class="n">saved_info</span><span class="o">.</span><span class="n">partitions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">saved_info</span><span class="o">.</span><span class="n">partitions</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">saved_meta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No saved metadata for partition </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">current_count</span> <span class="o">!=</span> <span class="n">saved_meta</span><span class="o">.</span><span class="n">row_count</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Partition </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> row count mismatch: current=</span><span class="si">{</span><span class="n">current_count</span><span class="si">}</span><span class="s2">, &quot;</span> <span class="sa">f</span><span class="s2">&quot;saved=</span><span class="si">{</span><span class="n">saved_meta</span><span class="o">.</span><span class="n">row_count</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="c1"># Validate first row hash (skip if not available)</span>
+            <span class="k">if</span> <span class="n">saved_meta</span><span class="o">.</span><span class="n">first_row_hash</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">first_rows</span> <span class="o">=</span> <span class="n">partition</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">first_rows</span><span class="p">:</span>
+                        <span class="n">current_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_row_hash</span><span class="p">(</span><span class="n">first_rows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="k">if</span> <span class="n">current_hash</span> <span class="o">!=</span> <span class="n">saved_meta</span><span class="o">.</span><span class="n">first_row_hash</span><span class="p">:</span>
+                            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Partition </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> first row hash mismatch: &quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;current=</span><span class="si">{</span><span class="n">current_hash</span><span class="si">}</span><span class="s2">, saved=</span><span class="si">{</span><span class="n">saved_meta</span><span class="o">.</span><span class="n">first_row_hash</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not validate partition </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> hash: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Partition validation passed - safe to use checkpoints&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_split_dataset_deterministic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">RayDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Split dataset deterministically and collect metadata.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: (partitions, partitioning_info)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Enable deterministic execution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enable_deterministic_execution</span><span class="p">()</span>
+
+        <span class="c1"># Check for existing partitioning info (resumption case)</span>
+        <span class="n">saved_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_partitioning_info</span><span class="p">()</span>
+
+        <span class="c1"># Split the dataset</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Splitting dataset into </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_partitions</span><span class="si">}</span><span class="s2"> partitions (deterministic mode)...&quot;</span><span class="p">)</span>
+        <span class="n">partitions</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_partitions</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">partitions</span><span class="p">)</span><span class="si">}</span><span class="s2"> partitions&quot;</span><span class="p">)</span>
+
+        <span class="c1"># If resuming, validate partitions match</span>
+        <span class="k">if</span> <span class="n">saved_info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Found existing partitioning info, validating...&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_partitions</span><span class="p">(</span><span class="n">partitions</span><span class="p">,</span> <span class="n">saved_info</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Partitions validated successfully - resuming with existing checkpoints&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">partitions</span><span class="p">,</span> <span class="n">saved_info</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Partition validation FAILED - partitions don&#39;t match saved info. &quot;</span>
+                    <span class="s2">&quot;This can happen if the input data changed or Ray&#39;s internal state differs. &quot;</span>
+                    <span class="s2">&quot;Clearing checkpoints and starting fresh.&quot;</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_clear_invalid_checkpoints</span><span class="p">()</span>
+                <span class="n">saved_info</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Collect metadata for new partitions</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Collecting partition metadata for checkpoint validation...&quot;</span><span class="p">)</span>
+        <span class="n">total_rows</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">partitions</span><span class="p">)</span>
+        <span class="n">partition_metadata</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">partition</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">partitions</span><span class="p">):</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collect_partition_metadata</span><span class="p">(</span><span class="n">partition</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">partition_metadata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Partition </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">meta</span><span class="o">.</span><span class="n">row_count</span><span class="si">}</span><span class="s2"> rows, hash=</span><span class="si">{</span><span class="n">meta</span><span class="o">.</span><span class="n">first_row_hash</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+
+        <span class="n">partitioning_info</span> <span class="o">=</span> <span class="n">PartitioningInfo</span><span class="p">(</span>
+            <span class="n">num_partitions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_partitions</span><span class="p">,</span>
+            <span class="n">total_rows</span><span class="o">=</span><span class="n">total_rows</span><span class="p">,</span>
+            <span class="n">partitions</span><span class="o">=</span><span class="n">partition_metadata</span><span class="p">,</span>
+            <span class="n">deterministic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Save partitioning info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_partitioning_info</span><span class="p">(</span><span class="n">partitioning_info</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">partitions</span><span class="p">,</span> <span class="n">partitioning_info</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_clear_invalid_checkpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear checkpoints when partition validation fails.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clearing invalid checkpoints in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ckpt_manager</span><span class="o">.</span><span class="n">ckpt_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

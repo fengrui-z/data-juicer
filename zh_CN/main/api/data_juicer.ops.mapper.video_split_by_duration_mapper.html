@@ -514,8 +514,71 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-video-split-by-duration-mapper-module">
-<h1>data_juicer.ops.mapper.video_split_by_duration_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-video-split-by-duration-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.video_split_by_duration_mapper">
+<span id="data-juicer-ops-mapper-video-split-by-duration-mapper-module"></span><h1>data_juicer.ops.mapper.video_split_by_duration_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.video_split_by_duration_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_split_by_duration_mapper.create_replacer">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.video_split_by_duration_mapper.</span></span><span class="sig-name descname"><span class="pre">create_replacer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">replacements</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_split_by_duration_mapper.html#create_replacer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_split_by_duration_mapper.create_replacer" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_split_by_duration_mapper.VideoSplitByDurationMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.video_split_by_duration_mapper.</span></span><span class="sig-name descname"><span class="pre">VideoSplitByDurationMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_split_by_duration_mapper.html#VideoSplitByDurationMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_split_by_duration_mapper.VideoSplitByDurationMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Splits videos into segments based on a specified duration.</p>
+<p>This operator splits each video in the dataset into smaller segments, each with a fixed
+duration. The last segment is discarded if its duration is less than the specified
+minimum last split duration. The original sample can be kept or removed based on the
+<cite>keep_original_sample</cite> parameter. The generated video files are saved in the specified
+directory or, if not provided, in the same directory as the input files. The key metric
+for this operation is the duration of each segment, which is character-based (seconds).</p>
+<ul class="simple">
+<li><p>Splits videos into segments of a specified duration.</p></li>
+<li><p>Discards the last segment if it is shorter than the minimum allowed duration.</p></li>
+<li><p>Keeps or removes the original sample based on the <cite>keep_original_sample</cite> parameter.</p></li>
+<li><p>Saves the generated video files in the specified directory or the input file's
+directory.</p></li>
+<li><p>Uses the duration in seconds to determine the segment boundaries.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_split_by_duration_mapper.VideoSplitByDurationMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split_duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_last_split_duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_original_sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ffmpeg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ffmpeg_extra_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_split_by_duration_mapper.html#VideoSplitByDurationMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_split_by_duration_mapper.VideoSplitByDurationMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>split_duration</strong> -- duration of each video split in seconds.</p></li>
+<li><p><strong>min_last_split_duration</strong> -- The minimum allowable duration in
+seconds for the last video split. If the duration of the last
+split is less than this value, it will be discarded.</p></li>
+<li><p><strong>keep_original_sample</strong> -- whether to keep the original sample. If
+it's set to False, there will be only cut sample in the
+final datasets and the original sample will be removed. It's True
+in default.</p></li>
+<li><p><strong>save_dir</strong> -- The directory where generated video files will be stored.
+If not specified, outputs will be saved in the same directory as their corresponding input files.
+This path can alternatively be defined by setting the <cite>DJ_PRODUCED_DATA_DIR</cite> environment variable.</p></li>
+<li><p><strong>video_backend</strong> -- video backend, can be <cite>ffmpeg</cite>, <cite>av</cite>.</p></li>
+<li><p><strong>ffmpeg_extra_args</strong> -- Extra ffmpeg args for splitting video, only valid when <cite>video_backend</cite> is <cite>ffmpeg</cite>.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_split_by_duration_mapper.VideoSplitByDurationMapper.split_videos_by_duration">
+<span class="sig-name descname"><span class="pre">split_videos_by_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">video_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">container</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_split_by_duration_mapper.html#VideoSplitByDurationMapper.split_videos_by_duration"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_split_by_duration_mapper.VideoSplitByDurationMapper.split_videos_by_duration" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_split_by_duration_mapper.VideoSplitByDurationMapper.process_batched">
+<span class="sig-name descname"><span class="pre">process_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_split_by_duration_mapper.html#VideoSplitByDurationMapper.process_batched"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_split_by_duration_mapper.VideoSplitByDurationMapper.process_batched" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +601,24 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_split_by_duration_mapper.create_replacer"><code class="docutils literal notranslate"><span class="pre">create_replacer()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_split_by_duration_mapper.VideoSplitByDurationMapper"><code class="docutils literal notranslate"><span class="pre">VideoSplitByDurationMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_split_by_duration_mapper.VideoSplitByDurationMapper.__init__"><code class="docutils literal notranslate"><span class="pre">VideoSplitByDurationMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_split_by_duration_mapper.VideoSplitByDurationMapper.split_videos_by_duration"><code class="docutils literal notranslate"><span class="pre">VideoSplitByDurationMapper.split_videos_by_duration()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_split_by_duration_mapper.VideoSplitByDurationMapper.process_batched"><code class="docutils literal notranslate"><span class="pre">VideoSplitByDurationMapper.process_batched()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

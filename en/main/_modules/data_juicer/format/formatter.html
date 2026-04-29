@@ -590,12 +590,56 @@
         <span class="n">_num_proc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;num_proc&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">num_proc</span> <span class="o">=</span> <span class="n">num_proc</span> <span class="ow">or</span> <span class="n">_num_proc</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading dataset with num_proc: </span><span class="si">{</span><span class="n">num_proc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">datasets</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
-            <span class="n">data_files</span><span class="o">=</span><span class="p">{</span><span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="p">},</span>
-            <span class="n">num_proc</span><span class="o">=</span><span class="n">num_proc</span><span class="p">,</span>
-            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span>
-        <span class="p">)</span>
+
+        <span class="c1"># If decrypt_after_reading is enabled, decrypt each file into a</span>
+        <span class="c1"># temporary file so that no plaintext from the original encrypted</span>
+        <span class="c1"># file is written to the regular filesystem.  We write to a NamedTemp-</span>
+        <span class="c1"># oraryFile with delete=False, collect all paths, call load_dataset,</span>
+        <span class="c1"># then immediately remove the temp files so plaintext does not linger.</span>
+        <span class="n">decrypt</span> <span class="o">=</span> <span class="n">global_cfg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">global_cfg</span><span class="p">,</span> <span class="s2">&quot;decrypt_after_reading&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">decrypt</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+
+            <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.encryption_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+                <span class="n">decrypt_file_to_bytes</span><span class="p">,</span>
+                <span class="n">get_secure_tmpdir</span><span class="p">,</span>
+                <span class="n">load_fernet_key</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">fernet</span> <span class="o">=</span> <span class="n">load_fernet_key</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">global_cfg</span><span class="p">,</span> <span class="s2">&quot;encryption_key_path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">get_secure_tmpdir</span><span class="p">()</span>
+            <span class="n">decrypted_data_files</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">tmp_paths</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># track for cleanup</span>
+            <span class="k">for</span> <span class="n">ext</span><span class="p">,</span> <span class="n">paths</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">tmp_file_paths</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">decrypt_file_to_bytes</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">fernet</span><span class="p">)</span>
+                    <span class="n">suffix</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">p</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="n">tmp_dir</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp</span><span class="p">:</span>
+                        <span class="n">tmp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                        <span class="n">tmp_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                        <span class="n">tmp_file_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">decrypted_data_files</span><span class="p">[</span><span class="n">ext</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">tmp_file_paths</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">datasets</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+                    <span class="n">data_files</span><span class="o">=</span><span class="n">decrypted_data_files</span><span class="p">,</span>
+                    <span class="n">num_proc</span><span class="o">=</span><span class="n">num_proc</span><span class="p">,</span>
+                    <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">tp</span> <span class="ow">in</span> <span class="n">tmp_paths</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tp</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                        <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">datasets</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+                <span class="n">data_files</span><span class="o">=</span><span class="p">{</span><span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="p">},</span>
+                <span class="n">num_proc</span><span class="o">=</span><span class="n">num_proc</span><span class="p">,</span>
+                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_suffix</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Add suffix info into dataset...&quot;</span><span class="p">)</span>
             <span class="n">datasets</span> <span class="o">=</span> <span class="n">add_suffixes</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="n">num_proc</span><span class="p">)</span>

@@ -512,9 +512,11 @@
                 <article class="bd-article">
                   
   <h1>Source code for data_juicer.core.exporter</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span> <span class="k">as</span> <span class="n">HFDataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fields</span><span class="p">,</span> <span class="n">HashKeys</span>
@@ -540,6 +542,8 @@
         <span class="n">keep_stats_in_res_ds</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">keep_hashes_in_res_ds</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">export_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">encrypt_before_export</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">encryption_key_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -558,6 +562,14 @@
 <span class="sd">        :param keep_hashes_in_res_ds: whether to keep hashes in the result</span>
 <span class="sd">            dataset.</span>
 <span class="sd">        :param export_stats: whether to export the stats of dataset.</span>
+<span class="sd">        :param encrypt_before_export: whether to encrypt each exported file</span>
+<span class="sd">            in-place immediately after writing. Requires a valid Fernet key</span>
+<span class="sd">            accessible via ``encryption_key_path`` or the environment</span>
+<span class="sd">            variable ``DJ_ENCRYPTION_KEY``. S3 paths are skipped (use S3</span>
+<span class="sd">            SSE instead). Default: False.</span>
+<span class="sd">        :param encryption_key_path: path to a file containing the Fernet key.</span>
+<span class="sd">            Falls back to the ``DJ_ENCRYPTION_KEY`` environment variable when</span>
+<span class="sd">            ``None``. Only used when ``encrypt_before_export`` is True.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">export_path</span> <span class="o">=</span> <span class="n">export_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">export_shard_size</span> <span class="o">=</span> <span class="n">export_shard_size</span>
@@ -575,6 +587,22 @@
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_proc</span> <span class="o">=</span> <span class="n">num_proc</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_shard_size_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># Set up encryption for local export</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encrypt_before_export</span> <span class="o">=</span> <span class="n">encrypt_before_export</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fernet</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">encrypt_before_export</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">export_path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;s3://&quot;</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;encrypt_before_export is True but export_path is an S3 &quot;</span>
+                    <span class="s2">&quot;path. Local-file encryption is skipped for S3 exports. &quot;</span>
+                    <span class="s2">&quot;Use S3 server-side encryption (SSE) to protect data at rest.&quot;</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">encrypt_before_export</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.encryption_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_fernet_key</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fernet</span> <span class="o">=</span> <span class="n">load_fernet_key</span><span class="p">(</span><span class="n">encryption_key_path</span><span class="p">)</span>
 
         <span class="c1"># Check if export_path is S3 and create storage_options if needed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storage_options</span> <span class="o">=</span> <span class="kc">None</span>
@@ -658,6 +686,40 @@
         <span class="n">suffix</span> <span class="o">=</span> <span class="n">export_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">suffix</span>
 
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ensure_meta_stats_dicts_for_export</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If __dj__meta__ or __dj__stats__ are stored as JSON strings (e.g. after</span>
+<span class="sd">        Arrow/Ray serialization with ensure_ascii=True), parse them back to dict</span>
+<span class="sd">        so that to_json(force_ascii=False) writes proper UTF-8 instead of \\uXXXX.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">meta_key</span> <span class="o">=</span> <span class="n">Fields</span><span class="o">.</span><span class="n">meta</span>
+        <span class="n">stats_key</span> <span class="o">=</span> <span class="n">Fields</span><span class="o">.</span><span class="n">stats</span>
+        <span class="n">columns_to_fix</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="n">meta_key</span><span class="p">,</span> <span class="n">stats_key</span><span class="p">]</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">column_names</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">columns_to_fix</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dataset</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_parse_if_string</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns_to_fix</span><span class="p">:</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">out</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                        <span class="k">pass</span>
+            <span class="k">return</span> <span class="n">out</span>
+
+        <span class="k">return</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">_parse_if_string</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Preparing meta/stats for UTF-8 export&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_encrypt_local_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Encrypt a local file in-place if encrypt_before_export is enabled.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">encrypt_before_export</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fernet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.encryption_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">encrypt_file</span>
+
+            <span class="n">encrypt_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fernet</span><span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_export_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">export_path</span><span class="p">,</span> <span class="n">suffix</span><span class="p">,</span> <span class="n">export_stats</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Export a dataset to specific path.</span>
@@ -678,12 +740,16 @@
                 <span class="n">export_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">export_columns</span><span class="p">):</span>
                 <span class="n">ds_stats</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">select_columns</span><span class="p">(</span><span class="n">export_columns</span><span class="p">)</span>
+                <span class="c1"># If meta/stats were serialized as JSON strings (e.g. \\uXXXX),</span>
+                <span class="c1"># parse back to dict so to_json(force_ascii=False) writes UTF-8.</span>
+                <span class="n">ds_stats</span> <span class="o">=</span> <span class="n">Exporter</span><span class="o">.</span><span class="n">_ensure_meta_stats_dicts_for_export</span><span class="p">(</span><span class="n">ds_stats</span><span class="p">)</span>
                 <span class="n">stats_file</span> <span class="o">=</span> <span class="n">export_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">suffix</span><span class="p">,</span> <span class="s2">&quot;_stats.jsonl&quot;</span><span class="p">)</span>
                 <span class="n">export_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;num_proc&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_proc</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">export_in_parallel</span> <span class="k">else</span> <span class="mi">1</span><span class="p">}</span>
                 <span class="c1"># Add storage_options if available (for S3 export)</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">export_kwargs</span><span class="p">[</span><span class="s2">&quot;storage_options&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_options</span>
                 <span class="n">Exporter</span><span class="o">.</span><span class="n">to_jsonl</span><span class="p">(</span><span class="n">ds_stats</span><span class="p">,</span> <span class="n">stats_file</span><span class="p">,</span> <span class="o">**</span><span class="n">export_kwargs</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_encrypt_local_file</span><span class="p">(</span><span class="n">stats_file</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">export_ds</span><span class="p">:</span>
             <span class="c1"># fetch the corresponding export method according to the suffix</span>
@@ -712,6 +778,7 @@
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">export_kwargs</span><span class="p">[</span><span class="s2">&quot;storage_options&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_options</span>
                 <span class="n">export_method</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">export_path</span><span class="p">,</span> <span class="o">**</span><span class="n">export_kwargs</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_encrypt_local_file</span><span class="p">(</span><span class="n">export_path</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># compute the dataset size and number of shards to split</span>
                 <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">_indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -779,6 +846,9 @@
                     <span class="p">)</span>
                 <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                 <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+                <span class="c1"># Encrypt each local shard after all shards are written.</span>
+                <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_encrypt_local_file</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Exporter.export">
 <a class="viewcode-back" href="../../../api/data_juicer.core.exporter.html#data_juicer.core.Exporter.export">[docs]</a>
@@ -804,6 +874,48 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">keep_stats_in_res_ds</span> <span class="o">=</span> <span class="n">keep_stats_in_res_ds</span></div>
 
 
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_row_to_json_serializable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a row or value to JSON-serializable form; keep Unicode as-is.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">Exporter</span><span class="o">.</span><span class="n">_row_to_json_serializable</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">Exporter</span><span class="o">.</span><span class="n">_row_to_json_serializable</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;item&quot;</span><span class="p">):</span>  <span class="c1"># numpy scalar</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;tolist&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;as_py&quot;</span><span class="p">):</span>  <span class="c1"># pyarrow scalar</span>
+            <span class="k">return</span> <span class="n">Exporter</span><span class="o">.</span><span class="n">_row_to_json_serializable</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">as_py</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_jsonl_utf8</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">export_path</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write dataset to JSONL with UTF-8 text (no \\uXXXX escape).</span>
+<span class="sd">        HuggingFace&#39;s to_json(force_ascii=False) can still escape in some paths;</span>
+<span class="sd">        we iterate and use json.dumps(ensure_ascii=False) per row.</span>
+<span class="sd">        Use HFDataset.__getitem__ to get raw batch (avoid NestedQueryDict wrapping</span>
+<span class="sd">        which fails on None in list columns e.g. response_usage).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1000</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">export_path</span><span class="p">)),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">export_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">total</span><span class="p">)</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="n">HFDataset</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="nb">slice</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">))</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]])):</span>
+                        <span class="n">row</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">}</span>
+                        <span class="n">row</span> <span class="o">=</span> <span class="n">Exporter</span><span class="o">.</span><span class="n">_row_to_json_serializable</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">:</span>
+                        <span class="n">row</span> <span class="o">=</span> <span class="n">Exporter</span><span class="o">.</span><span class="n">_row_to_json_serializable</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
 <div class="viewcode-block" id="Exporter.to_jsonl">
 <a class="viewcode-back" href="../../../api/data_juicer.core.exporter.html#data_juicer.core.Exporter.to_jsonl">[docs]</a>
     <span class="nd">@staticmethod</span>
@@ -817,12 +929,15 @@
 <span class="sd">        :param kwargs: extra arguments.</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Add storage_options if provided (for S3 export)</span>
+        <span class="c1"># Use custom UTF-8 writer so all text (e.g. text, meta, dialog_history)</span>
+        <span class="c1"># is written as UTF-8, not \\uXXXX. HF to_json(force_ascii=False) can still</span>
+        <span class="c1"># escape in batch/multiproc paths.</span>
         <span class="n">storage_options</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;storage_options&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">storage_options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># S3 or custom storage: fall back to HF to_json</span>
             <span class="n">dataset</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">export_path</span><span class="p">,</span> <span class="n">force_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="n">num_proc</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">dataset</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">export_path</span><span class="p">,</span> <span class="n">force_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="n">num_proc</span><span class="p">)</span></div>
+            <span class="n">Exporter</span><span class="o">.</span><span class="n">_write_jsonl_utf8</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">export_path</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Exporter.to_json">

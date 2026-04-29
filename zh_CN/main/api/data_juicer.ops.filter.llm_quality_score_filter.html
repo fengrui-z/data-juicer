@@ -514,8 +514,66 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-filter-llm-quality-score-filter-module">
-<h1>data_juicer.ops.filter.llm_quality_score_filter module<a class="headerlink" href="#data-juicer-ops-filter-llm-quality-score-filter-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.filter.llm_quality_score_filter">
+<span id="data-juicer-ops-filter-llm-quality-score-filter-module"></span><h1>data_juicer.ops.filter.llm_quality_score_filter module<a class="headerlink" href="#module-data_juicer.ops.filter.llm_quality_score_filter" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.llm_quality_score_filter.LLMQualityScoreFilter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.filter.llm_quality_score_filter.</span></span><span class="sig-name descname"><span class="pre">LLMQualityScoreFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/llm_quality_score_filter.html#LLMQualityScoreFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.llm_quality_score_filter.LLMQualityScoreFilter" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.filter.llm_analysis_filter.html#data_juicer.ops.filter.llm_analysis_filter.LLMAnalysisFilter" title="data_juicer.ops.filter.llm_analysis_filter.LLMAnalysisFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">LLMAnalysisFilter</span></code></a></p>
+<p>Filter to keep samples with a high quality score estimated by a language model.</p>
+<p>This operator uses a language model to evaluate the quality of each sample across
+multiple dimensions, including accuracy, grammar, informativeness, and coherence. The
+LLM provides a numerical score for each dimension on a 1-5 scale, where 1 is the lowest
+and 5 is the highest. The overall quality score is used to decide whether to keep or
+filter out the sample based on the specified minimum and maximum score thresholds. The
+evaluation results are cached in the 'llm_quality_score' and 'llm_quality_record'
+fields. Important flags and tags from the LLM's analysis may also be stored in the
+sample's stats.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.llm_quality_score_filter.LLMQualityScoreFilter.DEFAULT_SYSTEM_PROMPT">
+<span class="sig-name descname"><span class="pre">DEFAULT_SYSTEM_PROMPT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\nYou</span> <span class="pre">are</span> <span class="pre">a</span> <span class="pre">meticulous</span> <span class="pre">data</span> <span class="pre">quality</span> <span class="pre">assessor</span> <span class="pre">for</span> <span class="pre">LLM</span> <span class="pre">training.</span> <span class="pre">Analyze</span> <span class="pre">each</span> <span class="pre">data</span> <span class="pre">sample</span> <span class="pre">across</span> <span class="pre">multiple</span> <span class="pre">quality</span> <span class="pre">dimensions</span> <span class="pre">and</span> <span class="pre">provide</span> <span class="pre">numerical</span> <span class="pre">scores</span> <span class="pre">with</span> <span class="pre">reasoning.</span> <span class="pre">Follow</span> <span class="pre">these</span> <span class="pre">guidelines:\n\n1.</span> <span class="pre">Evaluation</span> <span class="pre">Dimensions\nScore</span> <span class="pre">each</span> <span class="pre">dimension</span> <span class="pre">(1-5</span> <span class="pre">scale:</span> <span class="pre">1=lowest,</span> <span class="pre">5=highest):\n-</span> <span class="pre">Accuracy:</span> <span class="pre">Factual</span> <span class="pre">correctness</span> <span class="pre">&amp;</span> <span class="pre">verifiability\n-</span> <span class="pre">Grammar:</span> <span class="pre">Linguistic</span> <span class="pre">correctness</span> <span class="pre">&amp;</span> <span class="pre">fluency\n-</span> <span class="pre">Informativeness:</span> <span class="pre">Depth/utility</span> <span class="pre">of</span> <span class="pre">content\n-</span> <span class="pre">Coherence:</span> <span class="pre">Logical</span> <span class="pre">structure</span> <span class="pre">&amp;</span> <span class="pre">consistency\n\n2.</span> <span class="pre">Scoring</span> <span class="pre">Protocol\n-</span> <span class="pre">Base</span> <span class="pre">scores</span> <span class="pre">on</span> <span class="pre">concrete</span> <span class="pre">evidence</span> <span class="pre">from</span> <span class="pre">text\n-</span> <span class="pre">Flag</span> <span class="pre">samples</span> <span class="pre">needing</span> <span class="pre">human</span> <span class="pre">review</span> <span class="pre">(confidence</span> <span class="pre">&lt;90%)\n-</span> <span class="pre">Compare</span> <span class="pre">with</span> <span class="pre">similar</span> <span class="pre">data</span> <span class="pre">points</span> <span class="pre">for</span> <span class="pre">consistency\n-</span> <span class="pre">Penalize</span> <span class="pre">hallucination/misinformation</span> <span class="pre">severely\n\n3.</span> <span class="pre">Output</span> <span class="pre">Format\njson\n{\n</span>&#160; <span class="pre">&quot;dimension_scores&quot;:</span> <span class="pre">{\n</span>&#160;&#160;&#160; <span class="pre">&quot;accuracy&quot;:</span> <span class="pre">,\n</span>&#160;&#160;&#160; <span class="pre">&quot;grammar&quot;:</span> <span class="pre">,\n</span>&#160;&#160;&#160; <span class="pre">&quot;informativeness&quot;:</span> <span class="pre">,\n</span>&#160;&#160;&#160; <span class="pre">&quot;coherence&quot;:\n</span>&#160; <span class="pre">},\n</span>&#160; <span class="pre">&quot;flags&quot;:</span> <span class="pre">[&quot;syntax_error&quot;,</span> <span class="pre">&quot;insufficient_information&quot;,</span> <span class="pre">...],\n</span>&#160; <span class="pre">&quot;rationale&quot;:</span> <span class="pre">&quot;Concise</span> <span class="pre">technical</span> <span class="pre">analysis&quot;,\n</span>&#160; <span class="pre">&quot;recommendation&quot;:</span> <span class="pre">[&quot;keep&quot;,</span> <span class="pre">&quot;review&quot;,</span> <span class="pre">&quot;discard&quot;]\n}\n4.</span> <span class="pre">Special</span> <span class="pre">Instructions\n-</span> <span class="pre">Prioritize</span> <span class="pre">factual</span> <span class="pre">integrity</span> <span class="pre">over</span> <span class="pre">stylistic</span> <span class="pre">qualities\n-</span> <span class="pre">Treat</span> <span class="pre">unverified</span> <span class="pre">medical/legal</span> <span class="pre">claims</span> <span class="pre">as</span> <span class="pre">high-risk\n-</span> <span class="pre">Contextualize</span> <span class="pre">cultural</span> <span class="pre">references</span> <span class="pre">appropriately\n-</span> <span class="pre">Response</span> <span class="pre">a</span> <span class="pre">json</span> <span class="pre">dict\n\nExample</span> <span class="pre">Response:\n\njson\n{\n</span>&#160; <span class="pre">&quot;dimension_scores&quot;:</span> <span class="pre">{\n</span>&#160;&#160;&#160; <span class="pre">&quot;accuracy&quot;:</span> <span class="pre">2,\n</span>&#160;&#160;&#160; <span class="pre">&quot;grammar&quot;:</span> <span class="pre">4,\n</span>&#160;&#160;&#160; <span class="pre">&quot;informativeness&quot;:</span> <span class="pre">4,\n</span>&#160;&#160;&#160; <span class="pre">&quot;coherence&quot;:</span> <span class="pre">2\n</span>&#160; <span class="pre">},\n</span>&#160; <span class="pre">&quot;flags&quot;:</span> <span class="pre">[&quot;accuracy_concern&quot;,</span> <span class="pre">&quot;logical_confusion&quot;],\n</span>&#160; <span class="pre">&quot;rationale&quot;:</span> <span class="pre">&quot;The</span> <span class="pre">text</span> <span class="pre">provides</span> <span class="pre">rich</span> <span class="pre">information</span> <span class="pre">but</span> <span class="pre">suffers</span> <span class="pre">from</span> <span class="pre">logical</span> <span class="pre">confusion</span> <span class="pre">and</span> <span class="pre">lacks</span> <span class="pre">contextual</span> <span class="pre">coherence.</span> <span class="pre">Excellent</span> <span class="pre">grammatical</span> <span class="pre">structure</span> <span class="pre">offset</span> <span class="pre">by</span> <span class="pre">factual</span> <span class="pre">inaccuracies.&quot;,\n</span>&#160; <span class="pre">&quot;recommendation&quot;:</span> <span class="pre">[&quot;review&quot;]\n}\n'</span></span><a class="headerlink" href="#data_juicer.ops.filter.llm_quality_score_filter.LLMQualityScoreFilter.DEFAULT_SYSTEM_PROMPT" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.llm_quality_score_filter.LLMQualityScoreFilter.DEFAULT_DIM_REQUIRED_KEYS">
+<span class="sig-name descname"><span class="pre">DEFAULT_DIM_REQUIRED_KEYS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['accuracy',</span> <span class="pre">'grammar',</span> <span class="pre">'informativeness',</span> <span class="pre">'coherence']</span></span><a class="headerlink" href="#data_juicer.ops.filter.llm_quality_score_filter.LLMQualityScoreFilter.DEFAULT_DIM_REQUIRED_KEYS" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.llm_quality_score_filter.LLMQualityScoreFilter.compute_stats_single">
+<span class="sig-name descname"><span class="pre">compute_stats_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/llm_quality_score_filter.html#LLMQualityScoreFilter.compute_stats_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.llm_quality_score_filter.LLMQualityScoreFilter.compute_stats_single" title="链接到此定义。">#</a></dt>
+<dd><p>Compute stats for the sample which is used as a metric to decide
+whether to filter this sample.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample</strong> -- input sample.</p></li>
+<li><p><strong>context</strong> -- whether to store context information of intermediate
+vars in the sample temporarily.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>sample with computed stats</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.filter.llm_quality_score_filter.LLMQualityScoreFilter.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/filter/llm_quality_score_filter.html#LLMQualityScoreFilter.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.filter.llm_quality_score_filter.LLMQualityScoreFilter.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; Boolean.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to decide whether to filter</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>true for keeping and false for filtering</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +596,24 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.llm_quality_score_filter.LLMQualityScoreFilter"><code class="docutils literal notranslate"><span class="pre">LLMQualityScoreFilter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.llm_quality_score_filter.LLMQualityScoreFilter.DEFAULT_SYSTEM_PROMPT"><code class="docutils literal notranslate"><span class="pre">LLMQualityScoreFilter.DEFAULT_SYSTEM_PROMPT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.llm_quality_score_filter.LLMQualityScoreFilter.DEFAULT_DIM_REQUIRED_KEYS"><code class="docutils literal notranslate"><span class="pre">LLMQualityScoreFilter.DEFAULT_DIM_REQUIRED_KEYS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.llm_quality_score_filter.LLMQualityScoreFilter.compute_stats_single"><code class="docutils literal notranslate"><span class="pre">LLMQualityScoreFilter.compute_stats_single()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.filter.llm_quality_score_filter.LLMQualityScoreFilter.process_single"><code class="docutils literal notranslate"><span class="pre">LLMQualityScoreFilter.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

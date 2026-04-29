@@ -502,6 +502,14 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">demos</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../demos/README.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/agent/BAD_CASE_INSIGHTS.html">Agent 交互数据：Bad case 洞察</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/agent/BAD_CASE_REPORT.html">Bad case 自助报告（简化入口）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/agent/PERFORMANCE_LLM.html">Agent 流水线里 LLM 算子：加速与超参</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/agent/QUICKSTART_BAD_CASE.html">Bad case 流水线：一键运行与端到端指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/agent/README.html">Agent quality &amp; bad-case docs</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../demos/agent/minimal_configs/README.html">Agent 流水线最小可运行配置（便于逐项调试）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/agent/scripts/README.html">Agent pipeline 后分析脚本</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demos/process_video_on_ray/data/Note.html">Note for dataset path</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">tools</span></p>
@@ -687,6 +695,37 @@ Refer to <a class="reference external" href="https://github.com/datajuicer/data-
 </pre></div>
 </div>
 </section>
+<section id="jsonl-per-line-fault-tolerance-skip-bad-lines">
+<h3>JSONL per-line fault tolerance (skip bad lines)<a class="headerlink" href="#jsonl-per-line-fault-tolerance-skip-bad-lines" title="Link to this heading">#</a></h3>
+<p>For a few corrupted lines or parser failures in the HuggingFace JSON/ujson path, enable <strong>lenient JSONL loading</strong>: read with stdlib :func:<code class="docutils literal notranslate"><span class="pre">json.loads</span></code> <strong>line by line</strong>, <strong>skip</strong> lines that fail parsing (with warnings), and keep the rest. The result is still a HuggingFace <code class="docutils literal notranslate"><span class="pre">Dataset</span></code>, so downstream ops behave like normal JSONL.</p>
+<p><strong>Enable (either works):</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">load_jsonl_lenient</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">DATA_JUICER_JSONL_LENIENT</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>dj-process<span class="w"> </span>--config<span class="w"> </span>path/to/config.yaml
+</pre></div>
+</div>
+<p><strong>Constraints:</strong></p>
+<ul class="simple">
+<li><p>Only <code class="docutils literal notranslate"><span class="pre">.jsonl</span></code> / <code class="docutils literal notranslate"><span class="pre">.jsonl.gz</span></code> / <code class="docutils literal notranslate"><span class="pre">.jsonl.zst</span></code> shards are read. Other matched files (e.g. <code class="docutils literal notranslate"><span class="pre">.json</span></code> in the same folder) are <strong>skipped</strong> with a warning so the loader does <strong>not</strong> fall back to HuggingFace/ujson (which would hit <code class="docutils literal notranslate"><span class="pre">Value</span> <span class="pre">is</span> <span class="pre">too</span> <span class="pre">big!</span></code> again). Use <code class="docutils literal notranslate"><span class="pre">suffixes:</span> <span class="pre">['.jsonl']</span></code> if needed.</p></li>
+<li><p>Intended for <strong>DefaultExecutor</strong> local JSONL; unrelated to Parquet.</p></li>
+<li><p>Search logs for <code class="docutils literal notranslate"><span class="pre">[lenient</span> <span class="pre">jsonl]</span></code> for skipped lines.</p></li>
+</ul>
+</section>
+<section id="json-jsonl-load-error-value-is-too-big">
+<h3>JSON / JSONL load error: <code class="docutils literal notranslate"><span class="pre">Value</span> <span class="pre">is</span> <span class="pre">too</span> <span class="pre">big!</span></code><a class="headerlink" href="#json-jsonl-load-error-value-is-too-big" title="Link to this heading">#</a></h3>
+<p>When loading local JSONL, HuggingFace <code class="docutils literal notranslate"><span class="pre">datasets</span></code> may parse lines with <code class="docutils literal notranslate"><span class="pre">ujson</span></code> (via pandas). <strong>Very large JSON integers</strong> (e.g. long numeric IDs) can exceed what ujson supports and raise <code class="docutils literal notranslate"><span class="pre">ValueError:</span> <span class="pre">Value</span> <span class="pre">is</span> <span class="pre">too</span> <span class="pre">big!</span></code>. This is usually about <strong>numeric fields</strong>, not necessarily huge strings.</p>
+<p><strong>Mitigations:</strong></p>
+<ol class="arabic">
+<li><p><strong>Preferred (no data rewrite):</strong> force stdlib <code class="docutils literal notranslate"><span class="pre">json</span></code> before running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">DATA_JUICER_USE_STDLIB_JSON</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>dj-process<span class="w"> </span>--config<span class="w"> </span>path/to/config.yaml
+</pre></div>
+</div>
+</li>
+<li><p><strong>At source:</strong> export problematic fields as <strong>strings</strong> (quoted in JSON).</p></li>
+<li><p><strong>Other formats:</strong> e.g. Parquet, to avoid this JSON code path.</p></li>
+</ol>
+</section>
 <section id="legacy-dataset-path-configuration">
 <h3>Legacy dataset_path Configuration<a class="headerlink" href="#legacy-dataset-path-configuration" title="Link to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">dataset_path</span></code> configuration is the original way to specify the dataset path. It’s simplistic and easy to use, but lacks flexibility. It can be used in yaml or command line input. Some examples:</p>
@@ -763,6 +802,8 @@ dj-process<span class="w"> </span>--dataset_path<span class="w"> </span><span cl
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#other-features">Other features</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-mixture">Data Mixture</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-validation">Data Validation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#jsonl-per-line-fault-tolerance-skip-bad-lines">JSONL per-line fault tolerance (skip bad lines)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#json-jsonl-load-error-value-is-too-big">JSON / JSONL load error: <code class="docutils literal notranslate"><span class="pre">Value</span> <span class="pre">is</span> <span class="pre">too</span> <span class="pre">big!</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#legacy-dataset-path-configuration">Legacy dataset_path Configuration</a></li>
 </ul>
 </li>

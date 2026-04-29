@@ -514,8 +514,87 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-extract-nickname-mapper-module">
-<h1>data_juicer.ops.mapper.extract_nickname_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-extract-nickname-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.extract_nickname_mapper">
+<span id="data-juicer-ops-mapper-extract-nickname-mapper-module"></span><h1>data_juicer.ops.mapper.extract_nickname_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.extract_nickname_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.extract_nickname_mapper.</span></span><span class="sig-name descname"><span class="pre">ExtractNicknameMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/extract_nickname_mapper.html#ExtractNicknameMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Extracts nickname relationships in the text using a language model.</p>
+<p>This operator uses a language model to identify and extract nickname relationships from
+the input text. It follows specific instructions to ensure accurate extraction, such as
+identifying the speaker, the person being addressed, and the nickname used. The
+extracted relationships are stored in the meta field under the specified key. The
+operator uses a default system prompt, input template, and output pattern, but these can
+be customized. The results are parsed and validated to ensure they meet the required
+format. If the text already contains the nickname information, it is not processed
+again. The operator retries the API call a specified number of times if an error occurs.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.DEFAULT_SYSTEM_PROMPT">
+<span class="sig-name descname"><span class="pre">DEFAULT_SYSTEM_PROMPT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'给定你一段文本，你的任务是将人物之间的称呼方式（昵称）提取出来。\n要求：\n-</span> <span class="pre">需要给出说话人对被称呼人的称呼，不要搞反了。\n-</span> <span class="pre">相同的说话人和被称呼人最多给出一个最常用的称呼。\n-</span> <span class="pre">请不要输出互相没有昵称的称呼方式。\n-</span> <span class="pre">输出格式如下：\n```\n###</span> <span class="pre">称呼方式1\n-</span> <span class="pre">**说话人**：...\n-</span> <span class="pre">**被称呼人**：...\n-</span> <span class="pre">**...对...的昵称**：...\n###</span> <span class="pre">称呼方式2\n-</span> <span class="pre">**说话人**：...\n-</span> <span class="pre">**被称呼人**：...\n-</span> <span class="pre">**...对...的昵称**：...\n###</span> <span class="pre">称呼方式3\n-</span> <span class="pre">**说话人**：...\n-</span> <span class="pre">**被称呼人**：...\n-</span> <span class="pre">**...对...的昵称**：...\n...\n```\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.DEFAULT_SYSTEM_PROMPT" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.DEFAULT_INPUT_TEMPLATE">
+<span class="sig-name descname"><span class="pre">DEFAULT_INPUT_TEMPLATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'#</span> <span class="pre">文本\n```\n{text}\n```\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.DEFAULT_INPUT_TEMPLATE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.DEFAULT_OUTPUT_PATTERN">
+<span class="sig-name descname"><span class="pre">DEFAULT_OUTPUT_PATTERN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">\\#\\#\\#\\s*称呼方式(\\d+)\\s*\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">-\\s*\\*\\*说话人\\*\\*\\s*：\\s*(.*?)\\s*\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">-\\s*\\*\\*被称呼人\\*\\*\\s*：\\s*(.*?)\\s*\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">-\\s*\\*\\*(.*?)对(.*?)的昵称\\*\\*\\s*：\\s*(.*?)(?=\\#\\#\\#|\\Z)</span> <span class="pre">#</span> <span class="pre">for</span> <span class="pre">double</span> <span class="pre">check\n</span>&#160;&#160;&#160; <span class="pre">'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.DEFAULT_OUTPUT_PATTERN" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'gpt-4o'</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="仅关键字参数分隔符 (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">nickname_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'nickname'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_endpoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/extract_nickname_mapper.html#ExtractNicknameMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.
+:param api_model: API model name.
+:param nickname_key: The key name to store the nickname</p>
+<blockquote>
+<div><p>relationship in the meta field. It's &quot;nickname&quot; in default.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_endpoint</strong> -- URL endpoint for the API.</p></li>
+<li><p><strong>response_path</strong> -- Path to extract content from the API response.
+Defaults to 'choices.0.message.content'.</p></li>
+<li><p><strong>system_prompt</strong> -- System prompt for the task.</p></li>
+<li><p><strong>input_template</strong> -- Template for building the model input.</p></li>
+<li><p><strong>output_pattern</strong> -- Regular expression for parsing model output.</p></li>
+<li><p><strong>try_num</strong> -- The number of retry attempts when there is an API
+call error or output parsing error.</p></li>
+<li><p><strong>drop_text</strong> -- If drop the text in the output.</p></li>
+<li><p><strong>model_params</strong> -- Parameters for initializing the API model.</p></li>
+<li><p><strong>sampling_params</strong> -- Extra parameters passed to the API call.
+e.g {'temperature': 0.9, 'top_p': 0.95}</p></li>
+<li><p><strong>kwargs</strong> -- Extra keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.parse_output">
+<span class="sig-name descname"><span class="pre">parse_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/extract_nickname_mapper.html#ExtractNicknameMapper.parse_output"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.parse_output" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/extract_nickname_mapper.html#ExtractNicknameMapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +617,26 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper"><code class="docutils literal notranslate"><span class="pre">ExtractNicknameMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.DEFAULT_SYSTEM_PROMPT"><code class="docutils literal notranslate"><span class="pre">ExtractNicknameMapper.DEFAULT_SYSTEM_PROMPT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.DEFAULT_INPUT_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">ExtractNicknameMapper.DEFAULT_INPUT_TEMPLATE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.DEFAULT_OUTPUT_PATTERN"><code class="docutils literal notranslate"><span class="pre">ExtractNicknameMapper.DEFAULT_OUTPUT_PATTERN</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.__init__"><code class="docutils literal notranslate"><span class="pre">ExtractNicknameMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.parse_output"><code class="docutils literal notranslate"><span class="pre">ExtractNicknameMapper.parse_output()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_nickname_mapper.ExtractNicknameMapper.process_single"><code class="docutils literal notranslate"><span class="pre">ExtractNicknameMapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

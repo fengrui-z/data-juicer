@@ -523,10 +523,10 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">docstring_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">rank_bm25</span><span class="w"> </span><span class="kn">import</span> <span class="n">BM25Okapi</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.format.formatter</span><span class="w"> </span><span class="kn">import</span> <span class="n">FORMATTERS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPERATORS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
 
 <span class="n">PROJECT_ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
 
@@ -707,6 +707,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">desc</span> <span class="o">=</span> <span class="n">op_cls</span><span class="o">.</span><span class="vm">__doc__</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="n">analyze_tag_from_cls</span><span class="p">(</span><span class="n">op_cls</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">op_cls</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_func</span> <span class="o">=</span> <span class="n">op_cls</span><span class="o">.</span><span class="fm">__init__</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">param_desc</span> <span class="o">=</span> <span class="n">extract_param_docstring</span><span class="p">(</span><span class="n">op_cls</span><span class="o">.</span><span class="fm">__init__</span><span class="o">.</span><span class="vm">__doc__</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">param_desc_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_param_desc</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">source_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">get_source_path</span><span class="p">(</span><span class="n">op_cls</span><span class="p">))</span>
@@ -754,6 +755,7 @@
             <span class="s2">&quot;desc&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">desc</span><span class="p">,</span>
             <span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">,</span>
             <span class="s2">&quot;sig&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sig</span><span class="p">,</span>
+            <span class="s2">&quot;init_func&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_func</span><span class="p">,</span>
             <span class="s2">&quot;param_desc&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_desc</span><span class="p">,</span>
             <span class="s2">&quot;param_desc_map&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_desc_map</span><span class="p">,</span>
             <span class="s2">&quot;source_path&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_path</span><span class="p">,</span>
@@ -920,7 +922,8 @@
             <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_searchable_text</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>
             <span class="n">corpus_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_bm25_index</span> <span class="o">=</span> <span class="n">BM25Okapi</span><span class="p">(</span><span class="n">corpus_tokens</span><span class="p">)</span>
+        <span class="n">rank_bm25</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;rank_bm25&quot;</span><span class="p">,</span> <span class="s2">&quot;rank-bm25&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bm25_index</span> <span class="o">=</span> <span class="n">rank_bm25</span><span class="o">.</span><span class="n">BM25Okapi</span><span class="p">(</span><span class="n">corpus_tokens</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bm25_records</span> <span class="o">=</span> <span class="n">records</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bm25_fields_key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
 

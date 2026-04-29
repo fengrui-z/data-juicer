@@ -1,0 +1,1060 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer.tools.DJ_mcp_recipe_flow &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/tools/DJ_mcp_recipe_flow';</script>
+    <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/_modules/data_juicer/tools/DJ_mcp_recipe_flow.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/_modules/data_juicer/tools/DJ_mcp_recipe_flow_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/_modules/data_juicer/tools/DJ_mcp_recipe_flow.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/_modules/data_juicer/tools/DJ_mcp_recipe_flow.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/_modules/data_juicer/tools/DJ_mcp_recipe_flow_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/_modules/data_juicer/tools/DJ_mcp_recipe_flow.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">模块代码</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer.tools.DJ_mcp_recipe_flow</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>data_juicer.tools.DJ_mcp_recipe_flow 源代码</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.tools.mcp_tool</span><span class="w"> </span><span class="kn">import</span> <span class="n">execute_analyze</span><span class="p">,</span> <span class="n">execute_op</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.tools.op_search</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPSearcher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
+
+<span class="n">fastmcp</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;mcp.server.fastmcp&quot;</span><span class="p">,</span> <span class="s2">&quot;mcp[cli]&quot;</span><span class="p">)</span>
+
+<span class="c1"># Operator Management</span>
+<span class="n">ops_list_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DJ_OPS_LIST_PATH&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">ops_list_path</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ops_list_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">ops_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">ops_list</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">searcher</span> <span class="o">=</span> <span class="n">OPSearcher</span><span class="p">(</span><span class="n">ops_list</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_global_config_schema">
+<a class="viewcode-back" href="../../../api/data_juicer.tools.DJ_mcp_recipe_flow.html#data_juicer.tools.DJ_mcp_recipe_flow.get_global_config_schema">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_global_config_schema</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the full schema of all available global configuration options</span>
+<span class="sd">    for Data-Juicer.</span>
+
+<span class="sd">    Returns a dictionary where each key is a config parameter name,</span>
+<span class="sd">    and the value is a dict containing:</span>
+<span class="sd">    - type: the expected type of the parameter (e.g. &quot;bool&quot;, &quot;int&quot;, &quot;str&quot;)</span>
+<span class="sd">    - default: the default value</span>
+<span class="sd">    - description: a human-readable description of the parameter</span>
+
+<span class="sd">    Use this tool to discover what configuration options can be passed</span>
+<span class="sd">    to run_data_recipe via the extra_config parameter. This dynamically</span>
+<span class="sd">    reflects the latest Data-Juicer configuration, so it will always</span>
+<span class="sd">    be up-to-date even as new config options are added.</span>
+
+<span class="sd">    :returns: A dict mapping config parameter names to their schema info</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.config.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_base_parser</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">build_base_parser</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">parser</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Failed to initialize config parser&quot;</span><span class="p">}</span>
+
+    <span class="c1"># Internal parameters that should not be exposed to users</span>
+    <span class="n">excluded_params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;config&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;help&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;print_config&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">schema</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">_actions</span><span class="p">:</span>
+        <span class="c1"># Skip suppressed or internal actions</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">action</span><span class="o">.</span><span class="n">option_strings</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Use the longest option string as the parameter name</span>
+        <span class="n">param_name</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">option_strings</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">)</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+        <span class="n">dest</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span>
+
+        <span class="k">if</span> <span class="n">dest</span> <span class="ow">in</span> <span class="n">excluded_params</span> <span class="ow">or</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="n">excluded_params</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Determine type name</span>
+        <span class="n">type_name</span> <span class="o">=</span> <span class="s2">&quot;str&quot;</span>
+        <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">):</span>
+                <span class="n">type_name</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="s2">&quot;__class__&quot;</span><span class="p">):</span>
+                <span class="n">type_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">type_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">const</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="n">type_name</span> <span class="o">=</span> <span class="s2">&quot;bool&quot;</span>
+
+        <span class="c1"># Handle choices</span>
+        <span class="n">choices</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">choices</span><span class="p">:</span>
+            <span class="n">choices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">choices</span><span class="p">)</span>
+
+        <span class="n">entry</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">type_name</span><span class="p">,</span>
+            <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="n">action</span><span class="o">.</span><span class="n">default</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">action</span><span class="o">.</span><span class="n">help</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">choices</span><span class="p">:</span>
+            <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;choices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">choices</span>
+
+        <span class="n">schema</span><span class="p">[</span><span class="n">param_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span>
+
+    <span class="k">return</span> <span class="n">schema</span></div>
+
+
+
+<div class="viewcode-block" id="get_dataset_load_strategies">
+<a class="viewcode-back" href="../../../api/data_juicer.tools.DJ_mcp_recipe_flow.html#data_juicer.tools.DJ_mcp_recipe_flow.get_dataset_load_strategies">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_dataset_load_strategies</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get all available dataset loading strategies supported by Data-Juicer.</span>
+
+<span class="sd">    Returns information about each strategy including its executor type,</span>
+<span class="sd">    data type, data source, required/optional configuration fields, and</span>
+<span class="sd">    description. Use this tool to understand how to configure the &#39;dataset&#39;</span>
+<span class="sd">    parameter in run_data_recipe for different data sources (e.g., local</span>
+<span class="sd">    files, HuggingFace, S3, ModelScope, etc.).</span>
+
+<span class="sd">    The &#39;dataset&#39; parameter in run_data_recipe accepts a dict with:</span>
+<span class="sd">    - configs: a list of dataset config dicts, each containing a &#39;type&#39;</span>
+<span class="sd">      field that maps to a data source strategy (e.g., &#39;local&#39;, &#39;huggingface&#39;)</span>
+<span class="sd">    - max_sample_num: optional max number of samples to load</span>
+
+<span class="sd">    Each dataset config dict should follow the required/optional fields</span>
+<span class="sd">    described in the returned strategy information.</span>
+
+<span class="sd">    :returns: A dict mapping strategy identifiers to their configuration info</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.data.load_strategy</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoadStrategyRegistry</span>
+
+    <span class="n">strategies_info</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">strategy_key</span><span class="p">,</span> <span class="n">strategy_class</span> <span class="ow">in</span> <span class="n">DataLoadStrategyRegistry</span><span class="o">.</span><span class="n">_strategies</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">identifier</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">strategy_key</span><span class="o">.</span><span class="n">executor_type</span><span class="si">}</span><span class="s2">/&quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">strategy_key</span><span class="o">.</span><span class="n">data_type</span><span class="si">}</span><span class="s2">/&quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">strategy_key</span><span class="o">.</span><span class="n">data_source</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># Extract CONFIG_VALIDATION_RULES if available</span>
+        <span class="n">validation_rules</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">strategy_class</span><span class="p">,</span> <span class="s2">&quot;CONFIG_VALIDATION_RULES&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="c1"># Extract class docstring</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="n">strategy_class</span><span class="o">.</span><span class="vm">__doc__</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="n">description</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="n">entry</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;executor_type&quot;</span><span class="p">:</span> <span class="n">strategy_key</span><span class="o">.</span><span class="n">executor_type</span><span class="p">,</span>
+            <span class="s2">&quot;data_type&quot;</span><span class="p">:</span> <span class="n">strategy_key</span><span class="o">.</span><span class="n">data_type</span><span class="p">,</span>
+            <span class="s2">&quot;data_source&quot;</span><span class="p">:</span> <span class="n">strategy_key</span><span class="o">.</span><span class="n">data_source</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span>
+            <span class="s2">&quot;class_name&quot;</span><span class="p">:</span> <span class="n">strategy_class</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">validation_rules</span><span class="p">:</span>
+            <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;required_fields&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">validation_rules</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;required_fields&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;optional_fields&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">validation_rules</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;optional_fields&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="c1"># Convert field_types to string representation for serialization</span>
+            <span class="n">field_types</span> <span class="o">=</span> <span class="n">validation_rules</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;field_types&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;field_types&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">field_types</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+
+        <span class="n">strategies_info</span><span class="p">[</span><span class="n">identifier</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span>
+
+    <span class="k">return</span> <span class="n">strategies_info</span></div>
+
+
+
+<div class="viewcode-block" id="search_ops">
+<a class="viewcode-back" href="../../../api/data_juicer.tools.DJ_mcp_recipe_flow.html#data_juicer.tools.DJ_mcp_recipe_flow.search_ops">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">search_ops</span><span class="p">(</span>
+    <span class="n">query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">op_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">match_all</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">search_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;tags&quot;</span><span class="p">,</span>
+    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for available data processing operators.</span>
+
+<span class="sd">    Operators are a collection of basic processes that assist in data</span>
+<span class="sd">    modification, cleaning, filtering, deduplication, etc.</span>
+
+<span class="sd">    Supports multiple search modes:</span>
+<span class="sd">    - &quot;basic&quot;: filter by op_type and/or tags (default, original behavior).</span>
+<span class="sd">      If both tags and op_type are None, returns all operators.</span>
+<span class="sd">    - &quot;regex&quot;: Python regex pattern matching against OP names,</span>
+<span class="sd">      descriptions, and parameters. Requires the query parameter.</span>
+<span class="sd">    - &quot;bm25&quot;: BM25 text relevance ranking for natural language queries.</span>
+<span class="sd">      Returns top_k most relevant operators. Requires the query parameter.</span>
+
+<span class="sd">    op_type and tags can be combined with any search_mode as additional</span>
+<span class="sd">    filters to narrow down results.</span>
+
+<span class="sd">    The following `op_type` values are supported:</span>
+<span class="sd">    - aggregator: Aggregate for batched samples, such as summary or conclusion.</span>
+<span class="sd">    - deduplicator: Detects and removes duplicate samples.</span>
+<span class="sd">    - filter: Filters out low-quality samples.</span>
+<span class="sd">    - grouper: Group samples to batched samples.</span>
+<span class="sd">    - mapper: Edits and transforms samples.</span>
+<span class="sd">    - selector: Selects top samples based on ranking.</span>
+<span class="sd">    - pipeline: Applies dataset-level processing; both input and output are datasets.</span>
+
+<span class="sd">    The `tags` parameter specifies the characteristics of the data or the</span>
+<span class="sd">    required resources. Available tags are:</span>
+
+<span class="sd">    Modality Tags:</span>
+<span class="sd">        - text: process text data specifically.</span>
+<span class="sd">        - image: process image data specifically.</span>
+<span class="sd">        - audio: process audio data specifically.</span>
+<span class="sd">        - video: process video data specifically.</span>
+<span class="sd">        - multimodal: process multimodal data.</span>
+
+<span class="sd">    Resource Tags:</span>
+<span class="sd">        - cpu: only requires CPU resource.</span>
+<span class="sd">        - gpu: requires GPU/CUDA resource as well.</span>
+
+<span class="sd">    Model Tags:</span>
+<span class="sd">        - api: equipped with API-based models (e.g. ChatGPT, GPT-4o).</span>
+<span class="sd">        - vllm: equipped with models supported by vLLM.</span>
+<span class="sd">        - hf: equipped with models from HuggingFace Hub.</span>
+
+<span class="sd">    :param query: Search query string. Required for &quot;regex&quot; and &quot;bm25&quot;</span>
+<span class="sd">        modes. For &quot;regex&quot; mode, this should be a Python regex pattern.</span>
+<span class="sd">        For &quot;bm25&quot; mode, this should be a natural language</span>
+<span class="sd">        description of the desired functionality.</span>
+<span class="sd">    :param op_type: The type of data processing operator to filter by.</span>
+<span class="sd">        If None, no type-based filtering is applied. Defaults to None.</span>
+<span class="sd">    :param tags: An optional list of tags to filter operators.</span>
+<span class="sd">        If None, no tag-based filtering is applied. Defaults to None.</span>
+<span class="sd">    :param match_all: If True, only operators matching all specified tags</span>
+<span class="sd">        are returned. If False, operators matching any tag are returned.</span>
+<span class="sd">        Defaults to True.</span>
+<span class="sd">    :param search_mode: The search strategy to use. One of &quot;tags&quot;,</span>
+<span class="sd">        &quot;regex&quot;, or &quot;bm25&quot;. Defaults to &quot;tags&quot;.</span>
+<span class="sd">    :param top_k: Maximum number of results to return for &quot;bm25&quot; mode.</span>
+<span class="sd">        Defaults to 10. Ignored for other modes.</span>
+<span class="sd">    :returns: A dict containing detailed information about the matched</span>
+<span class="sd">        operators, keyed by operator name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">search_mode</span> <span class="o">==</span> <span class="s2">&quot;regex&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">query</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;query is required for regex search mode&quot;</span><span class="p">}</span>
+        <span class="n">op_results</span> <span class="o">=</span> <span class="n">searcher</span><span class="o">.</span><span class="n">search_by_regex</span><span class="p">(</span>
+            <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span>
+            <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
+            <span class="n">op_type</span><span class="o">=</span><span class="n">op_type</span><span class="p">,</span>
+            <span class="n">match_all</span><span class="o">=</span><span class="n">match_all</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">search_mode</span> <span class="o">==</span> <span class="s2">&quot;bm25&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">query</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;query is required for bm25 search mode&quot;</span><span class="p">}</span>
+        <span class="n">op_results</span> <span class="o">=</span> <span class="n">searcher</span><span class="o">.</span><span class="n">search_by_bm25</span><span class="p">(</span>
+            <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span>
+            <span class="n">top_k</span><span class="o">=</span><span class="n">top_k</span><span class="p">,</span>
+            <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
+            <span class="n">op_type</span><span class="o">=</span><span class="n">op_type</span><span class="p">,</span>
+            <span class="n">match_all</span><span class="o">=</span><span class="n">match_all</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Default &quot;tags&quot; mode: filter by op_type and tags</span>
+        <span class="n">op_results</span> <span class="o">=</span> <span class="n">searcher</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span> <span class="n">op_type</span><span class="o">=</span><span class="n">op_type</span><span class="p">,</span> <span class="n">match_all</span><span class="o">=</span><span class="n">match_all</span><span class="p">)</span>
+
+    <span class="n">ops_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">op_results</span><span class="p">:</span>
+        <span class="n">ops_dict</span><span class="p">[</span><span class="n">op</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">op</span><span class="p">[</span><span class="s2">&quot;desc&quot;</span><span class="p">],</span> <span class="n">op</span><span class="p">[</span><span class="s2">&quot;param_desc&quot;</span><span class="p">],</span> <span class="s2">&quot;Parameters: &quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">op</span><span class="p">[</span><span class="s2">&quot;sig&quot;</span><span class="p">])])</span>
+
+    <span class="k">return</span> <span class="n">ops_dict</span></div>
+
+
+
+<div class="viewcode-block" id="run_data_recipe">
+<a class="viewcode-back" href="../../../api/data_juicer.tools.DJ_mcp_recipe_flow.html#data_juicer.tools.DJ_mcp_recipe_flow.run_data_recipe">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_data_recipe</span><span class="p">(</span>
+    <span class="n">process</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span>
+    <span class="n">dataset_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">export_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">np</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">extra_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run a data processing recipe using Data-Juicer operators.</span>
+
+<span class="sd">    If you want to run one or more DataJuicer data processing operators,</span>
+<span class="sd">    use this tool. Supported operators and their arguments should be</span>
+<span class="sd">    obtained through the `search_ops` tool.</span>
+
+<span class="sd">    For advanced configuration options (e.g., enabling tracing, op fusion,</span>
+<span class="sd">    checkpoint, multimodal keys, etc.), first call `get_global_config_schema`</span>
+<span class="sd">    to discover available options, then pass them via `extra_config`.</span>
+
+<span class="sd">    For loading datasets from different sources (e.g., HuggingFace, S3),</span>
+<span class="sd">    first call `get_dataset_load_strategies` to discover available loading</span>
+<span class="sd">    strategies and their required fields, then pass the configuration via</span>
+<span class="sd">    the `dataset` parameter.</span>
+
+<span class="sd">    :param process: List of processing operations to be executed</span>
+<span class="sd">        sequentially. Each element is a dictionary with operator name as</span>
+<span class="sd">        key and its configuration as value.</span>
+<span class="sd">    :param dataset_path: Path to the dataset to be processed. This is the</span>
+<span class="sd">        simplest way to specify input data (local file path).</span>
+<span class="sd">    :param dataset: Optional dataset configuration dict for advanced data</span>
+<span class="sd">        loading. Supports multiple data sources (local, HuggingFace, S3,</span>
+<span class="sd">        etc.). Format follows Data-Juicer&#39;s dataset config schema:</span>
+<span class="sd">        {&quot;configs&quot;: [{&quot;type&quot;: &quot;local&quot;, &quot;path&quot;: &quot;...&quot;}, ...],</span>
+<span class="sd">         &quot;max_sample_num&quot;: 10000}</span>
+<span class="sd">        Use `get_dataset_load_strategies` to discover available options.</span>
+<span class="sd">        When provided alongside dataset_path, both are passed to</span>
+<span class="sd">        Data-Juicer (dataset_path serves as a fallback).</span>
+<span class="sd">    :param export_path: Path to export the processed dataset. Defaults to</span>
+<span class="sd">        None, which exports to &#39;./outputs&#39; directory.</span>
+<span class="sd">    :param np: Number of processes to use. Defaults to 1.</span>
+<span class="sd">    :param extra_config: Optional dict of additional global configuration</span>
+<span class="sd">        options. Use `get_global_config_schema` to discover all available</span>
+<span class="sd">        options. Example: {&quot;open_tracer&quot;: true, &quot;trace_num&quot;: 20,</span>
+<span class="sd">        &quot;op_fusion&quot;: true, &quot;text_keys&quot;: &quot;instruction&quot;}</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        # Basic usage: filter text samples</span>
+<span class="sd">        &gt;&gt;&gt; run_data_recipe(</span>
+<span class="sd">        ...     &quot;/path/to/dataset.jsonl&quot;,</span>
+<span class="sd">        ...     [{&quot;text_length_filter&quot;: {&quot;min_len&quot;: 10, &quot;max_len&quot;: 50}}]</span>
+<span class="sd">        ... )</span>
+
+<span class="sd">        # Advanced usage with tracing and HuggingFace dataset</span>
+<span class="sd">        &gt;&gt;&gt; run_data_recipe(</span>
+<span class="sd">        ...     dataset_path=&quot;&quot;,</span>
+<span class="sd">        ...     process=[{&quot;language_id_score_filter&quot;: {&quot;lang&quot;: &quot;en&quot;}}],</span>
+<span class="sd">        ...     dataset={</span>
+<span class="sd">        ...         &quot;configs&quot;: [{</span>
+<span class="sd">        ...             &quot;type&quot;: &quot;huggingface&quot;,</span>
+<span class="sd">        ...             &quot;path&quot;: &quot;tatsu-lab/alpaca&quot;,</span>
+<span class="sd">        ...             &quot;split&quot;: &quot;train&quot;</span>
+<span class="sd">        ...         }]</span>
+<span class="sd">        ...     },</span>
+<span class="sd">        ...     extra_config={</span>
+<span class="sd">        ...         &quot;open_tracer&quot;: True,</span>
+<span class="sd">        ...         &quot;trace_num&quot;: 20,</span>
+<span class="sd">        ...         &quot;text_keys&quot;: &quot;instruction&quot;</span>
+<span class="sd">        ...     }</span>
+<span class="sd">        ... )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dj_cfg</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;dataset_path&quot;</span><span class="p">:</span> <span class="n">dataset_path</span><span class="p">,</span>
+        <span class="s2">&quot;process&quot;</span><span class="p">:</span> <span class="n">process</span><span class="p">,</span>
+        <span class="s2">&quot;export_path&quot;</span><span class="p">:</span> <span class="n">export_path</span><span class="p">,</span>
+        <span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="n">np</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dj_cfg</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span>
+
+    <span class="k">if</span> <span class="n">extra_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">extra_config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">dj_cfg</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">execute_op</span><span class="p">(</span><span class="n">dj_cfg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="analyze_dataset">
+<a class="viewcode-back" href="../../../api/data_juicer.tools.DJ_mcp_recipe_flow.html#data_juicer.tools.DJ_mcp_recipe_flow.analyze_dataset">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">analyze_dataset</span><span class="p">(</span>
+    <span class="n">process</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span>
+    <span class="n">dataset_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">export_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">np</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">percentiles</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">extra_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Analyze a dataset using Data-Juicer&#39;s Analyzer pipeline.</span>
+
+<span class="sd">    This tool computes statistics for the specified filter and tagging</span>
+<span class="sd">    operators on the dataset, then performs overall analysis, column-wise</span>
+<span class="sd">    analysis, and correlation analysis. It generates stats tables and</span>
+<span class="sd">    distribution figures to help understand the dataset characteristics</span>
+<span class="sd">    before applying actual data processing.</span>
+
+<span class="sd">    This is the equivalent of the ``dj-analyze`` command. Use it to</span>
+<span class="sd">    understand your dataset&#39;s quality distribution, identify outliers,</span>
+<span class="sd">    and determine appropriate filter thresholds before running</span>
+<span class="sd">    ``run_data_recipe``.</span>
+
+<span class="sd">    Supported operators and their arguments should be obtained through</span>
+<span class="sd">    the ``search_ops`` tool. Only filter-type and tagging-type operators</span>
+<span class="sd">    will produce meaningful analysis results.</span>
+
+<span class="sd">    :param process: List of filter/tagging operations to compute stats</span>
+<span class="sd">        for. Each element is a dictionary with operator name as key and</span>
+<span class="sd">        its configuration as value. Only filter and tagging operators</span>
+<span class="sd">        produce analysis stats.</span>
+<span class="sd">    :param dataset_path: Path to the dataset to be analyzed. This is the</span>
+<span class="sd">        simplest way to specify input data (local file path).</span>
+<span class="sd">    :param dataset: Optional dataset configuration dict for advanced data</span>
+<span class="sd">        loading. Same format as in run_data_recipe.</span>
+<span class="sd">    :param export_path: Path to export the analyzed dataset with stats.</span>
+<span class="sd">        Defaults to None, which exports to &#39;./outputs&#39; directory.</span>
+<span class="sd">    :param np: Number of processes to use. Defaults to 1.</span>
+<span class="sd">    :param percentiles: List of percentiles to compute for the dataset</span>
+<span class="sd">        distribution analysis. Defaults to [0.25, 0.5, 0.75].</span>
+<span class="sd">    :param extra_config: Optional dict of additional global configuration</span>
+<span class="sd">        options. Use ``get_global_config_schema`` to discover all available</span>
+<span class="sd">        options. Analysis-specific options include:</span>
+<span class="sd">        - export_original_dataset (bool): whether to export the original</span>
+<span class="sd">          dataset with stats (default: False)</span>
+<span class="sd">        - save_stats_in_one_file (bool): whether to save all stats into</span>
+<span class="sd">          one file (default: False)</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        # Analyze text length and language distribution</span>
+<span class="sd">        &gt;&gt;&gt; analyze_dataset(</span>
+<span class="sd">        ...     dataset_path=&quot;/path/to/dataset.jsonl&quot;,</span>
+<span class="sd">        ...     process=[</span>
+<span class="sd">        ...         {&quot;text_length_filter&quot;: {&quot;min_len&quot;: 10, &quot;max_len&quot;: 1000}},</span>
+<span class="sd">        ...         {&quot;language_id_score_filter&quot;: {&quot;lang&quot;: &quot;en&quot;}}</span>
+<span class="sd">        ...     ],</span>
+<span class="sd">        ...     percentiles=[0.1, 0.25, 0.5, 0.75, 0.9]</span>
+<span class="sd">        ... )</span>
+
+<span class="sd">    :returns: A message indicating where the analysis results are saved,</span>
+<span class="sd">        including the export path and the analysis directory containing</span>
+<span class="sd">        stats tables and distribution figures.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dj_cfg</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;dataset_path&quot;</span><span class="p">:</span> <span class="n">dataset_path</span><span class="p">,</span>
+        <span class="s2">&quot;process&quot;</span><span class="p">:</span> <span class="n">process</span><span class="p">,</span>
+        <span class="s2">&quot;export_path&quot;</span><span class="p">:</span> <span class="n">export_path</span><span class="p">,</span>
+        <span class="s2">&quot;np&quot;</span><span class="p">:</span> <span class="n">np</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">percentiles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dj_cfg</span><span class="p">[</span><span class="s2">&quot;percentiles&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">percentiles</span>
+
+    <span class="k">if</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dj_cfg</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span>
+
+    <span class="k">if</span> <span class="n">extra_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">extra_config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">dj_cfg</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">execute_analyze</span><span class="p">(</span><span class="n">dj_cfg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_mcp_server">
+<a class="viewcode-back" href="../../../api/data_juicer.tools.DJ_mcp_recipe_flow.html#data_juicer.tools.DJ_mcp_recipe_flow.create_mcp_server">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_mcp_server</span><span class="p">(</span><span class="n">port</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;8000&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates the FastMCP server and registers the tools.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        port (str, optional): Port number. Defaults to &quot;8000&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mcp</span> <span class="o">=</span> <span class="n">fastmcp</span><span class="o">.</span><span class="n">FastMCP</span><span class="p">(</span><span class="s2">&quot;Data-Juicer Server&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">)</span>
+
+    <span class="n">mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()(</span><span class="n">get_global_config_schema</span><span class="p">)</span>
+    <span class="n">mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()(</span><span class="n">get_dataset_load_strategies</span><span class="p">)</span>
+    <span class="n">mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()(</span><span class="n">search_ops</span><span class="p">)</span>
+    <span class="n">mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()(</span><span class="n">run_data_recipe</span><span class="p">)</span>
+    <span class="n">mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()(</span><span class="n">analyze_dataset</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mcp</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Data-Juicer MCP Server&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--port&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;8000&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Port number for the MCP server&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">mcp</span> <span class="o">=</span> <span class="n">create_mcp_server</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+    <span class="n">mcp</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">transport</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SERVER_TRANSPORT&quot;</span><span class="p">,</span> <span class="s2">&quot;sse&quot;</span><span class="p">))</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

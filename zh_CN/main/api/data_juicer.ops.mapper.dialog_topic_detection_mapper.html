@@ -514,8 +514,135 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-dialog-topic-detection-mapper-module">
-<h1>data_juicer.ops.mapper.dialog_topic_detection_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-dialog-topic-detection-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.dialog_topic_detection_mapper">
+<span id="data-juicer-ops-mapper-dialog-topic-detection-mapper-module"></span><h1>data_juicer.ops.mapper.dialog_topic_detection_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.dialog_topic_detection_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.dialog_topic_detection_mapper.</span></span><span class="sig-name descname"><span class="pre">DialogTopicDetectionMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/dialog_topic_detection_mapper.html#DialogTopicDetectionMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Generates user's topic labels and analysis in a dialog.</p>
+<p>This operator processes a dialog to detect and label the topics discussed by the user.
+It takes input from <cite>history_key</cite>, <cite>query_key</cite>, and <cite>response_key</cite> and outputs lists of
+labels and analysis for each query in the dialog. The operator uses a predefined system
+prompt and templates to build the input prompt for the API call. It supports customizing
+the system prompt, templates, and patterns for parsing the API response. The results are
+stored in the <cite>meta</cite> field under the keys specified by <cite>labels_key</cite> and <cite>analysis_key</cite>.
+If these keys already exist in the <cite>meta</cite> field, the operator skips processing. The
+operator retries the API call up to <cite>try_num</cite> times in case of errors.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_SYSTEM_PROMPT">
+<span class="sig-name descname"><span class="pre">DEFAULT_SYSTEM_PROMPT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'请判断用户和LLM多轮对话中用户所讨论的话题。\n要求：\n-</span> <span class="pre">针对用户的每个query，需要先进行分析，然后列出用户正在讨论的话题，下面是一个样例，请模仿样例格式输出。\n用户：你好，今天我们来聊聊秦始皇吧。\n话题分析：用户提到秦始皇，这是中国历史上第一位皇帝。\n话题类别：历史\nLLM：当然可以，秦始皇是中国历史上第一个统一全国的皇帝，他在公元前221年建立了秦朝，并采取了一系列重要的改革措施，如统一文字、度量衡和货币等。\n用户：秦始皇修建的长城和现在的长城有什么区别？\n话题分析：用户提到秦始皇修建的长城，并将其与现代长城进行比较，涉及建筑历史和地理位置。\n话题类别：历史LLM：秦始皇时期修建的长城主要是为了抵御北方游牧民族的入侵，它的规模和修建技术相对较为简陋。现代人所看到的长城大部分是明朝时期修建和扩建的，明长城不仅规模更大、结构更坚固，而且保存得比较完好。\n用户：有意思，那么长城的具体位置在哪些省份呢？\n话题分析：用户询问长城的具体位置，涉及到地理知识。\n话题类别：地理\nLLM：长城横跨中国北方多个省份，主要包括河北、山西、内蒙古、宁夏、陕西、甘肃和北京等。每一段长城都建在关键的战略位置，以便最大限度地发挥其防御作用。\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_SYSTEM_PROMPT" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_QUERY_TEMPLATE">
+<span class="sig-name descname"><span class="pre">DEFAULT_QUERY_TEMPLATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'用户：{query}\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_QUERY_TEMPLATE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_RESPONSE_TEMPLATE">
+<span class="sig-name descname"><span class="pre">DEFAULT_RESPONSE_TEMPLATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'LLM：{response}\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_RESPONSE_TEMPLATE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_CANDIDATES_TEMPLATE">
+<span class="sig-name descname"><span class="pre">DEFAULT_CANDIDATES_TEMPLATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'备选话题类别：[{candidate_str}]'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_CANDIDATES_TEMPLATE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_ANALYSIS_TEMPLATE">
+<span class="sig-name descname"><span class="pre">DEFAULT_ANALYSIS_TEMPLATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'话题分析：{analysis}\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_ANALYSIS_TEMPLATE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_LABELS_TEMPLATE">
+<span class="sig-name descname"><span class="pre">DEFAULT_LABELS_TEMPLATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'话题类别：{labels}\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_LABELS_TEMPLATE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_ANALYSIS_PATTERN">
+<span class="sig-name descname"><span class="pre">DEFAULT_ANALYSIS_PATTERN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'话题分析：(.*?)\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_ANALYSIS_PATTERN" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_LABELS_PATTERN">
+<span class="sig-name descname"><span class="pre">DEFAULT_LABELS_PATTERN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'话题类别：(.*?)($|\n)'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_LABELS_PATTERN" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'gpt-4o'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topic_candidates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_round</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ge</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">ge</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="仅关键字参数分隔符 (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dialog_topic_labels'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysis_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dialog_topic_labels_analysis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_endpoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">candidate_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysis_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysis_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_query_chars_for_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ge</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">ge</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_response_chars_for_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ge</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">ge</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preferred_output_lang</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'zh'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/dialog_topic_detection_mapper.html#DialogTopicDetectionMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_model</strong> -- API model name.</p></li>
+<li><p><strong>topic_candidates</strong> -- The output topic candidates. Use
+open-domain topic labels if it is None.</p></li>
+<li><p><strong>max_round</strong> -- The max num of round in the dialog to build the
+prompt.</p></li>
+<li><p><strong>labels_key</strong> -- The key name in the meta field to store the
+output labels. It is 'dialog_topic_labels' in default.</p></li>
+<li><p><strong>analysis_key</strong> -- The key name in the meta field to store the
+corresponding analysis. It is 'dialog_topic_labels_analysis'
+in default.</p></li>
+<li><p><strong>api_endpoint</strong> -- URL endpoint for the API.</p></li>
+<li><p><strong>response_path</strong> -- Path to extract content from the API response.
+Defaults to 'choices.0.message.content'.</p></li>
+<li><p><strong>system_prompt</strong> -- System prompt for the task.</p></li>
+<li><p><strong>query_template</strong> -- Template for query part to build the input
+prompt.</p></li>
+<li><p><strong>response_template</strong> -- Template for response part to build the
+input prompt.</p></li>
+<li><p><strong>candidate_template</strong> -- Template for topic candidates to
+build the input prompt.</p></li>
+<li><p><strong>analysis_template</strong> -- Template for analysis part to build the
+input prompt.</p></li>
+<li><p><strong>labels_template</strong> -- Template for labels part to build the
+input prompt.</p></li>
+<li><p><strong>analysis_pattern</strong> -- Pattern to parse the return topic
+analysis.</p></li>
+<li><p><strong>labels_pattern</strong> -- Pattern to parse the return topic
+labels.</p></li>
+<li><p><strong>try_num</strong> -- The number of retry attempts when there is an API
+call error or output parsing error.</p></li>
+<li><p><strong>max_query_chars_for_prompt</strong> -- If &gt; 0, truncate user query in prompts.</p></li>
+<li><p><strong>max_response_chars_for_prompt</strong> -- If &gt; 0, truncate assistant side in prompts.</p></li>
+<li><p><strong>model_params</strong> -- Parameters for initializing the API model.</p></li>
+<li><p><strong>sampling_params</strong> -- Extra parameters passed to the API call.
+e.g {'temperature': 0.9, 'top_p': 0.95}</p></li>
+<li><p><strong>kwargs</strong> -- Extra keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.build_input">
+<span class="sig-name descname"><span class="pre">build_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">history</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/dialog_topic_detection_mapper.html#DialogTopicDetectionMapper.build_input"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.build_input" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.parse_output">
+<span class="sig-name descname"><span class="pre">parse_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/dialog_topic_detection_mapper.html#DialogTopicDetectionMapper.parse_output"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.parse_output" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/dialog_topic_detection_mapper.html#DialogTopicDetectionMapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +665,32 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper"><code class="docutils literal notranslate"><span class="pre">DialogTopicDetectionMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_SYSTEM_PROMPT"><code class="docutils literal notranslate"><span class="pre">DialogTopicDetectionMapper.DEFAULT_SYSTEM_PROMPT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_QUERY_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">DialogTopicDetectionMapper.DEFAULT_QUERY_TEMPLATE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_RESPONSE_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">DialogTopicDetectionMapper.DEFAULT_RESPONSE_TEMPLATE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_CANDIDATES_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">DialogTopicDetectionMapper.DEFAULT_CANDIDATES_TEMPLATE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_ANALYSIS_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">DialogTopicDetectionMapper.DEFAULT_ANALYSIS_TEMPLATE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_LABELS_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">DialogTopicDetectionMapper.DEFAULT_LABELS_TEMPLATE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_ANALYSIS_PATTERN"><code class="docutils literal notranslate"><span class="pre">DialogTopicDetectionMapper.DEFAULT_ANALYSIS_PATTERN</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.DEFAULT_LABELS_PATTERN"><code class="docutils literal notranslate"><span class="pre">DialogTopicDetectionMapper.DEFAULT_LABELS_PATTERN</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.__init__"><code class="docutils literal notranslate"><span class="pre">DialogTopicDetectionMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.build_input"><code class="docutils literal notranslate"><span class="pre">DialogTopicDetectionMapper.build_input()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.parse_output"><code class="docutils literal notranslate"><span class="pre">DialogTopicDetectionMapper.parse_output()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_topic_detection_mapper.DialogTopicDetectionMapper.process_single"><code class="docutils literal notranslate"><span class="pre">DialogTopicDetectionMapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

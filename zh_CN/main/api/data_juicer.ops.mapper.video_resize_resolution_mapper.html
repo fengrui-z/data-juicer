@@ -514,8 +514,64 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-video-resize-resolution-mapper-module">
-<h1>data_juicer.ops.mapper.video_resize_resolution_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-video-resize-resolution-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.video_resize_resolution_mapper">
+<span id="data-juicer-ops-mapper-video-resize-resolution-mapper-module"></span><h1>data_juicer.ops.mapper.video_resize_resolution_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.video_resize_resolution_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_resize_resolution_mapper.VideoResizeResolutionMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.video_resize_resolution_mapper.</span></span><span class="sig-name descname"><span class="pre">VideoResizeResolutionMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_resize_resolution_mapper.html#VideoResizeResolutionMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_resize_resolution_mapper.VideoResizeResolutionMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Resizes video resolution based on specified width and height constraints.</p>
+<p>This operator resizes videos to fit within the provided minimum and maximum width and
+height limits. It can optionally maintain the original aspect ratio by adjusting the
+dimensions accordingly. The resized videos are saved in the specified directory or the
+same directory as the input if no save directory is provided. The key metric for
+resizing is the video's width and height, which are adjusted to meet the constraints
+while maintaining the aspect ratio if configured. The <cite>force_divisible_by</cite> parameter
+ensures that the output dimensions are divisible by a specified integer, which must be a
+positive even number when used with aspect ratio adjustments.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_resize_resolution_mapper.VideoResizeResolutionMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">9223372036854775807</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_height</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">9223372036854775807</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_original_aspect_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'disable'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_divisible_by</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_resize_resolution_mapper.html#VideoResizeResolutionMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_resize_resolution_mapper.VideoResizeResolutionMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_width</strong> -- Videos with width less than 'min_width' will be
+mapped to videos with equal or bigger width.</p></li>
+<li><p><strong>max_width</strong> -- Videos with width more than 'max_width' will be
+mapped to videos with equal of smaller width.</p></li>
+<li><p><strong>min_height</strong> -- Videos with height less than 'min_height' will be
+mapped to videos with equal or bigger height.</p></li>
+<li><p><strong>max_height</strong> -- Videos with height more than 'max_height' will be
+mapped to videos with equal or smaller height.</p></li>
+<li><p><strong>force_original_aspect_ratio</strong> -- Enable decreasing or             increasing output video width or height if necessary             to keep the original aspect ratio, including ['disable',             'decrease', 'increase'].</p></li>
+<li><p><strong>force_divisible_by</strong> -- Ensures that both the output dimensions,             width and height, are divisible by the given integer when used             together with force_original_aspect_ratio, must be a positive             even number.</p></li>
+<li><p><strong>save_dir</strong> -- The directory where generated video files will be stored.
+If not specified, outputs will be saved in the same directory as their corresponding input files.
+This path can alternatively be defined by setting the <cite>DJ_PRODUCED_DATA_DIR</cite> environment variable.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_resize_resolution_mapper.VideoResizeResolutionMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_resize_resolution_mapper.html#VideoResizeResolutionMapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_resize_resolution_mapper.VideoResizeResolutionMapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +594,22 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_resize_resolution_mapper.VideoResizeResolutionMapper"><code class="docutils literal notranslate"><span class="pre">VideoResizeResolutionMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_resize_resolution_mapper.VideoResizeResolutionMapper.__init__"><code class="docutils literal notranslate"><span class="pre">VideoResizeResolutionMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_resize_resolution_mapper.VideoResizeResolutionMapper.process_single"><code class="docutils literal notranslate"><span class="pre">VideoResizeResolutionMapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

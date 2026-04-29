@@ -535,10 +535,10 @@
 
 
 <div class="viewcode-block" id="TempDirManager">
-<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor.html#data_juicer.core.TempDirManager">[docs]</a>
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor.html#data_juicer.core.executor.TempDirManager">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TempDirManager</span><span class="p">:</span>
 <div class="viewcode-block" id="TempDirManager.__init__">
-<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor.html#data_juicer.core.TempDirManager.__init__">[docs]</a>
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor.html#data_juicer.core.executor.TempDirManager.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tmp_dir</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">tmp_dir</span></div>
 
@@ -562,7 +562,7 @@
 
 
 <div class="viewcode-block" id="RayExecutor">
-<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor.html#data_juicer.core.RayExecutor">[docs]</a>
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor.html#data_juicer.core.executor.RayExecutor">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RayExecutor</span><span class="p">(</span><span class="n">ExecutorBase</span><span class="p">,</span> <span class="n">DAGExecutionMixin</span><span class="p">,</span> <span class="n">EventLoggingMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Executor based on Ray.</span>
@@ -576,7 +576,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="RayExecutor.__init__">
-<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor.html#data_juicer.core.RayExecutor.__init__">[docs]</a>
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor.html#data_juicer.core.executor.RayExecutor.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Namespace</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialization method.</span>
@@ -638,6 +638,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">export_shard_size</span><span class="p">,</span>
             <span class="n">keep_stats_in_res_ds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">keep_stats_in_res_ds</span><span class="p">,</span>
             <span class="n">keep_hashes_in_res_ds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">keep_hashes_in_res_ds</span><span class="p">,</span>
+            <span class="n">encrypt_before_export</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;encrypt_before_export&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">encryption_key_path</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;encryption_key_path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
             <span class="o">**</span><span class="n">export_extra_args</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -664,7 +666,7 @@
 
 
 <div class="viewcode-block" id="RayExecutor.run">
-<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor.html#data_juicer.core.RayExecutor.run">[docs]</a>
+<a class="viewcode-back" href="../../../../api/data_juicer.core.executor.ray_executor.html#data_juicer.core.executor.RayExecutor.run">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">load_data_np</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PositiveInt</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">skip_export</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">skip_return</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Running the dataset process pipeline</span>
@@ -674,9 +676,16 @@
 <span class="sd">        :param skip_return: skip return for API called.</span>
 <span class="sd">        :return: processed dataset.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># LLM data contains very large single json objects (lines). PyArrow&#39;s default block_size</span>
+        <span class="c1"># for open_json is only 1MB. We increase it massively (e.g. 256MB) to avoid the</span>
+        <span class="c1"># &#39;straddling object straddles two block boundaries&#39; ArrowInvalid error.</span>
+        <span class="c1">#</span>
+
+        <span class="n">read_opts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;read_options&quot;</span><span class="p">)</span>
+
         <span class="c1"># 1. load data</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading dataset with Ray...&quot;</span><span class="p">)</span>
-        <span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasetbuilder</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">num_proc</span><span class="o">=</span><span class="n">load_data_np</span><span class="p">)</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasetbuilder</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">num_proc</span><span class="o">=</span><span class="n">load_data_np</span><span class="p">,</span> <span class="n">read_options</span><span class="o">=</span><span class="n">read_opts</span><span class="p">)</span>
         <span class="n">columns</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">()</span>
 
         <span class="c1"># 2. extract processes</span>

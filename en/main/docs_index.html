@@ -502,6 +502,14 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">demos</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="demos/README.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="demos/agent/BAD_CASE_INSIGHTS.html">Agent 交互数据：Bad case 洞察</a></li>
+<li class="toctree-l1"><a class="reference internal" href="demos/agent/BAD_CASE_REPORT.html">Bad case 自助报告（简化入口）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="demos/agent/PERFORMANCE_LLM.html">Agent 流水线里 LLM 算子：加速与超参</a></li>
+<li class="toctree-l1"><a class="reference internal" href="demos/agent/QUICKSTART_BAD_CASE.html">Bad case 流水线：一键运行与端到端指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="demos/agent/README.html">Agent quality &amp; bad-case docs</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="demos/agent/minimal_configs/README.html">Agent 流水线最小可运行配置（便于逐项调试）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="demos/agent/scripts/README.html">Agent pipeline 后分析脚本</a></li>
 <li class="toctree-l1"><a class="reference internal" href="demos/process_video_on_ray/data/Note.html">Note for dataset path</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">tools</span></p>
@@ -744,6 +752,64 @@
 <li class="toctree-l1"><a class="reference internal" href="demos/README.html">Demos</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="demos/README.html#usage">Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="demos/README.html#available-demos">Available Demos</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="demos/agent/BAD_CASE_INSIGHTS.html">Agent 交互数据：Bad case 洞察</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/BAD_CASE_INSIGHTS.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/BAD_CASE_INSIGHTS.html#agent-assistant-tool">Agent 对话形态：多段 assistant 与 tool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/BAD_CASE_INSIGHTS.html#normalize">数据血缘字段（normalize 自动写入）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/BAD_CASE_INSIGHTS.html#upstream-9-pipeline">Upstream 信号覆盖（第 9 步尽量吃满 pipeline）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/BAD_CASE_INSIGHTS.html#agent-insight-llm-mapper-auto-analyst">第 10 步：<code class="docutils literal notranslate"><span class="pre">agent_insight_llm_mapper</span></code>（auto-analyst）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/BAD_CASE_INSIGHTS.html#id1">为何不强依赖「用户不满意」单一视角</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/BAD_CASE_INSIGHTS.html#model-pt">深挖思路（按 model / pt）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/BAD_CASE_INSIGHTS.html#pipeline">Pipeline 之后的分析脚本</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/BAD_CASE_INSIGHTS.html#jq">jq 快速筛选</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/BAD_CASE_INSIGHTS.html#id2">相关算子</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="demos/agent/BAD_CASE_REPORT.html">Bad case 自助报告（简化入口）</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/BAD_CASE_REPORT.html#id1">一行命令</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/BAD_CASE_REPORT.html#smoke-full">与 <code class="docutils literal notranslate"><span class="pre">smoke</span></code> / <code class="docutils literal notranslate"><span class="pre">full</span></code> 的关系</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/BAD_CASE_REPORT.html#python">直接调 Python（可选）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/BAD_CASE_REPORT.html#id2">仍是「进阶」的内容（刻意不收进报告页）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="demos/agent/PERFORMANCE_LLM.html">Agent 流水线里 LLM 算子：加速与超参</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/PERFORMANCE_LLM.html#api">1. 并行（多进程发 API）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/PERFORMANCE_LLM.html#id1">2. 减少「每个算子」的工作量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/PERFORMANCE_LLM.html#token">3. 减少 token（更快、更便宜）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/PERFORMANCE_LLM.html#id2">4. 迭代开发时的推荐组合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/PERFORMANCE_LLM.html#id3">5. 与本仓库脚本的衔接</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="demos/agent/QUICKSTART_BAD_CASE.html">Bad case 流水线：一键运行与端到端指南</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/QUICKSTART_BAD_CASE.html#id1">只想看报告（最少步骤）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/QUICKSTART_BAD_CASE.html#id2">前置条件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/QUICKSTART_BAD_CASE.html#id3">一键命令（推荐）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/QUICKSTART_BAD_CASE.html#id4">端到端两条路径</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/QUICKSTART_BAD_CASE.html#id5">脚本目录说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/QUICKSTART_BAD_CASE.html#llm">LLM 算子慢、想加速？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/QUICKSTART_BAD_CASE.html#meta">导出里的 meta 键名</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/QUICKSTART_BAD_CASE.html#id6">常见问题</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="demos/agent/README.html">Agent quality &amp; bad-case docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="demos/agent/README.html#agent-bad-case">Agent 质检 / bad-case 文档索引</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/README.html#id1">维护指南</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="demos/agent/minimal_configs/README.html">Agent 流水线最小可运行配置（便于逐项调试）</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/minimal_configs/README.html#docs-developerguide-md">环境与依赖（参考 docs/DeveloperGuide.md）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/minimal_configs/README.html#id1">运行方式（在仓库根目录）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/minimal_configs/README.html#id2">配置说明摘要</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/minimal_configs/README.html#id3">建议调试顺序</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/minimal_configs/README.html#id4">运行环境注意</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="demos/agent/scripts/README.html">Agent pipeline 后分析脚本</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/scripts/README.html#python">Python 脚本一览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/scripts/README.html#id1">手动分步示例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demos/agent/scripts/README.html#id2">与端到端流程的对应关系</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="demos/process_video_on_ray/data/Note.html">Note for dataset path</a></li>

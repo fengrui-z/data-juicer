@@ -514,8 +514,116 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-video-hand-reconstruction-hawor-mapper-module">
-<h1>data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-video-hand-reconstruction-hawor-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper">
+<span id="data-juicer-ops-mapper-video-hand-reconstruction-hawor-mapper-module"></span><h1>data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper.VideoHandReconstructionHaworMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper.</span></span><span class="sig-name descname"><span class="pre">VideoHandReconstructionHaworMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_hand_reconstruction_hawor_mapper.html#VideoHandReconstructionHaworMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper.VideoHandReconstructionHaworMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Use HaWoR and MoGe-2 for hand reconstruction.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper.VideoHandReconstructionHaworMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hawor_model_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'hawor.ckpt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hawor_config_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'model_config.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hawor_detector_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'detector.pt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moge_model_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Ruicheng/moge-2-vitl'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mano_right_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'path_to_mano_right_pkl'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'hand_reconstruction_hawor_tags'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'/home/runner/.cache/data_juicer/assets'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">if_output_moge_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moge_output_info_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'/home/runner/.cache/data_juicer/assets'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_hand_reconstruction_hawor_mapper.html#VideoHandReconstructionHaworMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper.VideoHandReconstructionHaworMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hawor_model_path</strong> -- The path to 'hawor.ckpt'. for the HaWoR
+model.</p></li>
+<li><p><strong>hawor_config_path</strong> -- The path to 'model_config.yaml' for the
+HaWoR model.</p></li>
+<li><p><strong>hawor_detector_path</strong> -- The path to 'detector.pt' for the HaWoR
+model.</p></li>
+<li><p><strong>moge_model_path</strong> -- The path to the Moge-2 model.</p></li>
+<li><p><strong>mano_right_path</strong> -- The path to 'MANO_RIGHT.pkl'. Users need to
+download this file from <a class="reference external" href="https://mano.is.tue.mpg.de/">https://mano.is.tue.mpg.de/</a> and comply
+with the MANO license.</p></li>
+<li><p><strong>frame_num</strong> -- The number of frames to be extracted uniformly from
+the video. If it's 1, only the middle frame will be extracted. If
+it's 2, only the first and the last frames will be extracted. If
+it's larger than 2, in addition to the first and the last frames,
+other frames will be extracted uniformly within the video duration.
+If &quot;duration&quot; &gt; 0, frame_num is the number of frames per segment.</p></li>
+<li><p><strong>duration</strong> -- The duration of each segment in seconds.
+If 0, frames are extracted from the entire video.
+If duration &gt; 0, the video is segmented into multiple segments
+based on duration, and frames are extracted from each segment.</p></li>
+<li><p><strong>thresh</strong> -- Confidence threshold for hand detection.</p></li>
+<li><p><strong>tag_field_name</strong> -- The field name to store the tags. It's
+&quot;hand_reconstruction_hawor_tags&quot; in default.</p></li>
+<li><p><strong>frame_dir</strong> -- Output directory to save extracted frames.</p></li>
+<li><p><strong>if_output_moge_info</strong> -- Whether to save the results from MoGe-2
+to an JSON file.</p></li>
+<li><p><strong>moge_output_info_dir</strong> -- Output directory for saving camera
+parameters.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper.VideoHandReconstructionHaworMapper.detect_track">
+<span class="sig-name descname"><span class="pre">detect_track</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgfiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hand_det_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thresh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span></span></span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_hand_reconstruction_hawor_mapper.html#VideoHandReconstructionHaworMapper.detect_track"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper.VideoHandReconstructionHaworMapper.detect_track" title="链接到此定义。">#</a></dt>
+<dd><p>Detects and tracks hands across a sequence of images using YOLO.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>imgfiles</strong> (<em>list</em>) -- List of image frames.</p></li>
+<li><p><strong>hand_det_model</strong> (<em>YOLO</em>) -- The initialized YOLO hand detection model.</p></li>
+<li><p><strong>thresh</strong> (<em>float</em>) -- Confidence threshold for detection.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>(list of boxes (unused in original logic), dict of tracks)</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper.VideoHandReconstructionHaworMapper.hawor_motion_estimation">
+<span class="sig-name descname"><span class="pre">hawor_motion_estimation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imgfiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tracks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_focal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_hand_reconstruction_hawor_mapper.html#VideoHandReconstructionHaworMapper.hawor_motion_estimation"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper.VideoHandReconstructionHaworMapper.hawor_motion_estimation" title="链接到此定义。">#</a></dt>
+<dd><p>Performs HAWOR 3D hand reconstruction on detected and tracked hand regions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>imgfiles</strong> (<em>list</em>) -- List of image frames.</p></li>
+<li><p><strong>tracks</strong> (<em>dict</em>) -- Dictionary mapping track ID to a list of detection objects.</p></li>
+<li><p><strong>model</strong> (<em>HAWOR</em>) -- The initialized HAWOR model.</p></li>
+<li><p><strong>img_focal</strong> (<em>float</em>) -- Camera focal length.</p></li>
+<li><p><strong>img_paths</strong> (<em>list</em>) -- List of images paths.</p></li>
+<li><p><strong>single_image</strong> (<em>bool</em>) -- Flag for single-image processing mode.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reconstructed parameters ('left' and 'right' hand results).</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper.VideoHandReconstructionHaworMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_hand_reconstruction_hawor_mapper.html#VideoHandReconstructionHaworMapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper.VideoHandReconstructionHaworMapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +646,24 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper.VideoHandReconstructionHaworMapper"><code class="docutils literal notranslate"><span class="pre">VideoHandReconstructionHaworMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper.VideoHandReconstructionHaworMapper.__init__"><code class="docutils literal notranslate"><span class="pre">VideoHandReconstructionHaworMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper.VideoHandReconstructionHaworMapper.detect_track"><code class="docutils literal notranslate"><span class="pre">VideoHandReconstructionHaworMapper.detect_track()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper.VideoHandReconstructionHaworMapper.hawor_motion_estimation"><code class="docutils literal notranslate"><span class="pre">VideoHandReconstructionHaworMapper.hawor_motion_estimation()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper.VideoHandReconstructionHaworMapper.process_single"><code class="docutils literal notranslate"><span class="pre">VideoHandReconstructionHaworMapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

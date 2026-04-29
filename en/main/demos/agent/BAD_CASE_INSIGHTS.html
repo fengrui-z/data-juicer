@@ -1,0 +1,958 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Agent 交互数据：Bad case 洞察 &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'demos/agent/BAD_CASE_INSIGHTS';</script>
+    <script src="../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../_static/icon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Bad case 自助报告（简化入口）" href="BAD_CASE_REPORT.html" />
+    <link rel="prev" title="Demos" href="../README.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../en/main/demos/agent/BAD_CASE_INSIGHTS.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../zh_CN/main/demos/agent/BAD_CASE_INSIGHTS.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../main/demos/agent/BAD_CASE_INSIGHTS.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../en/main/demos/agent/BAD_CASE_INSIGHTS.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../zh_CN/main/demos/agent/BAD_CASE_INSIGHTS.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../main/demos/agent/BAD_CASE_INSIGHTS.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../docs/tutorial/DJ-Cookbook.html">DJ-Cookbook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/tutorial/Installation.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/tutorial/QuickStart.html">Quick Start</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">docs</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../docs/Operators.html">Operator Schemas 算子提要</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/DatasetCfg.html">Dataset Configuration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/BadDataExhibition.html">“Bad” Data Exhibition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/Cache.html">Cache Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/DJ_SORA.html">DJ-SORA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/DJ_service.html">DJ_service</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/DeveloperGuide.html">How-to Guide for Developers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/Distributed.html">Distributed Data Processing in Data-Juicer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/Export.html">Dataset Export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/JobManagement.html">Job Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/PartitionAndCheckpoint.html">Partitioned Processing with Checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/Tracing.html">Data Tracing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/awesome_llm_data.html">Awesome Data-Model Co-Development of MLLMs </a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">operators</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../docs/operators/aggregator/index.html">Aggregator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/operators/deduplicator/index.html">Deduplicator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/operators/filter/index.html">Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/operators/mapper/index.html">Mapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/operators/formatter/index.html">Formatter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/operators/grouper/index.html">Grouper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/operators/selector/index.html">Selector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/operators/pipeline/index.html">Pipeline</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">demos</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../README.html">Demos</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Agent 交互数据：Bad case 洞察</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BAD_CASE_REPORT.html">Bad case 自助报告（简化入口）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PERFORMANCE_LLM.html">Agent 流水线里 LLM 算子：加速与超参</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QUICKSTART_BAD_CASE.html">Bad case 流水线：一键运行与端到端指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Agent quality &amp; bad-case docs</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="minimal_configs/README.html">Agent 流水线最小可运行配置（便于逐项调试）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scripts/README.html">Agent pipeline 后分析脚本</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../process_video_on_ray/data/Note.html">Note for dataset path</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">tools</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../tools/distributed_deduplication/README.html">Distributed Fuzzy Deduplication Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tools/evaluator/README.html">Auto Evaluation Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tools/evaluator/gpt_eval/README.html">GPT EVAL: Evaluate your model with OpenAI API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tools/evaluator/recorder/README.html">Evaluation Results Recorder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tools/fmt_conversion/README.html">Format Conversion Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tools/fmt_conversion/multimodal/README.html">Multimodal Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tools/fmt_conversion/post_tuning_dialog/README.html">Post Tuning Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tools/humanops/README.html">Label Studio Service Utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tools/mm_eval/inception_metrics/README.html">Metrics for video generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tools/mm_eval/vbench_metrics/README.html">VBench metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tools/postprocess/README.html">Postprocess tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tools/preprocess/README.html">Preprocess Tools</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">thirdparty</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../thirdparty/LLM_ecosystems/README.html">LLM Ecosystems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../thirdparty/models/README.html">Third-party Model Library</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../docs_index.html" class="nav-link">DOCS</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Agent 交互数据：Bad case 洞察</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="agent-bad-case">
+<h1>Agent 交互数据：Bad case 洞察<a class="headerlink" href="#agent-bad-case" title="Link to this heading">#</a></h1>
+<p><strong>从哪里读起</strong>：命令与排障 → <code class="docutils literal notranslate"><span class="pre">[QUICKSTART_BAD_CASE.md](QUICKSTART_BAD_CASE.md)</span></code>；仅 HTML 报告 → <code class="docutils literal notranslate"><span class="pre">[BAD_CASE_REPORT.md](BAD_CASE_REPORT.md)</span></code>；脚本参数 → <code class="docutils literal notranslate"><span class="pre">[scripts/README.md](scripts/README.md)</span></code>。总索引见 <code class="docutils literal notranslate"><span class="pre">[README.md](README.md)</span></code>。</p>
+<hr class="docutils" />
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>本文档对应数据菜谱 <code class="docutils literal notranslate"><span class="pre">agent_interaction_quality_analysis.yaml</span></code>：</p>
+<ul class="simple">
+<li><p>目标：基于交互数据，为模型和Agent（e.g.<code class="docutils literal notranslate"><span class="pre">meta.agent_request_model</span></code>）」产出<em>分层可溯源</em>线索及洞察</p></li>
+<li><p><strong>LLM 输出语言</strong>：各算子支持 kwargs <code class="docutils literal notranslate"><span class="pre">preferred_output_lang:</span> <span class="pre">zh</span> <span class="pre">|</span> <span class="pre">en</span></code>（实现见 <code class="docutils literal notranslate"><span class="pre">data_juicer/utils/agent_output_locale.py</span></code>）。全量菜谱默认 <code class="docutils literal notranslate"><span class="pre">zh</span></code> 以统一中文理由/说明；改英文流水线时在各 LLM 块改为 <code class="docutils literal notranslate"><span class="pre">en</span></code> 即可。第 10 步 insight 会将语言写入 <code class="docutils literal notranslate"><span class="pre">meta.agent_pipeline_output_lang</span></code>，供 <code class="docutils literal notranslate"><span class="pre">generate_bad_case_report.py</span> <span class="pre">--report-lang</span> <span class="pre">auto</span></code> 推断页面分档展示语言。</p></li>
+<li><p><strong>第 9 步</strong> <code class="docutils literal notranslate"><span class="pre">agent_bad_case_signal_mapper</span></code>：多源<strong>确定性</strong>信号 + 保守分层。</p></li>
+<li><p><strong>第 10 步</strong> <code class="docutils literal notranslate"><span class="pre">agent_insight_llm_mapper</span></code>（可选）：把数值 stats 与各类 LLM 评估文本<strong>二次综合</strong>成可解释 JSON（便于看板与人工质检）。</p></li>
+<li><p>覆盖隐私、agent能力、环境/工具交互、模型回复质量、任务成功率、用户满意度等信号，近40个DataJuicer算子</p></li>
+</ul>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>类别</p></td>
+<td><p>算子数</p></td>
+<td><p>核心功能</p></td>
+</tr>
+<tr class="row-odd"><td><p>数据规范化</p></td>
+<td><p>1</p></td>
+<td><p>多格式 Agent 数据结构化（messages/choices → text/dialog_history/query/response）、血缘字段写入、工具技能标签提取、超长内容截断</p></td>
+</tr>
+<tr class="row-even"><td><p>PII 处理</p></td>
+<td><p>2</p></td>
+<td><p>规则层脱敏（路径/邮件/密钥/ID/手机/身份证/OpenID 等）+ LLM 嫌疑复核，保留可溯源证据 供审计</p></td>
+</tr>
+<tr class="row-odd"><td><p>通用文本清洗</p></td>
+<td><p>2</p></td>
+<td><p>HTML 标签去除、版权声明清理</p></td>
+</tr>
+<tr class="row-even"><td><p>对话属性打标</p></td>
+<td><p>4</p></td>
+<td><p>（LLM辅助）意图识别、情感极性、话题分类、情感强度</p></td>
+</tr>
+<tr class="row-odd"><td><p>模型用量与工具标签</p></td>
+<td><p>4</p></td>
+<td><p>token 用量统计、工具调用成功/失败统计、主工具类型归纳（top-k）、工具/技能洞察短语生成（LLM）</p></td>
+</tr>
+<tr class="row-even"><td><p>对话末轮 / 轨迹质检</p></td>
+<td><p>9</p></td>
+<td><p>（LLM辅助）记忆一致性、指代消解、话题漂移、错误恢复、澄清提问质量、主动性、去重复性、Agent 轨迹连贯性、工具-任务相关性</p></td>
+</tr>
+<tr class="row-odd"><td><p>通用文本质量统计</p></td>
+<td><p>10</p></td>
+<td><p>文本长度、词数、语言置信度、字符重复率、词级重复率、特殊字符比率、停用词比率、字母数字比率、文本动作数、最大行长</p></td>
+</tr>
+<tr class="row-even"><td><p>LLM综合评分</p></td>
+<td><p>3</p></td>
+<td><p>回复质量四维 (准确性/语法/信息量/连贯性)、Agent 场景四维 (指令遵循/回复质量/有用性/安全性)、难度评估等</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bad case 分层</p></td>
+<td><p>1</p></td>
+<td><p>多信号融合保守分层（high_precision / watchlist / none），无额外 LLM 调用，基于上游 Meta 打标</p></td>
+</tr>
+<tr class="row-even"><td><p>LLM 可解释总览</p></td>
+<td><p>1</p></td>
+<td><p>对强怀疑/待观察样本自动生成自然语言根因洞察，写入 Insight 卡片供报告展示</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="agent-assistant-tool">
+<h2>Agent 对话形态：多段 assistant 与 tool<a class="headerlink" href="#agent-assistant-tool" title="Link to this heading">#</a></h2>
+<p>智能体数据<strong>不是</strong>严格的「user → assistant → user → assistant」一轮一轮交替：</p>
+<ul class="simple">
+<li><p>常见模式：<code class="docutils literal notranslate"><span class="pre">user</span></code> → 若干次 <code class="docutils literal notranslate"><span class="pre">(assistant</span> <span class="pre">+</span> <span class="pre">tool_calls)</span> <span class="pre">→</span> <span class="pre">tool</span> <span class="pre">→</span> <span class="pre">assistant</span> <span class="pre">→</span> <span class="pre">tool</span> <span class="pre">→</span> <span class="pre">…</span></code> → 最终 assistant 文本或下一轮 <code class="docutils literal notranslate"><span class="pre">user</span></code>。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">**agent_dialog_normalize_mapper</span></code>** 将 <code class="docutils literal notranslate"><span class="pre">messages</span></code> 压成 <code class="docutils literal notranslate"><span class="pre">dialog_history</span></code> / <code class="docutils literal notranslate"><span class="pre">query</span></code> / <code class="docutils literal notranslate"><span class="pre">response</span></code> / <code class="docutils literal notranslate"><span class="pre">text</span></code> 时，对<strong>同一 user 回合内多段 assistant</strong> 必须<strong>拼接保留</strong>（含 tool summary）；可选 <code class="docutils literal notranslate"><span class="pre">**history_*_max_chars</span></code>** 对 tool/助手侧做<strong>首尾保留 + 明确的中段省略标记</strong>写回（与仅 prompt 截断不同），并打 <code class="docutils literal notranslate"><span class="pre">**meta.agent_dialog_history_compressed</span></code><strong>。否则下游 <code class="docutils literal notranslate"><span class="pre">**llm_quality_score_filter</span></code> / <code class="docutils literal notranslate"><span class="pre">llm_analysis_filter</span></code></strong> 只看到最后一次助手片段，容易误判「没干活」或「偏题」。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">**tool_success_tagger_mapper**</span></code> 按 <strong>每条 <code class="docutils literal notranslate"><span class="pre">role=tool</span></code> 消息</strong>计数；<code class="docutils literal notranslate"><span class="pre">failed</span></code> / <code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">such</span> <span class="pre">file</span></code> 等会记 <strong>fail</strong>。在探索性策略里单次失败可能随后被纠正——第 9 步提供 <code class="docutils literal notranslate"><span class="pre">**min_tool_fail_count_for_signal</span></code><strong>（默认 1；菜谱可调到 2+）再抬 <code class="docutils literal notranslate"><span class="pre">tool_message_error_pattern</span></code>，并与 <code class="docutils literal notranslate"><span class="pre">**meta.tool_unknown_count</span></code></strong>（无法-regex 分类的 tool 行）一起看。</p></li>
+<li><p><strong>Dialog 打标算子</strong>（意图/情感/主题/强度）在内存里用 <code class="docutils literal notranslate"><span class="pre">build_dialog_turns_for_prompt</span></code> 合并 <code class="docutils literal notranslate"><span class="pre">dialog_history</span></code> 与 <code class="docutils literal notranslate"><span class="pre">query</span></code>/<code class="docutils literal notranslate"><span class="pre">response</span></code>，<em>不原地修改</em> <code class="docutils literal notranslate"><span class="pre">dialog_history</span></code>；末轮与 normalize 一致时<em>不重复追加</em>，避免历史被污染、API 轮次翻倍。</p></li>
+</ul>
+</section>
+<section id="normalize">
+<h2>数据血缘字段（normalize 自动写入）<a class="headerlink" href="#normalize" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>原始字段</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">meta</span></code> 键</p></th>
+<th class="head"><p>用途</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">request_model</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">agent_request_model</span></code></p></td>
+<td><p>按模型 cohort 分层、A/B</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pt</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">agent_pt</span></code></p></td>
+<td><p>同一时间桶 / 版本窗对比</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">total_cost_time</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">agent_total_cost_time_ms</span></code></p></td>
+<td><p>与 token 等一起看「贵不贵」</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="upstream-9-pipeline">
+<h2>Upstream 信号覆盖（第 9 步尽量吃满 pipeline）<a class="headerlink" href="#upstream-9-pipeline" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">agent_bad_case_signal_mapper</span></code> 在样本上读取（<strong>有则参与，无则跳过</strong>）：</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>来源</p></th>
+<th class="head"><p>字段</p></th>
+<th class="head"><p>默认行为</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tool_success_tagger_mapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tool_fail_count</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">high</span></code>：<code class="docutils literal notranslate"><span class="pre">tool_message_error_pattern</span></code>（需 fail ≥ <code class="docutils literal notranslate"><span class="pre">min_tool_fail_count_for_signal</span></code>）</p></td>
+</tr>
+<tr class="row-odd"><td><p>同上</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tool_unknown_count</span></code></p></td>
+<td><p>不参与 ratio；供排查「工具返回非典型文本/JSON」</p></td>
+</tr>
+<tr class="row-even"><td><p>同上</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tool_success_ratio</span></code> + 轮次数</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">medium</span></code>：比例过低（≥<code class="docutils literal notranslate"><span class="pre">min_tool_rounds_for_ratio_signal</span></code> 轮；分母不含 unknown）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">usage_counter_mapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">total_tokens</span></code> 等</p></td>
+<td><p>默认对相同 <code class="docutils literal notranslate"><span class="pre">(prompt,</span> <span class="pre">completion,</span> <span class="pre">total)</span></code> 快照去重后再汇总，避免 <code class="docutils literal notranslate"><span class="pre">response_usage</span></code> 与 <code class="docutils literal notranslate"><span class="pre">choices[].usage</span></code> 重复；可选绝对阈值 → <code class="docutils literal notranslate"><span class="pre">medium</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>normalize 血缘</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">agent_total_cost_time_ms</span></code></p></td>
+<td><p>可选绝对阈值 → <code class="docutils literal notranslate"><span class="pre">medium</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">llm_analysis_filter</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">llm_analysis_score</span></code> + <code class="docutils literal notranslate"><span class="pre">llm_analysis_record.recommendation</span></code></p></td>
+<td><p>discard + 低分 → <code class="docutils literal notranslate"><span class="pre">high</span></code>/<code class="docutils literal notranslate"><span class="pre">medium</span></code>（可 <code class="docutils literal notranslate"><span class="pre">*_discard_must_be_strict</span></code>）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">llm_quality_score_filter</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">llm_quality_score</span></code> + <code class="docutils literal notranslate"><span class="pre">llm_quality_record</span></code></p></td>
+<td><p>同上，信号码 <code class="docutils literal notranslate"><span class="pre">llm_reply_quality_eval_low</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dialog_sentiment_detection_mapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dialog_sentiment_labels</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">signal_on_negative_sentiment_hint</span></code> 开启时 → <code class="docutils literal notranslate"><span class="pre">medium</span></code>（易噪，报告里归「附录」类）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">perplexity_filter</span></code> + <code class="docutils literal notranslate"><span class="pre">stats.perplexity</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">stats.perplexity</span></code></p></td>
+<td><p><strong>可选</strong>：KenLM；默认菜谱为关闭状态 filter + <code class="docutils literal notranslate"><span class="pre">signal_on_high_perplexity:</span> <span class="pre">false</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">llm_difficulty_score_filter</span></code> + quality</p></td>
+<td><p>difficulty + <code class="docutils literal notranslate"><span class="pre">llm_quality_score</span></code></p></td>
+<td><p><strong>默认关</strong>；<code class="docutils literal notranslate"><span class="pre">signal_hard_query_poor_reply</span></code> → <code class="docutils literal notranslate"><span class="pre">medium</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>§5b 对话/轨迹质检算子</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">meta</span></code> 中各 <code class="docutils literal notranslate"><span class="pre">dialog_*</span></code>、<code class="docutils literal notranslate"><span class="pre">agent_trace_coherence</span></code>、<code class="docutils literal notranslate"><span class="pre">agent_tool_relevance</span></code>（1–5）</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">signal_on_low_dialog_quality_meta</span></code>：任一条目 <code class="docutils literal notranslate"><span class="pre">score</span> <span class="pre">≤</span> <span class="pre">threshold</span></code> 的轴数达标 → <code class="docutils literal notranslate"><span class="pre">medium</span></code>：<code class="docutils literal notranslate"><span class="pre">dialog_turn_quality_meta_low</span></code>（读已有 meta，<strong>无额外 LLM</strong>）</p></td>
+</tr>
+<tr class="row-odd"><td><p>文本</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">query</span></code> / <code class="docutils literal notranslate"><span class="pre">response</span></code></p></td>
+<td><p>长 query + 极短回复 → <code class="docutils literal notranslate"><span class="pre">medium</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>分层：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">**meta.agent_bad_case_signals</span></code>**：<code class="docutils literal notranslate"><span class="pre">{code,</span> <span class="pre">detail,</span> <span class="pre">weight}</span></code>。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">**meta.agent_bad_case_tier</span></code>**（机器枚举，jq 仍用英文）：<code class="docutils literal notranslate"><span class="pre">high_precision</span></code> | <code class="docutils literal notranslate"><span class="pre">watchlist</span></code> | <code class="docutils literal notranslate"><span class="pre">none</span></code>。</p>
+<ul>
+<li><p>报告中译为 <strong>强怀疑（主证据）</strong> / <strong>待观察（弱证据）</strong> / <strong>未标记</strong>；<code class="docutils literal notranslate"><span class="pre">**high_precision</span></code> 不是「模型精度高」**，而是「强怀疑、建议优先复核」。</p></li>
+<li><p>长 agent 轨迹易出现 <strong>多次 tool 返回含 error 模式</strong>：若 <code class="docutils literal notranslate"><span class="pre">**high_precision_on_tool_fail_alone:</span> <span class="pre">false</span></code><strong>（全量菜谱默认），仅凭 tool 计数</strong>不会<strong>单独升强怀疑档；可调 <code class="docutils literal notranslate"><span class="pre">**min_tool_fail_count_for_signal</span></code></strong> 控制何时打出 tool 信号。</p></li>
+</ul>
+</li>
+</ul>
+<p>YAML 中请将 <code class="docutils literal notranslate"><span class="pre">**llm_analysis_discard_must_be_strict**</span></code> / <code class="docutils literal notranslate"><span class="pre">**llm_text_quality_discard_must_be_strict**</span></code> 保持为 <code class="docutils literal notranslate"><span class="pre">true</span></code>，避免把 <code class="docutils literal notranslate"><span class="pre">review</span></code> 当坏样本。</p>
+</section>
+<section id="agent-insight-llm-mapper-auto-analyst">
+<h2>第 10 步：<code class="docutils literal notranslate"><span class="pre">agent_insight_llm_mapper</span></code>（auto-analyst）<a class="headerlink" href="#agent-insight-llm-mapper-auto-analyst" title="Link to this heading">#</a></h2>
+<p>把<strong>一条样本</strong>打包为 JSON（token、工具、意图/主题/情感标签、三路 LLM eval 摘要、<code class="docutils literal notranslate"><span class="pre">**dialog_quality_llm</span></code><strong>（§5b 各轴 1–5 分与短 reason 摘要）、<code class="docutils literal notranslate"><span class="pre">agent_bad_case_*</span></code>、query/response 截断预览），调用 API 模型输出</strong>严格 JSON**：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">headline</span></code>：一句话中文总览（适合卡片）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">root_causes</span></code>：<code class="docutils literal notranslate"><span class="pre">factor</span></code> + <code class="docutils literal notranslate"><span class="pre">confidence</span></code> + <code class="docutils literal notranslate"><span class="pre">cited_fields</span></code>（必须来自输入 JSON 的键路径）+ <code class="docutils literal notranslate"><span class="pre">rationale_one_line</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">narrative_alignment</span></code>：数值与文字 rationales 是否一致</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">human_review_priority</span></code>：<code class="docutils literal notranslate"><span class="pre">P0</span></code>–<code class="docutils literal notranslate"><span class="pre">P3</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">viz_facets</span></code>：建议切片维度</p></li>
+</ul>
+<p>写入 <code class="docutils literal notranslate"><span class="pre">**meta.agent_insight_llm</span></code><strong>；解析失败时仍有占位结构，原文在 <code class="docutils literal notranslate"><span class="pre">**meta.agent_insight_llm_raw</span></code></strong>。</p>
+<p><strong>成本控制</strong>：菜谱默认 <code class="docutils literal notranslate"><span class="pre">run_for_tiers:</span> <span class="pre">[high_precision,</span> <span class="pre">watchlist]</span></code>；要对全量跑可删掉该字段（等价于 <code class="docutils literal notranslate"><span class="pre">null</span></code> = 全部）。</p>
+</section>
+<section id="id1">
+<h2>为何不强依赖「用户不满意」单一视角<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>硬证据优先</strong>：工具 error 模式、<code class="docutils literal notranslate"><span class="pre">tool_fail_count</span></code>。</p></li>
+<li><p><strong>LLM 评估</strong>：discard + 极低分才抬 <code class="docutils literal notranslate"><span class="pre">high_precision</span></code>。</p></li>
+<li><p><strong>成本 / 长尾</strong>：用 <code class="docutils literal notranslate"><span class="pre">demos/agent/scripts/compute_percentile_thresholds.py</span></code> 算 P90/P95；可 <code class="docutils literal notranslate"><span class="pre">**--write-calibration</span></code>** 生成 JSON，在 <code class="docutils literal notranslate"><span class="pre">agent_bad_case_signal_mapper</span></code> 中设 <code class="docutils literal notranslate"><span class="pre">**auto_calibrate_thresholds:</span> <span class="pre">true</span></code>** 与 <code class="docutils literal notranslate"><span class="pre">**calibration_json_path</span></code>**，按 <code class="docutils literal notranslate"><span class="pre">meta.agent_request_model</span></code> 自动合并 <code class="docutils literal notranslate"><span class="pre">default</span></code> 与 <code class="docutils literal notranslate"><span class="pre">by_request_model</span></code> 的阈值（token / 延迟 / perplexity）。默认 <code class="docutils literal notranslate"><span class="pre">**calibration_manual_overrides_auto:</span> <span class="pre">true**</span></code>：YAML 里显式写的 <code class="docutils literal notranslate"><span class="pre">max_*</span></code> / perplexity 仍优先于文件；设为 <code class="docutils literal notranslate"><span class="pre">false</span></code> 则优先用校准文件。</p></li>
+</ol>
+</section>
+<section id="model-pt">
+<h2>深挖思路（按 model / pt）<a class="headerlink" href="#model-pt" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>跨模型</strong>：同一意图桶、同一工具族，对比 <code class="docutils literal notranslate"><span class="pre">llm_analysis_score</span></code>、<code class="docutils literal notranslate"><span class="pre">llm_quality_score</span></code>、token、tool 失败率。</p></li>
+<li><p><strong>跨 <code class="docutils literal notranslate"><span class="pre">pt</span></code></strong>：同一模型下看 P50/P90 与 <code class="docutils literal notranslate"><span class="pre">high_precision</span></code> 占比漂移。</p></li>
+<li><p><strong>组合</strong>：优先 <strong>AND</strong> 多条独立证据。</p></li>
+</ul>
+</section>
+<section id="pipeline">
+<h2>Pipeline 之后的分析脚本<a class="headerlink" href="#pipeline" title="Link to this heading">#</a></h2>
+<p>见 <code class="docutils literal notranslate"><span class="pre">**demos/agent/scripts/README.md</span></code>**：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">compute_percentile_thresholds.py</span></code>：分位数报告；<code class="docutils literal notranslate"><span class="pre">--write-calibration</span></code> → 自动阈值 JSON。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">analyze_bad_case_cohorts.py</span></code>：按 model / pt / tier 汇总并可选 CSV。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">slice_export_by_tier.py</span></code>：按 tier（及可选 model）导出子集 jsonl。</p></li>
+</ul>
+</section>
+<section id="jq">
+<h2>jq 快速筛选<a class="headerlink" href="#jq" title="Link to this heading">#</a></h2>
+<p>Data-Juicer 导出里 <code class="docutils literal notranslate"><span class="pre">**meta</span></code> 字段名为 <code class="docutils literal notranslate"><span class="pre">__dj__meta__</span></code><strong>（见 <code class="docutils literal notranslate"><span class="pre">data_juicer.utils.constant.Fields</span></code>）。若配置 <code class="docutils literal notranslate"><span class="pre">**keep_stats_in_res_ds:</span> <span class="pre">true</span></code></strong>（本仓库 agent 菜谱已默认），主 <code class="docutils literal notranslate"><span class="pre">processed.jsonl</span></code> 每行自带该字段；否则 meta 仅在同级 <code class="docutils literal notranslate"><span class="pre">**processed_stats.jsonl**</span></code>，可用 <code class="docutils literal notranslate"><span class="pre">demos/agent/scripts/dj_export_row.py</span></code> 的合并逻辑或后处理脚本（<code class="docutils literal notranslate"><span class="pre">verify</span></code> / <code class="docutils literal notranslate"><span class="pre">analyze</span></code> / <code class="docutils literal notranslate"><span class="pre">slice</span></code> / <code class="docutils literal notranslate"><span class="pre">compute_percentile</span></code> 已自动按行合并 <code class="docutils literal notranslate"><span class="pre">_stats</span></code> 文件）。</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jq<span class="w"> </span><span class="s1">&#39;select(.&quot;__dj__meta__&quot;.agent_bad_case_tier==&quot;high_precision&quot; and .&quot;__dj__meta__&quot;.agent_request_model==&quot;qwen3-max&quot;)&#39;</span><span class="w"> </span>processed.jsonl<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+jq<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;.&quot;__dj__meta__&quot;.agent_insight_llm.headline, .&quot;__dj__meta__&quot;.agent_bad_case_signals&#39;</span><span class="w"> </span>processed.jsonl<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>相关算子<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tool_success_tagger_mapper</span></code>、<code class="docutils literal notranslate"><span class="pre">usage_counter_mapper</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">llm_analysis_filter</span></code>、<code class="docutils literal notranslate"><span class="pre">llm_quality_score_filter</span></code>、<code class="docutils literal notranslate"><span class="pre">llm_difficulty_score_filter</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">agent_bad_case_signal_mapper</span></code>、<code class="docutils literal notranslate"><span class="pre">agent_insight_llm_mapper</span></code></p></li>
+</ul>
+<p>若需 <strong>按 session 聚合</strong> 再判坏，请在数据中带 <code class="docutils literal notranslate"><span class="pre">session_id</span></code> 并在分析脚本中 groupby；当前算子为<strong>逐条样本</strong>。</p>
+<p><strong>维护 / 合入上游</strong>：pre-commit、<code class="docutils literal notranslate"><span class="pre">docs/Operators.md</span></code>、归因表与单测清单见 <code class="docutils literal notranslate"><span class="pre">[README.md](README.md)</span></code> 中的 <strong>「合入 main 前（维护者速查）」</strong>。</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../README.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Demos</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="BAD_CASE_REPORT.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Bad case 自助报告（简化入口）</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#agent-assistant-tool">Agent 对话形态：多段 assistant 与 tool</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#normalize">数据血缘字段（normalize 自动写入）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#upstream-9-pipeline">Upstream 信号覆盖（第 9 步尽量吃满 pipeline）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#agent-insight-llm-mapper-auto-analyst">第 10 步：<code class="docutils literal notranslate"><span class="pre">agent_insight_llm_mapper</span></code>（auto-analyst）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">为何不强依赖「用户不满意」单一视角</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-pt">深挖思路（按 model / pt）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline">Pipeline 之后的分析脚本</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#jq">jq 快速筛选</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">相关算子</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/demos/agent/BAD_CASE_INSIGHTS.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

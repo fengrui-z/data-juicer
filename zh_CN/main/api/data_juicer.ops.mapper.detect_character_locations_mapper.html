@@ -514,8 +514,68 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-detect-character-locations-mapper-module">
-<h1>data_juicer.ops.mapper.detect_character_locations_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-detect-character-locations-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.detect_character_locations_mapper">
+<span id="data-juicer-ops-mapper-detect-character-locations-mapper-module"></span><h1>data_juicer.ops.mapper.detect_character_locations_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.detect_character_locations_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.detect_character_locations_mapper.DetectCharacterLocationsMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.detect_character_locations_mapper.</span></span><span class="sig-name descname"><span class="pre">DetectCharacterLocationsMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/detect_character_locations_mapper.html#DetectCharacterLocationsMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.detect_character_locations_mapper.DetectCharacterLocationsMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Given an image and a list of main character names, extract the bounding boxes for each present character.</p>
+<p>Detects and extracts bounding boxes for main characters in an image, this operator uses
+a YOLOE model to detect the presence of these characters. It then generates and refines
+bounding boxes for each detected character using a multimodal language model and an
+image-text matching filter. The final bounding boxes are stored in the metadata under
+'main_character_locations_list'. The operator considers two bounding boxes as
+overlapping if their Intersection over Union (IoU) score exceeds a specified threshold.
+Additionally, it uses a matching score threshold to determine if a cropped image region
+matches the character's name. The operator utilizes a Hugging Face tokenizer and a BLIP
+model for image-text matching.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.detect_character_locations_mapper.DetectCharacterLocationsMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mllm_mapper_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_text_matching_filter_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yoloe_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'yoloe-11l-seg.pt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iou_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matching_score_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/detect_character_locations_mapper.html#DetectCharacterLocationsMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.detect_character_locations_mapper.DetectCharacterLocationsMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mllm_mapper_args</strong> -- Arguments for multimodal language model mapper.
+Controls the generation of captions for bounding box regions. Default empty dict
+will use fixed values: max_new_tokens=256, temperature=0.2, top_p=None,
+num_beams=1, hf_model=&quot;llava-hf/llava-v1.6-vicuna-7b-hf&quot;.</p></li>
+<li><p><strong>image_text_matching_filter_args</strong> -- Arguments for image-text matching filter.
+Controls the matching between cropped image regions and text descriptions.
+Default empty dict will use fixed values: min_score=0.1, max_score=1.0,
+hf_blip=&quot;Salesforce/blip-itm-base-coco&quot;, num_proc=1.</p></li>
+<li><p><strong>yoloe_path</strong> -- The path to the YOLOE model.</p></li>
+<li><p><strong>iou_threshold</strong> -- We consider two bounding boxes from different models to be overlapping
+when their IOU score is higher than the iou_threshold.</p></li>
+<li><p><strong>matching_score_threshold</strong> -- If the matching score between the cropped image and the
+character's name exceeds the matching_score_threshold, they are considered a match.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.detect_character_locations_mapper.DetectCharacterLocationsMapper.iou_cal">
+<span class="sig-name descname"><span class="pre">iou_cal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bbox1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/detect_character_locations_mapper.html#DetectCharacterLocationsMapper.iou_cal"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.detect_character_locations_mapper.DetectCharacterLocationsMapper.iou_cal" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.detect_character_locations_mapper.DetectCharacterLocationsMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/detect_character_locations_mapper.html#DetectCharacterLocationsMapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.detect_character_locations_mapper.DetectCharacterLocationsMapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +598,23 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.detect_character_locations_mapper.DetectCharacterLocationsMapper"><code class="docutils literal notranslate"><span class="pre">DetectCharacterLocationsMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.detect_character_locations_mapper.DetectCharacterLocationsMapper.__init__"><code class="docutils literal notranslate"><span class="pre">DetectCharacterLocationsMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.detect_character_locations_mapper.DetectCharacterLocationsMapper.iou_cal"><code class="docutils literal notranslate"><span class="pre">DetectCharacterLocationsMapper.iou_cal()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.detect_character_locations_mapper.DetectCharacterLocationsMapper.process_single"><code class="docutils literal notranslate"><span class="pre">DetectCharacterLocationsMapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

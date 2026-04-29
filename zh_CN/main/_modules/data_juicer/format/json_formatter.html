@@ -513,7 +513,15 @@
                 <article class="bd-article">
                   
   <h1>data_juicer.format.json_formatter 源代码</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">.formatter</span><span class="w"> </span><span class="kn">import</span> <span class="n">FORMATTERS</span><span class="p">,</span> <span class="n">LocalFormatter</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.format.formatter</span><span class="w"> </span><span class="kn">import</span> <span class="n">FORMATTERS</span><span class="p">,</span> <span class="n">LocalFormatter</span><span class="p">,</span> <span class="n">unify_format</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.jsonl_lenient_loader</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">JSONL_LENIENT_EXTENSIONS</span><span class="p">,</span>
+    <span class="n">dataset_from_lenient_jsonl_files</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="JsonFormatter">
@@ -521,12 +529,23 @@
 <span class="nd">@FORMATTERS</span><span class="o">.</span><span class="n">register_module</span><span class="p">()</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">JsonFormatter</span><span class="p">(</span><span class="n">LocalFormatter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The class is used to load and format json-type files.</span>
+<span class="sd">    Load json-type files.</span>
 
-<span class="sd">    Default suffixes is `[&#39;.json&#39;, &#39;.jsonl&#39;, &#39;.json.gz&#39;, &#39;.jsonl.gz&#39;, &#39;.json.zst&#39;, &#39;.jsonl.zst&#39;]`</span>
+<span class="sd">    Default suffixes include ``.json``, ``.jsonl``, gzip/zstd variants.</span>
+
+<span class="sd">    Optional lenient JSONL: ``load_jsonl_lenient: true`` or env</span>
+<span class="sd">    ``DATA_JUICER_JSONL_LENIENT=1`` streams jsonl-only inputs with stdlib</span>
+<span class="sd">    :func:`json.loads`, skipping bad lines (avoids HF ujson for those files).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">SUFFIXES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="s2">&quot;.jsonl&quot;</span><span class="p">,</span> <span class="s2">&quot;.json.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;.jsonl.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;.json.zst&quot;</span><span class="p">,</span> <span class="s2">&quot;.jsonl.zst&quot;</span><span class="p">]</span>
+    <span class="n">SUFFIXES</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;.json&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.jsonl&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.json.gz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.jsonl.gz&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.json.zst&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;.jsonl.zst&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
 
 <div class="viewcode-block" id="JsonFormatter.__init__">
 <a class="viewcode-back" href="../../../api/data_juicer.format.json_formatter.html#data_juicer.format.JsonFormatter.__init__">[文档]</a>
@@ -543,6 +562,67 @@
             <span class="n">suffixes</span><span class="o">=</span><span class="n">suffixes</span> <span class="k">if</span> <span class="n">suffixes</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">SUFFIXES</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="JsonFormatter.load_dataset">
+<a class="viewcode-back" href="../../../api/data_juicer.format.json_formatter.html#data_juicer.format.JsonFormatter.load_dataset">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">global_cfg</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">env_key</span> <span class="o">=</span> <span class="s2">&quot;DATA_JUICER_JSONL_LENIENT&quot;</span>
+        <span class="n">env_raw</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">env_key</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">lenient_env</span> <span class="o">=</span> <span class="n">env_raw</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="s2">&quot;on&quot;</span><span class="p">)</span>
+        <span class="n">lenient_cfg</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">global_cfg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">lenient_cfg</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">global_cfg</span><span class="p">,</span> <span class="s2">&quot;load_jsonl_lenient&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="n">lenient</span> <span class="o">=</span> <span class="n">lenient_cfg</span> <span class="ow">or</span> <span class="n">lenient_env</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">lenient</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">num_proc</span><span class="p">,</span> <span class="n">global_cfg</span><span class="p">)</span>
+
+        <span class="c1"># Stream jsonl shards only; skipping .json avoids HF/ujson &quot;too big&quot;.</span>
+        <span class="n">jsonl_only_files</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">skipped_by_ext</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">ext</span><span class="p">,</span> <span class="n">paths</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">JSONL_LENIENT_EXTENSIONS</span><span class="p">:</span>
+                <span class="n">jsonl_only_files</span><span class="p">[</span><span class="n">ext</span><span class="p">]</span> <span class="o">=</span> <span class="n">paths</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">skipped_by_ext</span><span class="p">[</span><span class="n">ext</span><span class="p">]</span> <span class="o">=</span> <span class="n">paths</span>
+        <span class="k">if</span> <span class="n">skipped_by_ext</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ext</span><span class="p">,</span> <span class="n">paths</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">skipped_by_ext</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;[lenient jsonl] Ignoring </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> file(s) </span><span class="si">{</span><span class="n">ext</span><span class="si">!r}</span><span class="s2">; &quot;</span> <span class="sa">f</span><span class="s2">&quot;lenient mode only reads jsonl* shards.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">file_ext_pairs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ext</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">jsonl_only_files</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="k">for</span> <span class="n">fp</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+                <span class="n">file_ext_pairs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">fp</span><span class="p">,</span> <span class="n">ext</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">file_ext_pairs</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;[lenient jsonl] No .jsonl/.jsonl.gz/.jsonl.zst matched; &quot;</span> <span class="s2">&quot;using default HuggingFace JSON loader.&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">num_proc</span><span class="p">,</span> <span class="n">global_cfg</span><span class="p">)</span>
+
+        <span class="n">nsh</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_ext_pairs</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[lenient jsonl] ACTIVE: streaming </span><span class="si">{</span><span class="n">nsh</span><span class="si">}</span><span class="s2"> jsonl shard(s) &quot;</span> <span class="sa">f</span><span class="s2">&quot;with stdlib json (bad lines skipped).&quot;</span><span class="p">)</span>
+
+        <span class="n">_num_proc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;num_proc&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">num_proc_eff</span> <span class="o">=</span> <span class="n">num_proc</span> <span class="ow">or</span> <span class="n">_num_proc</span>
+        <span class="k">if</span> <span class="n">num_proc_eff</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;[lenient jsonl] Single-threaded load; ignoring num_proc&gt;1.&quot;</span><span class="p">)</span>
+
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">dataset_from_lenient_jsonl_files</span><span class="p">(</span>
+            <span class="n">file_ext_pairs</span><span class="p">,</span>
+            <span class="n">add_suffix_column</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_suffix</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">unify_format</span><span class="p">(</span>
+            <span class="n">ds</span><span class="p">,</span>
+            <span class="n">text_keys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">text_keys</span><span class="p">,</span>
+            <span class="n">num_proc</span><span class="o">=</span><span class="n">num_proc_eff</span><span class="p">,</span>
+            <span class="n">global_cfg</span><span class="o">=</span><span class="n">global_cfg</span><span class="p">,</span>
         <span class="p">)</span></div>
 </div>
 

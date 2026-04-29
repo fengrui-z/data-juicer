@@ -514,8 +514,58 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-extract-tables-from-html-mapper-module">
-<h1>data_juicer.ops.mapper.extract_tables_from_html_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-extract-tables-from-html-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.extract_tables_from_html_mapper">
+<span id="data-juicer-ops-mapper-extract-tables-from-html-mapper-module"></span><h1>data_juicer.ops.mapper.extract_tables_from_html_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.extract_tables_from_html_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_tables_from_html_mapper.ExtractTablesFromHtmlMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.extract_tables_from_html_mapper.</span></span><span class="sig-name descname"><span class="pre">ExtractTablesFromHtmlMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/extract_tables_from_html_mapper.html#ExtractTablesFromHtmlMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.extract_tables_from_html_mapper.ExtractTablesFromHtmlMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Extracts tables from HTML content and stores them in a specified field.</p>
+<p>This operator processes HTML content to extract tables. It can either retain or remove
+HTML tags based on the <cite>retain_html_tags</cite> parameter. If <cite>retain_html_tags</cite> is False, it
+can also include or exclude table headers based on the <cite>include_header</cite> parameter. The
+extracted tables are stored in the <cite>tables_field_name</cite> field within the sample's
+metadata. If no tables are found, an empty list is stored. If the tables have already
+been extracted, the operator will not reprocess the sample.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_tables_from_html_mapper.ExtractTablesFromHtmlMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tables_field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'html_tables'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retain_html_tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/extract_tables_from_html_mapper.html#ExtractTablesFromHtmlMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.extract_tables_from_html_mapper.ExtractTablesFromHtmlMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.
+:param tables_field_name: Field name to store the extracted tables.
+:param retain_html_tags: If True, retains HTML tags in the tables;</p>
+<blockquote>
+<div><p>otherwise, removes them.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>include_header</strong> -- <dl class="simple">
+<dt>If True, includes the table header;</dt><dd><p>otherwise, excludes it.</p>
+</dd>
+<dt>This parameter is effective</dt><dd><p>only when <cite>retain_html_tags</cite> is False</p>
+</dd>
+</dl>
+<p>and applies solely to the extracted table content.</p>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.extract_tables_from_html_mapper.ExtractTablesFromHtmlMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/extract_tables_from_html_mapper.html#ExtractTablesFromHtmlMapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.extract_tables_from_html_mapper.ExtractTablesFromHtmlMapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +588,22 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_tables_from_html_mapper.ExtractTablesFromHtmlMapper"><code class="docutils literal notranslate"><span class="pre">ExtractTablesFromHtmlMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_tables_from_html_mapper.ExtractTablesFromHtmlMapper.__init__"><code class="docutils literal notranslate"><span class="pre">ExtractTablesFromHtmlMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.extract_tables_from_html_mapper.ExtractTablesFromHtmlMapper.process_single"><code class="docutils literal notranslate"><span class="pre">ExtractTablesFromHtmlMapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

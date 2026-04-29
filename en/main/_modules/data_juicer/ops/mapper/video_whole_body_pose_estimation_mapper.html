@@ -514,7 +514,6 @@
   <h1>Source code for data_juicer.ops.mapper.video_whole_body_pose_estimation_mapper</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">PositiveInt</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">data_juicer</span>
@@ -593,6 +592,8 @@
             <span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="n">duration</span><span class="p">,</span>
             <span class="s2">&quot;frame_dir&quot;</span><span class="p">:</span> <span class="n">frame_dir</span><span class="p">,</span>
             <span class="s2">&quot;frame_key&quot;</span><span class="p">:</span> <span class="n">MetaKeys</span><span class="o">.</span><span class="n">video_frames</span><span class="p">,</span>
+            <span class="s2">&quot;num_proc&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># Disable multiprocessing to avoid nested process pool issue</span>
+            <span class="s2">&quot;auto_op_parallelism&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># Disable auto parallelism to avoid nested process pool issue</span>
         <span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fused_ops</span> <span class="o">=</span> <span class="n">load_ops</span><span class="p">([{</span><span class="s2">&quot;video_extract_frames_mapper&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_extract_frames_mapper_args</span><span class="p">}])</span>
 
@@ -657,6 +658,7 @@
             <span class="n">bbox_results_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bbox_results</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">if_save_visualization</span><span class="p">:</span>
+                <span class="n">plt</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;matplotlib.pyplot&quot;</span><span class="p">)</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">frame_dir_for_temp_video</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;temp_frame_pose_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">temp_frame_id</span><span class="p">)</span><span class="si">}</span><span class="s2">.jpg&quot;</span><span class="p">),</span> <span class="n">draw_pose</span>
                 <span class="p">)</span>

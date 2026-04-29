@@ -514,8 +514,70 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-generate-qa-from-text-mapper-module">
-<h1>data_juicer.ops.mapper.generate_qa_from_text_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-generate-qa-from-text-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.generate_qa_from_text_mapper">
+<span id="data-juicer-ops-mapper-generate-qa-from-text-mapper-module"></span><h1>data_juicer.ops.mapper.generate_qa_from_text_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.generate_qa_from_text_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.generate_qa_from_text_mapper.GenerateQAFromTextMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.generate_qa_from_text_mapper.</span></span><span class="sig-name descname"><span class="pre">GenerateQAFromTextMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/generate_qa_from_text_mapper.html#GenerateQAFromTextMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.generate_qa_from_text_mapper.GenerateQAFromTextMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Generates question and answer pairs from text using a specified model.</p>
+<p>This operator uses a Hugging Face model to generate QA pairs from the input text. It
+supports both Hugging Face and vLLM models for inference. The recommended models, such
+as 'alibaba-pai/pai-llama3-8b-doc2qa', are trained on Chinese data and are suitable for
+Chinese text. The operator can limit the number of generated QA pairs per text and
+allows custom output patterns for parsing the model's response. By default, it uses a
+regular expression to extract questions and answers from the model's output. If no QA
+pairs are extracted, a warning is logged.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.generate_qa_from_text_mapper.GenerateQAFromTextMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hf_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'alibaba-pai/pai-qwen1_5-7b-doc2qa'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="仅关键字参数分隔符 (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_vllm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/generate_qa_from_text_mapper.html#GenerateQAFromTextMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.generate_qa_from_text_mapper.GenerateQAFromTextMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hf_model</strong> -- Huggingface model ID.</p></li>
+<li><p><strong>max_num</strong> -- The max num of returned QA sample for each text.
+Not limit if it is None.</p></li>
+<li><p><strong>output_pattern</strong> -- Regular expression pattern to extract
+questions and answers from model response.</p></li>
+<li><p><strong>enable_vllm</strong> -- Whether to use vllm for inference acceleration.</p></li>
+<li><p><strong>model_params</strong> -- Parameters for initializing the model.</p></li>
+<li><p><strong>sampling_params</strong> -- Sampling parameters for text generation,
+e.g {'temperature': 0.9, 'top_p': 0.95}</p></li>
+<li><p><strong>kwargs</strong> -- Extra keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The default data format parsed by this interface is as follows:
+Model Input:</p>
+<blockquote>
+<div><p>蒙古国的首都是乌兰巴托（Ulaanbaatar）
+冰岛的首都是雷克雅未克（Reykjavik）</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Model Output:</dt><dd><p>蒙古国的首都是乌兰巴托（Ulaanbaatar）
+冰岛的首都是雷克雅未克（Reykjavik）
+Human: 请问蒙古国的首都是哪里？
+Assistant: 你好，根据提供的信息，蒙古国的首都是乌兰巴托（Ulaanbaatar）。
+Human: 冰岛的首都是哪里呢？
+Assistant: 冰岛的首都是雷克雅未克（Reykjavik）。
+...</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.generate_qa_from_text_mapper.GenerateQAFromTextMapper.parse_output">
+<span class="sig-name descname"><span class="pre">parse_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/generate_qa_from_text_mapper.html#GenerateQAFromTextMapper.parse_output"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.generate_qa_from_text_mapper.GenerateQAFromTextMapper.parse_output" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.generate_qa_from_text_mapper.GenerateQAFromTextMapper.process_batched">
+<span class="sig-name descname"><span class="pre">process_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/generate_qa_from_text_mapper.html#GenerateQAFromTextMapper.process_batched"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.generate_qa_from_text_mapper.GenerateQAFromTextMapper.process_batched" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +600,23 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.generate_qa_from_text_mapper.GenerateQAFromTextMapper"><code class="docutils literal notranslate"><span class="pre">GenerateQAFromTextMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.generate_qa_from_text_mapper.GenerateQAFromTextMapper.__init__"><code class="docutils literal notranslate"><span class="pre">GenerateQAFromTextMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.generate_qa_from_text_mapper.GenerateQAFromTextMapper.parse_output"><code class="docutils literal notranslate"><span class="pre">GenerateQAFromTextMapper.parse_output()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.generate_qa_from_text_mapper.GenerateQAFromTextMapper.process_batched"><code class="docutils literal notranslate"><span class="pre">GenerateQAFromTextMapper.process_batched()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

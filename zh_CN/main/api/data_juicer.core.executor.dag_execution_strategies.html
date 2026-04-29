@@ -514,8 +514,340 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-core-executor-dag-execution-strategies-module">
-<h1>data_juicer.core.executor.dag_execution_strategies module<a class="headerlink" href="#data-juicer-core-executor-dag-execution-strategies-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.core.executor.dag_execution_strategies">
+<span id="data-juicer-core-executor-dag-execution-strategies-module"></span><h1>data_juicer.core.executor.dag_execution_strategies module<a class="headerlink" href="#module-data_juicer.core.executor.dag_execution_strategies" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.DAGNodeType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.dag_execution_strategies.</span></span><span class="sig-name descname"><span class="pre">DAGNodeType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#DAGNodeType"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.DAGNodeType" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Types of DAG nodes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.DAGNodeType.OPERATION">
+<span class="sig-name descname"><span class="pre">OPERATION</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'operation'</span></span><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.DAGNodeType.OPERATION" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.DAGNodeType.PARTITION_OPERATION">
+<span class="sig-name descname"><span class="pre">PARTITION_OPERATION</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'partition_operation'</span></span><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.DAGNodeType.PARTITION_OPERATION" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.DAGNodeType.SCATTER_GATHER">
+<span class="sig-name descname"><span class="pre">SCATTER_GATHER</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'scatter_gather'</span></span><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.DAGNodeType.SCATTER_GATHER" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.DAGNodeStatusTransition">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.dag_execution_strategies.</span></span><span class="sig-name descname"><span class="pre">DAGNodeStatusTransition</span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#DAGNodeStatusTransition"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.DAGNodeStatusTransition" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Validates DAG node status transitions.</p>
+<p>Uses DAGNodeStatus enum for type safety. Valid transitions:
+- PENDING -&gt; RUNNING (node starts execution)
+- PENDING -&gt; COMPLETED (skipped - already done in previous run)
+- RUNNING -&gt; COMPLETED (node finishes successfully)
+- RUNNING -&gt; FAILED (node fails)
+- FAILED -&gt; RUNNING (node retries)
+- COMPLETED is terminal (no transitions out)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.DAGNodeStatusTransition.VALID_TRANSITIONS">
+<span class="sig-name descname"><span class="pre">VALID_TRANSITIONS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{DAGNodeStatus.COMPLETED:</span> <span class="pre">{},</span> <span class="pre">DAGNodeStatus.FAILED:</span> <span class="pre">{DAGNodeStatus.RUNNING},</span> <span class="pre">DAGNodeStatus.PENDING:</span> <span class="pre">{DAGNodeStatus.COMPLETED,</span> <span class="pre">DAGNodeStatus.RUNNING},</span> <span class="pre">DAGNodeStatus.RUNNING:</span> <span class="pre">{DAGNodeStatus.COMPLETED,</span> <span class="pre">DAGNodeStatus.FAILED}}</span></span><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.DAGNodeStatusTransition.VALID_TRANSITIONS" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.DAGNodeStatusTransition.is_valid">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from_status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="data_juicer.core.executor.pipeline_dag.html#data_juicer.core.executor.pipeline_dag.DAGNodeStatus" title="data_juicer.core.executor.pipeline_dag.DAGNodeStatus"><span class="pre">DAGNodeStatus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="data_juicer.core.executor.pipeline_dag.html#data_juicer.core.executor.pipeline_dag.DAGNodeStatus" title="data_juicer.core.executor.pipeline_dag.DAGNodeStatus"><span class="pre">DAGNodeStatus</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#DAGNodeStatusTransition.is_valid"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.DAGNodeStatusTransition.is_valid" title="链接到此定义。">#</a></dt>
+<dd><p>Check if a status transition is valid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>from_status</strong> -- Current status (string or enum)</p></li>
+<li><p><strong>to_status</strong> -- Target status (string or enum)</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if transition is valid, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.DAGNodeStatusTransition.validate_and_log">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">validate_and_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="data_juicer.core.executor.pipeline_dag.html#data_juicer.core.executor.pipeline_dag.DAGNodeStatus" title="data_juicer.core.executor.pipeline_dag.DAGNodeStatus"><span class="pre">DAGNodeStatus</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="data_juicer.core.executor.pipeline_dag.html#data_juicer.core.executor.pipeline_dag.DAGNodeStatus" title="data_juicer.core.executor.pipeline_dag.DAGNodeStatus"><span class="pre">DAGNodeStatus</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#DAGNodeStatusTransition.validate_and_log"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.DAGNodeStatusTransition.validate_and_log" title="链接到此定义。">#</a></dt>
+<dd><p>Validate transition and log warning if invalid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>node_id</strong> -- Node identifier for logging</p></li>
+<li><p><strong>from_status</strong> -- Current status (string or enum)</p></li>
+<li><p><strong>to_status</strong> -- Target status (string or enum)</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if transition is valid, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.dag_execution_strategies.</span></span><span class="sig-name descname"><span class="pre">ScatterGatherNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_partitions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_partitions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#ScatterGatherNode"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents a scatter-gather operation in partitioned execution.</p>
+<p>Encapsulates the complete scatter-gather pattern:
+1. Convergence: All partitions complete their work and converge
+2. Global Operation: A single operation runs on the gathered data
+3. Redistribution: Results are redistributed back to partitions</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.operation_index">
+<span class="sig-name descname"><span class="pre">operation_index</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.operation_index" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.operation_name">
+<span class="sig-name descname"><span class="pre">operation_name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.operation_name" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.input_partitions">
+<span class="sig-name descname"><span class="pre">input_partitions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.input_partitions" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.output_partitions">
+<span class="sig-name descname"><span class="pre">output_partitions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.output_partitions" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.node_id">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">node_id</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.node_id" title="链接到此定义。">#</a></dt>
+<dd><p>Generate unique node ID for scatter-gather operation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_partitions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_partitions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.__init__" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.NodeID">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.dag_execution_strategies.</span></span><span class="sig-name descname"><span class="pre">NodeID</span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#NodeID"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.NodeID" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Utility for creating and parsing standardized node IDs.</p>
+<p>Node ID formats:
+- Operation: &quot;op_{idx:03d}_{name}&quot;
+- Partition Operation: &quot;op_{idx:03d}_{name}_partition_{pid}&quot;
+- Scatter-Gather: &quot;sg_{idx:03d}_{name}&quot;</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.NodeID.for_operation">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">for_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#NodeID.for_operation"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.NodeID.for_operation" title="链接到此定义。">#</a></dt>
+<dd><p>Create node ID for global operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>op_idx</strong> -- Operation index (0-based)</p></li>
+<li><p><strong>op_name</strong> -- Operation name</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>Standardized node ID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.NodeID.for_partition_operation">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">for_partition_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">partition_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#NodeID.for_partition_operation"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.NodeID.for_partition_operation" title="链接到此定义。">#</a></dt>
+<dd><p>Create node ID for partition operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>partition_id</strong> -- Partition ID</p></li>
+<li><p><strong>op_idx</strong> -- Operation index (0-based)</p></li>
+<li><p><strong>op_name</strong> -- Operation name</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>Standardized node ID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.NodeID.for_scatter_gather">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">for_scatter_gather</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#NodeID.for_scatter_gather"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.NodeID.for_scatter_gather" title="链接到此定义。">#</a></dt>
+<dd><p>Create node ID for scatter-gather operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>op_idx</strong> -- Operation index (0-based)</p></li>
+<li><p><strong>op_name</strong> -- Operation name</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>Standardized node ID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.NodeID.parse">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#NodeID.parse"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.NodeID.parse" title="链接到此定义。">#</a></dt>
+<dd><p>Parse node ID into components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node_id</strong> -- The node ID to parse</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary with node type and components, or None if invalid format</p>
+</dd>
+</dl>
+<p class="rubric">示例</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">NodeID</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;op_001_mapper_partition_0&quot;</span><span class="p">)</span>
+<span class="go">{&#39;type&#39;: DAGNodeType.PARTITION_OPERATION, &#39;partition_id&#39;: 0,</span>
+<span class="go"> &#39;operation_index&#39;: 0, &#39;operation_name&#39;: &#39;mapper&#39;}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">NodeID</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;sg_002_deduplicator&quot;</span><span class="p">)</span>
+<span class="go">{&#39;type&#39;: DAGNodeType.SCATTER_GATHER, &#39;operation_index&#39;: 2,</span>
+<span class="go"> &#39;operation_name&#39;: &#39;deduplicator&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.dag_execution_strategies.</span></span><span class="sig-name descname"><span class="pre">DAGExecutionStrategy</span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#DAGExecutionStrategy"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Abstract base class for different DAG execution strategies.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy.generate_dag_nodes">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">generate_dag_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#DAGExecutionStrategy.generate_dag_nodes"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy.generate_dag_nodes" title="链接到此定义。">#</a></dt>
+<dd><p>Generate DAG nodes based on execution strategy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy.get_dag_node_id">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">get_dag_node_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#DAGExecutionStrategy.get_dag_node_id"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy.get_dag_node_id" title="链接到此定义。">#</a></dt>
+<dd><p>Get DAG node ID for operation based on strategy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy.build_dependencies">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">build_dependencies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#DAGExecutionStrategy.build_dependencies"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy.build_dependencies" title="链接到此定义。">#</a></dt>
+<dd><p>Build dependencies between nodes based on strategy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy.can_execute_node">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">can_execute_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">completed_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">set</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#DAGExecutionStrategy.can_execute_node"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy.can_execute_node" title="链接到此定义。">#</a></dt>
+<dd><p>Check if a node can be executed based on strategy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy.validate_dag">
+<span class="sig-name descname"><span class="pre">validate_dag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#DAGExecutionStrategy.validate_dag"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy.validate_dag" title="链接到此定义。">#</a></dt>
+<dd><p>Validate DAG has no cycles using DFS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if DAG is valid (no cycles), False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.NonPartitionedDAGStrategy">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.dag_execution_strategies.</span></span><span class="sig-name descname"><span class="pre">NonPartitionedDAGStrategy</span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#NonPartitionedDAGStrategy"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.NonPartitionedDAGStrategy" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="#data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy" title="data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">DAGExecutionStrategy</span></code></a></p>
+<p>Strategy for non-partitioned executors (default, ray).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.NonPartitionedDAGStrategy.generate_dag_nodes">
+<span class="sig-name descname"><span class="pre">generate_dag_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#NonPartitionedDAGStrategy.generate_dag_nodes"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.NonPartitionedDAGStrategy.generate_dag_nodes" title="链接到此定义。">#</a></dt>
+<dd><p>Generate DAG nodes for non-partitioned execution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.NonPartitionedDAGStrategy.get_dag_node_id">
+<span class="sig-name descname"><span class="pre">get_dag_node_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#NonPartitionedDAGStrategy.get_dag_node_id"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.NonPartitionedDAGStrategy.get_dag_node_id" title="链接到此定义。">#</a></dt>
+<dd><p>Get DAG node ID for non-partitioned operation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.NonPartitionedDAGStrategy.build_dependencies">
+<span class="sig-name descname"><span class="pre">build_dependencies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#NonPartitionedDAGStrategy.build_dependencies"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.NonPartitionedDAGStrategy.build_dependencies" title="链接到此定义。">#</a></dt>
+<dd><p>Build sequential dependencies for non-partitioned execution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.NonPartitionedDAGStrategy.can_execute_node">
+<span class="sig-name descname"><span class="pre">can_execute_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">completed_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">set</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#NonPartitionedDAGStrategy.can_execute_node"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.NonPartitionedDAGStrategy.can_execute_node" title="链接到此定义。">#</a></dt>
+<dd><p>Check if a node can be executed (all dependencies completed).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.dag_execution_strategies.</span></span><span class="sig-name descname"><span class="pre">PartitionedDAGStrategy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_partitions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#PartitionedDAGStrategy"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="#data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy" title="data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy"><code class="xref py py-class docutils literal notranslate"><span class="pre">DAGExecutionStrategy</span></code></a></p>
+<p>Strategy for partitioned executors (ray_partitioned).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_partitions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#PartitionedDAGStrategy.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy.__init__" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy.generate_dag_nodes">
+<span class="sig-name descname"><span class="pre">generate_dag_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#PartitionedDAGStrategy.generate_dag_nodes"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy.generate_dag_nodes" title="链接到此定义。">#</a></dt>
+<dd><p>Generate DAG nodes for partitioned execution using scatter-gather pattern.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy.get_dag_node_id">
+<span class="sig-name descname"><span class="pre">get_dag_node_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partition_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#PartitionedDAGStrategy.get_dag_node_id"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy.get_dag_node_id" title="链接到此定义。">#</a></dt>
+<dd><p>Get DAG node ID for partitioned operation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy.build_dependencies">
+<span class="sig-name descname"><span class="pre">build_dependencies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#PartitionedDAGStrategy.build_dependencies"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy.build_dependencies" title="链接到此定义。">#</a></dt>
+<dd><p>Build dependencies for partitioned execution using scatter-gather pattern.</p>
+<ul class="simple">
+<li><p>Partition operations depend on previous operation in same partition</p></li>
+<li><p>Scatter-gather nodes depend on ALL partitions from previous op</p></li>
+<li><p>Post-scatter-gather partition ops depend on the scatter-gather node</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy.can_execute_node">
+<span class="sig-name descname"><span class="pre">can_execute_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">completed_nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">set</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#PartitionedDAGStrategy.can_execute_node"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy.can_execute_node" title="链接到此定义。">#</a></dt>
+<dd><p>Check if a node can be executed (all dependencies completed).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.core.executor.dag_execution_strategies.is_global_operation">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.dag_execution_strategies.</span></span><span class="sig-name descname"><span class="pre">is_global_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/data_juicer/core/executor/dag_execution_strategies.html#is_global_operation"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.dag_execution_strategies.is_global_operation" title="链接到此定义。">#</a></dt>
+<dd><p>Check if an operation is a global operation that requires convergence.</p>
+<p>Global operations need to see all data at once (e.g., deduplication, global sorting).
+They cannot be partitioned and require a scatter-gather pattern.</p>
+<p>Detection priority:
+1. Explicit <cite>is_global_operation</cite> flag on the operation
+2. Base class inheritance (Deduplicator)
+3. Operation name pattern (fallback for unknown operations)</p>
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +870,69 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.DAGNodeType"><code class="docutils literal notranslate"><span class="pre">DAGNodeType</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.DAGNodeType.OPERATION"><code class="docutils literal notranslate"><span class="pre">DAGNodeType.OPERATION</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.DAGNodeType.PARTITION_OPERATION"><code class="docutils literal notranslate"><span class="pre">DAGNodeType.PARTITION_OPERATION</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.DAGNodeType.SCATTER_GATHER"><code class="docutils literal notranslate"><span class="pre">DAGNodeType.SCATTER_GATHER</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.DAGNodeStatusTransition"><code class="docutils literal notranslate"><span class="pre">DAGNodeStatusTransition</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.DAGNodeStatusTransition.VALID_TRANSITIONS"><code class="docutils literal notranslate"><span class="pre">DAGNodeStatusTransition.VALID_TRANSITIONS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.DAGNodeStatusTransition.is_valid"><code class="docutils literal notranslate"><span class="pre">DAGNodeStatusTransition.is_valid()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.DAGNodeStatusTransition.validate_and_log"><code class="docutils literal notranslate"><span class="pre">DAGNodeStatusTransition.validate_and_log()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode"><code class="docutils literal notranslate"><span class="pre">ScatterGatherNode</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.operation_index"><code class="docutils literal notranslate"><span class="pre">ScatterGatherNode.operation_index</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.operation_name"><code class="docutils literal notranslate"><span class="pre">ScatterGatherNode.operation_name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.input_partitions"><code class="docutils literal notranslate"><span class="pre">ScatterGatherNode.input_partitions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.output_partitions"><code class="docutils literal notranslate"><span class="pre">ScatterGatherNode.output_partitions</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.node_id"><code class="docutils literal notranslate"><span class="pre">ScatterGatherNode.node_id</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode.__init__"><code class="docutils literal notranslate"><span class="pre">ScatterGatherNode.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.NodeID"><code class="docutils literal notranslate"><span class="pre">NodeID</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.NodeID.for_operation"><code class="docutils literal notranslate"><span class="pre">NodeID.for_operation()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.NodeID.for_partition_operation"><code class="docutils literal notranslate"><span class="pre">NodeID.for_partition_operation()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.NodeID.for_scatter_gather"><code class="docutils literal notranslate"><span class="pre">NodeID.for_scatter_gather()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.NodeID.parse"><code class="docutils literal notranslate"><span class="pre">NodeID.parse()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy"><code class="docutils literal notranslate"><span class="pre">DAGExecutionStrategy</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy.generate_dag_nodes"><code class="docutils literal notranslate"><span class="pre">DAGExecutionStrategy.generate_dag_nodes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy.get_dag_node_id"><code class="docutils literal notranslate"><span class="pre">DAGExecutionStrategy.get_dag_node_id()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy.build_dependencies"><code class="docutils literal notranslate"><span class="pre">DAGExecutionStrategy.build_dependencies()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy.can_execute_node"><code class="docutils literal notranslate"><span class="pre">DAGExecutionStrategy.can_execute_node()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.DAGExecutionStrategy.validate_dag"><code class="docutils literal notranslate"><span class="pre">DAGExecutionStrategy.validate_dag()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.NonPartitionedDAGStrategy"><code class="docutils literal notranslate"><span class="pre">NonPartitionedDAGStrategy</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.NonPartitionedDAGStrategy.generate_dag_nodes"><code class="docutils literal notranslate"><span class="pre">NonPartitionedDAGStrategy.generate_dag_nodes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.NonPartitionedDAGStrategy.get_dag_node_id"><code class="docutils literal notranslate"><span class="pre">NonPartitionedDAGStrategy.get_dag_node_id()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.NonPartitionedDAGStrategy.build_dependencies"><code class="docutils literal notranslate"><span class="pre">NonPartitionedDAGStrategy.build_dependencies()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.NonPartitionedDAGStrategy.can_execute_node"><code class="docutils literal notranslate"><span class="pre">NonPartitionedDAGStrategy.can_execute_node()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy"><code class="docutils literal notranslate"><span class="pre">PartitionedDAGStrategy</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy.__init__"><code class="docutils literal notranslate"><span class="pre">PartitionedDAGStrategy.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy.generate_dag_nodes"><code class="docutils literal notranslate"><span class="pre">PartitionedDAGStrategy.generate_dag_nodes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy.get_dag_node_id"><code class="docutils literal notranslate"><span class="pre">PartitionedDAGStrategy.get_dag_node_id()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy.build_dependencies"><code class="docutils literal notranslate"><span class="pre">PartitionedDAGStrategy.build_dependencies()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.PartitionedDAGStrategy.can_execute_node"><code class="docutils literal notranslate"><span class="pre">PartitionedDAGStrategy.can_execute_node()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.core.executor.dag_execution_strategies.is_global_operation"><code class="docutils literal notranslate"><span class="pre">is_global_operation()</span></code></a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

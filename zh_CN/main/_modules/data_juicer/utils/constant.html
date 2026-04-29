@@ -660,7 +660,62 @@
     <span class="c1"># # role relation</span>
     <span class="n">role_relation</span> <span class="o">=</span> <span class="s2">&quot;role_relation&quot;</span>
     <span class="c1"># # html tables</span>
-    <span class="n">html_tables</span> <span class="o">=</span> <span class="s2">&quot;html_tables&quot;</span></div>
+    <span class="n">html_tables</span> <span class="o">=</span> <span class="s2">&quot;html_tables&quot;</span>
+    <span class="c1"># # LLM-based structured extraction (user-configurable output_schema)</span>
+    <span class="n">llm_extract</span> <span class="o">=</span> <span class="s2">&quot;llm_extract&quot;</span>
+    <span class="c1"># # LLM semantic ops: token/cost usage per call (prompt_tokens, completion_tokens, total_tokens, cost_estimate)</span>
+    <span class="n">llm_semantic_usage</span> <span class="o">=</span> <span class="s2">&quot;llm_semantic_usage&quot;</span>
+
+    <span class="c1"># === agent / dialog quality analysis tags ===</span>
+    <span class="c1"># # from agent_dialog_normalize_mapper</span>
+    <span class="n">agent_tool_types</span> <span class="o">=</span> <span class="s2">&quot;agent_tool_types&quot;</span>
+    <span class="n">agent_skill_types</span> <span class="o">=</span> <span class="s2">&quot;agent_skill_types&quot;</span>
+    <span class="n">agent_skill_insights</span> <span class="o">=</span> <span class="s2">&quot;agent_skill_insights&quot;</span>
+    <span class="n">agent_turn_count</span> <span class="o">=</span> <span class="s2">&quot;agent_turn_count&quot;</span>
+    <span class="c1"># # lineage / cohort fields (copied from raw agent JSON e.g. request_model, pt)</span>
+    <span class="n">agent_request_model</span> <span class="o">=</span> <span class="s2">&quot;agent_request_model&quot;</span>
+    <span class="n">agent_pt</span> <span class="o">=</span> <span class="s2">&quot;agent_pt&quot;</span>
+    <span class="n">agent_total_cost_time_ms</span> <span class="o">=</span> <span class="s2">&quot;agent_total_cost_time_ms&quot;</span>
+    <span class="c1"># # stable ids / message indices (for reports, showcase, log correlation)</span>
+    <span class="n">agent_request_id</span> <span class="o">=</span> <span class="s2">&quot;agent_request_id&quot;</span>
+    <span class="n">agent_last_user_msg_idx</span> <span class="o">=</span> <span class="s2">&quot;agent_last_user_msg_idx&quot;</span>
+    <span class="n">agent_last_assistant_msg_idx</span> <span class="o">=</span> <span class="s2">&quot;agent_last_assistant_msg_idx&quot;</span>
+    <span class="c1"># # True if dialog_history / text / query / response were shrunk via head+tail cap</span>
+    <span class="n">agent_dialog_history_compressed</span> <span class="o">=</span> <span class="s2">&quot;agent_dialog_history_compressed&quot;</span>
+    <span class="c1"># # from agent_bad_case_signal_mapper — structured, conservatively triaged</span>
+    <span class="n">agent_bad_case_signals</span> <span class="o">=</span> <span class="s2">&quot;agent_bad_case_signals&quot;</span>
+    <span class="n">agent_bad_case_tier</span> <span class="o">=</span> <span class="s2">&quot;agent_bad_case_tier&quot;</span>
+    <span class="c1"># # from agent_insight_llm_mapper — LLM synthesis for attribution / dashboards</span>
+    <span class="n">agent_insight_llm</span> <span class="o">=</span> <span class="s2">&quot;agent_insight_llm&quot;</span>
+    <span class="n">agent_insight_llm_raw</span> <span class="o">=</span> <span class="s2">&quot;agent_insight_llm_raw&quot;</span>
+    <span class="c1"># last writer (e.g. agent_insight_llm_mapper) records pipeline UI / report locale hint</span>
+    <span class="n">agent_pipeline_output_lang</span> <span class="o">=</span> <span class="s2">&quot;agent_pipeline_output_lang&quot;</span>
+    <span class="c1"># # from pii_llm_suspect_mapper — optional LLM audit for missed regex PII</span>
+    <span class="n">pii_llm_suspect</span> <span class="o">=</span> <span class="s2">&quot;pii_llm_suspect&quot;</span>
+    <span class="n">pii_llm_suspect_raw</span> <span class="o">=</span> <span class="s2">&quot;pii_llm_suspect_raw&quot;</span>
+    <span class="c1"># # dialog/agent turn-quality LLM mappers (see dialog_* / agent_* mapper files)</span>
+    <span class="n">dialog_memory_consistency</span> <span class="o">=</span> <span class="s2">&quot;dialog_memory_consistency&quot;</span>
+    <span class="n">dialog_coreference</span> <span class="o">=</span> <span class="s2">&quot;dialog_coreference&quot;</span>
+    <span class="n">dialog_topic_shift</span> <span class="o">=</span> <span class="s2">&quot;dialog_topic_shift&quot;</span>
+    <span class="n">dialog_error_recovery</span> <span class="o">=</span> <span class="s2">&quot;dialog_error_recovery&quot;</span>
+    <span class="n">dialog_clarification_quality</span> <span class="o">=</span> <span class="s2">&quot;dialog_clarification_quality&quot;</span>
+    <span class="n">dialog_proactivity</span> <span class="o">=</span> <span class="s2">&quot;dialog_proactivity&quot;</span>
+    <span class="n">dialog_non_repetition</span> <span class="o">=</span> <span class="s2">&quot;dialog_non_repetition&quot;</span>
+    <span class="n">agent_trace_coherence</span> <span class="o">=</span> <span class="s2">&quot;agent_trace_coherence&quot;</span>
+    <span class="n">agent_tool_relevance</span> <span class="o">=</span> <span class="s2">&quot;agent_tool_relevance&quot;</span>
+    <span class="c1"># # from agent_tool_type_mapper</span>
+    <span class="n">primary_tool_type</span> <span class="o">=</span> <span class="s2">&quot;primary_tool_type&quot;</span>
+    <span class="n">dominant_tool_types</span> <span class="o">=</span> <span class="s2">&quot;dominant_tool_types&quot;</span>
+    <span class="c1"># # from usage_counter_mapper</span>
+    <span class="n">prompt_tokens</span> <span class="o">=</span> <span class="s2">&quot;prompt_tokens&quot;</span>
+    <span class="n">completion_tokens</span> <span class="o">=</span> <span class="s2">&quot;completion_tokens&quot;</span>
+    <span class="n">total_tokens</span> <span class="o">=</span> <span class="s2">&quot;total_tokens&quot;</span>
+    <span class="c1"># # from tool_success_tagger_mapper</span>
+    <span class="n">tool_success_count</span> <span class="o">=</span> <span class="s2">&quot;tool_success_count&quot;</span>
+    <span class="n">tool_fail_count</span> <span class="o">=</span> <span class="s2">&quot;tool_fail_count&quot;</span>
+    <span class="n">tool_unknown_count</span> <span class="o">=</span> <span class="s2">&quot;tool_unknown_count&quot;</span>
+    <span class="n">tool_success_ratio</span> <span class="o">=</span> <span class="s2">&quot;tool_success_ratio&quot;</span>
+    <span class="n">tool_results</span> <span class="o">=</span> <span class="s2">&quot;tool_results&quot;</span></div>
 
 
 
@@ -697,6 +752,14 @@
             <span class="n">tmp_dj_cfg</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">dj_cfg</span><span class="p">)</span>
             <span class="n">tmp_dj_cfg</span><span class="o">.</span><span class="n">use_cache</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="n">tmp_dj_cfg</span><span class="o">.</span><span class="n">use_checkpoint</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">tmp_dj_cfg</span><span class="o">.</span><span class="n">auto_op_parallelism</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Disable auto parallelism to track StatsKeys access</span>
+            <span class="n">tmp_dj_cfg</span><span class="o">.</span><span class="n">np</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Disable multiprocessing to track StatsKeys access</span>
+            <span class="c1"># Force disable multiprocessing for each op to track StatsKeys access</span>
+            <span class="k">for</span> <span class="n">op_config</span> <span class="ow">in</span> <span class="n">tmp_dj_cfg</span><span class="o">.</span><span class="n">process</span><span class="p">:</span>
+                <span class="n">op_name</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">op_config</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">op_config</span><span class="p">[</span><span class="n">op_name</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">op_config</span><span class="p">[</span><span class="n">op_name</span><span class="p">][</span><span class="s2">&quot;auto_op_parallelism&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">op_config</span><span class="p">[</span><span class="n">op_name</span><span class="p">][</span><span class="s2">&quot;num_proc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
             <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_init_configs</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Analyzer</span>
@@ -744,6 +807,14 @@
                 <span class="n">tmp_dj_cfg</span><span class="o">.</span><span class="n">dataset_path</span> <span class="o">=</span> <span class="n">tmp_f_name</span>
                 <span class="n">tmp_dj_cfg</span><span class="o">.</span><span class="n">use_cache</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="n">tmp_dj_cfg</span><span class="o">.</span><span class="n">use_checkpoint</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">tmp_dj_cfg</span><span class="o">.</span><span class="n">auto_op_parallelism</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Disable auto parallelism to track StatsKeys access</span>
+                <span class="n">tmp_dj_cfg</span><span class="o">.</span><span class="n">np</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Disable multiprocessing to track StatsKeys access</span>
+                <span class="c1"># Force disable multiprocessing for each op to track StatsKeys access</span>
+                <span class="k">for</span> <span class="n">op_config</span> <span class="ow">in</span> <span class="n">tmp_dj_cfg</span><span class="o">.</span><span class="n">process</span><span class="p">:</span>
+                    <span class="n">op_name</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">op_config</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">op_config</span><span class="p">[</span><span class="n">op_name</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">op_config</span><span class="p">[</span><span class="n">op_name</span><span class="p">][</span><span class="s2">&quot;auto_op_parallelism&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="n">op_config</span><span class="p">[</span><span class="n">op_name</span><span class="p">][</span><span class="s2">&quot;num_proc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
                 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_init_configs</span>
                 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Analyzer</span>
@@ -792,13 +863,21 @@
     <span class="n">word_rep_ratio</span> <span class="o">=</span> <span class="s2">&quot;word_rep_ratio&quot;</span>
     <span class="n">llm_analysis_score</span> <span class="o">=</span> <span class="s2">&quot;llm_analysis_score&quot;</span>
     <span class="n">llm_analysis_record</span> <span class="o">=</span> <span class="s2">&quot;llm_analysis_record&quot;</span>
+    <span class="n">llm_analysis_tags</span> <span class="o">=</span> <span class="s2">&quot;llm_analysis_tags&quot;</span>
     <span class="n">llm_quality_score</span> <span class="o">=</span> <span class="s2">&quot;llm_quality_score&quot;</span>
     <span class="n">llm_quality_record</span> <span class="o">=</span> <span class="s2">&quot;llm_quality_record&quot;</span>
+    <span class="n">llm_quality_tags</span> <span class="o">=</span> <span class="s2">&quot;llm_quality_tags&quot;</span>
     <span class="n">llm_difficulty_score</span> <span class="o">=</span> <span class="s2">&quot;llm_difficulty_score&quot;</span>
     <span class="n">llm_difficulty_record</span> <span class="o">=</span> <span class="s2">&quot;llm_difficulty_record&quot;</span>
+    <span class="n">llm_difficulty_tags</span> <span class="o">=</span> <span class="s2">&quot;llm_difficulty_tags&quot;</span>
     <span class="n">llm_perplexity</span> <span class="o">=</span> <span class="s2">&quot;llm_perplexity&quot;</span>
     <span class="n">llm_task_relevance</span> <span class="o">=</span> <span class="s2">&quot;llm_task_relevance&quot;</span>
     <span class="n">llm_task_relevance_record</span> <span class="o">=</span> <span class="s2">&quot;llm_task_relevance_record&quot;</span>
+    <span class="n">llm_task_relevance_tags</span> <span class="o">=</span> <span class="s2">&quot;llm_task_relevance_tags&quot;</span>
+    <span class="c1"># llm_condition_filter: True if sample satisfies the user-given condition</span>
+    <span class="n">llm_condition_filter_result</span> <span class="o">=</span> <span class="s2">&quot;llm_condition_filter_result&quot;</span>
+    <span class="c1"># llm_* semantic ops: token/cost usage (dict with prompt_tokens, completion_tokens, total_tokens, cost_estimate)</span>
+    <span class="n">llm_semantic_usage</span> <span class="o">=</span> <span class="s2">&quot;llm_semantic_usage&quot;</span>
 
     <span class="c1">#  === image ===</span>
     <span class="n">aspect_ratios</span> <span class="o">=</span> <span class="s2">&quot;aspect_ratios&quot;</span>
@@ -862,6 +941,7 @@
     <span class="nb">hash</span> <span class="o">=</span> <span class="n">DEFAULT_PREFIX</span> <span class="o">+</span> <span class="s2">&quot;hash&quot;</span>
     <span class="n">minhash</span> <span class="o">=</span> <span class="n">DEFAULT_PREFIX</span> <span class="o">+</span> <span class="s2">&quot;minhash&quot;</span>
     <span class="n">simhash</span> <span class="o">=</span> <span class="n">DEFAULT_PREFIX</span> <span class="o">+</span> <span class="s2">&quot;simhash&quot;</span>
+    <span class="n">line_hashes</span> <span class="o">=</span> <span class="n">DEFAULT_PREFIX</span> <span class="o">+</span> <span class="s2">&quot;line_hashes&quot;</span>
 
     <span class="c1"># image</span>
     <span class="n">imagehash</span> <span class="o">=</span> <span class="n">DEFAULT_PREFIX</span> <span class="o">+</span> <span class="s2">&quot;imagehash&quot;</span>

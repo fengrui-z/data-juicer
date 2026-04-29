@@ -604,6 +604,85 @@ open.</p></li>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.deduplicator.DocumentLineDeduplicator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.deduplicator.</span></span><span class="sig-name descname"><span class="pre">DocumentLineDeduplicator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/deduplicator/document_line_deduplicator.html#DocumentLineDeduplicator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.ops.deduplicator.DocumentLineDeduplicator" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Deduplicator" title="data_juicer.ops.base_op.Deduplicator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Deduplicator</span></code></a></p>
+<p>Deduplicates at the line level across documents.</p>
+<p>This operator identifies lines that appear in many documents (boilerplate
+text, copyright notices, navigation bars, etc.) and removes them.  It works
+in two phases:</p>
+<ol class="arabic simple">
+<li><p><strong>compute_hash</strong> – splits each document into lines, applies configurable
+skip rules, and computes an MD5 hash for every non-skipped line.</p></li>
+<li><p><strong>process</strong> – counts in how many <em>distinct</em> documents each line hash
+appears.  Lines whose document frequency exceeds
+<code class="docutils literal notranslate"><span class="pre">frequency_threshold</span></code> are removed from every document.</p></li>
+</ol>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.deduplicator.DocumentLineDeduplicator.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frequency_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lowercase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_special_character</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_line_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_brackets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_markdown_headers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_latex_env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_html_tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/deduplicator/document_line_deduplicator.html#DocumentLineDeduplicator.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.ops.deduplicator.DocumentLineDeduplicator.__init__" title="Link to this definition">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frequency_threshold</strong> – document-frequency threshold.  Lines
+appearing in <strong>more than</strong> this many documents are removed.</p></li>
+<li><p><strong>lowercase</strong> – whether to lower-case a line before hashing.</p></li>
+<li><p><strong>ignore_special_character</strong> – whether to strip whitespace, digits,
+and punctuation before hashing.</p></li>
+<li><p><strong>min_line_length</strong> – lines whose stripped length is below this
+value are skipped (never considered for dedup).</p></li>
+<li><p><strong>skip_brackets</strong> – skip lines consisting solely of bracket /
+semicolon characters such as <code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">}</span> <span class="pre">[</span> <span class="pre">]</span> <span class="pre">(</span> <span class="pre">)</span> <span class="pre">;</span></code>.</p></li>
+<li><p><strong>skip_markdown_headers</strong> – skip lines that start with <code class="docutils literal notranslate"><span class="pre">#</span></code>
+(Markdown headings).</p></li>
+<li><p><strong>skip_latex_env</strong> – skip LaTeX <code class="docutils literal notranslate"><span class="pre">\begin{…}</span></code> / <code class="docutils literal notranslate"><span class="pre">\end{…}</span></code>
+environment declarations.</p></li>
+<li><p><strong>skip_html_tags</strong> – skip lines that are pure HTML / XML tags.</p></li>
+<li><p><strong>args</strong> – extra args</p></li>
+<li><p><strong>kwargs</strong> – extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.deduplicator.DocumentLineDeduplicator.compute_hash">
+<span class="sig-name descname"><span class="pre">compute_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/deduplicator/document_line_deduplicator.html#DocumentLineDeduplicator.compute_hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.ops.deduplicator.DocumentLineDeduplicator.compute_hash" title="Link to this definition">#</a></dt>
+<dd><p>Compute per-line MD5 hashes for a single document.</p>
+<p>Skipped lines receive an empty-string hash so that the list of
+hashes stays aligned with the original lines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> – input sample</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>sample with <code class="docutils literal notranslate"><span class="pre">HashKeys.line_hashes</span></code> populated.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.deduplicator.DocumentLineDeduplicator.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/deduplicator/document_line_deduplicator.html#DocumentLineDeduplicator.process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.ops.deduplicator.DocumentLineDeduplicator.process" title="Link to this definition">#</a></dt>
+<dd><p>Remove high-frequency lines from the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> – input dataset (already hash-annotated).</p></li>
+<li><p><strong>show_num</strong> – number of traced duplicate pairs for inspection.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(dataset, dup_pairs) where <em>dup_pairs</em> maps a line hash
+to sample texts that contained it.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="data_juicer.ops.deduplicator.DocumentMinhashDeduplicator">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.deduplicator.</span></span><span class="sig-name descname"><span class="pre">DocumentMinhashDeduplicator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/deduplicator/document_minhash_deduplicator.html#DocumentMinhashDeduplicator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.ops.deduplicator.DocumentMinhashDeduplicator" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Deduplicator" title="data_juicer.ops.base_op.Deduplicator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Deduplicator</span></code></a></p>
@@ -1159,7 +1238,7 @@ Default is None (no reservation).</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="data_juicer.ops.deduplicator.RayBTSMinhashDeduplicatorWithUid">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.deduplicator.</span></span><span class="sig-name descname"><span class="pre">RayBTSMinhashDeduplicatorWithUid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/deduplicator/ray_bts_minhash_deduplicator.html#RayBTSMinhashDeduplicatorWithUid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.ops.deduplicator.RayBTSMinhashDeduplicatorWithUid" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#data_juicer.ops.deduplicator.RayBTSMinhashDeduplicator" title="data_juicer.ops.deduplicator.ray_bts_minhash_deduplicator.RayBTSMinhashDeduplicator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RayBTSMinhashDeduplicator</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="data_juicer.ops.deduplicator.ray_bts_minhash_deduplicator.html#data_juicer.ops.deduplicator.ray_bts_minhash_deduplicator.RayBTSMinhashDeduplicator" title="data_juicer.ops.deduplicator.ray_bts_minhash_deduplicator.RayBTSMinhashDeduplicator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RayBTSMinhashDeduplicator</span></code></a></p>
 <p>A MinhashLSH deduplicator based on RAY.</p>
 <p>Unlike <cite>RayBTSMinhashDeduplicator</cite>, this class requires the input dataset to contain an additional column
 named ‘__dj__uid’ of type int, where each value is unique across samples. This column serves two main purposes:</p>
@@ -1373,6 +1452,12 @@ open.</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.deduplicator.DocumentDeduplicator.__init__"><code class="docutils literal notranslate"><span class="pre">DocumentDeduplicator.__init__()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.deduplicator.DocumentDeduplicator.compute_hash"><code class="docutils literal notranslate"><span class="pre">DocumentDeduplicator.compute_hash()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.deduplicator.DocumentDeduplicator.process"><code class="docutils literal notranslate"><span class="pre">DocumentDeduplicator.process()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.deduplicator.DocumentLineDeduplicator"><code class="docutils literal notranslate"><span class="pre">DocumentLineDeduplicator</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.deduplicator.DocumentLineDeduplicator.__init__"><code class="docutils literal notranslate"><span class="pre">DocumentLineDeduplicator.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.deduplicator.DocumentLineDeduplicator.compute_hash"><code class="docutils literal notranslate"><span class="pre">DocumentLineDeduplicator.compute_hash()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.deduplicator.DocumentLineDeduplicator.process"><code class="docutils literal notranslate"><span class="pre">DocumentLineDeduplicator.process()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.deduplicator.DocumentMinhashDeduplicator"><code class="docutils literal notranslate"><span class="pre">DocumentMinhashDeduplicator</span></code></a><ul class="nav section-nav flex-column">

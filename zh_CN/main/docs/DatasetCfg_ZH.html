@@ -503,6 +503,14 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">demos</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../demos/README_ZH.html">演示</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/agent/BAD_CASE_INSIGHTS.html">Agent 交互数据：Bad case 洞察</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/agent/BAD_CASE_REPORT.html">Bad case 自助报告（简化入口）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/agent/PERFORMANCE_LLM.html">Agent 流水线里 LLM 算子：加速与超参</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/agent/QUICKSTART_BAD_CASE.html">Bad case 流水线：一键运行与端到端指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/agent/README.html">Agent quality &amp; bad-case docs</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../demos/agent/minimal_configs/README.html">Agent 流水线最小可运行配置（便于逐项调试）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demos/agent/scripts/README.html">Agent pipeline 后分析脚本</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demos/auto_evaluation_helm/README_ZH.html">自动化评测：HELM 评测及可视化</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demos/process_video_on_ray/data/Note.html">Note for dataset path</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demos/role_playing_system_prompt/README_ZH.html">为LLM构造角色扮演的system prompt</a></li>
@@ -690,6 +698,37 @@
 </pre></div>
 </div>
 </section>
+<section id="jsonl">
+<h3>JSONL 样本级容错（跳过坏行）<a class="headerlink" href="#jsonl" title="链接到此标题。">#</a></h3>
+<p>若少数行损坏、或整行无法被 HF/ujson 解析，可使用 <strong>宽松 JSONL 加载</strong>：用标准库逐行 <code class="docutils literal notranslate"><span class="pre">json.loads</span></code>，解析失败 <strong>仅跳过该行</strong> 并打日志，其余样本照常进入流水线（下游算子仍面对与普通 JSONL 一致的 <code class="docutils literal notranslate"><span class="pre">datasets.Dataset</span></code>）。</p>
+<p><strong>启用方式（二选一）：</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">load_jsonl_lenient</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">DATA_JUICER_JSONL_LENIENT</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>dj-process<span class="w"> </span>--config<span class="w"> </span>path/to/config.yaml
+</pre></div>
+</div>
+<p><strong>限制：</strong></p>
+<ul class="simple">
+<li><p>只会读 <code class="docutils literal notranslate"><span class="pre">.jsonl</span></code> / <code class="docutils literal notranslate"><span class="pre">.jsonl.gz</span></code> / <code class="docutils literal notranslate"><span class="pre">.jsonl.zst</span></code>；同目录下其它后缀（如 <code class="docutils literal notranslate"><span class="pre">.json</span></code>）会被 <strong>跳过</strong> 并打警告，<strong>不再</strong> 整体回退到 HF/ujson（避免再次出现 <code class="docutils literal notranslate"><span class="pre">Value</span> <span class="pre">is</span> <span class="pre">too</span> <span class="pre">big!</span></code>）。需要时可设 <code class="docutils literal notranslate"><span class="pre">suffixes:</span> <span class="pre">['.jsonl']</span></code>。</p></li>
+<li><p>适合 <strong>DefaultExecutor</strong> 本地 jsonl；与 Parquet 无关。</p></li>
+<li><p>跳过的行请搜日志前缀 <code class="docutils literal notranslate"><span class="pre">[lenient</span> <span class="pre">jsonl]</span></code>。</p></li>
+</ul>
+</section>
+<section id="json-jsonl-value-is-too-big">
+<h3>JSON / JSONL 加载报错 <code class="docutils literal notranslate"><span class="pre">Value</span> <span class="pre">is</span> <span class="pre">too</span> <span class="pre">big!</span></code><a class="headerlink" href="#json-jsonl-value-is-too-big" title="链接到此标题。">#</a></h3>
+<p>本地 JSONL 由 HuggingFace <code class="docutils literal notranslate"><span class="pre">datasets</span></code> 解析时可能走 <code class="docutils literal notranslate"><span class="pre">ujson</span></code>；若某条样本里含有 <strong>超出 ujson 表示范围的整数</strong>（例如极长的数字型 ID），会报错 <code class="docutils literal notranslate"><span class="pre">ValueError:</span> <span class="pre">Value</span> <span class="pre">is</span> <span class="pre">too</span> <span class="pre">big!</span></code>。这与单行文本长短无关，多半是 <strong>数字字段</strong> 问题。</p>
+<p><strong>处理方式：</strong></p>
+<ol class="arabic">
+<li><p><strong>推荐（无需改数据）</strong>：在运行前设置环境变量，让解析改走 CPython 标准库 <code class="docutils literal notranslate"><span class="pre">json</span></code>：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">DATA_JUICER_USE_STDLIB_JSON</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>dj-process<span class="w"> </span>--config<span class="w"> </span>path/to/config.yaml
+</pre></div>
+</div>
+</li>
+<li><p><strong>从源头规避</strong>：把易超大的字段导出为 <strong>字符串</strong>（JSON 里加引号），再生成 JSONL。</p></li>
+<li><p><strong>换一种格式</strong>：例如改为 Parquet，由 Arrow 读入，不经过该 JSON 路径。</p></li>
+</ol>
+</section>
 <section id="dataset-path">
 <h3>旧版 dataset_path 配置<a class="headerlink" href="#dataset-path" title="链接到此标题。">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">dataset_path</span></code> 配置是指定数据集路径的历史版本方式。它简单易用，但缺乏灵活性。它可以在 yaml 或命令行输入中使用。一些示例：</p>
@@ -766,6 +805,8 @@ dj-process<span class="w"> </span>--dataset_path<span class="w"> </span><span cl
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">其他功能</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">数据混合</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">数据验证</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#jsonl">JSONL 样本级容错（跳过坏行）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#json-jsonl-value-is-too-big">JSON / JSONL 加载报错 <code class="docutils literal notranslate"><span class="pre">Value</span> <span class="pre">is</span> <span class="pre">too</span> <span class="pre">big!</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset-path">旧版 dataset_path 配置</a></li>
 </ul>
 </li>

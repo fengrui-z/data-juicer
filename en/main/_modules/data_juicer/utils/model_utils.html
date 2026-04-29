@@ -734,8 +734,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">endpoint</span> <span class="o">=</span> <span class="n">endpoint</span> <span class="ow">or</span> <span class="s2">&quot;/chat/completions&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">response_path</span> <span class="o">=</span> <span class="n">response_path</span> <span class="ow">or</span> <span class="s2">&quot;choices.0.message.content&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_response</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># last chat completion JSON (for usage / debugging)</span>
 
         <span class="n">client_args</span> <span class="o">=</span> <span class="n">filter_arguments</span><span class="p">(</span><span class="n">openai</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;base_url&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">client_args</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OPENAI_BASE_URL&quot;</span><span class="p">):</span>
+            <span class="n">client_args</span><span class="p">[</span><span class="s2">&quot;base_url&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OPENAI_BASE_URL&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">(</span><span class="o">**</span><span class="n">client_args</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No model specified. Using the first available model from the server.&quot;</span><span class="p">)</span>
@@ -770,9 +773,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">cast_to</span><span class="o">=</span><span class="n">httpx</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span> <span class="n">stream_cls</span><span class="o">=</span><span class="n">stream_cls</span>
             <span class="p">)</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_response</span> <span class="o">=</span> <span class="n">result</span>
             <span class="k">return</span> <span class="n">nested_access</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_path</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_response</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
 
 
@@ -798,6 +803,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">response_path</span> <span class="o">=</span> <span class="n">response_path</span> <span class="ow">or</span> <span class="s2">&quot;data.0.embedding&quot;</span>
 
         <span class="n">client_args</span> <span class="o">=</span> <span class="n">filter_arguments</span><span class="p">(</span><span class="n">openai</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;base_url&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">client_args</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OPENAI_BASE_URL&quot;</span><span class="p">):</span>
+            <span class="n">client_args</span><span class="p">[</span><span class="s2">&quot;base_url&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OPENAI_BASE_URL&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">(</span><span class="o">**</span><span class="n">client_args</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No model specified. Using the first available model from the server.&quot;</span><span class="p">)</span>
@@ -851,6 +858,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">response_path</span> <span class="o">=</span> <span class="n">response_path</span> <span class="ow">or</span> <span class="s2">&quot;output.0.content.0.text&quot;</span>
 
         <span class="n">client_args</span> <span class="o">=</span> <span class="n">filter_arguments</span><span class="p">(</span><span class="n">openai</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;base_url&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">client_args</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OPENAI_BASE_URL&quot;</span><span class="p">):</span>
+            <span class="n">client_args</span><span class="p">[</span><span class="s2">&quot;base_url&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OPENAI_BASE_URL&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">(</span><span class="o">**</span><span class="n">client_args</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No model specified. Using the first available model from the server.&quot;</span><span class="p">)</span>
@@ -885,6 +894,81 @@
 
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_merge_openai_compatible_env_into_model_params</span><span class="p">(</span><span class="n">model_params</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fill OpenAI client kwargs from environment (DashScope REST / OpenAI-compatible).</span>
+
+<span class="sd">    Supported env vars:</span>
+<span class="sd">    - ``OPENAI_API_KEY``, ``DASHSCOPE_API_KEY``, or ``SK`` -&gt; ``api_key``</span>
+<span class="sd">    - ``OPENAI_BASE_URL``, ``OPENAI_API_URL``, or ``DASHSCOPE_BASE_URL`` -&gt; ``base_url``</span>
+<span class="sd">      (trailing slash stripped)</span>
+
+<span class="sd">    Explicit keys in ``model_params`` take precedence.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">model_params</span><span class="p">)</span> <span class="k">if</span> <span class="n">model_params</span> <span class="k">else</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">out</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;api_key&quot;</span><span class="p">):</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OPENAI_API_KEY&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DASHSCOPE_API_KEY&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SK&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="s2">&quot;api_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">out</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;base_url&quot;</span><span class="p">):</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OPENAI_BASE_URL&quot;</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OPENAI_API_URL&quot;</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DASHSCOPE_BASE_URL&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">base</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="s2">&quot;base_url&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_dashscope_openai_compatible_base</span><span class="p">(</span><span class="n">base_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">base_url</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">base_url</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s2">&quot;dashscope&quot;</span> <span class="ow">in</span> <span class="n">u</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="s2">&quot;compatible-mode&quot;</span> <span class="ow">in</span> <span class="n">u</span> <span class="ow">and</span> <span class="s2">&quot;aliyun&quot;</span> <span class="ow">in</span> <span class="n">u</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_maybe_remap_model_for_dashscope</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">base_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">endpoint</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;DashScope compatible-mode does not serve OpenAI model ids (e.g. gpt-4o).</span>
+
+<span class="sd">    If the base URL looks like DashScope compatible API and the model id is not a</span>
+<span class="sd">    typical Qwen/DeepSeek id, remap using ``DASHSCOPE_DEFAULT_MODEL`` or</span>
+<span class="sd">    ``OPENAI_DEFAULT_MODEL``, else ``qwen-plus``.</span>
+
+<span class="sd">    Skipped for non-chat endpoints (e.g. ``/embeddings``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ep</span> <span class="o">=</span> <span class="p">(</span><span class="n">endpoint</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s2">&quot;embedd&quot;</span> <span class="ow">in</span> <span class="n">ep</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">model</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">model</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_is_dashscope_openai_compatible_base</span><span class="p">(</span><span class="n">base_url</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">model</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;qwen&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">m</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;deepseek&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">model</span>
+    <span class="n">remapped</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DASHSCOPE_DEFAULT_MODEL&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OPENAI_DEFAULT_MODEL&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">remapped</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">remapped</span> <span class="o">!=</span> <span class="n">model</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Remapping API model [</span><span class="si">{}</span><span class="s2">] -&gt; [</span><span class="si">{}</span><span class="s2">] for DashScope compatible endpoint&quot;</span><span class="p">,</span>
+                <span class="n">model</span><span class="p">,</span>
+                <span class="n">remapped</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">remapped</span>
+    <span class="n">fallback</span> <span class="o">=</span> <span class="s2">&quot;qwen-plus&quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s2">&quot;API model [</span><span class="si">{}</span><span class="s2">] is not a DashScope model id; using [</span><span class="si">{}</span><span class="s2">]. &quot;</span>
+        <span class="s2">&quot;Set DASHSCOPE_DEFAULT_MODEL or pass api_or_hf_model explicitly.&quot;</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">fallback</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">fallback</span>
+
+
 <div class="viewcode-block" id="prepare_api_model">
 <a class="viewcode-back" href="../../../api/data_juicer.utils.model_utils.html#data_juicer.utils.model_utils.prepare_api_model">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">prepare_api_model</span><span class="p">(</span>
@@ -914,10 +998,15 @@
 <span class="sd">        for initializing a Hugging Face processor. It is only relevant if</span>
 <span class="sd">        `return_processor` is set to True.</span>
 <span class="sd">    :param model_params: Additional parameters for configuring the API model.</span>
+<span class="sd">        Environment variables ``OPENAI_BASE_URL`` / ``OPENAI_API_URL`` and</span>
+<span class="sd">        ``OPENAI_API_KEY`` / ``DASHSCOPE_API_KEY`` are merged when not set here</span>
+<span class="sd">        (OpenAI-compatible / DashScope REST).</span>
 <span class="sd">    :return: A callable APIModel instance, and optionally a processor</span>
 <span class="sd">        if `return_processor` is True.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model_params</span> <span class="o">=</span> <span class="n">_merge_openai_compatible_env_into_model_params</span><span class="p">(</span><span class="n">model_params</span><span class="p">)</span>
     <span class="n">endpoint</span> <span class="o">=</span> <span class="n">endpoint</span> <span class="ow">or</span> <span class="s2">&quot;/chat/completions&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">_maybe_remap_model_for_dashscope</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;base_url&quot;</span><span class="p">),</span> <span class="n">endpoint</span><span class="p">)</span>
 
     <span class="n">ENDPOINT_CLASS_MAP</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;chat&quot;</span><span class="p">:</span> <span class="n">ChatAPIModel</span><span class="p">,</span>
@@ -1522,7 +1611,7 @@
 <span class="sd">        &quot;en&quot;]</span>
 <span class="sd">    :return: corresponding spacy model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">spacy</span>
+    <span class="n">spacy</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;spacy&quot;</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">lang</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;zh&quot;</span><span class="p">,</span> <span class="s2">&quot;en&quot;</span><span class="p">],</span> <span class="s2">&quot;Diversity only support zh and en&quot;</span>
     <span class="n">model_name</span> <span class="o">=</span> <span class="n">name_pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lang</span><span class="p">)</span>
@@ -1980,7 +2069,19 @@
 
 <div class="viewcode-block" id="update_sampling_params">
 <a class="viewcode-back" href="../../../api/data_juicer.utils.model_utils.html#data_juicer.utils.model_utils.update_sampling_params">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">update_sampling_params</span><span class="p">(</span><span class="n">sampling_params</span><span class="p">,</span> <span class="n">pretrained_model_name_or_path</span><span class="p">,</span> <span class="n">enable_vllm</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_sampling_params</span><span class="p">(</span>
+    <span class="n">sampling_params</span><span class="p">,</span>
+    <span class="n">pretrained_model_name_or_path</span><span class="p">,</span>
+    <span class="n">enable_vllm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">fetch_generation_config_from_hf</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update sampling_params with max_tokens/max_new_tokens from model or defaults.</span>
+
+<span class="sd">    When fetch_generation_config_from_hf is False (e.g. API-only models like</span>
+<span class="sd">    gemini-2.5-flash via DashScope), skip HuggingFace GenerationConfig fetch to</span>
+<span class="sd">    avoid connection errors. Default None means: fetch when enable_vllm or when</span>
+<span class="sd">    pretrained_model_name_or_path looks like an HF path (contains /).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">enable_vllm</span><span class="p">:</span>
         <span class="n">update_keys</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;max_tokens&quot;</span><span class="p">}</span>
     <span class="k">else</span><span class="p">:</span>
@@ -1994,15 +2095,20 @@
         <span class="s2">&quot;max_new_tokens&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">max</span><span class="p">,</span> <span class="mi">512</span><span class="p">),</span>
     <span class="p">}</span>
 
-    <span class="c1"># try to get the generation configs</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenerationConfig</span>
+    <span class="k">if</span> <span class="n">fetch_generation_config_from_hf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fetch_generation_config_from_hf</span> <span class="o">=</span> <span class="n">enable_vllm</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;/&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">pretrained_model_name_or_path</span><span class="p">))</span>
 
-    <span class="n">pretrained_model_name_or_path</span> <span class="o">=</span> <span class="n">check_model_home</span><span class="p">(</span><span class="n">pretrained_model_name_or_path</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">model_generation_config</span> <span class="o">=</span> <span class="n">GenerationConfig</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">pretrained_model_name_or_path</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
-    <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No generation config found for the model &quot;</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">pretrained_model_name_or_path</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
-        <span class="n">model_generation_config</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">model_generation_config</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">fetch_generation_config_from_hf</span><span class="p">:</span>
+        <span class="n">pretrained_model_name_or_path</span> <span class="o">=</span> <span class="n">check_model_home</span><span class="p">(</span><span class="n">pretrained_model_name_or_path</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">model_generation_config</span> <span class="o">=</span> <span class="n">transformers</span><span class="o">.</span><span class="n">GenerationConfig</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+                <span class="n">pretrained_model_name_or_path</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No generation config found for the model &quot;</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">pretrained_model_name_or_path</span><span class="si">}</span><span class="s2">]. Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">update_keys</span><span class="p">:</span>
         <span class="c1"># if there is this param in the sampling_prams, compare it with the</span>

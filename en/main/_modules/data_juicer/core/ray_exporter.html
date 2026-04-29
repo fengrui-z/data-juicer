@@ -514,6 +514,7 @@
   <h1>Source code for data_juicer.core.ray_exporter</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
@@ -551,6 +552,8 @@
         <span class="n">export_shard_size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="n">keep_stats_in_res_ds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">keep_hashes_in_res_ds</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">encrypt_before_export</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">encryption_key_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -564,6 +567,13 @@
 <span class="sd">            dataset.</span>
 <span class="sd">        :param keep_hashes_in_res_ds: whether to keep hashes in the result</span>
 <span class="sd">            dataset.</span>
+<span class="sd">        :param encrypt_before_export: whether to encrypt each exported file</span>
+<span class="sd">            in-place after Ray has finished writing. All files inside the</span>
+<span class="sd">            export directory will be encrypted. S3 paths are skipped.</span>
+<span class="sd">            Default: False.</span>
+<span class="sd">        :param encryption_key_path: path to a file containing the Fernet key.</span>
+<span class="sd">            Falls back to the ``DJ_ENCRYPTION_KEY`` environment variable when</span>
+<span class="sd">            ``None``. Only used when ``encrypt_before_export`` is True.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">export_path</span> <span class="o">=</span> <span class="n">export_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">export_shard_size</span> <span class="o">=</span> <span class="n">export_shard_size</span>
@@ -576,6 +586,22 @@
                 <span class="sa">f</span><span class="s2">&quot;for now. Only support </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_SUPPORTED_FORMATS</span><span class="si">}</span><span class="s2">. Please check export_type or export_path.&quot;</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">export_extra_args</span> <span class="o">=</span> <span class="n">kwargs</span> <span class="k">if</span> <span class="n">kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
+
+        <span class="c1"># Set up encryption for local export</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encrypt_before_export</span> <span class="o">=</span> <span class="n">encrypt_before_export</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fernet</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">encrypt_before_export</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">export_path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;s3://&quot;</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;encrypt_before_export is True but export_path is an S3 &quot;</span>
+                    <span class="s2">&quot;path. Local-file encryption is skipped for S3 exports. &quot;</span>
+                    <span class="s2">&quot;Use S3 server-side encryption (SSE) to protect data at rest.&quot;</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">encrypt_before_export</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.encryption_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_fernet_key</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fernet</span> <span class="o">=</span> <span class="n">load_fernet_key</span><span class="p">(</span><span class="n">encryption_key_path</span><span class="p">)</span>
 
         <span class="c1"># Check if export_path is S3 and create filesystem if needed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">s3_filesystem</span> <span class="o">=</span> <span class="kc">None</span>
@@ -701,7 +727,20 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">export_path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;s3://&quot;</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">export_path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">export_method</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">export_path</span><span class="p">,</span> <span class="o">**</span><span class="n">export_kwargs</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">export_method</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">export_path</span><span class="p">,</span> <span class="o">**</span><span class="n">export_kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Encrypt all exported files in-place after Ray has finished writing</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">encrypt_before_export</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fernet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">export_path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;s3://&quot;</span><span class="p">):</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.encryption_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">encrypt_file</span>
+
+            <span class="n">export_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">export_path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">export_dir</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">fpath</span> <span class="ow">in</span> <span class="n">export_dir</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">fpath</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                        <span class="n">encrypt_file</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">fpath</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">fpath</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fernet</span><span class="p">)</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Encrypted exported file: </span><span class="si">{</span><span class="n">fpath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
 
 <div class="viewcode-block" id="RayExporter.export">
 <a class="viewcode-back" href="../../../api/data_juicer.core.ray_exporter.html#data_juicer.core.RayExporter.export">[docs]</a>
@@ -777,6 +816,11 @@
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">export_format</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;export_format&quot;</span><span class="p">,</span> <span class="s2">&quot;parquet&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">export_format</span> <span class="o">==</span> <span class="s2">&quot;lance&quot;</span><span class="p">:</span>
+            <span class="c1"># use lazy loader to check pylance installation</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
+
+            <span class="n">LazyLoader</span><span class="o">.</span><span class="n">check_packages</span><span class="p">([</span><span class="s2">&quot;pylance&quot;</span><span class="p">])</span>
         <span class="n">write_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;write_</span><span class="si">{</span><span class="n">export_format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">export_extra_args</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;export_extra_args&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">filtered_kwargs</span> <span class="o">=</span> <span class="n">filter_arguments</span><span class="p">(</span><span class="n">write_method</span><span class="p">,</span> <span class="n">export_extra_args</span><span class="p">)</span>

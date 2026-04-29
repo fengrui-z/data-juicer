@@ -514,8 +514,60 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-remove-repeat-sentences-mapper-module">
-<h1>data_juicer.ops.mapper.remove_repeat_sentences_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-remove-repeat-sentences-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.remove_repeat_sentences_mapper">
+<span id="data-juicer-ops-mapper-remove-repeat-sentences-mapper-module"></span><h1>data_juicer.ops.mapper.remove_repeat_sentences_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.remove_repeat_sentences_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.remove_repeat_sentences_mapper.split_sentence">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.remove_repeat_sentences_mapper.</span></span><span class="sig-name descname"><span class="pre">split_sentence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/remove_repeat_sentences_mapper.html#split_sentence"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.remove_repeat_sentences_mapper.split_sentence" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.remove_repeat_sentences_mapper.RemoveRepeatSentencesMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.remove_repeat_sentences_mapper.</span></span><span class="sig-name descname"><span class="pre">RemoveRepeatSentencesMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/remove_repeat_sentences_mapper.html#RemoveRepeatSentencesMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.remove_repeat_sentences_mapper.RemoveRepeatSentencesMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Mapper to remove repeat sentences in text samples.</p>
+<p>This operator processes text samples to remove duplicate sentences. It splits the text
+into lines and then further splits each line into sentences. Sentences are considered
+duplicates if they are identical after optional case normalization and special character
+removal. The operator uses a hash set to track unique sentences. Sentences shorter than
+<cite>min_repeat_sentence_length</cite> are not deduplicated. If <cite>ignore_special_character</cite> is
+enabled, special characters (all except Chinese, letters, and numbers) are ignored when
+checking for duplicates. The resulting text is reassembled with unique sentences.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.remove_repeat_sentences_mapper.RemoveRepeatSentencesMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lowercase</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_special_character</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_repeat_sentence_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tokenizer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/remove_repeat_sentences_mapper.html#RemoveRepeatSentencesMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.remove_repeat_sentences_mapper.RemoveRepeatSentencesMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lowercase</strong> -- Whether to convert sample text to lower case</p></li>
+<li><p><strong>ignore_special_character</strong> -- Whether to ignore special
+characters when judging repeated sentences. Special characters
+are all characters except Chinese characters, letters and
+numbers.</p></li>
+<li><p><strong>min_repeat_sentence_length</strong> -- Sentences shorter than this
+length will not be deduplicated. If ignore_special_character is
+set to True, then special characters are not included in this
+length.</p></li>
+<li><p><strong>tokenizer</strong> -- Custom sentence tokenizer. Can be a callable
+that takes a string and returns a list of sentence strings,
+or a lambda string for YAML configs (e.g.
+<code class="docutils literal notranslate"><span class="pre">&quot;lambda</span> <span class="pre">text:</span> <span class="pre">__import__('nltk').sent_tokenize(text)&quot;</span></code>).
+If None, uses the built-in regex-based splitter.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.remove_repeat_sentences_mapper.RemoveRepeatSentencesMapper.process_batched">
+<span class="sig-name descname"><span class="pre">process_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/remove_repeat_sentences_mapper.html#RemoveRepeatSentencesMapper.process_batched"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.remove_repeat_sentences_mapper.RemoveRepeatSentencesMapper.process_batched" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +590,23 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.remove_repeat_sentences_mapper.split_sentence"><code class="docutils literal notranslate"><span class="pre">split_sentence()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.remove_repeat_sentences_mapper.RemoveRepeatSentencesMapper"><code class="docutils literal notranslate"><span class="pre">RemoveRepeatSentencesMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.remove_repeat_sentences_mapper.RemoveRepeatSentencesMapper.__init__"><code class="docutils literal notranslate"><span class="pre">RemoveRepeatSentencesMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.remove_repeat_sentences_mapper.RemoveRepeatSentencesMapper.process_batched"><code class="docutils literal notranslate"><span class="pre">RemoveRepeatSentencesMapper.process_batched()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

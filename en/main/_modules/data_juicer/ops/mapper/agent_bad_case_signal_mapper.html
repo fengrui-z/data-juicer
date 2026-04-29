@@ -1,0 +1,1138 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer.ops.mapper.agent_bad_case_signal_mapper &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/ops/mapper/agent_bad_case_signal_mapper';</script>
+    <script src="../../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../../_static/icon.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/ops/mapper/agent_bad_case_signal_mapper.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/ops/mapper/agent_bad_case_signal_mapper_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/ops/mapper/agent_bad_case_signal_mapper.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index.html">
+    DOCS
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/en/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/en/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/en/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: en">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">en</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/ops/mapper/agent_bad_case_signal_mapper.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/ops/mapper/agent_bad_case_signal_mapper_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/ops/mapper/agent_bad_case_signal_mapper.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer.ops.mapper.agent_bad_case_signal_mapper</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for data_juicer.ops.mapper.agent_bad_case_signal_mapper</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2025 The Data-Juicer Authors. All rights reserved.</span>
+<span class="c1"># SPDX-License-Identifier: Apache-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Fuse deterministic + optional LLM-eval signals into a conservative bad-case</span>
+<span class="c1"># triage for human review (precision-oriented by default).</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.base_op</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPERATORS</span><span class="p">,</span> <span class="n">TAGGING_OPS</span><span class="p">,</span> <span class="n">Mapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fields</span><span class="p">,</span> <span class="n">MetaKeys</span><span class="p">,</span> <span class="n">StatsKeys</span>
+
+<span class="n">OP_NAME</span> <span class="o">=</span> <span class="s2">&quot;agent_bad_case_signal_mapper&quot;</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Lightweight 1–5 turn/trace judges (dialog_* / agent_* quality LLM mappers).</span>
+<span class="n">_DIALOG_QUALITY_SCORE_META_KEYS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">MetaKeys</span><span class="o">.</span><span class="n">dialog_memory_consistency</span><span class="p">,</span>
+    <span class="n">MetaKeys</span><span class="o">.</span><span class="n">dialog_coreference</span><span class="p">,</span>
+    <span class="n">MetaKeys</span><span class="o">.</span><span class="n">dialog_topic_shift</span><span class="p">,</span>
+    <span class="n">MetaKeys</span><span class="o">.</span><span class="n">dialog_error_recovery</span><span class="p">,</span>
+    <span class="n">MetaKeys</span><span class="o">.</span><span class="n">dialog_clarification_quality</span><span class="p">,</span>
+    <span class="n">MetaKeys</span><span class="o">.</span><span class="n">dialog_proactivity</span><span class="p">,</span>
+    <span class="n">MetaKeys</span><span class="o">.</span><span class="n">dialog_non_repetition</span><span class="p">,</span>
+    <span class="n">MetaKeys</span><span class="o">.</span><span class="n">agent_trace_coherence</span><span class="p">,</span>
+    <span class="n">MetaKeys</span><span class="o">.</span><span class="n">agent_tool_relevance</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">_calibration_missing_path_warned</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_calibration_json</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">ap</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ap</span><span class="p">):</span>
+        <span class="k">global</span> <span class="n">_calibration_missing_path_warned</span>
+        <span class="k">if</span> <span class="n">_calibration_missing_path_warned</span> <span class="o">!=</span> <span class="n">ap</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;agent_bad_case_signal_mapper: calibration_json_path is not a file &quot;</span>
+                <span class="s2">&quot;(</span><span class="si">%s</span><span class="s2">); auto thresholds disabled for this run.&quot;</span><span class="p">,</span>
+                <span class="n">ap</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">_calibration_missing_path_warned</span> <span class="o">=</span> <span class="n">ap</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;agent_bad_case_signal_mapper: failed to load calibration JSON </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">ap</span><span class="p">,</span>
+            <span class="n">e</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">data</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_recommendation</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="c1"># record may be a JSON string (serialized by _normalize_record) or a dict</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">record</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">json</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_json</span>
+
+            <span class="n">record</span> <span class="o">=</span> <span class="n">_json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;recommendation&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="s2">&quot;item&quot;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="AgentBadCaseSignalMapper">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.agent_bad_case_signal_mapper.html#data_juicer.ops.mapper.AgentBadCaseSignalMapper">[docs]</a>
+<span class="nd">@TAGGING_OPS</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">OP_NAME</span><span class="p">)</span>
+<span class="nd">@OPERATORS</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">OP_NAME</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AgentBadCaseSignalMapper</span><span class="p">(</span><span class="n">Mapper</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Attach structured bad-case *signals* and a conservative *tier* to each sample.</span>
+
+<span class="sd">    Design goal: **precision over recall** for the ``high_precision`` tier.</span>
+
+<span class="sd">    **Upstream coverage** (when present in the pipeline):</span>
+
+<span class="sd">    - ``meta``: ``tool_*``, ``usage`` tokens, ``primary_tool_type``, ``dominant_tool_types``,</span>
+<span class="sd">      ``dialog_intent_labels``, ``dialog_topic_labels``, ``dialog_sentiment_labels``,</span>
+<span class="sd">      ``agent_turn_count``, lineage keys.</span>
+<span class="sd">    - ``stats``: ``llm_analysis_*``, ``llm_quality_*``, ``llm_difficulty_*``,</span>
+<span class="sd">      ``text_len``, ``num_words``, ``perplexity``, ``lang_score``.</span>
+<span class="sd">    - ``meta``: optional ``dialog_*`` / ``agent_trace_coherence`` /</span>
+<span class="sd">      ``agent_tool_relevance`` records (1–5 scores from lightweight LLM mappers).</span>
+
+<span class="sd">    Each signal group can be toggled via constructor flags. ``high`` weight feeds</span>
+<span class="sd">    ``high_precision`` tier (with config); ``medium`` feeds ``watchlist`` only.</span>
+
+<span class="sd">    **Tool-heavy agent runs:** use ``min_tool_fail_count_for_signal`` to avoid</span>
+<span class="sd">    treating a single exploratory tool error (common before recovery) as strong</span>
+<span class="sd">    bad-case evidence.</span>
+
+<span class="sd">    **P-percentile calibration** (optional): set ``auto_calibrate_thresholds`` and</span>
+<span class="sd">    ``calibration_json_path`` to a JSON file produced by</span>
+<span class="sd">    ``demos/agent/scripts/compute_percentile_thresholds.py --write-calibration``.</span>
+<span class="sd">    Per-sample thresholds merge ``default`` with ``by_request_model`` using</span>
+<span class="sd">    ``meta.agent_request_model``. When ``calibration_manual_overrides_auto`` is</span>
+<span class="sd">    true (default), explicit ``max_total_tokens`` / ``max_latency_ms`` / perplexity</span>
+<span class="sd">    settings in YAML override the file; set it false to prefer calibration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AgentBadCaseSignalMapper.__init__">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.agent_bad_case_signal_mapper.html#data_juicer.ops.mapper.AgentBadCaseSignalMapper.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;query&quot;</span><span class="p">,</span>
+        <span class="n">response_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;response&quot;</span><span class="p">,</span>
+        <span class="c1"># --- tool path ---</span>
+        <span class="n">signal_on_tool_fail</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="c1"># Agent runs often include exploratory tool errors (e.g. wrong path)</span>
+        <span class="c1"># before recovery; require this many pattern-matched **error** tool</span>
+        <span class="c1"># messages before emitting ``tool_message_error_pattern``.</span>
+        <span class="n">min_tool_fail_count_for_signal</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">signal_on_low_tool_success_ratio</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">tool_success_ratio_max_for_signal</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.499</span><span class="p">,</span>
+        <span class="n">min_tool_rounds_for_ratio_signal</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="c1"># --- empty response heuristic ---</span>
+        <span class="n">signal_on_suspect_empty_response</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">min_query_len_for_empty_check</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">80</span><span class="p">,</span>
+        <span class="n">max_response_len_for_empty_check</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+        <span class="c1"># --- cost / latency (optional absolute thresholds) ---</span>
+        <span class="n">max_total_tokens</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_latency_ms</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># --- optional P-percentile calibration (see demos/agent/scripts/compute_percentile_thresholds.py) ---</span>
+        <span class="n">calibration_json_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">auto_calibrate_thresholds</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="c1"># When True (default): explicit max_* / perplexity_high_threshold in YAML win over JSON.</span>
+        <span class="n">calibration_manual_overrides_auto</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="c1"># If JSON row has perplexity_high_threshold, enable that signal even when</span>
+        <span class="c1"># signal_on_high_perplexity is False (unless manual override supplies threshold).</span>
+        <span class="n">auto_enable_perplexity_from_calibration</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="c1"># --- llm_analysis_filter (agent scenario eval) ---</span>
+        <span class="n">signal_on_llm_analysis_low</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">llm_analysis_score_max_for_bad</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.28</span><span class="p">,</span>
+        <span class="n">llm_analysis_discard_must_be_strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">high_precision_llm_analysis_discard_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.24</span><span class="p">,</span>
+        <span class="c1"># --- llm_quality_score_filter (reply quality dims) ---</span>
+        <span class="n">signal_on_llm_text_quality_low</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">llm_text_quality_score_max_for_bad</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.28</span><span class="p">,</span>
+        <span class="n">llm_text_quality_discard_must_be_strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">high_precision_llm_text_quality_discard_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.24</span><span class="p">,</span>
+        <span class="c1"># --- dialog tags (weak signals → medium only) ---</span>
+        <span class="n">signal_on_negative_sentiment_hint</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">negative_sentiment_substrings</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># --- text stats from filters ---</span>
+        <span class="n">signal_on_high_perplexity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">perplexity_high_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">800.0</span><span class="p">,</span>
+        <span class="c1"># --- difficulty × quality conjunction (off by default) ---</span>
+        <span class="n">signal_hard_query_poor_reply</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">hard_query_difficulty_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.72</span><span class="p">,</span>
+        <span class="n">poor_reply_quality_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.36</span><span class="p">,</span>
+        <span class="c1"># --- tier composition ---</span>
+        <span class="n">high_precision_on_tool_fail_alone</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">min_medium_signals_for_watchlist</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="c1"># --- dialog / trace 1–5 meta (no extra LLM; reads upstream mapper output) ---</span>
+        <span class="n">signal_on_low_dialog_quality_meta</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">dialog_quality_low_score_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">min_dialog_quality_low_axes_for_signal</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query_key</span> <span class="o">=</span> <span class="n">query_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response_key</span> <span class="o">=</span> <span class="n">response_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_tool_fail</span> <span class="o">=</span> <span class="n">signal_on_tool_fail</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_tool_fail_count_for_signal</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">min_tool_fail_count_for_signal</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_low_tool_success_ratio</span> <span class="o">=</span> <span class="n">signal_on_low_tool_success_ratio</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tool_success_ratio_max_for_signal</span> <span class="o">=</span> <span class="n">tool_success_ratio_max_for_signal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_tool_rounds_for_ratio_signal</span> <span class="o">=</span> <span class="n">min_tool_rounds_for_ratio_signal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_suspect_empty_response</span> <span class="o">=</span> <span class="n">signal_on_suspect_empty_response</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_query_len_for_empty_check</span> <span class="o">=</span> <span class="n">min_query_len_for_empty_check</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len_for_empty_check</span> <span class="o">=</span> <span class="n">max_response_len_for_empty_check</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_total_tokens</span> <span class="o">=</span> <span class="n">max_total_tokens</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_latency_ms</span> <span class="o">=</span> <span class="n">max_latency_ms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calibration_json_path</span> <span class="o">=</span> <span class="n">calibration_json_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auto_calibrate_thresholds</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">auto_calibrate_thresholds</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calibration_manual_overrides_auto</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">calibration_manual_overrides_auto</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">auto_enable_perplexity_from_calibration</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">auto_enable_perplexity_from_calibration</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_calibrate_thresholds</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_json_path</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span> <span class="o">=</span> <span class="n">_load_calibration_json</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_json_path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;agent_bad_case_signal_mapper: loaded calibration (percentile=</span><span class="si">%s</span><span class="s2">) from </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;percentile&quot;</span><span class="p">,</span> <span class="s2">&quot;n/a&quot;</span><span class="p">),</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calibration_json_path</span><span class="p">))),</span>
+                <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_llm_analysis_low</span> <span class="o">=</span> <span class="n">signal_on_llm_analysis_low</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">llm_analysis_score_max_for_bad</span> <span class="o">=</span> <span class="n">llm_analysis_score_max_for_bad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">llm_analysis_discard_must_be_strict</span> <span class="o">=</span> <span class="n">llm_analysis_discard_must_be_strict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">high_precision_llm_analysis_discard_threshold</span> <span class="o">=</span> <span class="n">high_precision_llm_analysis_discard_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_llm_text_quality_low</span> <span class="o">=</span> <span class="n">signal_on_llm_text_quality_low</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">llm_text_quality_score_max_for_bad</span> <span class="o">=</span> <span class="n">llm_text_quality_score_max_for_bad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">llm_text_quality_discard_must_be_strict</span> <span class="o">=</span> <span class="n">llm_text_quality_discard_must_be_strict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">high_precision_llm_text_quality_discard_threshold</span> <span class="o">=</span> <span class="n">high_precision_llm_text_quality_discard_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_negative_sentiment_hint</span> <span class="o">=</span> <span class="n">signal_on_negative_sentiment_hint</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">negative_sentiment_substrings</span> <span class="o">=</span> <span class="n">negative_sentiment_substrings</span> <span class="ow">or</span> <span class="p">[</span>
+            <span class="s2">&quot;负面&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;negative&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;angry&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;沮丧&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;不满&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;frustrated&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;disappointed&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;unhappy&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_high_perplexity</span> <span class="o">=</span> <span class="n">signal_on_high_perplexity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perplexity_high_threshold</span> <span class="o">=</span> <span class="n">perplexity_high_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signal_hard_query_poor_reply</span> <span class="o">=</span> <span class="n">signal_hard_query_poor_reply</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hard_query_difficulty_min</span> <span class="o">=</span> <span class="n">hard_query_difficulty_min</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">poor_reply_quality_max</span> <span class="o">=</span> <span class="n">poor_reply_quality_max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">high_precision_on_tool_fail_alone</span> <span class="o">=</span> <span class="n">high_precision_on_tool_fail_alone</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_medium_signals_for_watchlist</span> <span class="o">=</span> <span class="n">min_medium_signals_for_watchlist</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_low_dialog_quality_meta</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">signal_on_low_dialog_quality_meta</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dialog_quality_low_score_threshold</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dialog_quality_low_score_threshold</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_dialog_quality_low_axes_for_signal</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">min_dialog_quality_low_axes_for_signal</span><span class="p">))</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_calibration_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_calibrate_thresholds</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="n">default</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">default</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">bym</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;by_request_model&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bym</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">bym</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MetaKeys</span><span class="o">.</span><span class="n">agent_request_model</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">default</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">model</span> <span class="ow">and</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">bym</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bym</span><span class="p">[</span><span class="n">model</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">bym</span><span class="p">[</span><span class="n">model</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">row</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_effective_max_total_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="n">cal_v</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_calibrate_thresholds</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="p">:</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_calibration_row</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_total_tokens&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">raw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">cal_v</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                    <span class="k">pass</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_manual_overrides_auto</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_total_tokens</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_total_tokens</span>
+            <span class="k">return</span> <span class="n">cal_v</span>
+        <span class="k">if</span> <span class="n">cal_v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cal_v</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_total_tokens</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_effective_max_latency_ms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="n">cal_v</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_calibrate_thresholds</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span><span class="p">:</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_calibration_row</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_latency_ms&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">raw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">cal_v</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                    <span class="k">pass</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_manual_overrides_auto</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_latency_ms</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_latency_ms</span>
+            <span class="k">return</span> <span class="n">cal_v</span>
+        <span class="k">if</span> <span class="n">cal_v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cal_v</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_latency_ms</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_effective_perplexity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return (signal_on, threshold).&quot;&quot;&quot;</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_calibration_row</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_calibrate_thresholds</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="n">cal_th</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;perplexity_high_threshold&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">raw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cal_th</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                <span class="k">pass</span>
+
+        <span class="n">want_signal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_high_perplexity</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">cal_th</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_enable_perplexity_from_calibration</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_calibrate_thresholds</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">want_signal</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perplexity_high_threshold</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_manual_overrides_auto</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_high_perplexity</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perplexity_high_threshold</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">calibration_manual_overrides_auto</span> <span class="ow">and</span> <span class="n">cal_th</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cal_th</span>
+
+        <span class="k">if</span> <span class="n">cal_th</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">signal_on_high_perplexity</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_enable_perplexity_from_calibration</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cal_th</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_high_perplexity</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perplexity_high_threshold</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perplexity_high_threshold</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_append</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">signals</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+        <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">detail</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">weight</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">signals</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;code&quot;</span><span class="p">:</span> <span class="n">code</span><span class="p">,</span> <span class="s2">&quot;detail&quot;</span><span class="p">:</span> <span class="n">detail</span><span class="p">,</span> <span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="n">weight</span><span class="p">})</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_llm_eval_signal</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">stats</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">signals</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+        <span class="n">score_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">record_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">score_max</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">discard_strict</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">high_thresh</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">score_key</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">record_key</span><span class="p">)</span>
+        <span class="n">rec_norm</span> <span class="o">=</span> <span class="n">_normalize_recommendation</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">score</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">score</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">score_max</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">strict</span> <span class="o">=</span> <span class="p">(</span><span class="ow">not</span> <span class="n">discard_strict</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">rec_norm</span> <span class="o">==</span> <span class="s2">&quot;discard&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">strict</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="s2">&quot;high&quot;</span> <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">score</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">high_thresh</span> <span class="ow">and</span> <span class="n">rec_norm</span> <span class="o">==</span> <span class="s2">&quot;discard&quot;</span> <span class="k">else</span> <span class="s2">&quot;medium&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_append</span><span class="p">(</span>
+            <span class="n">signals</span><span class="p">,</span>
+            <span class="n">code</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;score=</span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2">, recommendation=</span><span class="si">{</span><span class="n">rec_norm</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">&#39;n/a&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">w</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="AgentBadCaseSignalMapper.process_single">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.agent_bad_case_signal_mapper.html#data_juicer.ops.mapper.AgentBadCaseSignalMapper.process_single">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">signals</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">fail_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MetaKeys</span><span class="o">.</span><span class="n">tool_fail_count</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_tool_fail</span> <span class="ow">and</span> <span class="n">fail_count</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_tool_fail_count_for_signal</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_append</span><span class="p">(</span>
+                <span class="n">signals</span><span class="p">,</span>
+                <span class="s2">&quot;tool_message_error_pattern&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;tool_fail_count=</span><span class="si">{</span><span class="n">fail_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;high&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">succ</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MetaKeys</span><span class="o">.</span><span class="n">tool_success_count</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">rounds</span> <span class="o">=</span> <span class="n">succ</span> <span class="o">+</span> <span class="n">fail_count</span>
+        <span class="n">ratio</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MetaKeys</span><span class="o">.</span><span class="n">tool_success_ratio</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_low_tool_success_ratio</span>
+            <span class="ow">and</span> <span class="n">rounds</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_tool_rounds_for_ratio_signal</span>
+            <span class="ow">and</span> <span class="n">ratio</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tool_success_ratio_max_for_signal</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_append</span><span class="p">(</span>
+                <span class="n">signals</span><span class="p">,</span>
+                <span class="s2">&quot;low_tool_success_ratio&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;ratio=</span><span class="si">{</span><span class="n">ratio</span><span class="si">}</span><span class="s2">, success=</span><span class="si">{</span><span class="n">succ</span><span class="si">}</span><span class="s2">, fail=</span><span class="si">{</span><span class="n">fail_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;medium&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query_key</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response_key</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_suspect_empty_response</span>
+            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_query_len_for_empty_check</span>
+            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_response_len_for_empty_check</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_append</span><span class="p">(</span>
+                <span class="n">signals</span><span class="p">,</span>
+                <span class="s2">&quot;suspect_empty_or_trivial_final_response&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;query_len=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="si">}</span><span class="s2">, response_len=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;medium&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">eff_max_tok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effective_max_total_tokens</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+        <span class="n">total_tokens</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MetaKeys</span><span class="o">.</span><span class="n">total_tokens</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">eff_max_tok</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">total_tokens</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">total_tokens</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">eff_max_tok</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_append</span><span class="p">(</span>
+                <span class="n">signals</span><span class="p">,</span>
+                <span class="s2">&quot;high_token_usage&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;total_tokens=</span><span class="si">{</span><span class="n">total_tokens</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;medium&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">eff_max_lat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effective_max_latency_ms</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+        <span class="n">latency</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MetaKeys</span><span class="o">.</span><span class="n">agent_total_cost_time_ms</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">eff_max_lat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">latency</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">latency</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">eff_max_lat</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_append</span><span class="p">(</span>
+                <span class="n">signals</span><span class="p">,</span>
+                <span class="s2">&quot;high_latency_ms&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;total_cost_time_ms=</span><span class="si">{</span><span class="n">latency</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;medium&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_llm_analysis_low</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_llm_eval_signal</span><span class="p">(</span>
+                <span class="n">stats</span><span class="p">,</span>
+                <span class="n">signals</span><span class="p">,</span>
+                <span class="n">StatsKeys</span><span class="o">.</span><span class="n">llm_analysis_score</span><span class="p">,</span>
+                <span class="n">StatsKeys</span><span class="o">.</span><span class="n">llm_analysis_record</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">llm_analysis_score_max_for_bad</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">llm_analysis_discard_must_be_strict</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">high_precision_llm_analysis_discard_threshold</span><span class="p">,</span>
+                <span class="s2">&quot;llm_agent_analysis_eval_low&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_llm_text_quality_low</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_llm_eval_signal</span><span class="p">(</span>
+                <span class="n">stats</span><span class="p">,</span>
+                <span class="n">signals</span><span class="p">,</span>
+                <span class="n">StatsKeys</span><span class="o">.</span><span class="n">llm_quality_score</span><span class="p">,</span>
+                <span class="n">StatsKeys</span><span class="o">.</span><span class="n">llm_quality_record</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">llm_text_quality_score_max_for_bad</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">llm_text_quality_discard_must_be_strict</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">high_precision_llm_text_quality_discard_threshold</span><span class="p">,</span>
+                <span class="s2">&quot;llm_reply_quality_eval_low&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_negative_sentiment_hint</span><span class="p">:</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MetaKeys</span><span class="o">.</span><span class="n">dialog_sentiment_labels</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">labels</span><span class="p">:</span>
+                <span class="n">blob</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">blob</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">negative_sentiment_substrings</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_append</span><span class="p">(</span>
+                        <span class="n">signals</span><span class="p">,</span>
+                        <span class="s2">&quot;negative_sentiment_label_hint&quot;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">&quot;labels=</span><span class="si">{</span><span class="n">labels</span><span class="p">[:</span><span class="mi">6</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;medium&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+        <span class="n">ppl_on</span><span class="p">,</span> <span class="n">ppl_th</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effective_perplexity</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ppl_on</span><span class="p">:</span>
+            <span class="n">ppl</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">perplexity</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ppl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span><span class="n">ppl</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">ppl_th</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_append</span><span class="p">(</span>
+                    <span class="n">signals</span><span class="p">,</span>
+                    <span class="s2">&quot;high_perplexity&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;perplexity=</span><span class="si">{</span><span class="n">ppl</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;medium&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal_hard_query_poor_reply</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">llm_difficulty_score</span><span class="p">)</span>
+            <span class="n">qs</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">llm_quality_score</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">d</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="n">qs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hard_query_difficulty_min</span>
+                <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span><span class="n">qs</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">poor_reply_quality_max</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_append</span><span class="p">(</span>
+                    <span class="n">signals</span><span class="p">,</span>
+                    <span class="s2">&quot;hard_query_low_reply_quality_conjunction&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;difficulty=</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">, llm_quality_score=</span><span class="si">{</span><span class="n">qs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;medium&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal_on_low_dialog_quality_meta</span><span class="p">:</span>
+            <span class="n">lows</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">th</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dialog_quality_low_score_threshold</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">_DIALOG_QUALITY_SCORE_META_KEYS</span><span class="p">:</span>
+                <span class="n">rec</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">rec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;skipped&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">rec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="n">sc</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">sc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">fv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sc</span><span class="p">)</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">fv</span> <span class="o">&lt;=</span> <span class="n">th</span><span class="p">:</span>
+                    <span class="n">lows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lows</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_dialog_quality_low_axes_for_signal</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_append</span><span class="p">(</span>
+                    <span class="n">signals</span><span class="p">,</span>
+                    <span class="s2">&quot;dialog_turn_quality_meta_low&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;axes=</span><span class="si">{</span><span class="n">lows</span><span class="si">}</span><span class="s2">, threshold=</span><span class="si">{</span><span class="n">th</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;medium&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="n">meta</span><span class="p">[</span><span class="n">MetaKeys</span><span class="o">.</span><span class="n">agent_bad_case_signals</span><span class="p">]</span> <span class="o">=</span> <span class="n">signals</span>
+
+        <span class="n">mediums</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">signals</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;medium&quot;</span><span class="p">]</span>
+
+        <span class="n">tool_fail_high</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;tool_message_error_pattern&quot;</span> <span class="ow">and</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;high&quot;</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">signals</span>
+        <span class="p">)</span>
+        <span class="n">llm_high</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span>
+            <span class="ow">in</span> <span class="p">(</span>
+                <span class="s2">&quot;llm_agent_analysis_eval_low&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;llm_reply_quality_eval_low&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="ow">and</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;high&quot;</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">signals</span>
+        <span class="p">)</span>
+
+        <span class="n">tier</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+        <span class="k">if</span> <span class="n">tool_fail_high</span><span class="p">:</span>
+            <span class="n">tier</span> <span class="o">=</span> <span class="s2">&quot;high_precision&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">high_precision_on_tool_fail_alone</span> <span class="k">else</span> <span class="s2">&quot;watchlist&quot;</span>
+        <span class="k">elif</span> <span class="n">llm_high</span><span class="p">:</span>
+            <span class="n">tier</span> <span class="o">=</span> <span class="s2">&quot;high_precision&quot;</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">mediums</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_medium_signals_for_watchlist</span><span class="p">:</span>
+            <span class="n">tier</span> <span class="o">=</span> <span class="s2">&quot;watchlist&quot;</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">signals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">signals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weight&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;medium&quot;</span><span class="p">:</span>
+            <span class="n">tier</span> <span class="o">=</span> <span class="s2">&quot;watchlist&quot;</span>
+
+        <span class="n">meta</span><span class="p">[</span><span class="n">MetaKeys</span><span class="o">.</span><span class="n">agent_bad_case_tier</span><span class="p">]</span> <span class="o">=</span> <span class="n">tier</span>
+        <span class="k">return</span> <span class="n">sample</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

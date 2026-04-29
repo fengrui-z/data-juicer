@@ -514,8 +514,70 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-video-tagging-from-frames-mapper-module">
-<h1>data_juicer.ops.mapper.video_tagging_from_frames_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-video-tagging-from-frames-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.video_tagging_from_frames_mapper">
+<span id="data-juicer-ops-mapper-video-tagging-from-frames-mapper-module"></span><h1>data_juicer.ops.mapper.video_tagging_from_frames_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.video_tagging_from_frames_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_tagging_from_frames_mapper.VideoTaggingFromFramesMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.video_tagging_from_frames_mapper.</span></span><span class="sig-name descname"><span class="pre">VideoTaggingFromFramesMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_tagging_from_frames_mapper.html#VideoTaggingFromFramesMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_tagging_from_frames_mapper.VideoTaggingFromFramesMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Generates video tags from frames extracted from videos.</p>
+<p>This operator extracts frames from videos and generates tags based on the
+content of these frames. The frame extraction method can be either
+&quot;all_keyframes&quot; or &quot;uniform&quot;. For &quot;all_keyframes&quot;, all keyframes are
+extracted, while for &quot;uniform&quot;, a specified number of frames are
+extracted uniformly across the video. The tags are generated using a
+pre-trained model and stored in the specified field name. If the tags
+are already present in the sample, the operator skips processing.
+Important notes:
+- Uses a Hugging Face tokenizer and a pre-trained model for tag generation.
+- If no video is present in the sample, an empty tag array is stored.
+- Frame tensors are processed to generate tags, which are then sorted by
+frequency and stored.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_tagging_from_frames_mapper.VideoTaggingFromFramesMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_sampling_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all_keyframes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'video_frame_tags'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_tagging_from_frames_mapper.html#VideoTaggingFromFramesMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_tagging_from_frames_mapper.VideoTaggingFromFramesMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame_sampling_method</strong> -- sampling method of extracting frame
+images from the videos. Should be one of
+[&quot;all_keyframes&quot;, &quot;uniform&quot;].
+The former one extracts all key frames (the number of which depends
+on the duration of the video) and the latter one extract specified
+number of frames uniformly from the video.
+Default: &quot;all_keyframes&quot;.</p></li>
+<li><p><strong>frame_num</strong> -- the number of frames to be extracted uniformly from
+the video. Only works when frame_sampling_method is &quot;uniform&quot;. If
+it's 1, only the middle frame will be extracted. If it's 2, only
+the first and the last frames will be extracted. If it's larger
+than 2, in addition to the first and the last frames, other frames
+will be extracted uniformly within the video duration.</p></li>
+<li><p><strong>tag_field_name</strong> -- the field name to store the tags. It's
+&quot;video_frame_tags&quot; in default.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_tagging_from_frames_mapper.VideoTaggingFromFramesMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_tagging_from_frames_mapper.html#VideoTaggingFromFramesMapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_tagging_from_frames_mapper.VideoTaggingFromFramesMapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +600,22 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_tagging_from_frames_mapper.VideoTaggingFromFramesMapper"><code class="docutils literal notranslate"><span class="pre">VideoTaggingFromFramesMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_tagging_from_frames_mapper.VideoTaggingFromFramesMapper.__init__"><code class="docutils literal notranslate"><span class="pre">VideoTaggingFromFramesMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_tagging_from_frames_mapper.VideoTaggingFromFramesMapper.process_single"><code class="docutils literal notranslate"><span class="pre">VideoTaggingFromFramesMapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

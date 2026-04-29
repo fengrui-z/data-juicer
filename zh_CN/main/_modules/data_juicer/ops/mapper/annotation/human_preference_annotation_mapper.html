@@ -1,0 +1,846 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer.ops.mapper.annotation.human_preference_annotation_mapper &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/ops/mapper/annotation/human_preference_annotation_mapper';</script>
+    <script src="../../../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../../en/main/_modules/data_juicer/ops/mapper/annotation/human_preference_annotation_mapper.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../../zh_CN/main/_modules/data_juicer/ops/mapper/annotation/human_preference_annotation_mapper_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../../main/_modules/data_juicer/ops/mapper/annotation/human_preference_annotation_mapper.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../../en/main/_modules/data_juicer/ops/mapper/annotation/human_preference_annotation_mapper.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../../zh_CN/main/_modules/data_juicer/ops/mapper/annotation/human_preference_annotation_mapper_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../../main/_modules/data_juicer/ops/mapper/annotation/human_preference_annotation_mapper.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">模块代码</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer.ops.mapper.annotation.human_preference_annotation_mapper</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>data_juicer.ops.mapper.annotation.human_preference_annotation_mapper 源代码</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.mapper.annotation.annotation_mapper</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LabelStudioAnnotationMapper</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">...base_op</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPERATORS</span>
+
+
+<div class="viewcode-block" id="HumanPreferenceAnnotationMapper">
+<a class="viewcode-back" href="../../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.HumanPreferenceAnnotationMapper">[文档]</a>
+<span class="nd">@OPERATORS</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="s2">&quot;human_preference_annotation_mapper&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HumanPreferenceAnnotationMapper</span><span class="p">(</span><span class="n">LabelStudioAnnotationMapper</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Operator for human preference annotation using Label Studio.</span>
+
+<span class="sd">    This operator formats and presents pairs of answers to a prompt for human evaluation. It</span>
+<span class="sd">    uses a default or custom Label Studio configuration to display the prompt and answer</span>
+<span class="sd">    options. The operator processes the annotations to determine the preferred answer,</span>
+<span class="sd">    updating the sample with the chosen and rejected answers. The operator requires specific</span>
+<span class="sd">    keys in the samples for the prompt and answer options. If these keys are missing, it</span>
+<span class="sd">    logs warnings and uses placeholder text. The annotated results are processed to update</span>
+<span class="sd">    the sample with the chosen and rejected answers.&quot;&quot;&quot;</span>
+
+    <span class="n">DEFAULT_LABEL_CONFIG</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    &lt;View className=&quot;root&quot;&gt;</span>
+<span class="s2">      &lt;Style&gt;</span>
+<span class="s2">        .root {</span>
+<span class="s2">          box-sizing: border-box;</span>
+<span class="s2">          margin: 0;</span>
+<span class="s2">          padding: 0;</span>
+<span class="s2">          font-family: &#39;Roboto&#39;,</span>
+<span class="s2">            sans-serif;</span>
+<span class="s2">          line-height: 1.6;</span>
+<span class="s2">          background-color: #f0f0f0;</span>
+<span class="s2">        }</span>
+
+<span class="s2">        .container {</span>
+<span class="s2">          margin: 0 auto;</span>
+<span class="s2">          padding: 20px;</span>
+<span class="s2">          background-color: #ffffff;</span>
+<span class="s2">          border-radius: 5px;</span>
+<span class="s2">          box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.1);</span>
+<span class="s2">        }</span>
+
+<span class="s2">        .prompt {</span>
+<span class="s2">          padding: 20px;</span>
+<span class="s2">          background-color: #0084ff;</span>
+<span class="s2">          color: #ffffff;</span>
+<span class="s2">          border-radius: 5px;</span>
+<span class="s2">          margin-bottom: 20px;</span>
+<span class="s2">          box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 3px 10px 0 rgba(0, 0, 0, 0.1);</span>
+<span class="s2">        }</span>
+
+<span class="s2">        .answers {</span>
+<span class="s2">          display: flex;</span>
+<span class="s2">          justify-content: space-between;</span>
+<span class="s2">          flex-wrap: wrap;</span>
+<span class="s2">          gap: 20px;</span>
+<span class="s2">        }</span>
+
+<span class="s2">        .answer-box {</span>
+<span class="s2">          flex-basis: 49%;</span>
+<span class="s2">          padding: 20px;</span>
+<span class="s2">          background-color: rgba(44, 62, 80, 0.9);</span>
+<span class="s2">          color: #ffffff;</span>
+<span class="s2">          border-radius: 5px;</span>
+<span class="s2">          box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 3px 10px 0 rgba(0, 0, 0, 0.1);</span>
+<span class="s2">        }</span>
+
+<span class="s2">        .answer-box p {</span>
+<span class="s2">          word-wrap: break-word;</span>
+<span class="s2">        }</span>
+
+<span class="s2">        .answer-box:hover {</span>
+<span class="s2">          background-color: rgba(52, 73, 94, 0.9);</span>
+<span class="s2">          cursor: pointer;</span>
+<span class="s2">          transition: all 0.3s ease;</span>
+<span class="s2">        }</span>
+
+<span class="s2">        .lsf-richtext__line:hover {</span>
+<span class="s2">          background: unset;</span>
+<span class="s2">        }</span>
+
+<span class="s2">        .answer-box .lsf-object {</span>
+<span class="s2">          padding: 20px</span>
+<span class="s2">        }</span>
+<span class="s2">      &lt;/Style&gt;</span>
+<span class="s2">      &lt;View className=&quot;container&quot;&gt;</span>
+<span class="s2">        &lt;View className=&quot;prompt&quot;&gt;</span>
+<span class="s2">          &lt;Text name=&quot;prompt&quot; value=&quot;$prompt&quot; /&gt;</span>
+<span class="s2">        &lt;/View&gt;</span>
+<span class="s2">        &lt;View className=&quot;answers&quot;&gt;</span>
+<span class="s2">          &lt;Pairwise name=&quot;comparison&quot; toName=&quot;answer1,answer2&quot;</span>
+<span class="s2">                    selectionStyle=&quot;background-color: #27ae60; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2); border: 2px solid #2ecc71; cursor: pointer; transition: all 0.3s ease;&quot;</span>
+<span class="s2">                    leftChoiceValue=&quot;answer1&quot; rightChoiceValue=&quot;answer2&quot; /&gt;</span>
+<span class="s2">          &lt;View className=&quot;answer-box&quot;&gt;</span>
+<span class="s2">            &lt;Text name=&quot;answer1&quot; value=&quot;$answer1&quot; /&gt;</span>
+<span class="s2">          &lt;/View&gt;</span>
+<span class="s2">          &lt;View className=&quot;answer-box&quot;&gt;</span>
+<span class="s2">            &lt;Text name=&quot;answer2&quot; value=&quot;$answer2&quot; /&gt;</span>
+<span class="s2">          &lt;/View&gt;</span>
+<span class="s2">        &lt;/View&gt;</span>
+<span class="s2">      &lt;/View&gt;</span>
+<span class="s2">    &lt;/View&gt;</span>
+<span class="s2">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+
+<div class="viewcode-block" id="HumanPreferenceAnnotationMapper.__init__">
+<a class="viewcode-back" href="../../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.HumanPreferenceAnnotationMapper.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">label_config_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">answer1_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;answer1&quot;</span><span class="p">,</span>
+        <span class="n">answer2_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;answer2&quot;</span><span class="p">,</span>
+        <span class="n">prompt_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;prompt&quot;</span><span class="p">,</span>
+        <span class="n">chosen_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;chosen&quot;</span><span class="p">,</span>
+        <span class="n">rejected_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rejected&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the human preference annotation operator.</span>
+
+<span class="sd">        :param label_config_file: Path to the label config file</span>
+<span class="sd">        :param answer1_key: Key for the first answer</span>
+<span class="sd">        :param answer2_key: Key for the second answer</span>
+<span class="sd">        :param prompt_key: Key for the prompt/question</span>
+<span class="sd">        :param chosen_key: Key for the chosen answer</span>
+<span class="sd">        :param rejected_key: Key for the rejected answer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Ensure text_key is set to prompt_key if not explicitly provided</span>
+        <span class="k">if</span> <span class="s2">&quot;text_key&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;text_key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prompt_key</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># Store our class-specific attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">answer1_key</span> <span class="o">=</span> <span class="n">answer1_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">answer2_key</span> <span class="o">=</span> <span class="n">answer2_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prompt_key</span> <span class="o">=</span> <span class="n">prompt_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chosen_key</span> <span class="o">=</span> <span class="n">chosen_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rejected_key</span> <span class="o">=</span> <span class="n">rejected_key</span>
+
+        <span class="c1"># Prepare the label_config parameter</span>
+        <span class="k">if</span> <span class="n">label_config_file</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">label_config_file</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">label_config_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;label_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded label config from </span><span class="si">{</span><span class="n">label_config_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;label_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_LABEL_CONFIG</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using default UI config for human preference annotation&quot;</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_format_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format samples as a Label Studio task for human preference.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            samples: List of samples to include in the task</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict: Formatted task data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># For human preference, we need a special format</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Human preference requires exactly one sample per task&quot;</span><span class="p">)</span>
+
+        <span class="n">sample</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{}}</span>
+
+        <span class="c1"># Add the prompt/question</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompt_key</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">:</span>
+            <span class="n">task</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;prompt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_key</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sample missing required field &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_key</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="n">task</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;prompt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;No prompt provided&quot;</span>
+
+        <span class="c1"># Add the answer options</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">answer1_key</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">:</span>
+            <span class="n">task</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;answer1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">answer1_key</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sample missing required field &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">answer1_key</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="n">task</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;answer1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;No answer 1 provided&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">answer2_key</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">:</span>
+            <span class="n">task</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;answer2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">answer2_key</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sample missing required field &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">answer2_key</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="n">task</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;answer2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;No answer 2 provided&quot;</span>
+
+        <span class="c1"># Add any other metadata as string values only</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">sample</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">answer1_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">answer2_key</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">))</span> <span class="ow">or</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># Convert to string to ensure compatibility</span>
+                    <span class="n">task</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="sa">f</span><span class="s2">&quot;meta:</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># Log the task for debugging</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Formatted task: </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">task</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_task_annotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get annotation for a task if available&quot;&quot;&quot;</span>
+        <span class="n">annotation</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_get_task_annotation</span><span class="p">(</span><span class="n">task_id</span><span class="p">)</span>
+
+        <span class="c1"># Process the annotation if available</span>
+        <span class="k">if</span> <span class="n">annotation</span> <span class="ow">and</span> <span class="s2">&quot;result&quot;</span> <span class="ow">in</span> <span class="n">annotation</span><span class="p">:</span>
+            <span class="c1"># Extract the preference information</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">annotation</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;pairwise&quot;</span><span class="p">:</span>
+                    <span class="c1"># Get the selected option (from_id or to_id)</span>
+                    <span class="n">selected</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;selected&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">selected</span><span class="p">:</span>
+                        <span class="c1"># Add the preference to the annotation</span>
+                        <span class="n">annotation</span><span class="p">[</span><span class="s2">&quot;preference&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">selected</span>
+
+        <span class="k">return</span> <span class="n">annotation</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_annotation_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">sample</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process human preference annotation result and update the sample</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            annotation: The annotation result from Label Studio</span>
+<span class="sd">            sample: The original sample that was annotated</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict: The updated sample with preference results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Extract the preference information</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing annotation result: </span><span class="si">{</span><span class="n">annotation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">all_keys</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">answer1_key</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">answer2_key</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">preference</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">annotation</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;pairwise&quot;</span><span class="p">:</span>
+                <span class="c1"># Get the selected option</span>
+                <span class="n">selected</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;selected&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">selected</span><span class="p">:</span>
+                    <span class="c1"># Map &#39;left&#39;/&#39;right&#39; to &#39;answer1&#39;/&#39;answer2&#39;</span>
+                    <span class="k">if</span> <span class="n">selected</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>
+                        <span class="n">preference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">answer1_key</span>
+                    <span class="k">elif</span> <span class="n">selected</span> <span class="o">==</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span>
+                        <span class="n">preference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">answer2_key</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># In case it&#39;s already &#39;answer1&#39;/&#39;answer2&#39;</span>
+                        <span class="n">preference</span> <span class="o">=</span> <span class="n">selected</span>
+                    <span class="k">break</span>
+
+        <span class="c1"># Store the preference result directly in the sample</span>
+        <span class="n">chosen</span> <span class="o">=</span> <span class="n">preference</span> <span class="k">if</span> <span class="n">preference</span> <span class="k">else</span> <span class="s2">&quot;Unanswered&quot;</span>
+        <span class="n">rejected</span> <span class="o">=</span> <span class="n">all_keys</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">preference</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">preference</span> <span class="k">else</span> <span class="s2">&quot;Unanswered&quot;</span>
+        <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">chosen_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">chosen</span><span class="p">]</span>
+        <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rejected_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">rejected</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updated sample: </span><span class="si">{</span><span class="n">sample</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sample</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -514,8 +514,72 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-video-captioning-from-summarizer-mapper-module">
-<h1>data_juicer.ops.mapper.video_captioning_from_summarizer_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-video-captioning-from-summarizer-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.video_captioning_from_summarizer_mapper">
+<span id="data-juicer-ops-mapper-video-captioning-from-summarizer-mapper-module"></span><h1>data_juicer.ops.mapper.video_captioning_from_summarizer_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.video_captioning_from_summarizer_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_captioning_from_summarizer_mapper.VideoCaptioningFromSummarizerMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.video_captioning_from_summarizer_mapper.</span></span><span class="sig-name descname"><span class="pre">VideoCaptioningFromSummarizerMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_captioning_from_summarizer_mapper.html#VideoCaptioningFromSummarizerMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_captioning_from_summarizer_mapper.VideoCaptioningFromSummarizerMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Mapper to generate video captions by summarizing several kinds of generated
+texts (captions from video/audio/frames, tags from audio/frames, ...)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_captioning_from_summarizer_mapper.VideoCaptioningFromSummarizerMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hf_summarizer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trust_remote_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consider_video_caption_from_video</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consider_video_caption_from_audio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consider_video_caption_from_frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consider_video_tags_from_audio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consider_video_tags_from_frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vid_cap_from_vid_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vid_cap_from_frm_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vid_tag_from_aud_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vid_tag_from_frm_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_tag_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_original_sample</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_captioning_from_summarizer_mapper.html#VideoCaptioningFromSummarizerMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_captioning_from_summarizer_mapper.VideoCaptioningFromSummarizerMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hf_summarizer</strong> -- the summarizer model used to summarize texts
+generated by other methods.</p></li>
+<li><p><strong>trust_remote_code</strong> -- whether to trust the remote code of HF models.</p></li>
+<li><p><strong>consider_video_caption_from_video</strong> -- whether to consider the video
+caption generated from video directly in the summarization process.
+Default: True.</p></li>
+<li><p><strong>consider_video_caption_from_audio</strong> -- whether to consider the video
+caption generated from audio streams in the video in the
+summarization process. Default: True.</p></li>
+<li><p><strong>consider_video_caption_from_frames</strong> -- whether to consider the
+video caption generated from sampled frames from the video in the
+summarization process. Default: True.</p></li>
+<li><p><strong>consider_video_tags_from_audio</strong> -- whether to consider the video
+tags generated from audio streams in the video in the summarization
+process. Default: True.</p></li>
+<li><p><strong>consider_video_tags_from_frames</strong> -- whether to consider the video
+tags generated from sampled frames from the video in the
+summarization process. Default: True.</p></li>
+<li><p><strong>vid_cap_from_vid_args</strong> -- the arg dict for video captioning from
+video directly with keys are the arg names and values are the arg
+values. Default: None.</p></li>
+<li><p><strong>vid_cap_from_frm_args</strong> -- the arg dict for video captioning from
+sampled frames from the video with keys are the arg names and
+values are the arg values. Default: None.</p></li>
+<li><p><strong>vid_tag_from_aud_args</strong> -- the arg dict for video tagging from audio
+streams in the video with keys are the arg names and values are the
+arg values. Default: None.</p></li>
+<li><p><strong>vid_tag_from_frm_args</strong> -- the arg dict for video tagging from
+sampled frames from the video with keys are the arg names and
+values are the arg values. Default: None.</p></li>
+<li><p><strong>keep_tag_num</strong> -- max number N of tags from sampled frames to keep.
+Too many tags might bring negative influence to summarized text, so
+we consider to only keep the N most frequent tags. Default: 5.</p></li>
+<li><p><strong>keep_original_sample</strong> -- whether to keep the original sample. If
+it's set to False, there will be only summarized captions in the
+final datasets and the original captions will be removed. It's True
+in default.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_captioning_from_summarizer_mapper.VideoCaptioningFromSummarizerMapper.process_batched">
+<span class="sig-name descname"><span class="pre">process_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_captioning_from_summarizer_mapper.html#VideoCaptioningFromSummarizerMapper.process_batched"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_captioning_from_summarizer_mapper.VideoCaptioningFromSummarizerMapper.process_batched" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +602,22 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_captioning_from_summarizer_mapper.VideoCaptioningFromSummarizerMapper"><code class="docutils literal notranslate"><span class="pre">VideoCaptioningFromSummarizerMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_captioning_from_summarizer_mapper.VideoCaptioningFromSummarizerMapper.__init__"><code class="docutils literal notranslate"><span class="pre">VideoCaptioningFromSummarizerMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_captioning_from_summarizer_mapper.VideoCaptioningFromSummarizerMapper.process_batched"><code class="docutils literal notranslate"><span class="pre">VideoCaptioningFromSummarizerMapper.process_batched()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

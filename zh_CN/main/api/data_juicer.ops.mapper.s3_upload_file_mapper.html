@@ -514,8 +514,88 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-s3-upload-file-mapper-module">
-<h1>data_juicer.ops.mapper.s3_upload_file_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-s3-upload-file-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.s3_upload_file_mapper">
+<span id="data-juicer-ops-mapper-s3-upload-file-mapper-module"></span><h1>data_juicer.ops.mapper.s3_upload_file_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.s3_upload_file_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.s3_upload_file_mapper.</span></span><span class="sig-name descname"><span class="pre">S3UploadFileMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/s3_upload_file_mapper.html#S3UploadFileMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Mapper to upload local files to S3 and update paths to S3 URLs.</p>
+<p>This operator uploads files from local paths to S3 storage. It supports:
+- Uploading multiple files concurrently
+- Updating file paths in the dataset to S3 URLs
+- Optional deletion of local files after successful upload
+- Custom S3 endpoints (for S3-compatible services like MinIO)
+- Skipping already uploaded files (based on S3 key)</p>
+<p>The operator processes nested lists of paths, maintaining the original structure
+in the output.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upload_field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s3_bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s3_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_access_key_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_secret_access_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_session_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endpoint_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_local</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_existing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_concurrent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/s3_upload_file_mapper.html#S3UploadFileMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>upload_field</strong> -- The field name containing file paths to upload.</p></li>
+<li><p><strong>s3_bucket</strong> -- S3 bucket name to upload files to.</p></li>
+<li><p><strong>s3_prefix</strong> -- Prefix (folder path) in S3 bucket. E.g., 'videos/' or 'data/videos/'.</p></li>
+<li><p><strong>aws_access_key_id</strong> -- AWS access key ID for S3.</p></li>
+<li><p><strong>aws_secret_access_key</strong> -- AWS secret access key for S3.</p></li>
+<li><p><strong>aws_session_token</strong> -- AWS session token for S3 (optional).</p></li>
+<li><p><strong>aws_region</strong> -- AWS region for S3.</p></li>
+<li><p><strong>endpoint_url</strong> -- Custom S3 endpoint URL (for S3-compatible services).</p></li>
+<li><p><strong>remove_local</strong> -- Whether to delete local files after successful upload.</p></li>
+<li><p><strong>skip_existing</strong> -- Whether to skip uploading if file already exists in S3.</p></li>
+<li><p><strong>max_concurrent</strong> -- Maximum concurrent uploads.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper.s3_client">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">s3_client</span></span><a class="headerlink" href="#data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper.s3_client" title="链接到此定义。">#</a></dt>
+<dd><p>Lazy initialization of S3 client to avoid serialization issues with Ray.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper.upload_files_async">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">upload_files_async</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/s3_upload_file_mapper.html#S3UploadFileMapper.upload_files_async"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper.upload_files_async" title="链接到此定义。">#</a></dt>
+<dd><p>Upload multiple files asynchronously.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>paths</strong> -- List of local file paths</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of (idx, status, s3_url, error_message) tuples</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper.upload_nested_paths">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">upload_nested_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nested_paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/s3_upload_file_mapper.html#S3UploadFileMapper.upload_nested_paths"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper.upload_nested_paths" title="链接到此定义。">#</a></dt>
+<dd><p>Upload nested paths with structure preservation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nested_paths</strong> -- Nested list of file paths</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>(reconstructed_paths, failed_info)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper.process_batched">
+<span class="sig-name descname"><span class="pre">process_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/s3_upload_file_mapper.html#S3UploadFileMapper.process_batched"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper.process_batched" title="链接到此定义。">#</a></dt>
+<dd><p>Process a batch of samples.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +618,25 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper"><code class="docutils literal notranslate"><span class="pre">S3UploadFileMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper.__init__"><code class="docutils literal notranslate"><span class="pre">S3UploadFileMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper.s3_client"><code class="docutils literal notranslate"><span class="pre">S3UploadFileMapper.s3_client</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper.upload_files_async"><code class="docutils literal notranslate"><span class="pre">S3UploadFileMapper.upload_files_async()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper.upload_nested_paths"><code class="docutils literal notranslate"><span class="pre">S3UploadFileMapper.upload_nested_paths()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.s3_upload_file_mapper.S3UploadFileMapper.process_batched"><code class="docutils literal notranslate"><span class="pre">S3UploadFileMapper.process_batched()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

@@ -514,8 +514,304 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mixins-module">
-<h1>data_juicer.ops.mixins module<a class="headerlink" href="#data-juicer-ops-mixins-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mixins">
+<span id="data-juicer-ops-mixins-module"></span><h1>data_juicer.ops.mixins module<a class="headerlink" href="#module-data_juicer.ops.mixins" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mixins.EventDrivenMixin">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mixins.</span></span><span class="sig-name descname"><span class="pre">EventDrivenMixin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mixins.html#EventDrivenMixin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mixins.EventDrivenMixin" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Mixin for event-driven capabilities in operations.</p>
+<p>This mixin provides functionality for registering event handlers,
+triggering events, and managing event polling.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mixins.EventDrivenMixin.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mixins.html#EventDrivenMixin.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mixins.EventDrivenMixin.__init__" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mixins.EventDrivenMixin.register_event_handler">
+<span class="sig-name descname"><span class="pre">register_event_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mixins.html#EventDrivenMixin.register_event_handler"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mixins.EventDrivenMixin.register_event_handler" title="链接到此定义。">#</a></dt>
+<dd><p>Register a handler for a specific event type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_type</strong> -- Type of event to handle</p></li>
+<li><p><strong>handler</strong> -- Callback function to handle the event</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mixins.EventDrivenMixin.trigger_event">
+<span class="sig-name descname"><span class="pre">trigger_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mixins.html#EventDrivenMixin.trigger_event"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mixins.EventDrivenMixin.trigger_event" title="链接到此定义。">#</a></dt>
+<dd><p>Trigger an event and call all registered handlers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_type</strong> -- Type of event to trigger</p></li>
+<li><p><strong>data</strong> -- Event data to pass to handlers</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mixins.EventDrivenMixin.start_polling">
+<span class="sig-name descname"><span class="pre">start_polling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mixins.html#EventDrivenMixin.start_polling"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mixins.EventDrivenMixin.start_polling" title="链接到此定义。">#</a></dt>
+<dd><p>Start polling for a specific event type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_type</strong> -- Type of event to poll for</p></li>
+<li><p><strong>poll_func</strong> -- Function to call for polling</p></li>
+<li><p><strong>interval</strong> -- Polling interval in seconds</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mixins.EventDrivenMixin.stop_polling">
+<span class="sig-name descname"><span class="pre">stop_polling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mixins.html#EventDrivenMixin.stop_polling"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mixins.EventDrivenMixin.stop_polling" title="链接到此定义。">#</a></dt>
+<dd><p>Stop polling for a specific event type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event_type</strong> -- Type of event to stop polling for</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mixins.EventDrivenMixin.stop_all_polling">
+<span class="sig-name descname"><span class="pre">stop_all_polling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mixins.html#EventDrivenMixin.stop_all_polling"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mixins.EventDrivenMixin.stop_all_polling" title="链接到此定义。">#</a></dt>
+<dd><p>Stop all polling threads.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mixins.EventDrivenMixin.wait_for_completion">
+<span class="sig-name descname"><span class="pre">wait_for_completion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">condition_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Operation</span> <span class="pre">timed</span> <span class="pre">out'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mixins.html#EventDrivenMixin.wait_for_completion"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mixins.EventDrivenMixin.wait_for_completion" title="链接到此定义。">#</a></dt>
+<dd><p>Wait for a condition to be met.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>condition_func</strong> -- Function that returns True when condition is met</p></li>
+<li><p><strong>timeout</strong> -- Maximum time to wait in seconds</p></li>
+<li><p><strong>poll_interval</strong> -- Polling interval in seconds</p></li>
+<li><p><strong>error_message</strong> -- Error message to raise on timeout</p></li>
+</ul>
+</dd>
+<dt class="field-even">抛出<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TimeoutError</strong> -- If the condition is not met within the timeout</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mixins.NotificationMixin">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mixins.</span></span><span class="sig-name descname"><span class="pre">NotificationMixin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mixins.html#NotificationMixin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mixins.NotificationMixin" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Mixin for sending notifications through various channels.</p>
+<p>This mixin provides functionality for sending notifications via email,
+Slack, DingTalk, and other platforms.</p>
+<p>Notification configuration can be specified as a &quot;notification_config&quot;
+parameter within an operator (for backward compatibility):
+<a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>yaml
+process:</p>
+<blockquote>
+<div><ul>
+<li><dl>
+<dt>some_mapper:</dt><dd><dl>
+<dt>notification_config:</dt><dd><p>enabled: true
+email:</p>
+<blockquote>
+<div><p># ... email settings ...</p>
+</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a></p>
+<p>For security best practices, sensitive information like passwords and
+tokens should be provided via environment variables:</p>
+<ul class="simple">
+<li><p>Email: set 'DATA_JUICER_EMAIL_PASSWORD' environment variable
+or service-specific 'DATA_JUICER_SMTP_SERVER_NAME_PASSWORD'</p></li>
+<li><p>Slack: set 'DATA_JUICER_SLACK_WEBHOOK' environment variable</p></li>
+<li><p>DingTalk: set 'DATA_JUICER_DINGTALK_TOKEN' and
+'DATA_JUICER_DINGTALK_SECRET' environment variables</p></li>
+</ul>
+<p>For even more secure email authentication, you can use TLS client
+certificates instead of passwords:</p>
+<ol class="arabic">
+<li><p>Generate a client certificate and key (example using OpenSSL):
+<a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a>bash
+# Generate a private key
+openssl genrsa -out client.key 2048</p>
+<p># Generate a certificate signing request (CSR)
+openssl req -new -key client.key -out client.csr</p>
+<p># Generate a self-signed certificate
+openssl x509 -req -days 365 -in client.csr -signkey client.key</p>
+<blockquote>
+<div><p>-out client.crt</p>
+</div></blockquote>
+<p><a href="#id13"><span class="problematic" id="id14">``</span></a><a href="#id15"><span class="problematic" id="id16">`</span></a></p>
+</li>
+<li><dl class="simple">
+<dt>Configure your SMTP server to accept this client certificate for</dt><dd><p>authentication</p>
+</dd>
+</dl>
+</li>
+<li><p>Configure Data Juicer to use certificate authentication:
+<a href="#id17"><span class="problematic" id="id18">``</span></a><a href="#id19"><span class="problematic" id="id20">`</span></a>yaml
+notification:</p>
+<blockquote>
+<div><p>enabled: true
+email:</p>
+<blockquote>
+<div><p>use_cert_auth: true
+client_cert_file: &quot;/path/to/client.crt&quot;
+client_key_file: &quot;/path/to/client.key&quot;
+smtp_server: &quot;smtp.example.com&quot;
+smtp_port: 587
+sender_email: &quot;<a class="reference external" href="mailto:notifications&#37;&#52;&#48;example&#46;com">notifications<span>&#64;</span>example<span>&#46;</span>com</a>&quot;
+recipients: [&quot;<a class="reference external" href="mailto:recipient&#37;&#52;&#48;example&#46;com">recipient<span>&#64;</span>example<span>&#46;</span>com</a>&quot;]</p>
+</div></blockquote>
+</div></blockquote>
+<p><a href="#id21"><span class="problematic" id="id22">``</span></a><a href="#id23"><span class="problematic" id="id24">`</span></a></p>
+</li>
+<li><p>Or use environment variables:
+<code class="docutils literal notranslate"><span class="pre">`bash</span>
+<span class="pre">export</span> <span class="pre">DATA_JUICER_EMAIL_CERT=&quot;/path/to/client.crt&quot;</span>
+<span class="pre">export</span> <span class="pre">DATA_JUICER_EMAIL_KEY=&quot;/path/to/client.key&quot;</span>
+<span class="pre">`</span></code></p></li>
+</ol>
+<p>For maximum connection security, you can use a direct SSL connection
+instead of STARTTLS by enabling the 'use_ssl' option:</p>
+<p><a href="#id25"><span class="problematic" id="id26">``</span></a><a href="#id27"><span class="problematic" id="id28">`</span></a>yaml
+notification:</p>
+<blockquote>
+<div><p>enabled: true
+email:</p>
+<blockquote>
+<div><p>use_ssl: true
+smtp_port: 465  # Common port for SMTP over SSL
+# ... other email configuration ...</p>
+</div></blockquote>
+</div></blockquote>
+<p><a href="#id29"><span class="problematic" id="id30">``</span></a><a href="#id31"><span class="problematic" id="id32">`</span></a></p>
+<dl class="simple">
+<dt>This establishes an encrypted connection from the beginning, rather than</dt><dd><p>starting with an unencrypted connection and upgrading to TLS as with
+STARTTLS. Note that this option can be combined with certificate
+authentication for maximum security.</p>
+</dd>
+<dt>The email notification system supports various email server configurations</dt><dd><p>through a flexible configuration system. Here are some examples for
+different servers:</p>
+</dd>
+</dl>
+<p>Standard SMTP with STARTTLS:
+<a href="#id33"><span class="problematic" id="id34">``</span></a><a href="#id35"><span class="problematic" id="id36">`</span></a>yaml
+notification:</p>
+<blockquote>
+<div><p>enabled: true
+email:</p>
+<blockquote>
+<div><p>smtp_server: &quot;smtp.example.com&quot;
+smtp_port: 587
+username: &quot;<a class="reference external" href="mailto:your&#46;username&#37;&#52;&#48;example&#46;com">your<span>&#46;</span>username<span>&#64;</span>example<span>&#46;</span>com</a>&quot;
+sender_email: &quot;<a class="reference external" href="mailto:your&#46;username&#37;&#52;&#48;example&#46;com">your<span>&#46;</span>username<span>&#64;</span>example<span>&#46;</span>com</a>&quot;
+sender_name: &quot;Your Name&quot;  # Optional
+recipients: [&quot;<a class="reference external" href="mailto:recipient1&#37;&#52;&#48;example&#46;com">recipient1<span>&#64;</span>example<span>&#46;</span>com</a>&quot;, &quot;<a class="reference external" href="mailto:recipient2&#37;&#52;&#48;example&#46;com">recipient2<span>&#64;</span>example<span>&#46;</span>com</a>&quot;]</p>
+</div></blockquote>
+</div></blockquote>
+<p><a href="#id37"><span class="problematic" id="id38">``</span></a><a href="#id39"><span class="problematic" id="id40">`</span></a></p>
+<p>Direct SSL Connection (e.g., Gmail):
+<a href="#id41"><span class="problematic" id="id42">``</span></a><a href="#id43"><span class="problematic" id="id44">`</span></a>yaml
+notification:</p>
+<blockquote>
+<div><p>enabled: true
+email:</p>
+<blockquote>
+<div><p>smtp_server: &quot;smtp.gmail.com&quot;
+smtp_port: 465
+use_ssl: true
+username: &quot;<a class="reference external" href="mailto:your&#46;username&#37;&#52;&#48;gmail&#46;com">your<span>&#46;</span>username<span>&#64;</span>gmail<span>&#46;</span>com</a>&quot;
+sender_email: &quot;<a class="reference external" href="mailto:your&#46;username&#37;&#52;&#48;gmail&#46;com">your<span>&#46;</span>username<span>&#64;</span>gmail<span>&#46;</span>com</a>&quot;
+sender_name: &quot;Your Name&quot;
+recipients: [&quot;<a class="reference external" href="mailto:recipient1&#37;&#52;&#48;example&#46;com">recipient1<span>&#64;</span>example<span>&#46;</span>com</a>&quot;, &quot;<a class="reference external" href="mailto:recipient2&#37;&#52;&#48;example&#46;com">recipient2<span>&#64;</span>example<span>&#46;</span>com</a>&quot;]</p>
+</div></blockquote>
+</div></blockquote>
+<p><a href="#id45"><span class="problematic" id="id46">``</span></a><a href="#id47"><span class="problematic" id="id48">`</span></a></p>
+<p>Alibaba Email Server:
+<a href="#id49"><span class="problematic" id="id50">``</span></a><a href="#id51"><span class="problematic" id="id52">`</span></a>yaml
+notification:</p>
+<blockquote>
+<div><p>enabled: true
+email:</p>
+<blockquote>
+<div><p>smtp_server: &quot;smtp.alibaba-inc.com&quot;
+smtp_port: 465
+username: &quot;<a class="reference external" href="mailto:your&#46;username&#37;&#52;&#48;alibaba-inc&#46;com">your<span>&#46;</span>username<span>&#64;</span>alibaba-inc<span>&#46;</span>com</a>&quot;
+sender_email: &quot;<a class="reference external" href="mailto:your&#46;username&#37;&#52;&#48;alibaba-inc&#46;com">your<span>&#46;</span>username<span>&#64;</span>alibaba-inc<span>&#46;</span>com</a>&quot;
+sender_name: &quot;Your Name&quot;
+recipient_separator: &quot;;&quot;       # Use semicolons to separate recipients
+recipients: [&quot;<a class="reference external" href="mailto:recipient1&#37;&#52;&#48;example&#46;com">recipient1<span>&#64;</span>example<span>&#46;</span>com</a>&quot;, &quot;<a class="reference external" href="mailto:recipient2&#37;&#52;&#48;example&#46;com">recipient2<span>&#64;</span>example<span>&#46;</span>com</a>&quot;]</p>
+</div></blockquote>
+</div></blockquote>
+<p><a href="#id53"><span class="problematic" id="id54">``</span></a><a href="#id55"><span class="problematic" id="id56">`</span></a></p>
+<p>Environment variable usage examples:
+<a href="#id57"><span class="problematic" id="id58">``</span></a><a href="#id59"><span class="problematic" id="id60">`</span></a>bash
+# General email password
+export DATA_JUICER_EMAIL_PASSWORD=&quot;your_email_password&quot;</p>
+<p># Server-specific passwords (preferred for clarity)
+export DATA_JUICER_SMTP_GMAIL_COM_PASSWORD=&quot;your_gmail_password&quot;
+export DATA_JUICER_SMTP_ALIBABA_INC_COM_PASSWORD=&quot;your_alibaba_password&quot;</p>
+<p># Slack webhook
+export DATA_JUICER_SLACK_WEBHOOK=&quot;your_slack_webhook_url&quot;</p>
+<p># DingTalk credentials
+export DATA_JUICER_DINGTALK_TOKEN=&quot;your_dingtalk_token&quot;
+export DATA_JUICER_DINGTALK_SECRET=&quot;your_dingtalk_secret&quot;
+<a href="#id61"><span class="problematic" id="id62">``</span></a><a href="#id63"><span class="problematic" id="id64">`</span></a></p>
+<p>If environment variables are not set, the system will fall back to using
+values from the configuration file, but this is less secure and not
+recommended for production environments.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mixins.NotificationMixin.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mixins.html#NotificationMixin.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mixins.NotificationMixin.__init__" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mixins.NotificationMixin.send_notification">
+<span class="sig-name descname"><span class="pre">send_notification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notification_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mixins.html#NotificationMixin.send_notification"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mixins.NotificationMixin.send_notification" title="链接到此定义。">#</a></dt>
+<dd><p>Send a notification message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> -- The message to send</p></li>
+<li><p><strong>notification_type</strong> -- The type of notification to send.
+Email, Slack, DingTalk.
+If None, send nothing</p></li>
+<li><p><strong>**kwargs</strong> -- Additional arguments to pass to the notification handler
+These can override any configuration settings for this
+specific notification</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the notification was sent successfully, else False</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +834,32 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mixins.EventDrivenMixin"><code class="docutils literal notranslate"><span class="pre">EventDrivenMixin</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mixins.EventDrivenMixin.__init__"><code class="docutils literal notranslate"><span class="pre">EventDrivenMixin.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mixins.EventDrivenMixin.register_event_handler"><code class="docutils literal notranslate"><span class="pre">EventDrivenMixin.register_event_handler()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mixins.EventDrivenMixin.trigger_event"><code class="docutils literal notranslate"><span class="pre">EventDrivenMixin.trigger_event()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mixins.EventDrivenMixin.start_polling"><code class="docutils literal notranslate"><span class="pre">EventDrivenMixin.start_polling()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mixins.EventDrivenMixin.stop_polling"><code class="docutils literal notranslate"><span class="pre">EventDrivenMixin.stop_polling()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mixins.EventDrivenMixin.stop_all_polling"><code class="docutils literal notranslate"><span class="pre">EventDrivenMixin.stop_all_polling()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mixins.EventDrivenMixin.wait_for_completion"><code class="docutils literal notranslate"><span class="pre">EventDrivenMixin.wait_for_completion()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mixins.NotificationMixin"><code class="docutils literal notranslate"><span class="pre">NotificationMixin</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mixins.NotificationMixin.__init__"><code class="docutils literal notranslate"><span class="pre">NotificationMixin.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mixins.NotificationMixin.send_notification"><code class="docutils literal notranslate"><span class="pre">NotificationMixin.send_notification()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

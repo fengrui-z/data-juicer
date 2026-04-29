@@ -922,6 +922,11 @@
             <span class="s2">&quot;binary_files&quot;</span><span class="p">,</span>
             <span class="s2">&quot;lance&quot;</span><span class="p">,</span>
         <span class="p">}:</span>
+            <span class="k">if</span> <span class="n">data_format</span> <span class="o">==</span> <span class="s2">&quot;lance&quot;</span><span class="p">:</span>
+                <span class="c1"># use lazy loader to check pylance installation</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
+
+                <span class="n">LazyLoader</span><span class="o">.</span><span class="n">check_packages</span><span class="p">([</span><span class="s2">&quot;pylance&quot;</span><span class="p">])</span>
             <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;read_</span><span class="si">{</span><span class="n">data_format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)(</span><span class="n">paths</span><span class="p">)</span></div>
 
 
@@ -955,9 +960,19 @@
 
 
 
+<span class="c1"># Ray renamed ArrowJSONDatasource -&gt; JSONDatasource in newer releases</span>
+<span class="n">_read_api</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">read_api</span>
+<span class="n">_JSONDatasourceBase</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_read_api</span><span class="p">,</span> <span class="s2">&quot;ArrowJSONDatasource&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_read_api</span><span class="p">,</span> <span class="s2">&quot;JSONDatasource&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">_JSONDatasourceBase</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+        <span class="s2">&quot;ray.data.read_api has neither ArrowJSONDatasource nor JSONDatasource; &quot;</span>
+        <span class="s2">&quot;please upgrade or pin a compatible Ray version.&quot;</span>
+    <span class="p">)</span>
+
+
 <div class="viewcode-block" id="JSONStreamDatasource">
 <a class="viewcode-back" href="../../../../api/data_juicer.core.data.ray_dataset.html#data_juicer.core.data.ray_dataset.JSONStreamDatasource">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">JSONStreamDatasource</span><span class="p">(</span><span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">read_api</span><span class="o">.</span><span class="n">ArrowJSONDatasource</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JSONStreamDatasource</span><span class="p">(</span><span class="n">_JSONDatasourceBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A temp Datasource for reading json stream.</span>
 
@@ -1001,7 +1016,7 @@
                 <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
                     <span class="k">return</span>
         <span class="k">except</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">ArrowInvalid</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to read JSON file: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to read JSON file: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">. Underlying PyArrow Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
 
 
 

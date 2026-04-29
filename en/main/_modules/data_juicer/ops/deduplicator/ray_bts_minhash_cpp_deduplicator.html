@@ -536,237 +536,261 @@
 <span class="n">MAX_DATA_NUM</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">63</span>
 
 
-<span class="nd">@ray</span><span class="o">.</span><span class="n">remote</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">IdGenerator</span><span class="p">:</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_id</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">next_id</span> <span class="o">=</span> <span class="n">start_id</span>
+<div class="viewcode-block" id="define_id_generator">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.deduplicator.ray_bts_minhash_cpp_deduplicator.html#data_juicer.ops.deduplicator.define_id_generator">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">define_id_generator</span><span class="p">():</span>
+    <span class="nd">@ray</span><span class="o">.</span><span class="n">remote</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">IdGenerator</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_id</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">next_id</span> <span class="o">=</span> <span class="n">start_id</span>
 
-    <span class="nd">@ray</span><span class="o">.</span><span class="n">method</span><span class="p">(</span><span class="n">num_returns</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_next_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
-        <span class="n">current_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">next_id</span> <span class="o">+=</span> <span class="n">count</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">current_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_id</span><span class="p">)</span>
+        <span class="nd">@ray</span><span class="o">.</span><span class="n">method</span><span class="p">(</span><span class="n">num_returns</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_next_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+            <span class="n">current_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_id</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">next_id</span> <span class="o">+=</span> <span class="n">count</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">current_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_id</span><span class="p">)</span>
 
-
-<span class="nd">@ray</span><span class="o">.</span><span class="n">remote</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">HashAggregator</span><span class="p">:</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parallel_num</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span> <span class="o">=</span> <span class="p">[{}</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">parallel_num</span><span class="p">)]</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_hash_pairs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pairs</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">hash_table_id</span><span class="p">,</span> <span class="n">hash_value</span><span class="p">,</span> <span class="n">uid</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span><span class="p">[</span><span class="n">hash_table_id</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">hash_value</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_hash_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hash_table_id</span><span class="p">):</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span><span class="p">[</span><span class="n">hash_table_id</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span><span class="p">[</span><span class="n">hash_table_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">return</span> <span class="n">IdGenerator</span></div>
 
 
-<span class="nd">@ray</span><span class="o">.</span><span class="n">remote</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">EdgeBuffer</span><span class="p">:</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge_buffer</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span> <span class="o">=</span> <span class="n">edge_buffer</span>
+<div class="viewcode-block" id="define_hash_aggregator">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.deduplicator.ray_bts_minhash_cpp_deduplicator.html#data_juicer.ops.deduplicator.define_hash_aggregator">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">define_hash_aggregator</span><span class="p">():</span>
+    <span class="nd">@ray</span><span class="o">.</span><span class="n">remote</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">HashAggregator</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parallel_num</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span> <span class="o">=</span> <span class="p">[{}</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">parallel_num</span><span class="p">)]</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parallel_id</span><span class="p">):</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span><span class="p">[</span><span class="n">parallel_id</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span><span class="p">[</span><span class="n">parallel_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">return</span> <span class="n">result</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">set_hash_pairs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pairs</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">hash_table_id</span><span class="p">,</span> <span class="n">hash_value</span><span class="p">,</span> <span class="n">uid</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span><span class="p">[</span><span class="n">hash_table_id</span><span class="p">]</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">hash_value</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_hash_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hash_table_id</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span><span class="p">[</span><span class="n">hash_table_id</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span><span class="p">[</span><span class="n">hash_table_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">return</span> <span class="n">HashAggregator</span></div>
 
 
-<span class="nd">@ray</span><span class="o">.</span><span class="n">remote</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">BTSUnionFind</span><span class="p">:</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">union_threshold</span><span class="p">,</span>
-        <span class="n">parallel_num</span><span class="p">,</span>
-        <span class="n">parallel_id</span><span class="p">,</span>
-        <span class="n">max_pending_edge_buffer_task</span><span class="p">,</span>
-        <span class="n">num_edge_buffer_task_returns</span><span class="p">,</span>
-        <span class="n">worker_node_ids</span><span class="p">,</span>
-        <span class="n">num_hash_aggregators</span><span class="p">,</span>
-        <span class="n">remote_edge_buffers_ref</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">union_threshold</span> <span class="o">=</span> <span class="n">union_threshold</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span> <span class="o">=</span> <span class="n">parallel_num</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span> <span class="o">=</span> <span class="n">parallel_id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">old_parent</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">remote_edge_buffers</span> <span class="o">=</span> <span class="n">remote_edge_buffers_ref</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">remote_buffer</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">remote_edges</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">parallel_num</span><span class="p">)]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_pending_edge_buffer_task</span> <span class="o">=</span> <span class="n">max_pending_edge_buffer_task</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_edge_buffer_task_returns</span> <span class="o">=</span> <span class="n">num_edge_buffer_task_returns</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">worker_node_ids</span> <span class="o">=</span> <span class="n">worker_node_ids</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_nodes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">worker_node_ids</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_hash_aggregators</span> <span class="o">=</span> <span class="n">num_hash_aggregators</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_hash_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hash_aggregators</span><span class="p">):</span>
-        <span class="n">result_refs</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">hash_aggregator</span> <span class="ow">in</span> <span class="n">hash_aggregators</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result_refs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_pending_edge_buffer_task</span><span class="p">:</span>
-                <span class="n">ready_refs</span><span class="p">,</span> <span class="n">result_refs</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">result_refs</span><span class="p">,</span> <span class="n">num_returns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_edge_buffer_task_returns</span><span class="p">)</span>
-                <span class="n">hash_table_list</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ready_refs</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">hash_table</span> <span class="ow">in</span> <span class="n">hash_table_list</span><span class="p">:</span>
-                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">hash_table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                <span class="k">del</span> <span class="n">ready_refs</span>
-            <span class="n">result_refs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hash_aggregator</span><span class="o">.</span><span class="n">get_hash_table</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span><span class="p">))</span>
-        <span class="n">hash_table_list</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">result_refs</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">hash_table</span> <span class="ow">in</span> <span class="n">hash_table_list</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">hash_table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="n">key_cnt</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span><span class="p">)</span>
-        <span class="n">value_cnt</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">value_cnt</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">union_list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span>
-        <span class="k">return</span> <span class="n">key_cnt</span><span class="p">,</span> <span class="n">value_cnt</span>
+<div class="viewcode-block" id="define_edge_buffer">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.deduplicator.ray_bts_minhash_cpp_deduplicator.html#data_juicer.ops.deduplicator.define_edge_buffer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">define_edge_buffer</span><span class="p">():</span>
+    <span class="nd">@ray</span><span class="o">.</span><span class="n">remote</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">EdgeBuffer</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">balanced_union_find</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">set_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge_buffer</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span> <span class="o">=</span> <span class="n">edge_buffer</span>
 
-        <span class="n">result_refs</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">remote_edge_buffer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remote_edge_buffers</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result_refs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_pending_edge_buffer_task</span><span class="p">:</span>
-                <span class="n">ready_refs</span><span class="p">,</span> <span class="n">result_refs</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">result_refs</span><span class="p">,</span> <span class="n">num_returns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_edge_buffer_task_returns</span><span class="p">)</span>
-                <span class="n">edge_list</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ready_refs</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">edges</span> <span class="ow">in</span> <span class="n">edge_list</span><span class="p">:</span>
-                    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-                <span class="k">del</span> <span class="n">ready_refs</span>
-            <span class="n">result_refs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">remote_edge_buffer</span><span class="o">.</span><span class="n">get_edges</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span><span class="p">))</span>
-        <span class="n">edge_list</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">result_refs</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">edges</span> <span class="ow">in</span> <span class="n">edge_list</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parallel_id</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span><span class="p">[</span><span class="n">parallel_id</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span><span class="p">[</span><span class="n">parallel_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">return</span> <span class="n">EdgeBuffer</span></div>
+
+
+
+<div class="viewcode-block" id="define_bts_union_find">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.deduplicator.ray_bts_minhash_cpp_deduplicator.html#data_juicer.ops.deduplicator.define_bts_union_find">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">define_bts_union_find</span><span class="p">():</span>
+    <span class="nd">@ray</span><span class="o">.</span><span class="n">remote</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">BTSUnionFind</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">union_threshold</span><span class="p">,</span>
+            <span class="n">parallel_num</span><span class="p">,</span>
+            <span class="n">parallel_id</span><span class="p">,</span>
+            <span class="n">max_pending_edge_buffer_task</span><span class="p">,</span>
+            <span class="n">num_edge_buffer_task_returns</span><span class="p">,</span>
+            <span class="n">worker_node_ids</span><span class="p">,</span>
+            <span class="n">num_hash_aggregators</span><span class="p">,</span>
+            <span class="n">remote_edge_buffers_ref</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">union_threshold</span> <span class="o">=</span> <span class="n">union_threshold</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span> <span class="o">=</span> <span class="n">parallel_num</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span> <span class="o">=</span> <span class="n">parallel_id</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">old_parent</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remote_edge_buffers</span> <span class="o">=</span> <span class="n">remote_edge_buffers_ref</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remote_buffer</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remote_edges</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">parallel_num</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_pending_edge_buffer_task</span> <span class="o">=</span> <span class="n">max_pending_edge_buffer_task</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_edge_buffer_task_returns</span> <span class="o">=</span> <span class="n">num_edge_buffer_task_returns</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">worker_node_ids</span> <span class="o">=</span> <span class="n">worker_node_ids</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_nodes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">worker_node_ids</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_hash_aggregators</span> <span class="o">=</span> <span class="n">num_hash_aggregators</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_hash_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hash_aggregators</span><span class="p">):</span>
+            <span class="n">result_refs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">hash_aggregator</span> <span class="ow">in</span> <span class="n">hash_aggregators</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result_refs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_pending_edge_buffer_task</span><span class="p">:</span>
+                    <span class="n">ready_refs</span><span class="p">,</span> <span class="n">result_refs</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">result_refs</span><span class="p">,</span> <span class="n">num_returns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_edge_buffer_task_returns</span><span class="p">)</span>
+                    <span class="n">hash_table_list</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ready_refs</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">hash_table</span> <span class="ow">in</span> <span class="n">hash_table_list</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">hash_table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">del</span> <span class="n">ready_refs</span>
+                <span class="n">result_refs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hash_aggregator</span><span class="o">.</span><span class="n">get_hash_table</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span><span class="p">))</span>
+            <span class="n">hash_table_list</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">result_refs</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">hash_table</span> <span class="ow">in</span> <span class="n">hash_table_list</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">hash_table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">key_cnt</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span><span class="p">)</span>
+            <span class="n">value_cnt</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">value_cnt</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">union_list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_table</span>
+            <span class="k">return</span> <span class="n">key_cnt</span><span class="p">,</span> <span class="n">value_cnt</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">balanced_union_find</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        <span class="k">del</span> <span class="n">edge_list</span><span class="p">,</span> <span class="n">result_refs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rebalancing</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_parent</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">distribute_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="n">hash_u</span> <span class="o">=</span> <span class="n">u</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span>
-        <span class="n">hash_v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">remote_edges</span><span class="p">[</span><span class="n">hash_u</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">hash_u</span> <span class="o">!=</span> <span class="n">hash_v</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">remote_edges</span><span class="p">[</span><span class="n">hash_v</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+            <span class="n">result_refs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">remote_edge_buffer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remote_edge_buffers</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result_refs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_pending_edge_buffer_task</span><span class="p">:</span>
+                    <span class="n">ready_refs</span><span class="p">,</span> <span class="n">result_refs</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">result_refs</span><span class="p">,</span> <span class="n">num_returns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_edge_buffer_task_returns</span><span class="p">)</span>
+                    <span class="n">edge_list</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ready_refs</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">edges</span> <span class="ow">in</span> <span class="n">edge_list</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                    <span class="k">del</span> <span class="n">ready_refs</span>
+                <span class="n">result_refs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">remote_edge_buffer</span><span class="o">.</span><span class="n">get_edges</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span><span class="p">))</span>
+            <span class="n">edge_list</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">result_refs</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">edges</span> <span class="ow">in</span> <span class="n">edge_list</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">edge_list</span><span class="p">,</span> <span class="n">result_refs</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rebalancing</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_parent</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_edge_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote_edges</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">remote_edges</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">ray</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remote_edge_buffers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span><span class="p">]</span><span class="o">.</span><span class="n">set_edges</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remote_edges</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">remote_edges</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span><span class="p">)]</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">edge_redistribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hash_aggregators</span><span class="p">):</span>
-        <span class="n">key_cnt</span><span class="p">,</span> <span class="n">value_cnt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_hash_table</span><span class="p">(</span><span class="n">hash_aggregators</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rebalancing</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">distribute_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_edge_buffer</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">key_cnt</span><span class="p">,</span> <span class="n">value_cnt</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">communication</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">del_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">distribute_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
             <span class="n">hash_u</span> <span class="o">=</span> <span class="n">u</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_parent</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">hash_u</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span> <span class="ow">and</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">):</span>
+            <span class="n">hash_v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remote_edges</span><span class="p">[</span><span class="n">hash_u</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">hash_u</span> <span class="o">!=</span> <span class="n">hash_v</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">remote_edges</span><span class="p">[</span><span class="n">hash_v</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">set_edge_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remote_edges</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remote_edges</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">ray</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remote_edge_buffers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span><span class="p">]</span><span class="o">.</span><span class="n">set_edges</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remote_edges</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remote_edges</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span><span class="p">)]</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">edge_redistribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hash_aggregators</span><span class="p">):</span>
+            <span class="n">key_cnt</span><span class="p">,</span> <span class="n">value_cnt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_hash_table</span><span class="p">(</span><span class="n">hash_aggregators</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rebalancing</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">distribute_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">hash_u</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span><span class="p">:</span>
-                <span class="n">del_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">old_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">del_list</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="n">u</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_edge_buffer</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_edge_buffer</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">key_cnt</span><span class="p">,</span> <span class="n">value_cnt</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">x</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">communication</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">del_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">hash_u</span> <span class="o">=</span> <span class="n">u</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">old_parent</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">hash_u</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span> <span class="ow">and</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">distribute_edge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">hash_u</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span><span class="p">:</span>
+                    <span class="n">del_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">old_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">del_list</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="n">u</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_edge_buffer</span><span class="p">()</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">union</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="n">px</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">py</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">px</span> <span class="o">==</span> <span class="n">py</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="k">if</span> <span class="n">px</span> <span class="o">&gt;</span> <span class="n">py</span><span class="p">:</span>
-            <span class="n">px</span><span class="p">,</span> <span class="n">py</span> <span class="o">=</span> <span class="n">py</span><span class="p">,</span> <span class="n">px</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="n">py</span><span class="p">]</span> <span class="o">=</span> <span class="n">px</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">union_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_list</span><span class="p">):</span>
-        <span class="n">px_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_list</span><span class="p">]</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">px_list</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">px</span> <span class="ow">in</span> <span class="n">px_list</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">px</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="n">px</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span>
-        <span class="k">return</span> <span class="n">p</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">rebalancing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">new_px_dict</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
-            <span class="n">hash_x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span>
-            <span class="n">px</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">hash_x</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_px_dict</span><span class="p">:</span>
-                <span class="n">new_px_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">x</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">new_px_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">new_px_dict</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span>
-        <span class="n">px_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">px</span> <span class="k">for</span> <span class="n">px</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">new_px_dict</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">px</span> <span class="ow">in</span> <span class="n">px_set</span><span class="p">:</span>
-            <span class="n">hash_px</span> <span class="o">=</span> <span class="n">px</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">hash_px</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_px_dict</span><span class="p">:</span>
-                <span class="n">new_px_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">px</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">new_px_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">new_px_dict</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">px</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
 
-        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
-            <span class="n">hash_x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">union</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
             <span class="n">px</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">hash_x</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">new_px_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
-                <span class="k">continue</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_px_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">py</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">px</span> <span class="o">==</span> <span class="n">py</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="k">if</span> <span class="n">px</span> <span class="o">&gt;</span> <span class="n">py</span><span class="p">:</span>
+                <span class="n">px</span><span class="p">,</span> <span class="n">py</span> <span class="o">=</span> <span class="n">py</span><span class="p">,</span> <span class="n">px</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="n">py</span><span class="p">]</span> <span class="o">=</span> <span class="n">px</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">squeeze</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dup_uids</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
-            <span class="n">x_div</span> <span class="o">=</span> <span class="n">x</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span>
-            <span class="k">if</span> <span class="n">x_div</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">x_div</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dup_uids</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">dup_uids</span><span class="p">[</span><span class="n">x_div</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dup_uids</span><span class="p">[</span><span class="n">x_div</span><span class="p">][</span><span class="n">x</span> <span class="o">%</span> <span class="n">BATCH_SIZE</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">old_parent</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">union_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_list</span><span class="p">):</span>
+            <span class="n">px_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_list</span><span class="p">]</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">px_list</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">px</span> <span class="ow">in</span> <span class="n">px_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">px</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="n">px</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span>
+            <span class="k">return</span> <span class="n">p</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">remain_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid_div</span><span class="p">,</span> <span class="n">cmp_uid_mods</span><span class="p">):</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">bitarray</span><span class="w"> </span><span class="kn">import</span> <span class="n">bitarray</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">rebalancing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">new_px_dict</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
+                <span class="n">hash_x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span>
+                <span class="n">px</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">hash_x</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_px_dict</span><span class="p">:</span>
+                    <span class="n">new_px_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_px_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">new_px_dict</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">x</span><span class="p">)</span>
+            <span class="n">px_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">px</span> <span class="k">for</span> <span class="n">px</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">new_px_dict</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">px</span> <span class="ow">in</span> <span class="n">px_set</span><span class="p">:</span>
+                <span class="n">hash_px</span> <span class="o">=</span> <span class="n">px</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">hash_px</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_px_dict</span><span class="p">:</span>
+                    <span class="n">new_px_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">px</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_px_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">new_px_dict</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">px</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">uid_div</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dup_uids</span><span class="p">:</span>
-            <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dup_uids</span><span class="p">[</span><span class="n">uid_div</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cmp_uid_mods</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)]</span>
-            <span class="n">cmp_mask</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">()</span>
-            <span class="n">cmp_mask</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
-            <span class="k">return</span> <span class="n">cmp_mask</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># return np.ones(uid_mods.sum(), dtype=np.bool_)</span>
-            <span class="n">cmp_mask</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">()</span>
-            <span class="n">cmp_mask</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">cmp_uid_mods</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-            <span class="k">return</span> <span class="n">cmp_mask</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
+                <span class="n">hash_x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span>
+                <span class="n">px</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">hash_x</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">new_px_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+                    <span class="k">continue</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_px_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">squeeze</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dup_uids</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
+                <span class="n">x_div</span> <span class="o">=</span> <span class="n">x</span> <span class="o">//</span> <span class="n">BATCH_SIZE</span>
+                <span class="k">if</span> <span class="n">x_div</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_num</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_id</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">x_div</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dup_uids</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dup_uids</span><span class="p">[</span><span class="n">x_div</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dup_uids</span><span class="p">[</span><span class="n">x_div</span><span class="p">][</span><span class="n">x</span> <span class="o">%</span> <span class="n">BATCH_SIZE</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">old_parent</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">edge_buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">remain_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid_div</span><span class="p">,</span> <span class="n">cmp_uid_mods</span><span class="p">):</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">bitarray</span><span class="w"> </span><span class="kn">import</span> <span class="n">bitarray</span>
+
+            <span class="k">if</span> <span class="n">uid_div</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dup_uids</span><span class="p">:</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dup_uids</span><span class="p">[</span><span class="n">uid_div</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cmp_uid_mods</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)]</span>
+                <span class="n">cmp_mask</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">()</span>
+                <span class="n">cmp_mask</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+                <span class="k">return</span> <span class="n">cmp_mask</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># return np.ones(uid_mods.sum(), dtype=np.bool_)</span>
+                <span class="n">cmp_mask</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">()</span>
+                <span class="n">cmp_mask</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">cmp_uid_mods</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">cmp_mask</span>
+
+    <span class="k">return</span> <span class="n">BTSUnionFind</span></div>
+
 
 
 <div class="viewcode-block" id="MinhashCalculator">
@@ -1052,13 +1076,15 @@
 
         <span class="n">num_ids_per_node</span> <span class="o">=</span> <span class="n">MAX_DATA_NUM</span> <span class="o">//</span> <span class="n">num_nodes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">id_generators</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">IdGenerator</span><span class="o">.</span><span class="n">options</span><span class="p">(</span>
+            <span class="n">define_id_generator</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">options</span><span class="p">(</span>
                 <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;id_generators_</span><span class="si">{</span><span class="n">worker_node_ids</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="n">scheduling_strategy</span><span class="o">=</span><span class="n">NodeAffinitySchedulingStrategy</span><span class="p">(</span>
                     <span class="n">node_id</span><span class="o">=</span><span class="n">worker_node_ids</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                     <span class="n">soft</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="p">),</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span><span class="n">num_ids_per_node</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">remote</span><span class="p">(</span><span class="n">num_ids_per_node</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_nodes</span><span class="p">)</span>
         <span class="p">]</span>
 
@@ -1066,13 +1092,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">num_hash_aggregators_per_node</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">cpu_num</span> <span class="o">/</span> <span class="n">num_nodes</span> <span class="o">*</span> <span class="mf">0.2</span><span class="p">))</span>
         <span class="n">num_hash_aggregators</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_hash_aggregators_per_node</span> <span class="o">*</span> <span class="n">num_nodes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hash_aggregators</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">HashAggregator</span><span class="o">.</span><span class="n">options</span><span class="p">(</span>
+            <span class="n">define_hash_aggregator</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">options</span><span class="p">(</span>
                 <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;hash_aggregator_</span><span class="si">{</span><span class="n">worker_node_ids</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">num_nodes</span><span class="p">]</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="n">num_nodes</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="n">scheduling_strategy</span><span class="o">=</span><span class="n">NodeAffinitySchedulingStrategy</span><span class="p">(</span>
                     <span class="n">node_id</span><span class="o">=</span><span class="n">worker_node_ids</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="n">num_nodes</span><span class="p">],</span>
                     <span class="n">soft</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="p">),</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span><span class="n">parallel_num</span><span class="o">=</span><span class="n">union_find_parallel_num</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">remote</span><span class="p">(</span><span class="n">parallel_num</span><span class="o">=</span><span class="n">union_find_parallel_num</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_hash_aggregators</span><span class="p">)</span>
         <span class="p">]</span>
 
@@ -1088,24 +1116,28 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">union_find_parallel_num</span> <span class="o">=</span> <span class="n">union_find_parallel_num</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">union_threshold</span> <span class="o">=</span> <span class="n">union_threshold</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remote_edge_buffers</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">EdgeBuffer</span><span class="o">.</span><span class="n">options</span><span class="p">(</span>
+            <span class="n">define_edge_buffer</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">options</span><span class="p">(</span>
                 <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;edge_buffer_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="n">scheduling_strategy</span><span class="o">=</span><span class="n">NodeAffinitySchedulingStrategy</span><span class="p">(</span>
                     <span class="n">node_id</span><span class="o">=</span><span class="n">worker_node_ids</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="n">num_nodes</span><span class="p">],</span>
                     <span class="n">soft</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="p">),</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">remote</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">remote</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">union_find_parallel_num</span><span class="p">)</span>
         <span class="p">]</span>
         <span class="n">remote_edge_buffers_ref</span> <span class="o">=</span> <span class="n">ray</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remote_edge_buffers</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">union_find_list</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">BTSUnionFind</span><span class="o">.</span><span class="n">options</span><span class="p">(</span>
+            <span class="n">define_bts_union_find</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">options</span><span class="p">(</span>
                 <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;union_find_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="n">scheduling_strategy</span><span class="o">=</span><span class="n">NodeAffinitySchedulingStrategy</span><span class="p">(</span>
                     <span class="n">node_id</span><span class="o">=</span><span class="n">worker_node_ids</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="n">num_nodes</span><span class="p">],</span>
                     <span class="n">soft</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="p">),</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">remote</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">union_threshold</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">union_find_parallel_num</span><span class="p">,</span>
                 <span class="n">i</span><span class="p">,</span>

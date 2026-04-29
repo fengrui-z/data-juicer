@@ -894,7 +894,7 @@
 
         <span class="n">files_to_remove</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">files_printed</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">num_proc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">num_proc</span> <span class="ow">and</span> <span class="n">num_proc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">num_proc</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">full_name</span> <span class="ow">in</span> <span class="n">caches_to_compress</span><span class="p">:</span>
             <span class="c1"># ignore the cache file of the original dataset and only consider</span>
@@ -910,7 +910,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">compress_filename</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">formatted_cache_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files_printed</span><span class="p">:</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Compressing cache file to </span><span class="si">{</span><span class="n">formatted_cache_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">num_proc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">num_proc</span> <span class="ow">and</span> <span class="n">num_proc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">pool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">compress_manager</span><span class="o">.</span><span class="n">compress</span><span class="p">,</span>
                         <span class="n">args</span><span class="o">=</span><span class="p">(</span>
@@ -925,7 +925,7 @@
                     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found compressed cache file </span><span class="si">{</span><span class="n">formatted_cache_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">files_printed</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">formatted_cache_name</span><span class="p">)</span>
             <span class="n">files_to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">full_name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">num_proc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">num_proc</span> <span class="ow">and</span> <span class="n">num_proc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
 
@@ -957,7 +957,7 @@
             <span class="n">cache_directory</span><span class="o">=</span><span class="n">cache_directory</span><span class="p">,</span> <span class="n">fingerprints</span><span class="o">=</span><span class="n">fingerprints</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">compressor_extension</span>
         <span class="p">)</span>
         <span class="n">files_printed</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">num_proc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">num_proc</span> <span class="ow">and</span> <span class="n">num_proc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">num_proc</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">f_name</span> <span class="ow">in</span> <span class="n">f_names</span><span class="p">:</span>
             <span class="n">full_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cache_directory</span><span class="p">,</span> <span class="n">f_name</span><span class="p">))</span>
@@ -968,7 +968,7 @@
                 <span class="k">if</span> <span class="n">formatted_cache_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files_printed</span><span class="p">:</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Decompressing cache file to &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">formatted_cache_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                     <span class="n">files_printed</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">formatted_cache_name</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">num_proc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">num_proc</span> <span class="ow">and</span> <span class="n">num_proc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">pool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">compress_manager</span><span class="o">.</span><span class="n">decompress</span><span class="p">,</span>
                         <span class="n">args</span><span class="o">=</span><span class="p">(</span>
@@ -981,7 +981,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">formatted_cache_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">files_printed</span><span class="p">:</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found uncompressed cache files &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">formatted_cache_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">num_proc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">num_proc</span> <span class="ow">and</span> <span class="n">num_proc</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span></div>
 

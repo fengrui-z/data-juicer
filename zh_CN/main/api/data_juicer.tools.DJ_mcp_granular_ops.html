@@ -514,8 +514,44 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-tools-dj-mcp-granular-ops-module">
-<h1>data_juicer.tools.DJ_mcp_granular_ops module<a class="headerlink" href="#data-juicer-tools-dj-mcp-granular-ops-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.tools.DJ_mcp_granular_ops">
+<span id="data-juicer-tools-dj-mcp-granular-ops-module"></span><h1>data_juicer.tools.DJ_mcp_granular_ops module<a class="headerlink" href="#module-data_juicer.tools.DJ_mcp_granular_ops" title="链接到此标题。">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.DJ_mcp_granular_ops.resolve_signature_annotations">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.DJ_mcp_granular_ops.</span></span><span class="sig-name descname"><span class="pre">resolve_signature_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Signature</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Signature</span></span></span><a class="reference internal" href="../_modules/data_juicer/tools/DJ_mcp_granular_ops.html#resolve_signature_annotations"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.DJ_mcp_granular_ops.resolve_signature_annotations" title="链接到此定义。">#</a></dt>
+<dd><p>Resolve postponed/string annotations into real runtime types.</p>
+<p>When a module uses <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">__future__</span> <span class="pre">import</span> <span class="pre">annotations</span></code>, all
+annotations are stored as strings. This helper calls
+<code class="docutils literal notranslate"><span class="pre">typing.get_type_hints</span></code> on the original callable to obtain the
+real type objects and rebuilds the signature with them.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.DJ_mcp_granular_ops.process_parameter">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.DJ_mcp_granular_ops.</span></span><span class="sig-name descname"><span class="pre">process_parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Parameter</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Parameter</span></span></span><a class="reference internal" href="../_modules/data_juicer/tools/DJ_mcp_granular_ops.html#process_parameter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.DJ_mcp_granular_ops.process_parameter" title="链接到此定义。">#</a></dt>
+<dd><p>Processes a function parameter:
+- Converts jsonargparse.typing.ClosedUnitInterval to a local equivalent annotation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.DJ_mcp_granular_ops.create_operator_function">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.DJ_mcp_granular_ops.</span></span><span class="sig-name descname"><span class="pre">create_operator_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/DJ_mcp_granular_ops.html#create_operator_function"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.DJ_mcp_granular_ops.create_operator_function" title="链接到此定义。">#</a></dt>
+<dd><p>Creates a callable function for a Data-Juicer operator class.</p>
+<p>This function dynamically creates a function that can be registered as an MCP tool,
+with proper signature and documentation based on the operator's __init__ method.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.DJ_mcp_granular_ops.create_mcp_server">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.DJ_mcp_granular_ops.</span></span><span class="sig-name descname"><span class="pre">create_mcp_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'8000'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/DJ_mcp_granular_ops.html#create_mcp_server"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.DJ_mcp_granular_ops.create_mcp_server" title="链接到此定义。">#</a></dt>
+<dd><p>Creates the FastMCP server and registers the tools.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>port</strong> (<em>str</em><em>, </em><em>optional</em>) -- Port number. Defaults to &quot;8000&quot;.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +574,21 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.DJ_mcp_granular_ops.resolve_signature_annotations"><code class="docutils literal notranslate"><span class="pre">resolve_signature_annotations()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.DJ_mcp_granular_ops.process_parameter"><code class="docutils literal notranslate"><span class="pre">process_parameter()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.DJ_mcp_granular_ops.create_operator_function"><code class="docutils literal notranslate"><span class="pre">create_operator_function()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.DJ_mcp_granular_ops.create_mcp_server"><code class="docutils literal notranslate"><span class="pre">create_mcp_server()</span></code></a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

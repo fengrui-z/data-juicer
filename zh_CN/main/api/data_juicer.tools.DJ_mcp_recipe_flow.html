@@ -514,8 +514,277 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-tools-dj-mcp-recipe-flow-module">
-<h1>data_juicer.tools.DJ_mcp_recipe_flow module<a class="headerlink" href="#data-juicer-tools-dj-mcp-recipe-flow-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.tools.DJ_mcp_recipe_flow">
+<span id="data-juicer-tools-dj-mcp-recipe-flow-module"></span><h1>data_juicer.tools.DJ_mcp_recipe_flow module<a class="headerlink" href="#module-data_juicer.tools.DJ_mcp_recipe_flow" title="链接到此标题。">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.DJ_mcp_recipe_flow.get_global_config_schema">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.DJ_mcp_recipe_flow.</span></span><span class="sig-name descname"><span class="pre">get_global_config_schema</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/data_juicer/tools/DJ_mcp_recipe_flow.html#get_global_config_schema"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.DJ_mcp_recipe_flow.get_global_config_schema" title="链接到此定义。">#</a></dt>
+<dd><p>Get the full schema of all available global configuration options
+for Data-Juicer.</p>
+<p>Returns a dictionary where each key is a config parameter name,
+and the value is a dict containing:
+- type: the expected type of the parameter (e.g. &quot;bool&quot;, &quot;int&quot;, &quot;str&quot;)
+- default: the default value
+- description: a human-readable description of the parameter</p>
+<p>Use this tool to discover what configuration options can be passed
+to run_data_recipe via the extra_config parameter. This dynamically
+reflects the latest Data-Juicer configuration, so it will always
+be up-to-date even as new config options are added.</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dict mapping config parameter names to their schema info</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.DJ_mcp_recipe_flow.get_dataset_load_strategies">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.DJ_mcp_recipe_flow.</span></span><span class="sig-name descname"><span class="pre">get_dataset_load_strategies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/data_juicer/tools/DJ_mcp_recipe_flow.html#get_dataset_load_strategies"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.DJ_mcp_recipe_flow.get_dataset_load_strategies" title="链接到此定义。">#</a></dt>
+<dd><p>Get all available dataset loading strategies supported by Data-Juicer.</p>
+<p>Returns information about each strategy including its executor type,
+data type, data source, required/optional configuration fields, and
+description. Use this tool to understand how to configure the 'dataset'
+parameter in run_data_recipe for different data sources (e.g., local
+files, HuggingFace, S3, ModelScope, etc.).</p>
+<p>The 'dataset' parameter in run_data_recipe accepts a dict with:
+- configs: a list of dataset config dicts, each containing a 'type'</p>
+<blockquote>
+<div><p>field that maps to a data source strategy (e.g., 'local', 'huggingface')</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>max_sample_num: optional max number of samples to load</p></li>
+</ul>
+<p>Each dataset config dict should follow the required/optional fields
+described in the returned strategy information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dict mapping strategy identifiers to their configuration info</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.DJ_mcp_recipe_flow.search_ops">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.DJ_mcp_recipe_flow.</span></span><span class="sig-name descname"><span class="pre">search_ops</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_all</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'tags'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/data_juicer/tools/DJ_mcp_recipe_flow.html#search_ops"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.DJ_mcp_recipe_flow.search_ops" title="链接到此定义。">#</a></dt>
+<dd><p>Search for available data processing operators.</p>
+<p>Operators are a collection of basic processes that assist in data
+modification, cleaning, filtering, deduplication, etc.</p>
+<p>Supports multiple search modes:
+- &quot;basic&quot;: filter by op_type and/or tags (default, original behavior).</p>
+<blockquote>
+<div><p>If both tags and op_type are None, returns all operators.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>&quot;regex&quot;: Python regex pattern matching against OP names,
+descriptions, and parameters. Requires the query parameter.</p></li>
+<li><p>&quot;bm25&quot;: BM25 text relevance ranking for natural language queries.
+Returns top_k most relevant operators. Requires the query parameter.</p></li>
+</ul>
+<p>op_type and tags can be combined with any search_mode as additional
+filters to narrow down results.</p>
+<p>The following <cite>op_type</cite> values are supported:
+- aggregator: Aggregate for batched samples, such as summary or conclusion.
+- deduplicator: Detects and removes duplicate samples.
+- filter: Filters out low-quality samples.
+- grouper: Group samples to batched samples.
+- mapper: Edits and transforms samples.
+- selector: Selects top samples based on ranking.
+- pipeline: Applies dataset-level processing; both input and output are datasets.</p>
+<p>The <cite>tags</cite> parameter specifies the characteristics of the data or the
+required resources. Available tags are:</p>
+<dl class="simple">
+<dt>Modality Tags:</dt><dd><ul class="simple">
+<li><p>text: process text data specifically.</p></li>
+<li><p>image: process image data specifically.</p></li>
+<li><p>audio: process audio data specifically.</p></li>
+<li><p>video: process video data specifically.</p></li>
+<li><p>multimodal: process multimodal data.</p></li>
+</ul>
+</dd>
+<dt>Resource Tags:</dt><dd><ul class="simple">
+<li><p>cpu: only requires CPU resource.</p></li>
+<li><p>gpu: requires GPU/CUDA resource as well.</p></li>
+</ul>
+</dd>
+<dt>Model Tags:</dt><dd><ul class="simple">
+<li><p>api: equipped with API-based models (e.g. ChatGPT, GPT-4o).</p></li>
+<li><p>vllm: equipped with models supported by vLLM.</p></li>
+<li><p>hf: equipped with models from HuggingFace Hub.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> -- Search query string. Required for &quot;regex&quot; and &quot;bm25&quot;
+modes. For &quot;regex&quot; mode, this should be a Python regex pattern.
+For &quot;bm25&quot; mode, this should be a natural language
+description of the desired functionality.</p></li>
+<li><p><strong>op_type</strong> -- The type of data processing operator to filter by.
+If None, no type-based filtering is applied. Defaults to None.</p></li>
+<li><p><strong>tags</strong> -- An optional list of tags to filter operators.
+If None, no tag-based filtering is applied. Defaults to None.</p></li>
+<li><p><strong>match_all</strong> -- If True, only operators matching all specified tags
+are returned. If False, operators matching any tag are returned.
+Defaults to True.</p></li>
+<li><p><strong>search_mode</strong> -- The search strategy to use. One of &quot;tags&quot;,
+&quot;regex&quot;, or &quot;bm25&quot;. Defaults to &quot;tags&quot;.</p></li>
+<li><p><strong>top_k</strong> -- Maximum number of results to return for &quot;bm25&quot; mode.
+Defaults to 10. Ignored for other modes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dict containing detailed information about the matched
+operators, keyed by operator name.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.DJ_mcp_recipe_flow.run_data_recipe">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.DJ_mcp_recipe_flow.</span></span><span class="sig-name descname"><span class="pre">run_data_recipe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">np</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/data_juicer/tools/DJ_mcp_recipe_flow.html#run_data_recipe"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.DJ_mcp_recipe_flow.run_data_recipe" title="链接到此定义。">#</a></dt>
+<dd><p>Run a data processing recipe using Data-Juicer operators.</p>
+<p>If you want to run one or more DataJuicer data processing operators,
+use this tool. Supported operators and their arguments should be
+obtained through the <cite>search_ops</cite> tool.</p>
+<p>For advanced configuration options (e.g., enabling tracing, op fusion,
+checkpoint, multimodal keys, etc.), first call <cite>get_global_config_schema</cite>
+to discover available options, then pass them via <cite>extra_config</cite>.</p>
+<p>For loading datasets from different sources (e.g., HuggingFace, S3),
+first call <cite>get_dataset_load_strategies</cite> to discover available loading
+strategies and their required fields, then pass the configuration via
+the <cite>dataset</cite> parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>process</strong> -- List of processing operations to be executed
+sequentially. Each element is a dictionary with operator name as
+key and its configuration as value.</p></li>
+<li><p><strong>dataset_path</strong> -- Path to the dataset to be processed. This is the
+simplest way to specify input data (local file path).</p></li>
+<li><p><strong>dataset</strong> -- <p>Optional dataset configuration dict for advanced data
+loading. Supports multiple data sources (local, HuggingFace, S3,
+etc.). Format follows Data-Juicer's dataset config schema:
+{&quot;configs&quot;: [{&quot;type&quot;: &quot;local&quot;, &quot;path&quot;: &quot;...&quot;}, ...],</p>
+<blockquote>
+<div><p>&quot;max_sample_num&quot;: 10000}</p>
+</div></blockquote>
+<p>Use <cite>get_dataset_load_strategies</cite> to discover available options.
+When provided alongside dataset_path, both are passed to
+Data-Juicer (dataset_path serves as a fallback).</p>
+</p></li>
+<li><p><strong>export_path</strong> -- Path to export the processed dataset. Defaults to
+None, which exports to './outputs' directory.</p></li>
+<li><p><strong>np</strong> -- Number of processes to use. Defaults to 1.</p></li>
+<li><p><strong>extra_config</strong> -- Optional dict of additional global configuration
+options. Use <cite>get_global_config_schema</cite> to discover all available
+options. Example: {&quot;open_tracer&quot;: true, &quot;trace_num&quot;: 20,
+&quot;op_fusion&quot;: true, &quot;text_keys&quot;: &quot;instruction&quot;}</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">示例</p>
+<p># Basic usage: filter text samples
+&gt;&gt;&gt; run_data_recipe(
+...     &quot;/path/to/dataset.jsonl&quot;,
+...     [{&quot;text_length_filter&quot;: {&quot;min_len&quot;: 10, &quot;max_len&quot;: 50}}]
+... )</p>
+<p># Advanced usage with tracing and HuggingFace dataset
+&gt;&gt;&gt; run_data_recipe(
+...     dataset_path=&quot;&quot;,
+...     process=[{&quot;language_id_score_filter&quot;: {&quot;lang&quot;: &quot;en&quot;}}],
+...     dataset={
+...         &quot;configs&quot;: [{
+...             &quot;type&quot;: &quot;huggingface&quot;,
+...             &quot;path&quot;: &quot;tatsu-lab/alpaca&quot;,
+...             &quot;split&quot;: &quot;train&quot;
+...         }]
+...     },
+...     extra_config={
+...         &quot;open_tracer&quot;: True,
+...         &quot;trace_num&quot;: 20,
+...         &quot;text_keys&quot;: &quot;instruction&quot;
+...     }
+... )</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.DJ_mcp_recipe_flow.analyze_dataset">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.DJ_mcp_recipe_flow.</span></span><span class="sig-name descname"><span class="pre">analyze_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">export_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">np</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percentiles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/data_juicer/tools/DJ_mcp_recipe_flow.html#analyze_dataset"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.DJ_mcp_recipe_flow.analyze_dataset" title="链接到此定义。">#</a></dt>
+<dd><p>Analyze a dataset using Data-Juicer's Analyzer pipeline.</p>
+<p>This tool computes statistics for the specified filter and tagging
+operators on the dataset, then performs overall analysis, column-wise
+analysis, and correlation analysis. It generates stats tables and
+distribution figures to help understand the dataset characteristics
+before applying actual data processing.</p>
+<p>This is the equivalent of the <code class="docutils literal notranslate"><span class="pre">dj-analyze</span></code> command. Use it to
+understand your dataset's quality distribution, identify outliers,
+and determine appropriate filter thresholds before running
+<code class="docutils literal notranslate"><span class="pre">run_data_recipe</span></code>.</p>
+<p>Supported operators and their arguments should be obtained through
+the <code class="docutils literal notranslate"><span class="pre">search_ops</span></code> tool. Only filter-type and tagging-type operators
+will produce meaningful analysis results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>process</strong> -- List of filter/tagging operations to compute stats
+for. Each element is a dictionary with operator name as key and
+its configuration as value. Only filter and tagging operators
+produce analysis stats.</p></li>
+<li><p><strong>dataset_path</strong> -- Path to the dataset to be analyzed. This is the
+simplest way to specify input data (local file path).</p></li>
+<li><p><strong>dataset</strong> -- Optional dataset configuration dict for advanced data
+loading. Same format as in run_data_recipe.</p></li>
+<li><p><strong>export_path</strong> -- Path to export the analyzed dataset with stats.
+Defaults to None, which exports to './outputs' directory.</p></li>
+<li><p><strong>np</strong> -- Number of processes to use. Defaults to 1.</p></li>
+<li><p><strong>percentiles</strong> -- List of percentiles to compute for the dataset
+distribution analysis. Defaults to [0.25, 0.5, 0.75].</p></li>
+<li><p><strong>extra_config</strong> -- <p>Optional dict of additional global configuration
+options. Use <code class="docutils literal notranslate"><span class="pre">get_global_config_schema</span></code> to discover all available
+options. Analysis-specific options include:
+- export_original_dataset (bool): whether to export the original</p>
+<blockquote>
+<div><p>dataset with stats (default: False)</p>
+</div></blockquote>
+<ul>
+<li><p>save_stats_in_one_file (bool): whether to save all stats into
+one file (default: False)</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">示例</p>
+<p># Analyze text length and language distribution
+&gt;&gt;&gt; analyze_dataset(
+...     dataset_path=&quot;/path/to/dataset.jsonl&quot;,
+...     process=[
+...         {&quot;text_length_filter&quot;: {&quot;min_len&quot;: 10, &quot;max_len&quot;: 1000}},
+...         {&quot;language_id_score_filter&quot;: {&quot;lang&quot;: &quot;en&quot;}}
+...     ],
+...     percentiles=[0.1, 0.25, 0.5, 0.75, 0.9]
+... )</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A message indicating where the analysis results are saved,
+including the export path and the analysis directory containing
+stats tables and distribution figures.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.DJ_mcp_recipe_flow.create_mcp_server">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.DJ_mcp_recipe_flow.</span></span><span class="sig-name descname"><span class="pre">create_mcp_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'8000'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/DJ_mcp_recipe_flow.html#create_mcp_server"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.tools.DJ_mcp_recipe_flow.create_mcp_server" title="链接到此定义。">#</a></dt>
+<dd><p>Creates the FastMCP server and registers the tools.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>port</strong> (<em>str</em><em>, </em><em>optional</em>) -- Port number. Defaults to &quot;8000&quot;.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +807,23 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.DJ_mcp_recipe_flow.get_global_config_schema"><code class="docutils literal notranslate"><span class="pre">get_global_config_schema()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.DJ_mcp_recipe_flow.get_dataset_load_strategies"><code class="docutils literal notranslate"><span class="pre">get_dataset_load_strategies()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.DJ_mcp_recipe_flow.search_ops"><code class="docutils literal notranslate"><span class="pre">search_ops()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.DJ_mcp_recipe_flow.run_data_recipe"><code class="docutils literal notranslate"><span class="pre">run_data_recipe()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.DJ_mcp_recipe_flow.analyze_dataset"><code class="docutils literal notranslate"><span class="pre">analyze_dataset()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.DJ_mcp_recipe_flow.create_mcp_server"><code class="docutils literal notranslate"><span class="pre">create_mcp_server()</span></code></a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

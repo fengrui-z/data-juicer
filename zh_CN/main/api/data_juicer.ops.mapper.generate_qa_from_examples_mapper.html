@@ -514,8 +514,111 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-generate-qa-from-examples-mapper-module">
-<h1>data_juicer.ops.mapper.generate_qa_from_examples_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-generate-qa-from-examples-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.generate_qa_from_examples_mapper">
+<span id="data-juicer-ops-mapper-generate-qa-from-examples-mapper-module"></span><h1>data_juicer.ops.mapper.generate_qa_from_examples_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.generate_qa_from_examples_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.generate_qa_from_examples_mapper.</span></span><span class="sig-name descname"><span class="pre">GenerateQAFromExamplesMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/generate_qa_from_examples_mapper.html#GenerateQAFromExamplesMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Generates question and answer pairs from examples using a Hugging Face model.</p>
+<p>This operator generates QA pairs based on provided seed examples. The number of
+generated samples is determined by the length of the empty dataset configured in the
+YAML file. The operator uses a Hugging Face model to generate new QA pairs, which are
+then filtered based on their similarity to the seed examples. Samples with a similarity
+score below the specified threshold are kept. The similarity is computed using the
+ROUGE-L metric. The operator requires a seed file in chatml format, which provides the
+initial QA examples. The generated QA pairs must follow specific formatting rules, such
+as maintaining the same format as the input examples and ensuring that questions and
+answers are paired correctly.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.DEFAULT_SYSTEM_PROMPT">
+<span class="sig-name descname"><span class="pre">DEFAULT_SYSTEM_PROMPT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'请你仔细观察多个示例数据的输入和输出，按照你的理解，总结出相应规矩，然后写出一个新的【问题】和【回答】。注意，新生成的【问题】和【回答】需要满足如下要求：\n1.</span> <span class="pre">生成的【问题】和【回答】不能与输入的【问题】和【回答】一致，但是需要保持格式相同。\n2.</span> <span class="pre">生成的【问题】不一定要局限于输入【问题】的话题或领域，生成的【回答】需要正确回答生成的【问题】。\n3.</span> <span class="pre">提供的【问题】和【回答】可能是多轮对话，生成的【问题】和【回答】也可以是多轮，但是需要保持格式相同。\n4.</span> <span class="pre">生成的【问题】和【回答】必须成对出现，而且【问题】需要在【回答】之前。\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.DEFAULT_SYSTEM_PROMPT" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.DEFAULT_INPUT_TEMPLATE">
+<span class="sig-name descname"><span class="pre">DEFAULT_INPUT_TEMPLATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'{}'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.DEFAULT_INPUT_TEMPLATE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.DEFAULT_EXAMPLE_TEMPLATE">
+<span class="sig-name descname"><span class="pre">DEFAULT_EXAMPLE_TEMPLATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\n如下是一条示例数据：\n{}'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.DEFAULT_EXAMPLE_TEMPLATE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.DEFAULT_QA_PAIR_TEMPLATE">
+<span class="sig-name descname"><span class="pre">DEFAULT_QA_PAIR_TEMPLATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'【问题】\n{}\n【回答】\n{}\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.DEFAULT_QA_PAIR_TEMPLATE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.DEFAULT_OUTPUT_PATTERN">
+<span class="sig-name descname"><span class="pre">DEFAULT_OUTPUT_PATTERN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'【问题】(.*?)【回答】(.*?)(?=【问题】|$)'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.DEFAULT_OUTPUT_PATTERN" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hf_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Qwen/Qwen2.5-7B-Instruct'</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="仅关键字参数分隔符 (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">example_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">similarity_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">example_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qa_pair_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_vllm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/generate_qa_from_examples_mapper.html#GenerateQAFromExamplesMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hf_model</strong> -- Huggingface model ID.</p></li>
+<li><p><strong>seed_file</strong> -- Path to the seed file in chatml format.</p></li>
+<li><p><strong>example_num</strong> -- The number of selected examples.
+Randomly select N examples from &quot;seed_file&quot; and
+put them into prompt as QA examples.</p></li>
+<li><p><strong>similarity_threshold</strong> -- The similarity score threshold
+between the generated samples and the seed examples.
+Range from 0 to 1. Samples with similarity score less than
+this threshold will be kept.</p></li>
+<li><p><strong>system_prompt</strong> -- System prompt for guiding the generation task.</p></li>
+<li><p><strong>input_template</strong> -- Template for building the input prompt. It must
+include one placeholder '{}', which will be replaced by
+<cite>example_num</cite> formatted examples defined by <cite>example_template</cite>.</p></li>
+<li><p><strong>example_template</strong> -- Template for formatting one QA example. It
+must include one placeholder '{}', which will be replaced by one
+formatted qa_pair.</p></li>
+<li><p><strong>qa_pair_template</strong> -- Template for formatting a single QA pair
+within each example. Must include two placeholders '{}' for the
+question and answer.</p></li>
+<li><p><strong>output_pattern</strong> -- Regular expression pattern to extract questions
+and answers from model response.</p></li>
+<li><p><strong>enable_vllm</strong> -- Whether to use vllm for inference acceleration.</p></li>
+<li><p><strong>model_params</strong> -- Parameters for initializing the model.</p></li>
+<li><p><strong>sampling_params</strong> -- Sampling parameters for text generation.
+e.g {'temperature': 0.9, 'top_p': 0.95}</p></li>
+<li><p><strong>kwargs</strong> -- Extra keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.build_input">
+<span class="sig-name descname"><span class="pre">build_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qa_examples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/generate_qa_from_examples_mapper.html#GenerateQAFromExamplesMapper.build_input"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.build_input" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.parse_output">
+<span class="sig-name descname"><span class="pre">parse_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/generate_qa_from_examples_mapper.html#GenerateQAFromExamplesMapper.parse_output"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.parse_output" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/generate_qa_from_examples_mapper.html#GenerateQAFromExamplesMapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +641,29 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper"><code class="docutils literal notranslate"><span class="pre">GenerateQAFromExamplesMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.DEFAULT_SYSTEM_PROMPT"><code class="docutils literal notranslate"><span class="pre">GenerateQAFromExamplesMapper.DEFAULT_SYSTEM_PROMPT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.DEFAULT_INPUT_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">GenerateQAFromExamplesMapper.DEFAULT_INPUT_TEMPLATE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.DEFAULT_EXAMPLE_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">GenerateQAFromExamplesMapper.DEFAULT_EXAMPLE_TEMPLATE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.DEFAULT_QA_PAIR_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">GenerateQAFromExamplesMapper.DEFAULT_QA_PAIR_TEMPLATE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.DEFAULT_OUTPUT_PATTERN"><code class="docutils literal notranslate"><span class="pre">GenerateQAFromExamplesMapper.DEFAULT_OUTPUT_PATTERN</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.__init__"><code class="docutils literal notranslate"><span class="pre">GenerateQAFromExamplesMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.build_input"><code class="docutils literal notranslate"><span class="pre">GenerateQAFromExamplesMapper.build_input()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.parse_output"><code class="docutils literal notranslate"><span class="pre">GenerateQAFromExamplesMapper.parse_output()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.generate_qa_from_examples_mapper.GenerateQAFromExamplesMapper.process_single"><code class="docutils literal notranslate"><span class="pre">GenerateQAFromExamplesMapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

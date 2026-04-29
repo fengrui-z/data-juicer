@@ -1,0 +1,870 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer.ops.mapper.detect_character_locations_mapper &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/ops/mapper/detect_character_locations_mapper';</script>
+    <script src="../../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/ops/mapper/detect_character_locations_mapper.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/ops/mapper/detect_character_locations_mapper_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/ops/mapper/detect_character_locations_mapper.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/ops/mapper/detect_character_locations_mapper.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/ops/mapper/detect_character_locations_mapper_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/ops/mapper/detect_character_locations_mapper.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">模块代码</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer.ops.mapper.detect_character_locations_mapper</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>data_juicer.ops.mapper.detect_character_locations_mapper 源代码</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">data_juicer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.load</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_ops</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.cache_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">DATA_JUICER_ASSETS_CACHE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fields</span><span class="p">,</span> <span class="n">StatsKeys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.mm_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpecialTokens</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.model_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_model</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..base_op</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPERATORS</span><span class="p">,</span> <span class="n">TAGGING_OPS</span><span class="p">,</span> <span class="n">UNFORKABLE</span><span class="p">,</span> <span class="n">Mapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..op_fusion</span><span class="w"> </span><span class="kn">import</span> <span class="n">LOADED_IMAGES</span>
+
+<span class="n">OP_NAME</span> <span class="o">=</span> <span class="s2">&quot;detect_character_locations_mapper&quot;</span>
+
+<span class="n">ultralytics</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;ultralytics&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DetectCharacterLocationsMapper">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.DetectCharacterLocationsMapper">[文档]</a>
+<span class="nd">@UNFORKABLE</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">OP_NAME</span><span class="p">)</span>
+<span class="nd">@TAGGING_OPS</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">OP_NAME</span><span class="p">)</span>
+<span class="nd">@OPERATORS</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">OP_NAME</span><span class="p">)</span>
+<span class="nd">@LOADED_IMAGES</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">OP_NAME</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DetectCharacterLocationsMapper</span><span class="p">(</span><span class="n">Mapper</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Given an image and a list of main character names, extract the bounding boxes for each present character.</span>
+
+<span class="sd">    Detects and extracts bounding boxes for main characters in an image, this operator uses</span>
+<span class="sd">    a YOLOE model to detect the presence of these characters. It then generates and refines</span>
+<span class="sd">    bounding boxes for each detected character using a multimodal language model and an</span>
+<span class="sd">    image-text matching filter. The final bounding boxes are stored in the metadata under</span>
+<span class="sd">    &#39;main_character_locations_list&#39;. The operator considers two bounding boxes as</span>
+<span class="sd">    overlapping if their Intersection over Union (IoU) score exceeds a specified threshold.</span>
+<span class="sd">    Additionally, it uses a matching score threshold to determine if a cropped image region</span>
+<span class="sd">    matches the character&#39;s name. The operator utilizes a Hugging Face tokenizer and a BLIP</span>
+<span class="sd">    model for image-text matching.&quot;&quot;&quot;</span>
+
+    <span class="n">_accelerator</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span>
+
+<div class="viewcode-block" id="DetectCharacterLocationsMapper.__init__">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.DetectCharacterLocationsMapper.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">mllm_mapper_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
+        <span class="n">image_text_matching_filter_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
+        <span class="n">yoloe_path</span><span class="o">=</span><span class="s2">&quot;yoloe-11l-seg.pt&quot;</span><span class="p">,</span>
+        <span class="n">iou_threshold</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+        <span class="n">matching_score_threshold</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization method.</span>
+
+<span class="sd">        :param mllm_mapper_args: Arguments for multimodal language model mapper.</span>
+<span class="sd">            Controls the generation of captions for bounding box regions. Default empty dict</span>
+<span class="sd">            will use fixed values: max_new_tokens=256, temperature=0.2, top_p=None,</span>
+<span class="sd">            num_beams=1, hf_model=&quot;llava-hf/llava-v1.6-vicuna-7b-hf&quot;.</span>
+<span class="sd">        :param image_text_matching_filter_args: Arguments for image-text matching filter.</span>
+<span class="sd">            Controls the matching between cropped image regions and text descriptions.</span>
+<span class="sd">            Default empty dict will use fixed values: min_score=0.1, max_score=1.0,</span>
+<span class="sd">            hf_blip=&quot;Salesforce/blip-itm-base-coco&quot;, num_proc=1.</span>
+<span class="sd">        :param yoloe_path: The path to the YOLOE model.</span>
+<span class="sd">        :param iou_threshold: We consider two bounding boxes from different models to be overlapping</span>
+<span class="sd">            when their IOU score is higher than the iou_threshold.</span>
+<span class="sd">        :param matching_score_threshold: If the matching score between the cropped image and the</span>
+<span class="sd">            character&#39;s name exceeds the matching_score_threshold, they are considered a match.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Requires the weights for YOLOE and mobileclip_blt.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yoloe_model</span> <span class="o">=</span> <span class="n">ultralytics</span><span class="o">.</span><span class="n">YOLO</span><span class="p">(</span><span class="n">check_model</span><span class="p">(</span><span class="n">yoloe_path</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">FIXED_ARGS</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">FIXED_ARGS</span><span class="p">[</span><span class="s2">&quot;mllm_mapper&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;max_new_tokens&quot;</span><span class="p">:</span> <span class="mi">256</span><span class="p">,</span>
+            <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+            <span class="s2">&quot;top_p&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;num_beams&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;hf_model&quot;</span><span class="p">:</span> <span class="s2">&quot;llava-hf/llava-v1.6-vicuna-7b-hf&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">FIXED_ARGS</span><span class="p">[</span><span class="s2">&quot;image_text_matching_filter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;min_score&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;max_score&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="s2">&quot;hf_blip&quot;</span><span class="p">:</span> <span class="s2">&quot;Salesforce/blip-itm-base-coco&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;num_proc&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mllm_mapper_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_op_args</span><span class="p">(</span><span class="s2">&quot;mllm_mapper&quot;</span><span class="p">,</span> <span class="n">mllm_mapper_args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_text_matching_filter_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_op_args</span><span class="p">(</span>
+            <span class="s2">&quot;image_text_matching_filter&quot;</span><span class="p">,</span> <span class="n">image_text_matching_filter_args</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fused_op_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;mllm_mapper&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mllm_mapper_args</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;image_text_matching_filter&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_text_matching_filter_args</span><span class="p">},</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fused_ops</span> <span class="o">=</span> <span class="n">load_ops</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fused_op_list</span><span class="p">)</span>
+
+        <span class="n">accelerator_methods</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">op</span><span class="o">.</span><span class="n">accelerator</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fused_ops</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s2">&quot;cuda&quot;</span> <span class="ow">in</span> <span class="n">accelerator_methods</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accelerator</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span>
+
+        <span class="c1"># update num_proc with the min num_proc of all fusible filters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_proc</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">op</span><span class="o">.</span><span class="n">runtime_np</span><span class="p">()</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fused_ops</span><span class="p">])</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fused_ops</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iou_threshold</span> <span class="o">=</span> <span class="n">iou_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">matching_score_threshold</span> <span class="o">=</span> <span class="n">matching_score_threshold</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_op_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_name</span><span class="p">,</span> <span class="n">args_dict</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">FIXED_ARGS</span><span class="p">[</span><span class="n">op_name</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args_dict</span><span class="p">:</span>
+                <span class="n">args_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FIXED_ARGS</span><span class="p">[</span><span class="n">op_name</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">args_dict</span><span class="p">[</span><span class="s2">&quot;accelerator&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">accelerator</span>
+        <span class="k">return</span> <span class="n">args_dict</span>
+
+<div class="viewcode-block" id="DetectCharacterLocationsMapper.iou_cal">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.DetectCharacterLocationsMapper.iou_cal">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iou_cal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bbox1</span><span class="p">,</span> <span class="n">bbox2</span><span class="p">):</span>
+
+        <span class="n">max_x1</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">bbox1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bbox2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">max_y1</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">bbox1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">bbox2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">min_x2</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">bbox1</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">bbox2</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">min_y2</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">bbox1</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">bbox2</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">min_x2</span> <span class="o">-</span> <span class="n">max_x1</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">min_y2</span> <span class="o">-</span> <span class="n">max_y1</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+        <span class="n">area1</span> <span class="o">=</span> <span class="p">(</span><span class="n">bbox1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox1</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">bbox1</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">area2</span> <span class="o">=</span> <span class="p">(</span><span class="n">bbox2</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">bbox2</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">bbox2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">intersection_area</span> <span class="o">=</span> <span class="p">(</span><span class="n">min_x2</span> <span class="o">-</span> <span class="n">max_x1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">min_y2</span> <span class="o">-</span> <span class="n">max_y1</span><span class="p">)</span>
+        <span class="n">union_area</span> <span class="o">=</span> <span class="n">area1</span> <span class="o">+</span> <span class="n">area2</span> <span class="o">-</span> <span class="n">intersection_area</span>
+        <span class="n">iou</span> <span class="o">=</span> <span class="n">intersection_area</span> <span class="o">/</span> <span class="n">union_area</span>
+
+        <span class="k">return</span> <span class="n">iou</span><span class="p">,</span> <span class="n">area1</span><span class="p">,</span> <span class="n">area2</span></div>
+
+
+<div class="viewcode-block" id="DetectCharacterLocationsMapper.process_single">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.DetectCharacterLocationsMapper.process_single">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">Fields</span><span class="o">.</span><span class="n">meta</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">:</span>
+            <span class="n">samples</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">now_image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="s2">&quot;images&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yoloe_model</span><span class="o">.</span><span class="n">set_classes</span><span class="p">(</span>
+            <span class="n">samples</span><span class="p">[</span><span class="s2">&quot;main_character_list&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">yoloe_model</span><span class="o">.</span><span class="n">get_text_pe</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="s2">&quot;main_character_list&quot;</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yoloe_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="s2">&quot;images&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">yoloe_bboxes</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">xyxy</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">bboxes_cls</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">cls</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="n">valid_main_character</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">temp_bbox_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">yoloe_bboxes</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">bboxes_cls</span><span class="p">[</span><span class="n">temp_bbox_idx</span><span class="p">]</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bboxes_cls</span><span class="p">[</span><span class="n">temp_bbox_idx</span><span class="p">])</span>
+            <span class="n">temp_bbox_json</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">temp_bbox_json</span><span class="p">[</span><span class="s2">&quot;main_character&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="s2">&quot;main_character_list&quot;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">bboxes_cls</span><span class="p">[</span><span class="n">temp_bbox_idx</span><span class="p">])]</span>
+            <span class="n">temp_bbox_json</span><span class="p">[</span><span class="s2">&quot;yoloe_bbox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="nb">round</span><span class="p">(</span><span class="n">yoloe_bboxes</span><span class="p">[</span><span class="n">temp_bbox_idx</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span>
+                <span class="nb">round</span><span class="p">(</span><span class="n">yoloe_bboxes</span><span class="p">[</span><span class="n">temp_bbox_idx</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span>
+                <span class="nb">round</span><span class="p">(</span><span class="n">yoloe_bboxes</span><span class="p">[</span><span class="n">temp_bbox_idx</span><span class="p">][</span><span class="mi">2</span><span class="p">]),</span>
+                <span class="nb">round</span><span class="p">(</span><span class="n">yoloe_bboxes</span><span class="p">[</span><span class="n">temp_bbox_idx</span><span class="p">][</span><span class="mi">3</span><span class="p">]),</span>
+            <span class="p">]</span>
+            <span class="n">valid_main_character</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp_bbox_json</span><span class="p">)</span>
+
+        <span class="n">final_bboxes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">temp_character</span> <span class="ow">in</span> <span class="n">valid_main_character</span><span class="p">:</span>
+
+            <span class="n">prompt</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s1">&#39;Please only provide the bounding box coordinate of the region &quot;&#39;</span>
+                <span class="o">+</span> <span class="n">temp_character</span><span class="p">[</span><span class="s2">&quot;main_character&quot;</span><span class="p">]</span>
+                <span class="o">+</span> <span class="s1">&#39;&quot; describes.&#39;</span>
+            <span class="p">)</span>
+            <span class="n">mllm_sample</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">prompt</span><span class="p">,</span> <span class="s2">&quot;images&quot;</span><span class="p">:</span> <span class="n">samples</span><span class="p">[</span><span class="s2">&quot;images&quot;</span><span class="p">]}</span>
+            <span class="n">output_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fused_ops</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">mllm_sample</span><span class="p">)[</span><span class="s2">&quot;text&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;ASSISTANT:&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">output_text</span> <span class="o">=</span> <span class="n">output_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;```&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">output_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">output_text</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_data</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
+                    <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">output_data</span><span class="p">)</span>
+                <span class="p">):</span>
+                    <span class="n">temp_character</span><span class="p">[</span><span class="s2">&quot;llm_bbox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="nb">int</span><span class="p">(</span><span class="n">output_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">now_image</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                        <span class="nb">int</span><span class="p">(</span><span class="n">output_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">now_image</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                        <span class="nb">int</span><span class="p">(</span><span class="n">output_data</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">now_image</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                        <span class="nb">int</span><span class="p">(</span><span class="n">output_data</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">now_image</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                    <span class="p">]</span>
+                <span class="n">final_bboxes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp_character</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+        <span class="n">final_filterd_character</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">temp_character_idx</span><span class="p">,</span> <span class="n">temp_character</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">final_bboxes</span><span class="p">):</span>
+            <span class="n">temp_iou</span><span class="p">,</span> <span class="n">area1</span><span class="p">,</span> <span class="n">area2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iou_cal</span><span class="p">(</span><span class="n">temp_character</span><span class="p">[</span><span class="s2">&quot;yoloe_bbox&quot;</span><span class="p">],</span> <span class="n">temp_character</span><span class="p">[</span><span class="s2">&quot;llm_bbox&quot;</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">temp_iou</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">iou_threshold</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">area1</span> <span class="o">&gt;</span> <span class="n">area2</span><span class="p">:</span>
+                    <span class="n">temp_json</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="n">temp_json</span><span class="p">[</span><span class="s2">&quot;main_character&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_character</span><span class="p">[</span><span class="s2">&quot;main_character&quot;</span><span class="p">]</span>
+                    <span class="n">temp_json</span><span class="p">[</span><span class="s2">&quot;bbox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_character</span><span class="p">[</span><span class="s2">&quot;yoloe_bbox&quot;</span><span class="p">]</span>
+                    <span class="n">final_filterd_character</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp_json</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">temp_json</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="n">temp_json</span><span class="p">[</span><span class="s2">&quot;main_character&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_character</span><span class="p">[</span><span class="s2">&quot;main_character&quot;</span><span class="p">]</span>
+                    <span class="n">temp_json</span><span class="p">[</span><span class="s2">&quot;bbox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_character</span><span class="p">[</span><span class="s2">&quot;llm_bbox&quot;</span><span class="p">]</span>
+                    <span class="n">final_filterd_character</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp_json</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">yoloe_bbox_crop_img</span> <span class="o">=</span> <span class="n">now_image</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">temp_character</span><span class="p">[</span><span class="s2">&quot;yoloe_bbox&quot;</span><span class="p">])</span>
+                <span class="n">llm_bbox_crop_img</span> <span class="o">=</span> <span class="n">now_image</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">temp_character</span><span class="p">[</span><span class="s2">&quot;llm_bbox&quot;</span><span class="p">])</span>
+
+                <span class="n">random_num</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">valid_img_name</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="s2">&quot;images&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+
+                <span class="n">temp_image_path_yoloe</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">DATA_JUICER_ASSETS_CACHE</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;cropped_images_</span><span class="si">{</span><span class="n">valid_img_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">random_num</span><span class="si">}</span><span class="s2">_&quot;</span> <span class="sa">f</span><span class="s2">&quot;&lt;yoloe&gt;.jpg&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">yoloe_bbox_crop_img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">temp_image_path_yoloe</span><span class="p">)</span>
+
+                <span class="n">temp_image_path_llm</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">DATA_JUICER_ASSETS_CACHE</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;cropped_images_</span><span class="si">{</span><span class="n">valid_img_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">random_num</span><span class="si">}</span><span class="s2">_&quot;</span> <span class="sa">f</span><span class="s2">&quot;&lt;llm&gt;.jpg&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">llm_bbox_crop_img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">temp_image_path_llm</span><span class="p">)</span>
+
+                <span class="n">crop_samples</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">SpecialTokens</span><span class="o">.</span><span class="n">image</span> <span class="o">+</span> <span class="n">temp_character</span><span class="p">[</span><span class="s2">&quot;main_character&quot;</span><span class="p">],</span> <span class="s2">&quot;images&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">temp_image_path_yoloe</span><span class="p">]},</span>
+                    <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">SpecialTokens</span><span class="o">.</span><span class="n">image</span> <span class="o">+</span> <span class="n">temp_character</span><span class="p">[</span><span class="s2">&quot;main_character&quot;</span><span class="p">],</span> <span class="s2">&quot;images&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">temp_image_path_llm</span><span class="p">]},</span>
+                <span class="p">]</span>
+
+                <span class="n">crop_samples</span> <span class="o">=</span> <span class="n">data_juicer</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">NestedDataset</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="n">crop_samples</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">Fields</span><span class="o">.</span><span class="n">stats</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">crop_samples</span><span class="o">.</span><span class="n">features</span><span class="p">:</span>
+                    <span class="n">crop_samples</span> <span class="o">=</span> <span class="n">crop_samples</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="p">[{}]</span> <span class="o">*</span> <span class="n">crop_samples</span><span class="o">.</span><span class="n">num_rows</span><span class="p">)</span>
+
+                <span class="n">crop_image_filtered</span> <span class="o">=</span> <span class="n">crop_samples</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fused_ops</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">compute_stats</span><span class="p">,</span>
+                    <span class="n">num_proc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">with_rank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">temp_image_path_yoloe</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">temp_image_path_llm</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">crop_image_filtered</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">image_text_matching_score</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">matching_score_threshold</span>
+                    <span class="ow">and</span> <span class="n">crop_image_filtered</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">image_text_matching_score</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">matching_score_threshold</span>
+                <span class="p">):</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">crop_image_filtered</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">image_text_matching_score</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="o">&gt;</span> <span class="n">crop_image_filtered</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">image_text_matching_score</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="p">):</span>
+                    <span class="n">temp_json</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="n">temp_json</span><span class="p">[</span><span class="s2">&quot;main_character&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_character</span><span class="p">[</span><span class="s2">&quot;main_character&quot;</span><span class="p">]</span>
+                    <span class="n">temp_json</span><span class="p">[</span><span class="s2">&quot;bbox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_character</span><span class="p">[</span><span class="s2">&quot;yoloe_bbox&quot;</span><span class="p">]</span>
+                    <span class="n">final_filterd_character</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp_json</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">temp_json</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="n">temp_json</span><span class="p">[</span><span class="s2">&quot;main_character&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_character</span><span class="p">[</span><span class="s2">&quot;main_character&quot;</span><span class="p">]</span>
+                    <span class="n">temp_json</span><span class="p">[</span><span class="s2">&quot;bbox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_character</span><span class="p">[</span><span class="s2">&quot;llm_bbox&quot;</span><span class="p">]</span>
+                    <span class="n">final_filterd_character</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp_json</span><span class="p">)</span>
+
+        <span class="n">samples</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="s2">&quot;main_character_locations_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_filterd_character</span>
+
+        <span class="k">return</span> <span class="n">samples</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

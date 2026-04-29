@@ -514,8 +514,108 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-annotation-annotation-mapper-module">
-<h1>data_juicer.ops.mapper.annotation.annotation_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-annotation-annotation-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.annotation.annotation_mapper">
+<span id="data-juicer-ops-mapper-annotation-annotation-mapper-module"></span><h1>data_juicer.ops.mapper.annotation.annotation_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.annotation.annotation_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.annotation.annotation_mapper.BaseAnnotationMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.annotation.annotation_mapper.</span></span><span class="sig-name descname"><span class="pre">BaseAnnotationMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/annotation/annotation_mapper.html#BaseAnnotationMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.annotation.annotation_mapper.BaseAnnotationMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.mixins.html#data_juicer.ops.mixins.EventDrivenMixin" title="data_juicer.ops.mixins.EventDrivenMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventDrivenMixin</span></code></a>, <a class="reference internal" href="data_juicer.ops.mixins.html#data_juicer.ops.mixins.NotificationMixin" title="data_juicer.ops.mixins.NotificationMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">NotificationMixin</span></code></a>, <a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Base class for annotation operations with event-driven capabilities.</p>
+<p>This class provides functionality for creating annotation tasks, waiting
+for annotations to be completed, and handling notification events for
+various stages of the annotation process.</p>
+<p>It supports sending notifications with annotation platform URLs included,
+making it easy for annotators to directly access the annotation interface
+when they receive a notification. This is particularly useful for time-se-
+-nsitive annotation tasks or for coordinating with remote annotation teams.</p>
+<p>Notifications can be sent via email, Slack, or DingTalk, and can be
+configured to trigger on various events such as task creation, batch
+creation, annotation completion, and error conditions.</p>
+<p>URL inclusion in notifications can be enabled or disabled using the
+<cite>include_urls_in_notifications</cite> parameter.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.annotation.annotation_mapper.BaseAnnotationMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_name_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'DataJuicer_Annotation'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for_annotations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples_per_task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tasks_per_batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notification_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notification_events</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/annotation/annotation_mapper.html#BaseAnnotationMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.annotation.annotation_mapper.BaseAnnotationMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialize the base annotation operation</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_name_prefix</strong> -- Prefix for the project name</p></li>
+<li><p><strong>project_id</strong> -- ID of existing project (if None, creates new project)</p></li>
+<li><p><strong>wait_for_annotations</strong> -- Whether to wait for annotations to complete</p></li>
+<li><p><strong>timeout</strong> -- Maximum time to wait for annotations in seconds</p></li>
+<li><p><strong>poll_interval</strong> -- Time between annotation status checks in seconds</p></li>
+<li><p><strong>samples_per_task</strong> -- Number of samples in each annotation task</p></li>
+<li><p><strong>max_tasks_per_batch</strong> -- Maximum number of tasks in a single batch</p></li>
+<li><p><strong>notification_config</strong> -- Configuration for notifications (email, slack)</p></li>
+<li><p><strong>notification_events</strong> -- Events that should trigger notifications</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.annotation.annotation_mapper.BaseAnnotationMapper.process_batched">
+<span class="sig-name descname"><span class="pre">process_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/annotation/annotation_mapper.html#BaseAnnotationMapper.process_batched"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.annotation.annotation_mapper.BaseAnnotationMapper.process_batched" title="链接到此定义。">#</a></dt>
+<dd><p>Process a batch of samples by creating annotation tasks</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>samples</strong> -- Dictionary of samples to process (column-oriented)</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>Processed samples (column-oriented)</p>
+</dd>
+<dt class="field-odd">返回类型<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.annotation.annotation_mapper.LabelStudioAnnotationMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.annotation.annotation_mapper.</span></span><span class="sig-name descname"><span class="pre">LabelStudioAnnotationMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/annotation/annotation_mapper.html#LabelStudioAnnotationMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.annotation.annotation_mapper.LabelStudioAnnotationMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="#data_juicer.ops.mapper.annotation.annotation_mapper.BaseAnnotationMapper" title="data_juicer.ops.mapper.annotation.annotation_mapper.BaseAnnotationMapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseAnnotationMapper</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Operation for annotating data using Label Studio</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.annotation.annotation_mapper.LabelStudioAnnotationMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/annotation/annotation_mapper.html#LabelStudioAnnotationMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.annotation.annotation_mapper.LabelStudioAnnotationMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialize the Label Studio annotation operation</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_url</strong> -- Base URL for Label Studio API</p></li>
+<li><p><strong>api_key</strong> -- API key for authentication</p></li>
+<li><p><strong>label_config</strong> -- XML configuration for the labeling interface</p></li>
+<li><p><strong>**kwargs</strong> -- Additional parameters passed to BaseAnnotationMapper</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.annotation.annotation_mapper.LabelStudioAnnotationMapper.setup_project">
+<span class="sig-name descname"><span class="pre">setup_project</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/annotation/annotation_mapper.html#LabelStudioAnnotationMapper.setup_project"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.annotation.annotation_mapper.LabelStudioAnnotationMapper.setup_project" title="链接到此定义。">#</a></dt>
+<dd><p>Create a new project or use existing one</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.annotation.annotation_mapper.LabelStudioAnnotationMapper.get_all_annotations">
+<span class="sig-name descname"><span class="pre">get_all_annotations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/annotation/annotation_mapper.html#LabelStudioAnnotationMapper.get_all_annotations"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.annotation.annotation_mapper.LabelStudioAnnotationMapper.get_all_annotations" title="链接到此定义。">#</a></dt>
+<dd><p>Get all annotations for tasks created by this operation</p>
+<dl class="field-list simple">
+<dt class="field-odd">返回<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary mapping task IDs to annotations</p>
+</dd>
+<dt class="field-even">返回类型<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[int, Dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +638,28 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.annotation.annotation_mapper.BaseAnnotationMapper"><code class="docutils literal notranslate"><span class="pre">BaseAnnotationMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.annotation.annotation_mapper.BaseAnnotationMapper.__init__"><code class="docutils literal notranslate"><span class="pre">BaseAnnotationMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.annotation.annotation_mapper.BaseAnnotationMapper.process_batched"><code class="docutils literal notranslate"><span class="pre">BaseAnnotationMapper.process_batched()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.annotation.annotation_mapper.LabelStudioAnnotationMapper"><code class="docutils literal notranslate"><span class="pre">LabelStudioAnnotationMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.annotation.annotation_mapper.LabelStudioAnnotationMapper.__init__"><code class="docutils literal notranslate"><span class="pre">LabelStudioAnnotationMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.annotation.annotation_mapper.LabelStudioAnnotationMapper.setup_project"><code class="docutils literal notranslate"><span class="pre">LabelStudioAnnotationMapper.setup_project()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.annotation.annotation_mapper.LabelStudioAnnotationMapper.get_all_annotations"><code class="docutils literal notranslate"><span class="pre">LabelStudioAnnotationMapper.get_all_annotations()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

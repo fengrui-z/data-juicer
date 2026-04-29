@@ -514,8 +514,137 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-dialog-intent-detection-mapper-module">
-<h1>data_juicer.ops.mapper.dialog_intent_detection_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-dialog-intent-detection-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.dialog_intent_detection_mapper">
+<span id="data-juicer-ops-mapper-dialog-intent-detection-mapper-module"></span><h1>data_juicer.ops.mapper.dialog_intent_detection_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.dialog_intent_detection_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.dialog_intent_detection_mapper.</span></span><span class="sig-name descname"><span class="pre">DialogIntentDetectionMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/dialog_intent_detection_mapper.html#DialogIntentDetectionMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Generates user's intent labels in a dialog by analyzing the history, query, and
+response.</p>
+<p>This operator processes a dialog to identify and label the user's intent. It uses a
+predefined system prompt and templates to build input prompts for an API call. The API
+model (e.g., GPT-4) is used to analyze the dialog and generate intent labels and
+analysis. The results are stored in the meta field under 'dialog_intent_labels' and
+'dialog_intent_labels_analysis'. The operator supports customizing the system prompt,
+templates, and patterns for parsing the API response. If the intent candidates are
+provided, they are included in the input prompt. The operator retries the API call up to
+a specified number of times if there are errors.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_SYSTEM_PROMPT">
+<span class="sig-name descname"><span class="pre">DEFAULT_SYSTEM_PROMPT</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'请判断用户和LLM多轮对话中用户的意图。\n要求：\n-</span> <span class="pre">需要先进行分析，然后列出用户所具有的意图，下面是一个样例，请模仿样例格式输出。\n用户：你好，我最近对人工智能很感兴趣，能给我讲讲什么是机器学习吗？\n意图分析：用户在请求信息，希望了解有关机器学习的基础知识。\n意图类别：信息查找\nLLM：你好！当然可以。机器学习是一种人工智能方法，允许计算机通过数据自动改进和学习。\n用户：听起来很有趣，有没有推荐的入门书籍或资料？\n意图分析：用户在请求建议，希望获取关于机器学习的入门资源。\n意图类别：请求建议\nLLM：有很多不错的入门书籍和资源。一本常被推荐的书是《Python机器学习实践》（Python</span> <span class="pre">Machine</span> <span class="pre">Learning），它涵盖了基础知识和一些实际案例。此外，您还可以参考Coursera或edX上的在线课程，这些课程提供了系统的学习路径。\n用户：谢谢你的建议！我还想知道，学习机器学习需要什么样的数学基础？\n意图分析：用户在寻求信息，希望了解学习机器学习所需的前提条件，特别是在数学方面。\n意图类别：信息查找\nLLM：学习机器学习通常需要一定的数学基础，特别是线性代数、概率论和统计学。这些数学领域帮助理解算法的工作原理和数据模式分析。如果您对这些主题不太熟悉，建议先从相关基础书籍或在线资源开始学习。\n用户：明白了，我会先补习这些基础知识。再次感谢你的帮助！\n意图分析：用户表达感谢，并表示计划付诸行动来补充所需的基础知识。\n意图类别：其他'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_SYSTEM_PROMPT" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_QUERY_TEMPLATE">
+<span class="sig-name descname"><span class="pre">DEFAULT_QUERY_TEMPLATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'用户：{query}\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_QUERY_TEMPLATE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_RESPONSE_TEMPLATE">
+<span class="sig-name descname"><span class="pre">DEFAULT_RESPONSE_TEMPLATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'LLM：{response}\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_RESPONSE_TEMPLATE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_CANDIDATES_TEMPLATE">
+<span class="sig-name descname"><span class="pre">DEFAULT_CANDIDATES_TEMPLATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'备选意图类别：[{candidate_str}]'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_CANDIDATES_TEMPLATE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_ANALYSIS_TEMPLATE">
+<span class="sig-name descname"><span class="pre">DEFAULT_ANALYSIS_TEMPLATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'意图分析：{analysis}\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_ANALYSIS_TEMPLATE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_LABELS_TEMPLATE">
+<span class="sig-name descname"><span class="pre">DEFAULT_LABELS_TEMPLATE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'意图类别：{labels}\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_LABELS_TEMPLATE" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_ANALYSIS_PATTERN">
+<span class="sig-name descname"><span class="pre">DEFAULT_ANALYSIS_PATTERN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'意图分析：(.*?)\n'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_ANALYSIS_PATTERN" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_LABELS_PATTERN">
+<span class="sig-name descname"><span class="pre">DEFAULT_LABELS_PATTERN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'意图类别：(.*?)($|\n)'</span></span><a class="headerlink" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_LABELS_PATTERN" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'gpt-4o'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intent_candidates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_round</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ge</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">ge</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="仅关键字参数分隔符 (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dialog_intent_labels'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysis_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dialog_intent_labels_analysis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_endpoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">candidate_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysis_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysis_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_query_chars_for_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ge</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">ge</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_response_chars_for_prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Ge</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">ge</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preferred_output_lang</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'zh'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/dialog_intent_detection_mapper.html#DialogIntentDetectionMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>api_model</strong> -- API model name.</p></li>
+<li><p><strong>intent_candidates</strong> -- The output intent candidates. Use the
+intent labels of the open domain if it is None.</p></li>
+<li><p><strong>max_round</strong> -- The max num of round in the dialog to build the
+prompt.</p></li>
+<li><p><strong>labels_key</strong> -- The key name in the meta field to store the
+output labels. It is 'dialog_intent_labels' in default.</p></li>
+<li><p><strong>analysis_key</strong> -- The key name in the meta field to store the
+corresponding analysis. It is 'dialog_intent_labels_analysis'
+in default.</p></li>
+<li><p><strong>api_endpoint</strong> -- URL endpoint for the API.</p></li>
+<li><p><strong>response_path</strong> -- Path to extract content from the API response.
+Defaults to 'choices.0.message.content'.</p></li>
+<li><p><strong>system_prompt</strong> -- System prompt for the task.</p></li>
+<li><p><strong>query_template</strong> -- Template for query part to build the input
+prompt.</p></li>
+<li><p><strong>response_template</strong> -- Template for response part to build the
+input prompt.</p></li>
+<li><p><strong>candidate_template</strong> -- Template for intent candidates to
+build the input prompt.</p></li>
+<li><p><strong>analysis_template</strong> -- Template for analysis part to build the
+input prompt.</p></li>
+<li><p><strong>labels_template</strong> -- Template for labels to build the
+input prompt.</p></li>
+<li><p><strong>analysis_pattern</strong> -- Pattern to parse the return intent
+analysis.</p></li>
+<li><p><strong>labels_pattern</strong> -- Pattern to parse the return intent
+labels.</p></li>
+<li><p><strong>try_num</strong> -- The number of retry attempts when there is an API
+call error or output parsing error.</p></li>
+<li><p><strong>max_query_chars_for_prompt</strong> -- If &gt; 0, truncate user query in prompts.</p></li>
+<li><p><strong>max_response_chars_for_prompt</strong> -- If &gt; 0, truncate assistant / LLM side
+(recommended for agent logs with tool traces).</p></li>
+<li><p><strong>model_params</strong> -- Parameters for initializing the API model.</p></li>
+<li><p><strong>sampling_params</strong> -- Extra parameters passed to the API call.
+e.g {'temperature': 0.9, 'top_p': 0.95}</p></li>
+<li><p><strong>kwargs</strong> -- Extra keyword arguments.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.build_input">
+<span class="sig-name descname"><span class="pre">build_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">history</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/dialog_intent_detection_mapper.html#DialogIntentDetectionMapper.build_input"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.build_input" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.parse_output">
+<span class="sig-name descname"><span class="pre">parse_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/dialog_intent_detection_mapper.html#DialogIntentDetectionMapper.parse_output"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.parse_output" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/dialog_intent_detection_mapper.html#DialogIntentDetectionMapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +667,32 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper"><code class="docutils literal notranslate"><span class="pre">DialogIntentDetectionMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_SYSTEM_PROMPT"><code class="docutils literal notranslate"><span class="pre">DialogIntentDetectionMapper.DEFAULT_SYSTEM_PROMPT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_QUERY_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">DialogIntentDetectionMapper.DEFAULT_QUERY_TEMPLATE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_RESPONSE_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">DialogIntentDetectionMapper.DEFAULT_RESPONSE_TEMPLATE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_CANDIDATES_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">DialogIntentDetectionMapper.DEFAULT_CANDIDATES_TEMPLATE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_ANALYSIS_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">DialogIntentDetectionMapper.DEFAULT_ANALYSIS_TEMPLATE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_LABELS_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">DialogIntentDetectionMapper.DEFAULT_LABELS_TEMPLATE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_ANALYSIS_PATTERN"><code class="docutils literal notranslate"><span class="pre">DialogIntentDetectionMapper.DEFAULT_ANALYSIS_PATTERN</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.DEFAULT_LABELS_PATTERN"><code class="docutils literal notranslate"><span class="pre">DialogIntentDetectionMapper.DEFAULT_LABELS_PATTERN</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.__init__"><code class="docutils literal notranslate"><span class="pre">DialogIntentDetectionMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.build_input"><code class="docutils literal notranslate"><span class="pre">DialogIntentDetectionMapper.build_input()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.parse_output"><code class="docutils literal notranslate"><span class="pre">DialogIntentDetectionMapper.parse_output()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.dialog_intent_detection_mapper.DialogIntentDetectionMapper.process_single"><code class="docutils literal notranslate"><span class="pre">DialogIntentDetectionMapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

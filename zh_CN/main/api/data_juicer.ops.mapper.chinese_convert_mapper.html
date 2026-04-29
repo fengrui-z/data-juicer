@@ -514,8 +514,71 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-chinese-convert-mapper-module">
-<h1>data_juicer.ops.mapper.chinese_convert_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-chinese-convert-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.chinese_convert_mapper">
+<span id="data-juicer-ops-mapper-chinese-convert-mapper-module"></span><h1>data_juicer.ops.mapper.chinese_convert_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.chinese_convert_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.chinese_convert_mapper.prepare_converter">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.chinese_convert_mapper.</span></span><span class="sig-name descname"><span class="pre">prepare_converter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/chinese_convert_mapper.html#prepare_converter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.chinese_convert_mapper.prepare_converter" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.chinese_convert_mapper.ChineseConvertMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.chinese_convert_mapper.</span></span><span class="sig-name descname"><span class="pre">ChineseConvertMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/chinese_convert_mapper.html#ChineseConvertMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.chinese_convert_mapper.ChineseConvertMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Mapper to convert Chinese text between Traditional, Simplified, and Japanese Kanji.</p>
+<p>This operator converts Chinese text based on the specified mode. It supports conversions
+between Simplified Chinese, Traditional Chinese (including Taiwan and Hong Kong
+variants), and Japanese Kanji. The conversion is performed using a pre-defined set of
+rules. The available modes include 's2t' for Simplified to Traditional, 't2s' for
+Traditional to Simplified, and other specific variants like 's2tw', 'tw2s', 's2hk',
+'hk2s', 's2twp', 'tw2sp', 't2tw', 'tw2t', 'hk2t', 't2hk', 't2jp', and 'jp2t'. The
+operator processes text in batches and applies the conversion to the specified text key
+in the samples.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.chinese_convert_mapper.ChineseConvertMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'s2t'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/chinese_convert_mapper.html#ChineseConvertMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.chinese_convert_mapper.ChineseConvertMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mode</strong> -- <p>Choose the mode to convert Chinese:</p>
+<p>s2t: Simplified Chinese to Traditional Chinese,</p>
+<p>t2s: Traditional Chinese to Simplified Chinese,</p>
+<p>s2tw: Simplified Chinese to Traditional Chinese (Taiwan Standard),</p>
+<p>tw2s: Traditional Chinese (Taiwan Standard) to Simplified Chinese,</p>
+<p>s2hk: Simplified Chinese to Traditional Chinese
+(Hong Kong variant),</p>
+<p>hk2s: Traditional Chinese (Hong Kong variant) to Simplified
+Chinese,</p>
+<p>s2twp: Simplified Chinese to Traditional Chinese (Taiwan Standard)
+with Taiwanese idiom,</p>
+<p>tw2sp: Traditional Chinese (Taiwan Standard) to Simplified Chinese
+with Mainland Chinese idiom,</p>
+<p>t2tw: Traditional Chinese to Traditional Chinese (Taiwan Standard),</p>
+<p>tw2t: Traditional Chinese (Taiwan standard) to Traditional Chinese,</p>
+<p>hk2t: Traditional Chinese (Hong Kong variant) to Traditional
+Chinese,</p>
+<p>t2hk: Traditional Chinese to Traditional Chinese
+(Hong Kong variant),</p>
+<p>t2jp: Traditional Chinese Characters (Kyūjitai) to New Japanese
+Kanji,</p>
+<p>jp2t: New Japanese Kanji (Shinjitai) to Traditional Chinese
+Characters,</p>
+</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.chinese_convert_mapper.ChineseConvertMapper.process_batched">
+<span class="sig-name descname"><span class="pre">process_batched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/chinese_convert_mapper.html#ChineseConvertMapper.process_batched"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.chinese_convert_mapper.ChineseConvertMapper.process_batched" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +601,23 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.chinese_convert_mapper.prepare_converter"><code class="docutils literal notranslate"><span class="pre">prepare_converter()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.chinese_convert_mapper.ChineseConvertMapper"><code class="docutils literal notranslate"><span class="pre">ChineseConvertMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.chinese_convert_mapper.ChineseConvertMapper.__init__"><code class="docutils literal notranslate"><span class="pre">ChineseConvertMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.chinese_convert_mapper.ChineseConvertMapper.process_batched"><code class="docutils literal notranslate"><span class="pre">ChineseConvertMapper.process_batched()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

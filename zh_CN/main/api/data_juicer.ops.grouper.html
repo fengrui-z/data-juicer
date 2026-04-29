@@ -514,8 +514,136 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-grouper">
-<h1>data_juicer.ops.grouper<a class="headerlink" href="#data-juicer-ops-grouper" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.grouper">
+<span id="data-juicer-ops-grouper"></span><h1>data_juicer.ops.grouper<a class="headerlink" href="#module-data_juicer.ops.grouper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.grouper.KeyValueGrouper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.grouper.</span></span><span class="sig-name descname"><span class="pre">KeyValueGrouper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/grouper/key_value_grouper.html#KeyValueGrouper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.grouper.KeyValueGrouper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Grouper" title="data_juicer.ops.base_op.Grouper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grouper</span></code></a></p>
+<p>Groups samples into batches based on values in specified keys.</p>
+<p>This operator groups samples by the values of the given keys, which can be nested. If no
+keys are provided, it defaults to using the text key. It uses a naive grouping strategy
+to batch samples with identical key values. The resulting dataset is a list of batched
+samples, where each batch contains samples that share the same key values. This is
+useful for organizing data by specific attributes or features.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.grouper.KeyValueGrouper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group_by_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/grouper/key_value_grouper.html#KeyValueGrouper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.grouper.KeyValueGrouper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>group_by_keys</strong> -- group samples according values in the keys.
+Support for nested keys such as &quot;__dj__stats__.text_len&quot;.
+It is [self.text_key] in default.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.grouper.KeyValueGrouper.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/grouper/key_value_grouper.html#KeyValueGrouper.process"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.grouper.KeyValueGrouper.process" title="链接到此定义。">#</a></dt>
+<dd><p>Dataset --&gt; dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataset</strong> -- input dataset</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>dataset of batched samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.grouper.NaiveGrouper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.grouper.</span></span><span class="sig-name descname"><span class="pre">NaiveGrouper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/grouper/naive_grouper.html#NaiveGrouper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.grouper.NaiveGrouper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Grouper" title="data_juicer.ops.base_op.Grouper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grouper</span></code></a></p>
+<p>Group all samples in a dataset into a single batched sample.</p>
+<p>This operator takes a dataset and combines all its samples into one batched sample. If
+the input dataset is empty, it returns an empty dataset. The resulting batched sample is
+a dictionary where each key corresponds to a list of values from all samples in the
+dataset.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.grouper.NaiveGrouper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/grouper/naive_grouper.html#NaiveGrouper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.grouper.NaiveGrouper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.grouper.NaiveGrouper.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/grouper/naive_grouper.html#NaiveGrouper.process"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.grouper.NaiveGrouper.process" title="链接到此定义。">#</a></dt>
+<dd><p>Dataset --&gt; dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataset</strong> -- input dataset</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>dataset of batched samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.grouper.NaiveReverseGrouper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.grouper.</span></span><span class="sig-name descname"><span class="pre">NaiveReverseGrouper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/grouper/naive_reverse_grouper.html#NaiveReverseGrouper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.grouper.NaiveReverseGrouper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Grouper" title="data_juicer.ops.base_op.Grouper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Grouper</span></code></a></p>
+<p>Split batched samples into individual samples.</p>
+<p>This operator processes a dataset by splitting each batched sample into
+individual samples. It also handles and optionally exports batch metadata.
+- If a sample contains 'batch_meta', it is separated and can be exported
+to a specified path.
+- The operator converts the remaining data from a dictionary of lists
+to a list of dictionaries, effectively unbatching the samples.
+- If <cite>batch_meta_export_path</cite> is provided, the batch metadata is written
+to this file in JSON format, one entry per line.
+- If no samples are present in the dataset, the original dataset is returned.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.grouper.NaiveReverseGrouper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_meta_export_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/grouper/naive_reverse_grouper.html#NaiveReverseGrouper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.grouper.NaiveReverseGrouper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch_meta_export_path</strong> -- the path to export the batch meta.
+Just drop the batch meta if it is None.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.grouper.NaiveReverseGrouper.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/grouper/naive_reverse_grouper.html#NaiveReverseGrouper.process"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.grouper.NaiveReverseGrouper.process" title="链接到此定义。">#</a></dt>
+<dd><p>Dataset --&gt; dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataset</strong> -- input dataset</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>dataset of batched samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +666,32 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.grouper.KeyValueGrouper"><code class="docutils literal notranslate"><span class="pre">KeyValueGrouper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.grouper.KeyValueGrouper.__init__"><code class="docutils literal notranslate"><span class="pre">KeyValueGrouper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.grouper.KeyValueGrouper.process"><code class="docutils literal notranslate"><span class="pre">KeyValueGrouper.process()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.grouper.NaiveGrouper"><code class="docutils literal notranslate"><span class="pre">NaiveGrouper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.grouper.NaiveGrouper.__init__"><code class="docutils literal notranslate"><span class="pre">NaiveGrouper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.grouper.NaiveGrouper.process"><code class="docutils literal notranslate"><span class="pre">NaiveGrouper.process()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.grouper.NaiveReverseGrouper"><code class="docutils literal notranslate"><span class="pre">NaiveReverseGrouper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.grouper.NaiveReverseGrouper.__init__"><code class="docutils literal notranslate"><span class="pre">NaiveReverseGrouper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.grouper.NaiveReverseGrouper.process"><code class="docutils literal notranslate"><span class="pre">NaiveReverseGrouper.process()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

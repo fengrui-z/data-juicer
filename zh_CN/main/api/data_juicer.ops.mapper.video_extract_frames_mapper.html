@@ -514,8 +514,136 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="data-juicer-ops-mapper-video-extract-frames-mapper-module">
-<h1>data_juicer.ops.mapper.video_extract_frames_mapper module<a class="headerlink" href="#data-juicer-ops-mapper-video-extract-frames-mapper-module" title="链接到此标题。">#</a></h1>
+  <section id="module-data_juicer.ops.mapper.video_extract_frames_mapper">
+<span id="data-juicer-ops-mapper-video-extract-frames-mapper-module"></span><h1>data_juicer.ops.mapper.video_extract_frames_mapper module<a class="headerlink" href="#module-data_juicer.ops.mapper.video_extract_frames_mapper" title="链接到此标题。">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_extract_frames_mapper.VideoExtractFramesMapper">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.ops.mapper.video_extract_frames_mapper.</span></span><span class="sig-name descname"><span class="pre">VideoExtractFramesMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_extract_frames_mapper.html#VideoExtractFramesMapper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_extract_frames_mapper.VideoExtractFramesMapper" title="链接到此定义。">#</a></dt>
+<dd><p>基类：<a class="reference internal" href="data_juicer.ops.base_op.html#data_juicer.ops.base_op.Mapper" title="data_juicer.ops.base_op.Mapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapper</span></code></a></p>
+<p>Mapper to extract frames from video files according to specified methods.</p>
+<p>Extracts frames from video files using either all keyframes or a uniform sampling
+method.</p>
+<p>Supported output formats are: [&quot;path&quot;, &quot;bytes&quot;].
+If format is &quot;path&quot;, the output is a list of lists, where each inner
+list contains the path of the frames of a single video.
+e.g.[</p>
+<blockquote>
+<div><blockquote>
+<div><p>[video1_frame1_path, video1_frame2_path, ...],
+[video2_frame1_path, video2_frame2_path, ...],
+...</p>
+</div></blockquote>
+<p>] (In the order of the videos).</p>
+</div></blockquote>
+<p>If format is &quot;bytes&quot;, the output is a list of lists, where each inner
+list contains the bytes of the frames of a single video.
+e.g. [</p>
+<blockquote>
+<div><blockquote>
+<div><p>[video1_byte1, video1_byte2, ...],
+[video2_byte1, video2_byte2, ...],
+...</p>
+</div></blockquote>
+<p>] (In the order of the videos).</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>Frame Sampling Methods</strong>:</p></li>
+<li><p>&quot;all_keyframes&quot;: Extracts all keyframes from the video.</p></li>
+<li><p>&quot;uniform&quot;: Extracts a specified number of frames uniformly from the video.</p></li>
+<li><p>If <cite>duration</cite> is set, the video is segmented into multiple segments based on the
+duration, and frames are extracted from each segment.</p></li>
+<li><p>The output directory for the frames can be specified if output format is &quot;path&quot;, else left to None.</p></li>
+<li><p>The field name in the sample's metadata where the frame information is stored can be
+customized.</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_extract_frames_mapper.VideoExtractFramesMapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_sampling_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all_keyframes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'path'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Annotated</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Gt</span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">gt</span></span><span class="o"><span class="pre">=</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'video_frames'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legacy_split_by_text_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'av'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_extract_frames_mapper.html#VideoExtractFramesMapper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_extract_frames_mapper.VideoExtractFramesMapper.__init__" title="链接到此定义。">#</a></dt>
+<dd><p>Initialization method.
+:param frame_sampling_method: sampling method of extracting frame</p>
+<blockquote>
+<div><p>videos from the videos. Should be one of
+[&quot;all_keyframes&quot;, &quot;uniform&quot;].
+The former one extracts all key frames (the number
+of which depends on the duration of the video) and the latter
+one extract specified number of frames uniformly from the video.
+If &quot;duration&quot; &gt; 0, frame_sampling_method acts on every segment.
+Default: &quot;all_keyframes&quot;.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output_format</strong> -- <p>The output format of the frame videos.
+Supported formats are: [&quot;path&quot;, &quot;bytes&quot;].
+If format is &quot;path&quot;, the output is a list of lists, where each inner
+list contains the path of the frames of a single video.
+e.g.[</p>
+<blockquote>
+<div><blockquote>
+<div><p>[video1_frame1_path, video1_frame2_path, ...],
+[video2_frame1_path, video2_frame2_path, ...],
+...</p>
+</div></blockquote>
+<p>] (In the order of the videos).</p>
+</div></blockquote>
+<p>If format is &quot;bytes&quot;, the output is a list of lists, where each inner
+list contains the bytes of the frames of a single video.
+e.g. [</p>
+<blockquote>
+<div><blockquote>
+<div><p>[video1_byte1, video1_byte2, ...],
+[video2_byte1, video2_byte2, ...],
+...</p>
+</div></blockquote>
+<p>] (In the order of the videos).</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>frame_num</strong> -- the number of frames to be extracted uniformly from
+the video. Only works when frame_sampling_method is &quot;uniform&quot;. If
+it's 1, only the middle frame will be extracted. If it's 2, only
+the first and the last frames will be extracted. If it's larger
+than 2, in addition to the first and the last frames, other frames
+will be extracted uniformly within the video duration.
+If &quot;duration&quot; &gt; 0, frame_num is the number of frames per segment.</p></li>
+<li><p><strong>duration</strong> -- The duration of each segment in seconds.
+If 0, frames are extracted from the entire video.
+If duration &gt; 0, the video is segmented into multiple segments
+based on duration, and frames are extracted from each segment.</p></li>
+<li><p><strong>frame_dir</strong> -- Output directory to save extracted frames.
+If output_format is &quot;path&quot;, must specify a directory.</p></li>
+<li><p><strong>frame_key</strong> -- The name of field to save generated frames info.</p></li>
+<li><p><strong>frame_field</strong> -- The name of field to save generated frames info.</p></li>
+<li><p><strong>legacy_split_by_text_token</strong> -- Whether to split by special tokens (e.g. &lt;__dj__video&gt;)
+in the text field and read videos in order, or use the 'videos' or 'frames' field directly.</p></li>
+<li><p><strong>video_backend</strong> -- video backend, can be <cite>ffmpeg</cite>, <cite>av</cite>.</p></li>
+<li><p><strong>args</strong> -- extra args</p></li>
+<li><p><strong>kwargs</strong> -- extra args</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_extract_frames_mapper.VideoExtractFramesMapper.extract_frames">
+<span class="sig-name descname"><span class="pre">extract_frames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">video</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_extract_frames_mapper.html#VideoExtractFramesMapper.extract_frames"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_extract_frames_mapper.VideoExtractFramesMapper.extract_frames" title="链接到此定义。">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.ops.mapper.video_extract_frames_mapper.VideoExtractFramesMapper.process_single">
+<span class="sig-name descname"><span class="pre">process_single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/ops/mapper/video_extract_frames_mapper.html#VideoExtractFramesMapper.process_single"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.ops.mapper.video_extract_frames_mapper.VideoExtractFramesMapper.process_single" title="链接到此定义。">#</a></dt>
+<dd><p>For sample level, sample --&gt; sample</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample</strong> -- sample to process</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>processed sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -538,6 +666,23 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 当前页面
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_extract_frames_mapper.VideoExtractFramesMapper"><code class="docutils literal notranslate"><span class="pre">VideoExtractFramesMapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_extract_frames_mapper.VideoExtractFramesMapper.__init__"><code class="docutils literal notranslate"><span class="pre">VideoExtractFramesMapper.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_extract_frames_mapper.VideoExtractFramesMapper.extract_frames"><code class="docutils literal notranslate"><span class="pre">VideoExtractFramesMapper.extract_frames()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.ops.mapper.video_extract_frames_mapper.VideoExtractFramesMapper.process_single"><code class="docutils literal notranslate"><span class="pre">VideoExtractFramesMapper.process_single()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

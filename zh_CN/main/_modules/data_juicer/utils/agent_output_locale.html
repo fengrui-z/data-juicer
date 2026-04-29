@@ -1,0 +1,804 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer.utils.agent_output_locale &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/utils/agent_output_locale';</script>
+    <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/_modules/data_juicer/utils/agent_output_locale.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/_modules/data_juicer/utils/agent_output_locale_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/_modules/data_juicer/utils/agent_output_locale.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../en/main/_modules/data_juicer/utils/agent_output_locale.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../zh_CN/main/_modules/data_juicer/utils/agent_output_locale_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../main/_modules/data_juicer/utils/agent_output_locale.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">模块代码</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer.utils.agent_output_locale</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>data_juicer.utils.agent_output_locale 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2025 The Data-Juicer Authors. All rights reserved.</span>
+<span class="c1"># SPDX-License-Identifier: Apache-2.0</span>
+<span class="sd">&quot;&quot;&quot;Preferred output language helpers for agent / dialog LLM operators.</span>
+
+<span class="sd">YAML / op kwargs use ``preferred_output_lang`` (e.g. ``zh``, ``en``, ``zh-CN``).</span>
+<span class="sd">Normalized to ``zh`` or ``en`` for prompt selection. JSON **keys** stay English</span>
+<span class="sd">where required for parsing; **free-text** fields follow this locale.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="c1"># Keep in sync with dialog_quality_llm_utils.JSON_SCORE_REASON_EN intent.</span>
+<span class="n">_JSON_SCHEMA_EN</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;Output exactly one JSON object, no markdown. Schema:</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="s1">&#39;{&quot;score&quot;: &lt;integer 1-5&gt;, &quot;reason&quot;: &quot;&lt;brief justification&gt;&quot;}</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s2">&quot;Higher score = better for this criterion.&quot;</span>
+<span class="p">)</span>
+
+<span class="n">_JSON_SCHEMA_ZH</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;请只输出一个 JSON 对象，不要使用 markdown。模式：</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="s1">&#39;{&quot;score&quot;: &lt;1-5 的整数&gt;, &quot;reason&quot;: &quot;&lt;简短理由&gt;&quot;}</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="s2">&quot;分数越高表示该维度表现越好。&quot;</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="normalize_preferred_output_lang">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.agent_output_locale.html#data_juicer.utils.agent_output_locale.normalize_preferred_output_lang">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_preferred_output_lang</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return ``zh`` or ``en`` (default ``en`` if missing/unknown).&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;en&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">s</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;en&quot;</span>
+    <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;zh&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;zh&quot;</span>
+    <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="s2">&quot;english&quot;</span><span class="p">,</span> <span class="s2">&quot;eng&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;en&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;en&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="dialog_score_json_instruction">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.agent_output_locale.html#data_juicer.utils.agent_output_locale.dialog_score_json_instruction">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dialog_score_json_instruction</span><span class="p">(</span><span class="n">lang</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Instruction block for 1–5 + reason JSON (dialog / trace quality mappers).&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_JSON_SCHEMA_ZH</span> <span class="k">if</span> <span class="n">normalize_preferred_output_lang</span><span class="p">(</span><span class="n">lang</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;zh&quot;</span> <span class="k">else</span> <span class="n">_JSON_SCHEMA_EN</span></div>
+
+
+
+<div class="viewcode-block" id="rubric_reason_language_clause">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.agent_output_locale.html#data_juicer.utils.agent_output_locale.rubric_reason_language_clause">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rubric_reason_language_clause</span><span class="p">(</span><span class="n">lang</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Append to system prompt: rubric may be English; ``reason`` follows locale.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">normalize_preferred_output_lang</span><span class="p">(</span><span class="n">lang</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;zh&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="s2">&quot;Language: The scoring rubric above may be in English; apply it faithfully. &quot;</span>
+            <span class="s2">&quot;The JSON field `reason` must be written in concise **Simplified Chinese (简体中文)**.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="s2">&quot;Language: Write the JSON field `reason` in concise **English**, &quot;</span>
+        <span class="s2">&quot;even if the user dialog is in another language.&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="llm_filter_free_text_language_appendix">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.agent_output_locale.html#data_juicer.utils.agent_output_locale.llm_filter_free_text_language_appendix">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">llm_filter_free_text_language_appendix</span><span class="p">(</span><span class="n">lang</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Append to LLMAnalysisFilter ``system_prompt`` for rationale / tags language.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">lang</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">lang</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">normalize_preferred_output_lang</span><span class="p">(</span><span class="n">lang</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;zh&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">【输出语言】保持 JSON 键名与上述 schema 一致（英文）；&quot;</span>
+            <span class="s2">&quot;`rationale`、tags 中自然语言描述、以及 flags 的可读语义请使用**简体中文**。&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">【Output language】Keep JSON keys as in the schema (English); &quot;</span>
+        <span class="s2">&quot;write `rationale`, human-readable tag strings, and flag semantics in **English**.&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="agent_insight_system_prompt">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.agent_output_locale.html#data_juicer.utils.agent_output_locale.agent_insight_system_prompt">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">agent_insight_system_prompt</span><span class="p">(</span><span class="n">lang</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;System prompt for ``agent_insight_llm_mapper``.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">normalize_preferred_output_lang</span><span class="p">(</span><span class="n">lang</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;zh&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="s2">&quot;你是智能体交互日志的谨慎分析员（自动数据科学风格）。&quot;</span>
+            <span class="s2">&quot;你会收到**单条**样本的 JSON：数值 stats、query/response 短预览、&quot;</span>
+            <span class="s2">&quot;可选的 LLM 评估摘录、dialog_quality_llm（各轴 1–5 分）、&quot;</span>
+            <span class="s2">&quot;对话标签、工具使用、以及确定性的 bad-case 信号。</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;任务：</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;1）综合数字与文字依据；指出一致或冲突。</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;2）只使用输入 JSON 里出现的键作归因，不要编造事实。</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;3）不确定时标为低置信度（偏 precision，便于人工质检）。</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;请只输出一个 JSON 对象，键名必须完全一致：</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;- headline: 一句话卡片标题（中文）</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;- root_causes: 数组，元素为 &quot;</span>
+            <span class="s2">&quot;{factor, confidence (high|medium|low), cited_fields (来自输入的字段路径字符串), &quot;</span>
+            <span class="s2">&quot;rationale_one_line}；其中说明用中文</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s1">&#39;- narrative_alignment: &quot;aligned&quot;|&quot;mixed&quot;|&quot;conflict&quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;- human_review_priority: &quot;P0&quot;|&quot;P1&quot;|&quot;P2&quot;|&quot;P3&quot;（P0 少用）</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s2">&quot;- viz_facets: 字符串数组，用于图表维度（如 agent_request_model, agent_pt）</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;- audit_notes: 可选字符串，中文备注</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;只输出合法 JSON，不要用 markdown 代码围栏。&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="s2">&quot;You are a careful analyst for agent interaction logs &quot;</span>
+        <span class="s2">&quot;(auto data-scientist style).</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;You receive ONE sample as a JSON object: numeric stats, short &quot;</span>
+        <span class="s2">&quot;previews of query/response, optional LLM evaluation rationales, &quot;</span>
+        <span class="s2">&quot;dialog_quality_llm (1–5 per-axis scores from lightweight turn/trace &quot;</span>
+        <span class="s2">&quot;judges), dialog tags, tool usage, and deterministic bad-case signals.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;Tasks:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;1) Integrate numbers and qualitative rationales; note agreement &quot;</span>
+        <span class="s2">&quot;or conflict.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;2) Attribute only with keys from the input JSON (no invented &quot;</span>
+        <span class="s2">&quot;facts).</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s1">&#39;3) Prefer &quot;uncertain&quot; / low confidence (precision for human QA).</span><span class="se">\n\n</span><span class="s1">&#39;</span>
+        <span class="s2">&quot;Output a single JSON object with exactly these keys:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;- headline: one short sentence for dashboard cards (English)</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;- root_causes: array of {factor, confidence (high|medium|low), &quot;</span>
+        <span class="s2">&quot;cited_fields (strings from input), rationale_one_line} — in English</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s1">&#39;- narrative_alignment: &quot;aligned&quot;|&quot;mixed&quot;|&quot;conflict&quot;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="s1">&#39;- human_review_priority: &quot;P0&quot;|&quot;P1&quot;|&quot;P2&quot;|&quot;P3&quot; (P0 sparingly)</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="s2">&quot;- viz_facets: strings for chart dimensions &quot;</span>
+        <span class="s2">&quot;(e.g. agent_request_model, agent_pt)</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;- audit_notes: optional caveats in English</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;Respond with valid JSON only, no markdown fences.&quot;</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="dialog_detection_output_language_note">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.agent_output_locale.html#data_juicer.utils.agent_output_locale.dialog_detection_output_language_note">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dialog_detection_output_language_note</span><span class="p">(</span><span class="n">lang</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Append to dialog intent/topic/sentiment/intensity system prompts.</span>
+
+<span class="sd">    Chinese prefixes (意图分析：, 话题类别：, …) stay for regex parsers; body follows locale.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="n">mode</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">zh</span> <span class="o">=</span> <span class="n">normalize_preferred_output_lang</span><span class="p">(</span><span class="n">lang</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;zh&quot;</span>
+    <span class="k">if</span> <span class="n">zh</span><span class="p">:</span>
+        <span class="n">notes</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;intent&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">【语言】「意图分析」「意图类别」后的说明请使用简体中文。&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;topic&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">【语言】「话题分析」「话题类别」后的说明请使用简体中文。&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sentiment&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">【语言】「情感分析」「情感类别」后的说明请使用简体中文。&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;intensity&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">【语言】「情绪分析」后的说明与情绪值整数请按规定格式；分析句用简体中文。&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">notes</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;intent&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">【Language】Keep the exact prefixes &quot;</span>
+                <span class="s2">&quot;「意图分析：」「意图类别：」 as in the examples; &quot;</span>
+                <span class="s2">&quot;write the text after each colon in **English**.&quot;</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;topic&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">【Language】Keep the exact prefixes &quot;</span>
+                <span class="s2">&quot;「话题分析：」「话题类别：」 as in the examples; &quot;</span>
+                <span class="s2">&quot;write the text after each colon in **English**.&quot;</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;sentiment&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">【Language】Keep the exact prefixes &quot;</span>
+                <span class="s2">&quot;「情感分析：」「情感类别：」 as in the examples; &quot;</span>
+                <span class="s2">&quot;write the text after each colon in **English**.&quot;</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;intensity&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">【Language】Keep the exact prefixes &quot;</span>
+                <span class="s2">&quot;「情绪分析：」「情绪值：」 as in the examples; &quot;</span>
+                <span class="s2">&quot;write the analysis sentence after the colon in **English**; &quot;</span>
+                <span class="s2">&quot;the integer after 情绪值： must still be -5..5.&quot;</span>
+            <span class="p">),</span>
+        <span class="p">}</span>
+    <span class="k">return</span> <span class="n">notes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="agent_skill_insight_system_prompt">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.agent_output_locale.html#data_juicer.utils.agent_output_locale.agent_skill_insight_system_prompt">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">agent_skill_insight_system_prompt</span><span class="p">(</span><span class="n">lang</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">normalize_preferred_output_lang</span><span class="p">(</span><span class="n">lang</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;zh&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="s2">&quot;根据输入的 Tools / Skills 列表，归纳 3～5 条**具体能力短语**，逗号分隔；&quot;</span>
+            <span class="s2">&quot;每条**约 8～12 个汉字**（围绕「约 10 字」的信息量），使用**简体中文**。</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;每条必须体现**对象或载体 + 具体动作或场景**（从工具/技能名抽象，但要比原名更可区分，&quot;</span>
+            <span class="s2">&quot;勿整段复述原名）。</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;**禁止**空洞标签：不得主要靠「处理、操作、读写、执行、调用、获取」等泛化动词凑标签；&quot;</span>
+            <span class="s2">&quot;不得仅用「文件/数据/内容」而无细分动作或对象。</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;好例：飞书多维表字段批量改写、本地日志按关键字追溯、PDF 表格转结构化字段。</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;反例：文件读写、数据处理、读取与操作。</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;只输出逗号分隔的短语：不要编号、不要解释、不要换行。&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="s2">&quot;From the Tools / Skills list, write **3–5 capability phrases**, &quot;</span>
+        <span class="s2">&quot;comma-separated.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;Each phrase is **about 4–8 words** (one concrete skill), &quot;</span>
+        <span class="s2">&quot;in **English**.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;Each phrase must name **what (object, tool, or domain) + a specific &quot;</span>
+        <span class="s2">&quot;action or scenario** — grounded in the input but more distinctive &quot;</span>
+        <span class="s2">&quot;than the raw names; do not paste long tool names verbatim.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;**Forbidden** as stand-alone tags: vague &quot;</span>
+        <span class="s1">&#39;&quot;processing&quot;, &quot;operations&quot;, &quot;read/write&quot;, &quot;handling&quot;, &#39;</span>
+        <span class="s1">&#39;&quot;calling&quot; without a clear target; &quot;files/data/content&quot; alone.</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="s2">&quot;Good: Feishu Bitable bulk field edits, log trace by keyword, &quot;</span>
+        <span class="s2">&quot;PDF tables to structured fields.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;Bad: file I/O, data processing, read and manipulate.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="s2">&quot;Output comma-separated phrases only: no numbering, no explanation, &quot;</span>
+        <span class="s2">&quot;no newlines.&quot;</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
