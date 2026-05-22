@@ -620,7 +620,9 @@
         <span class="n">model_params</span> <span class="o">=</span> <span class="n">model_params</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="n">sampling_params</span> <span class="o">=</span> <span class="n">sampling_params</span> <span class="ow">or</span> <span class="p">{}</span>
 
-        <span class="n">sampling_params</span> <span class="o">=</span> <span class="n">update_sampling_params</span><span class="p">(</span><span class="n">sampling_params</span><span class="p">,</span> <span class="n">api_or_hf_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_vllm</span><span class="p">)</span>
+        <span class="n">sampling_params</span> <span class="o">=</span> <span class="n">sampling_params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">enable_vllm</span> <span class="ow">or</span> <span class="n">is_hf_model</span><span class="p">:</span>
+            <span class="n">sampling_params</span> <span class="o">=</span> <span class="n">update_sampling_params</span><span class="p">(</span><span class="n">sampling_params</span><span class="p">,</span> <span class="n">api_or_hf_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_vllm</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">enable_vllm</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is_ray_mode</span><span class="p">():</span>

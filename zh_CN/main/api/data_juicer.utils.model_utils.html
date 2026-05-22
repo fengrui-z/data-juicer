@@ -976,6 +976,11 @@ otherwise, only the processor is returned.</p>
 <dt class="sig sig-object py" id="data_juicer.utils.model_utils.update_sampling_params">
 <span class="sig-prename descclassname"><span class="pre">data_juicer.utils.model_utils.</span></span><span class="sig-name descname"><span class="pre">update_sampling_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampling_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretrained_model_name_or_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_vllm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fetch_generation_config_from_hf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/utils/model_utils.html#update_sampling_params"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.utils.model_utils.update_sampling_params" title="链接到此定义。">#</a></dt>
 <dd><p>Update sampling_params with max_tokens/max_new_tokens from model or defaults.</p>
+<p>For vLLM: ensures <cite>max_tokens</cite> is set (vLLM default 16 is too small).
+For HF local: ensures <cite>max_new_tokens</cite> is set (transformers default 20 is too small).</p>
+<p>This function should NOT be called for API models — API providers have
+their own defaults, and injecting params like <cite>max_new_tokens</cite> would be
+invalid for OpenAI-compatible endpoints.</p>
 <p>When fetch_generation_config_from_hf is False (e.g. API-only models like
 gemini-2.5-flash via DashScope), skip HuggingFace GenerationConfig fetch to
 avoid connection errors. Default None means: fetch when enable_vllm or when
