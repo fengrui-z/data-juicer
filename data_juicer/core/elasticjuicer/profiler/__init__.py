@@ -10,6 +10,7 @@ Provides:
 from .resource_monitor import ResourceMonitor, MonitoredOp
 from .ocs_annotator import OCSAnnotator, OpCostSignature
 from .profiling_store import ProfilingStore
+from .execution_observer import ExecutionObserver
 
 __all__ = [
     "ResourceMonitor",
@@ -17,4 +18,5 @@ __all__ = [
     "OCSAnnotator",
     "OpCostSignature",
     "ProfilingStore",
+    "ExecutionObserver",
 ]

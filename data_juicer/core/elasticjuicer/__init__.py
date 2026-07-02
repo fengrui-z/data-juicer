@@ -13,6 +13,7 @@ from .contracts import (
     ClusterState,
     MemoryState,
     ResourceQuota,
+    StageExecutionObservation,
     StageMetrics,
     TopologyMode,
 )
@@ -23,6 +24,7 @@ __all__ = [
     "ClusterState",
     "MemoryState",
     "ResourceQuota",
+    "StageExecutionObservation",
     "StageMetrics",
     "TopologyMode",
 ]

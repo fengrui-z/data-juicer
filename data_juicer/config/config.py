@@ -607,6 +607,25 @@ def init_configs(args: Optional[List[str]] = None, which_entry: object = None, l
                 "the probed results. It's False in default.",
             )
             parser.add_argument(
+                "--elastic_juicer_mode",
+                type=str,
+                default="off",
+                choices=["off", "observe"],
+                help=(
+                    "ElasticJuicer execution mode. 'off' preserves existing behavior; "
+                    "'observe' records per-operator execution profiles without changing scheduling."
+                ),
+            )
+            parser.add_argument(
+                "--elastic_juicer_profile_dir",
+                type=Optional[str],
+                default=None,
+                help=(
+                    "Directory for ElasticJuicer observation files. Defaults to "
+                    "<work_dir>/elastic_juicer when observe mode is enabled."
+                ),
+            )
+            parser.add_argument(
                 "--process",
                 type=List[Dict],
                 default=[],

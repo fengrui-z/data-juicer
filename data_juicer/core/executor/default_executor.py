@@ -26,6 +26,20 @@ from data_juicer.utils.ckpt_utils import CheckpointManager
 from data_juicer.utils.sample import random_sample
 
 
+def _create_elastic_juicer_observer(cfg, work_dir):
+    """Build the optional observe-only hook without initializing an executor."""
+
+    if getattr(cfg, "elastic_juicer_mode", "off") != "observe":
+        return None
+
+    from data_juicer.core.elasticjuicer.profiler import ExecutionObserver
+
+    profile_dir = getattr(cfg, "elastic_juicer_profile_dir", None)
+    if not profile_dir:
+        profile_dir = os.path.join(work_dir, "elastic_juicer")
+    return ExecutionObserver(profile_dir)
+
+
 class DefaultExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin):
     """
     This Executor class is used to process a specific dataset.
@@ -57,6 +71,11 @@ class DefaultExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin):
         self.adapter = Adapter(self.cfg)
 
         self.np = self.cfg.get("np", None) or 1
+
+        self.elastic_juicer_observer = _create_elastic_juicer_observer(
+            self.cfg,
+            self.work_dir,
+        )
 
         # only enable it when using cache
         if self.cfg.use_cache:
@@ -226,6 +245,7 @@ class DefaultExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin):
             tracer=self.tracer if self.cfg.open_tracer else None,
             adapter=self.adapter,
             open_monitor=self.cfg.open_monitor,
+            execution_observer=self.elastic_juicer_observer,
         )
 
         # Post-execute DAG monitoring (log operation completion events)

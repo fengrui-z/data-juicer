@@ -261,6 +261,7 @@ class NestedDataset(Dataset, DJDataset):
         tracer=None,
         adapter=None,
         open_monitor=True,
+        execution_observer=None,
     ):
         # Local import to avoid logger being serialized in multiprocessing
         from loguru import logger
@@ -272,8 +273,9 @@ class NestedDataset(Dataset, DJDataset):
             operators = [operators]
         unforkable_operators = set(UNFORKABLE.modules.keys())
 
-        # resource utilization monitor
-        if open_monitor:
+        # Reuse one monitor invocation for the legacy report and ElasticJuicer.
+        capture_resources = open_monitor or execution_observer is not None
+        if capture_resources:
             resource_util_list = []
 
         # whether to enable insight mining
@@ -291,13 +293,14 @@ class NestedDataset(Dataset, DJDataset):
                 setup_mp(mp_context)
 
                 start = time()
+                input_rows = len(dataset)
                 # run single op
                 run_args = {
                     "dataset": dataset,
                     "exporter": exporter,
                     "tracer": tracer,
                 }
-                if open_monitor:
+                if capture_resources:
                     dataset, resource_util_per_op = Monitor.monitor_func(op.run, args=run_args)
                 else:
                     dataset = op.run(**run_args)
@@ -307,6 +310,19 @@ class NestedDataset(Dataset, DJDataset):
                 if open_monitor:
                     resource_util_list.append(resource_util_per_op)
                 end = time()
+                if execution_observer is not None:
+                    execution_observer.record_stage(
+                        stage_name=op._name,
+                        configured_batch_size=(
+                            getattr(op, "batch_size", 1)
+                            if callable(getattr(op, "is_batched_op", None)) and op.is_batched_op()
+                            else 1
+                        ),
+                        input_rows=input_rows,
+                        output_rows=len(dataset),
+                        duration_sec=end - start,
+                        monitor_result=resource_util_per_op,
+                    )
                 logger.info(
                     f"[{idx}/{op_num}] OP [{op._name}] Done in " f"{end - start:.3f}s. Left {len(dataset)} samples."
                 )

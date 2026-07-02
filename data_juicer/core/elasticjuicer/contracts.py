@@ -5,7 +5,7 @@ small value objects.  Keeping them in a dependency-free module prevents the
 control plane from depending on a concrete runtime such as psutil or Ray.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from enum import Enum
 from time import time
 from typing import Optional, Protocol
@@ -53,15 +53,13 @@ class MemoryState:
 class MemoryStateProvider(Protocol):
     """Injectable source of memory observations."""
 
-    def __call__(self) -> MemoryState:
-        ...
+    def __call__(self) -> MemoryState: ...
 
 
 class Clock(Protocol):
     """Injectable wall clock used by controllers and monitors."""
 
-    def __call__(self) -> float:
-        ...
+    def __call__(self) -> float: ...
 
 
 @dataclass(frozen=True)
@@ -106,6 +104,52 @@ class BatchDecision:
             raise ValueError("reason must not be empty")
         if not 0 <= self.confidence <= 1:
             raise ValueError("confidence must be in [0, 1]")
+
+
+@dataclass(frozen=True)
+class StageExecutionObservation:
+    """Observed outcome of one complete operator stage execution."""
+
+    stage_name: str
+    configured_batch_size: int
+    input_rows: int
+    output_rows: int
+    duration_ms: float
+    throughput: float
+    cpu_peak_percent: Optional[float] = None
+    memory_peak_mb: Optional[float] = None
+    gpu_memory_peak_mb: Optional[float] = None
+    gpu_peak_percent: Optional[float] = None
+    succeeded: bool = True
+    error_type: Optional[str] = None
+    timestamp: float = field(default_factory=time)
+
+    def __post_init__(self):
+        if not self.stage_name:
+            raise ValueError("stage_name must not be empty")
+        if self.configured_batch_size < 1:
+            raise ValueError("configured_batch_size must be at least 1")
+        for name in ("input_rows", "output_rows"):
+            if getattr(self, name) < 0:
+                raise ValueError(f"{name} must be non-negative")
+        for name in ("duration_ms", "throughput"):
+            if getattr(self, name) < 0:
+                raise ValueError(f"{name} must be non-negative")
+        for name in ("cpu_peak_percent", "gpu_peak_percent"):
+            value = getattr(self, name)
+            if value is not None and not 0 <= value <= 100:
+                raise ValueError(f"{name} must be in [0, 100]")
+        for name in ("memory_peak_mb", "gpu_memory_peak_mb"):
+            value = getattr(self, name)
+            if value is not None and value < 0:
+                raise ValueError(f"{name} must be non-negative")
+        if self.succeeded and self.error_type is not None:
+            raise ValueError("successful observations cannot contain error_type")
+
+    def to_dict(self) -> dict:
+        """Return a JSON-serializable representation."""
+
+        return asdict(self)
 
 
 @dataclass
