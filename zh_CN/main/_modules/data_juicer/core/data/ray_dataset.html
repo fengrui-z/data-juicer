@@ -899,11 +899,11 @@
 <div class="viewcode-block" id="RayDataset.read">
 <a class="viewcode-back" href="../../../../api/data_juicer.core.data.ray_dataset.html#data_juicer.core.data.ray_dataset.RayDataset.read">[文档]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">paths</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">RayDataset</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">paths</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">data_format</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="s2">&quot;jsonl&quot;</span><span class="p">,</span> <span class="s2">&quot;json.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;jsonl.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;json.zst&quot;</span><span class="p">,</span> <span class="s2">&quot;jsonl.zst&quot;</span><span class="p">}:</span>
-            <span class="k">return</span> <span class="n">RayDataset</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">RayDataset</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">data_format</span> <span class="o">==</span> <span class="s2">&quot;webdataset&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">RayDataset</span><span class="o">.</span><span class="n">read_webdataset</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">RayDataset</span><span class="o">.</span><span class="n">read_webdataset</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">data_format</span> <span class="ow">in</span> <span class="p">{</span>
             <span class="s2">&quot;parquet&quot;</span><span class="p">,</span>
             <span class="s2">&quot;images&quot;</span><span class="p">,</span>
@@ -917,33 +917,32 @@
             <span class="s2">&quot;lance&quot;</span><span class="p">,</span>
         <span class="p">}:</span>
             <span class="k">if</span> <span class="n">data_format</span> <span class="o">==</span> <span class="s2">&quot;lance&quot;</span><span class="p">:</span>
-                <span class="c1"># use lazy loader to check pylance installation</span>
                 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
 
                 <span class="n">LazyLoader</span><span class="o">.</span><span class="n">check_packages</span><span class="p">([</span><span class="s2">&quot;pylance&quot;</span><span class="p">])</span>
-            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;read_</span><span class="si">{</span><span class="n">data_format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)(</span><span class="n">paths</span><span class="p">)</span></div>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;read_</span><span class="si">{</span><span class="n">data_format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)(</span><span class="n">paths</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RayDataset.read_json">
 <a class="viewcode-back" href="../../../../api/data_juicer.core.data.ray_dataset.html#data_juicer.core.data.ray_dataset.RayDataset.read_json">[文档]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">read_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">paths</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">RayDataset</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">paths</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">:</span>
         <span class="c1"># Note: a temp solution for reading json stream</span>
         <span class="c1"># TODO: replace with ray.data.read_json_stream once it is available</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow.json</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">js</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">js</span><span class="o">.</span><span class="n">open_json</span>
-            <span class="k">return</span> <span class="n">read_json_stream</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">read_json_stream</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span></div>
+            <span class="k">return</span> <span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RayDataset.read_webdataset">
 <a class="viewcode-back" href="../../../../api/data_juicer.core.data.ray_dataset.html#data_juicer.core.data.ray_dataset.RayDataset.read_webdataset">[文档]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">read_webdataset</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">paths</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">RayDataset</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">read_webdataset</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">_custom_default_decoder</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;PIL&quot;</span><span class="p">))</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_webdataset</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">paths</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">read_webdataset</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">decoder</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">_custom_default_decoder</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;PIL&quot;</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RayDataset.to_list">
@@ -993,6 +992,25 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to read JSON file: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">. Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
             <span class="k">return</span>
 
+        <span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow.json</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">paj</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_full_file_fallback</span><span class="p">():</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Re-read the entire file with paj.read_json which handles</span>
+<span class="sd">            schema inference across all rows in a single pass.&quot;&quot;&quot;</span>
+            <span class="n">fs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_filesystem&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">open_input_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f2</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">paj</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span>
+                        <span class="n">f2</span><span class="p">,</span>
+                        <span class="n">read_options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">read_options</span><span class="p">,</span>
+                        <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">arrow_json_args</span><span class="p">,</span>
+                    <span class="p">)</span>
+            <span class="k">return</span> <span class="n">paj</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span>
+                <span class="n">path</span><span class="p">,</span>
+                <span class="n">read_options</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">read_options</span><span class="p">,</span>
+                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">arrow_json_args</span><span class="p">,</span>
+            <span class="p">)</span>
+
         <span class="k">try</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">open_json</span><span class="p">(</span>
                 <span class="n">f</span><span class="p">,</span>
@@ -1000,17 +1018,32 @@
                 <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">arrow_json_args</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">schema</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">batches</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">schema_evolved</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">batch</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">read_next_batch</span><span class="p">()</span>
-                    <span class="n">table</span> <span class="o">=</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">Table</span><span class="o">.</span><span class="n">from_batches</span><span class="p">([</span><span class="n">batch</span><span class="p">],</span> <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">schema</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">schema</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">schema</span>
-                    <span class="k">yield</span> <span class="n">table</span>
                 <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
-                    <span class="k">return</span>
-        <span class="k">except</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">ArrowInvalid</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to read JSON file: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">. Underlying PyArrow Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+                    <span class="k">break</span>
+                <span class="n">batches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">schema</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">schema</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">schema</span>
+                <span class="k">elif</span> <span class="ow">not</span> <span class="n">schema</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">batch</span><span class="o">.</span><span class="n">schema</span><span class="p">):</span>
+                    <span class="n">schema</span> <span class="o">=</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">unify_schemas</span><span class="p">([</span><span class="n">schema</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">schema</span><span class="p">])</span>
+                    <span class="n">schema_evolved</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="c1"># Yield all batches with consistent schema.</span>
+            <span class="c1"># Use .cast() when schema evolved (from_batches does NOT cast).</span>
+            <span class="k">if</span> <span class="n">schema_evolved</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">batches</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">Table</span><span class="o">.</span><span class="n">from_batches</span><span class="p">([</span><span class="n">batch</span><span class="p">])</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">batches</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">Table</span><span class="o">.</span><span class="n">from_batches</span><span class="p">([</span><span class="n">batch</span><span class="p">])</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">pyarrow</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">ArrowInvalid</span><span class="p">,</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">ArrowTypeError</span><span class="p">):</span>
+            <span class="c1"># PyArrow&#39;s streaming reader cannot handle schema evolution</span>
+            <span class="c1"># across block boundaries (e.g. null -&gt; string). Fall back to</span>
+            <span class="c1"># paj.read_json() which infers schema across the entire file.</span>
+            <span class="k">yield</span> <span class="n">_full_file_fallback</span><span class="p">()</span></div>
 
 
 

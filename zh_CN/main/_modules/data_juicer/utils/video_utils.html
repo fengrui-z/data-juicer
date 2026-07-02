@@ -674,6 +674,86 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
+<div class="viewcode-block" id="VideoReader.extract_frames_uniformly">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.VideoReader.extract_frames_uniformly">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_frames_uniformly</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract a number of frames uniformly distributed across the video.</span>
+
+<span class="sd">        :param frame_num: Number of frames to extract. If 1, the middle frame</span>
+<span class="sd">            is extracted. If 2, the first and last frames. If &gt;2, frames are</span>
+<span class="sd">            spaced uniformly including the first and last.</span>
+<span class="sd">        :return: A list of numpy arrays (RGB frames).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+        <span class="n">duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">duration</span>
+        <span class="n">total_frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">num_frames</span>
+
+        <span class="k">if</span> <span class="n">total_frames</span> <span class="o">&lt;</span> <span class="n">frame_num</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Number of frames to be extracted is larger than the &quot;</span>
+                <span class="s2">&quot;total number of frames in this video. Set it to the &quot;</span>
+                <span class="s2">&quot;total number of frames.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">frame_num</span> <span class="o">=</span> <span class="n">total_frames</span>
+
+        <span class="k">if</span> <span class="n">frame_num</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">extract_seconds</span> <span class="o">=</span> <span class="p">[</span><span class="n">duration</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="n">duration</span> <span class="o">/</span> <span class="p">(</span><span class="n">frame_num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">extract_seconds</span> <span class="o">=</span> <span class="p">[</span><span class="n">step</span> <span class="o">*</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">frame_num</span><span class="p">)]</span>
+
+        <span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">extract_seconds</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_frames</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="n">ts</span><span class="p">):</span>
+                <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">frames</span></div>
+
+
+<div class="viewcode-block" id="VideoReader.extract_frames_uniformly_by_seconds">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.VideoReader.extract_frames_uniformly_by_seconds">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_frames_uniformly_by_seconds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract frames uniformly from each segment of given duration.</span>
+
+<span class="sd">        The video is split into segments of the specified duration, and</span>
+<span class="sd">        ``frame_num`` frames are extracted uniformly from each segment.</span>
+<span class="sd">        Only full-length segments are processed (matching AV behavior);</span>
+<span class="sd">        a trailing partial segment shorter than ``duration`` is skipped.</span>
+
+<span class="sd">        :param frame_num: Number of frames per segment.</span>
+<span class="sd">        :param duration: Duration of each segment in seconds.</span>
+<span class="sd">        :return: A list of numpy arrays (RGB frames).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">video_duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">duration</span>
+        <span class="c1"># np.arange excludes the endpoint, so partial trailing segments</span>
+        <span class="c1"># shorter than `duration` are naturally skipped.</span>
+        <span class="n">timestamps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">video_duration</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="n">all_frames</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">timestamps</span><span class="p">)):</span>
+            <span class="n">seg_start</span> <span class="o">=</span> <span class="n">timestamps</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">seg_end</span> <span class="o">=</span> <span class="n">timestamps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">seg_duration</span> <span class="o">=</span> <span class="n">seg_end</span> <span class="o">-</span> <span class="n">seg_start</span>
+
+            <span class="k">if</span> <span class="n">seg_duration</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Calculate uniform timestamps within this segment</span>
+            <span class="k">if</span> <span class="n">frame_num</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">seg_seconds</span> <span class="o">=</span> <span class="p">[</span><span class="n">seg_start</span> <span class="o">+</span> <span class="n">seg_duration</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">seg_step</span> <span class="o">=</span> <span class="n">seg_duration</span> <span class="o">/</span> <span class="p">(</span><span class="n">frame_num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">seg_seconds</span> <span class="o">=</span> <span class="p">[</span><span class="n">seg_start</span> <span class="o">+</span> <span class="n">seg_step</span> <span class="o">*</span> <span class="n">j</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">frame_num</span><span class="p">)]</span>
+
+            <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">seg_seconds</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_frames</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="n">ts</span><span class="p">):</span>
+                    <span class="n">all_frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+                    <span class="k">break</span>
+
+        <span class="k">return</span> <span class="n">all_frames</span></div>
+
+
 <div class="viewcode-block" id="VideoReader.check_time_span">
 <a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.VideoReader.check_time_span">[文档]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_time_span</span><span class="p">(</span>
@@ -1250,6 +1330,80 @@
             <span class="k">return</span> <span class="n">Frames</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">[],</span> <span class="n">indices</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">frame_indices</span><span class="p">),</span> <span class="n">pts_time</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">pts_time</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">Frames</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="n">key_frames</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">frame_indices</span><span class="p">),</span> <span class="n">pts_time</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">pts_time</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="FFmpegReader.extract_frames_uniformly">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.video_utils.html#data_juicer.utils.video_utils.FFmpegReader.extract_frames_uniformly">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_frames_uniformly</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract frames uniformly using ffmpeg select filter (single pass).</span>
+
+<span class="sd">        Overrides the base class to use a single ffmpeg process with the</span>
+<span class="sd">        ``select`` filter, which is much more efficient than seeking for each</span>
+<span class="sd">        frame individually.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+        <span class="n">total_frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">num_frames</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">duration</span>
+        <span class="n">fps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">fps</span>
+
+        <span class="k">if</span> <span class="n">total_frames</span> <span class="o">&lt;</span> <span class="n">frame_num</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Number of frames to be extracted is larger than the &quot;</span>
+                <span class="s2">&quot;total number of frames in this video. Set it to the &quot;</span>
+                <span class="s2">&quot;total number of frames.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">frame_num</span> <span class="o">=</span> <span class="n">total_frames</span>
+
+        <span class="k">if</span> <span class="n">frame_num</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">extract_seconds</span> <span class="o">=</span> <span class="p">[</span><span class="n">duration</span> <span class="o">/</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="n">duration</span> <span class="o">/</span> <span class="p">(</span><span class="n">frame_num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">extract_seconds</span> <span class="o">=</span> <span class="p">[</span><span class="n">step</span> <span class="o">*</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">frame_num</span><span class="p">)]</span>
+
+        <span class="c1"># Convert timestamps to frame indices</span>
+        <span class="n">frame_indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">extract_seconds</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ts</span> <span class="o">*</span> <span class="n">fps</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">total_frames</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="n">frame_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+        <span class="c1"># Build select filter expression</span>
+        <span class="n">select_expr</span> <span class="o">=</span> <span class="s2">&quot;+&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;eq(n</span><span class="se">\\</span><span class="s2">,</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">frame_indices</span><span class="p">)</span>
+
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;ffmpeg&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-v&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;quiet&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-i&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">video_path</span><span class="p">,</span>
+            <span class="s2">&quot;-vf&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;select=&#39;</span><span class="si">{</span><span class="n">select_expr</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-vsync&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;vfr&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;rawvideo&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-pix_fmt&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">frame_format</span><span class="p">,</span>
+            <span class="s2">&quot;-&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+
+        <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">height</span>
+        <span class="n">frame_size</span> <span class="o">=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="mi">3</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">frame_num</span><span class="p">:</span>
+                <span class="n">raw</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">frame_size</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">frame_size</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">frame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+                <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kill_process</span><span class="p">(</span><span class="n">process</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">frames</span></div>
 
 
 <div class="viewcode-block" id="FFmpegReader.extract_clip">

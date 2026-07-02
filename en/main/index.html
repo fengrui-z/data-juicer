@@ -583,6 +583,26 @@ dj-process<span class="w"> </span>--config<span class="w"> </span>demos/process_
 <section id="news">
 <h2>📰 News<a class="headerlink" href="#news" title="Link to this heading">#</a></h2>
 <details open>
+<summary>[2026-06-26] Release v1.5.3: <b>VLA Ops Enhancements; Ray Repartition Pipeline; Scalability & Robustness</b></summary>
+<ul class="simple">
+<li><p>🤖 <em>VLA Ops Enhancements</em> — Expanded embodied-AI processing with 10+ new/renamed VLA operators (camera calibration via DeepCalib/DroidCalib/MoGe, atomic action segmentation, hand action computation &amp; motion smoothing, clip reassembly, trajectory overlay, LeRobot export) and a complete VLA pipeline demo.</p></li>
+<li><p>🔄 <em>Ray Repartition Pipeline</em> — New <code class="docutils literal notranslate"><span class="pre">ray_repartition_pipeline</span></code> for dataset-level block repartitioning in Ray mode.</p></li>
+<li><p>⚡ <em>Scalable Ray Data Reads</em> — Wired <code class="docutils literal notranslate"><span class="pre">override_num_blocks</span></code> through the full call chain for controlling block parallelism on PB-scale datasets.</p></li>
+<li><p>🧪 <em>Test Coverage Expansion</em> — Added 409 new test cases across 18 test files.</p></li>
+<li><p>🐳 <em>Stability &amp; Robustness Fixes</em> — JSONStreamDatasource schema unification, OP env version resolution, FUSE-safe rmtree for PartitionedRayExecutor, deprecated model name updates, and num_proc handling fixes.</p></li>
+</ul>
+</details>
+<details open>
+<summary>[2026-05-29] Release v1.5.2: <b>Semantic LLM OPs, Cross-doc Line Dedup & Leaner Dependencies</b></summary>
+<ul class="simple">
+<li><p>🧹 <em>New Deduplicator</em> — Added <code class="docutils literal notranslate"><span class="pre">DocumentLineDeduplicator</span></code> for cross-document line-level dedup, removing boilerplate lines (templates, copyright notices, navigation bars) by global document frequency.</p></li>
+<li><p>🤖 <em>Agent Data Quality Toolkit</em> — Shipped interaction-quality OPs &amp; recipe, a bad-case HTML report, and more robust JSONL / HuggingFace meta loading.</p></li>
+<li><p>📦 <em>Leaner &amp; Faster Install</em> — Slimmed the default dependency set (Ray, audio, spaCy, av, etc. moved to on-demand extras) to speed up installation.</p></li>
+<li><p>🐳 <em>Stability &amp; Robustness Fixes</em> — Library-safe error handling (raise over <code class="docutils literal notranslate"><span class="pre">exit(1)</span></code>), Ray init/temp-dir fixes, valid API params (drop invalid <code class="docutils literal notranslate"><span class="pre">max_new_tokens</span></code>), PyArrow 20+ batch JSON reading, local-path aesthetics model support, and more performance/bug fixes.</p></li>
+<li><p>🧠 <em>Semantic LLM Operators</em> — Introduced <code class="docutils literal notranslate"><span class="pre">llm_extract_mapper</span></code>, <code class="docutils literal notranslate"><span class="pre">llm_condition_filter</span></code>, and <code class="docutils literal notranslate"><span class="pre">llm_structured_ops</span></code> with unified <code class="docutils literal notranslate"><span class="pre">llm_*</span></code> naming and configurable inference strategies (join/agg/top-k planned).</p></li>
+</ul>
+</details>
+<details>
 <summary>[2026-03-17] Release v1.5.1: <b>LaTeX OPs; Compressed Format Support; Operator Robustness Fixes</b></summary>
 <ul class="simple">
 <li><p>📄 Two new LaTeX-focused mapper OPs shipped, extending data-juicer’s document processing capabilities to handle <code class="docutils literal notranslate"><span class="pre">.tex</span></code> archives and figure contexts.</p></li>
@@ -591,7 +611,7 @@ dj-process<span class="w"> </span>--config<span class="w"> </span>demos/process_
 <li><p>🤖 Major refactor and upgrade of data-juicer-agents completed: The project architecture and CLI/session capabilities were comprehensively redesigned for better maintainability and extensibility. See <a class="reference external" href="https://github.com/datajuicer/data-juicer-agents">date-juicer-agents</a> for more details.</p></li>
 </ul>
 </details>
-<details open>
+<details>
 <summary>[2026-02-12] Release v1.5.0: <b>Partitioned Ray Executor, OP-level Env Management, and More Embodied-AI OPs</b></summary>
 <ul class="simple">
 <li><p>🚀 <em>Enhanced Distributed Execution Framework</em> – Introduced partitioned Ray executor and OP-level isolated environments to improve fault tolerance, scalability, and dependency conflict resolution.</p></li>
@@ -739,8 +759,8 @@ Attribution is appreciated: please use our <a class="reference external" href="h
 <li><p>(TPAMI’25) <a class="reference external" href="https://arxiv.org/abs/2407.08583">The Synergy between Data and Multi-Modal Large Language Models: A Survey from Co-Development Perspective</a></p></li>
 <li><p>(NeurIPS’25) <a class="reference external" href="https://arxiv.org/abs/2502.04380">Diversity as a Reward: Fine-Tuning LLMs on a Mixture of Domain-Undetermined Data</a></p></li>
 <li><p>(NeurIPS’25) <a class="reference external" href="https://arxiv.org/abs/2503.09499">MindGYM: What Matters in Question Synthesis for Thinking-Centric Fine-Tuning?</a></p></li>
-<li><p>(Benchmark Data) <a class="reference external" href="https://arxiv.org/abs/2412.17574">HumanVBench: Exploring Human-Centric Video Understanding Capabilities of MLLMs with Synthetic Benchmark Data</a></p></li>
-<li><p>(Benchmark Data) <a class="reference external" href="https://www.arxiv.org/abs/2505.16915">DetailMaster: Can Your Text-to-Image Model Handle Long Prompts?</a></p></li>
+<li><p>(CVPR’26) <a class="reference external" href="https://arxiv.org/abs/2412.17574">HumanVBench: Exploring Human-Centric Video Understanding Capabilities of MLLMs with Synthetic Benchmark Data</a></p></li>
+<li><p>(ICML’26) <a class="reference external" href="https://www.arxiv.org/abs/2505.16915">DetailMaster: Can Your Text-to-Image Model Handle Long Prompts?</a></p></li>
 <li><p>(Data Scaling) <a class="reference external" href="https://arxiv.org/abs/2405.14908">BiMix: A Bivariate Data Mixing Law for Language Model Pretraining</a></p></li>
 </ul>
 </details>

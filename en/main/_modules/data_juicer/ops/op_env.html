@@ -1093,28 +1093,43 @@
             <span class="c1"># use union to combine them to find the latest version</span>
             <span class="n">combined</span> <span class="o">=</span> <span class="n">p1</span> <span class="o">|</span> <span class="n">p2</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">combined</span><span class="p">,</span> <span class="n">UnionSpecifier</span><span class="p">):</span>
-                <span class="n">max_str</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">combined</span><span class="o">.</span><span class="n">ranges</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">max</span><span class="p">:</span>
+                <span class="n">has_unbounded</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">max</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">combined</span><span class="o">.</span><span class="n">ranges</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">has_unbounded</span><span class="p">:</span>
+                    <span class="c1"># Some ranges extend to +inf. Use the highest lower bound</span>
+                    <span class="c1"># from unbounded ranges as the LATEST constraint.</span>
+                    <span class="n">max_min</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">include_max_min</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">combined</span><span class="o">.</span><span class="n">ranges</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">max</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">min</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">max_min</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">r</span><span class="o">.</span><span class="n">min</span> <span class="o">&gt;</span> <span class="n">max_min</span><span class="p">:</span>
+                                <span class="n">max_min</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">min</span>
+                                <span class="n">include_max_min</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">include_min</span>
+                    <span class="k">if</span> <span class="n">max_min</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">latest_version</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">SpecifierSet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&gt;=</span><span class="si">{</span><span class="n">max_min</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">include_max_min</span> <span class="k">else</span> <span class="n">SpecifierSet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&gt;</span><span class="si">{</span><span class="n">max_min</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="c1"># else: fully unbounded (no min), fall through to warning</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># All ranges have upper bounds, find the maximum upper bound</span>
+                    <span class="n">max_str</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">combined</span><span class="o">.</span><span class="n">ranges</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">include_max</span><span class="p">:</span>
                             <span class="n">max_str</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;=</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">max</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">max_str</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">max</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">max_str</span> <span class="o">=</span> <span class="p">[]</span>
-                        <span class="k">break</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">max_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">max_spec</span> <span class="o">=</span> <span class="n">parse_version_specifier</span><span class="p">(</span><span class="s2">&quot;||&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">max_str</span><span class="p">))</span>
-                    <span class="n">include_latest</span> <span class="o">=</span> <span class="n">max_spec</span><span class="o">.</span><span class="n">include_max</span>
-                    <span class="n">latest_version</span> <span class="o">=</span> <span class="n">max_spec</span><span class="o">.</span><span class="n">max</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">max_str</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">max_spec</span> <span class="o">=</span> <span class="n">parse_version_specifier</span><span class="p">(</span><span class="s2">&quot;||&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">max_str</span><span class="p">))</span>
+                        <span class="n">include_latest</span> <span class="o">=</span> <span class="n">max_spec</span><span class="o">.</span><span class="n">include_max</span>
+                        <span class="n">latest_version</span> <span class="o">=</span> <span class="n">max_spec</span><span class="o">.</span><span class="n">max</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">include_latest</span> <span class="o">=</span> <span class="n">combined</span><span class="o">.</span><span class="n">include_max</span>
                 <span class="n">latest_version</span> <span class="o">=</span> <span class="n">combined</span><span class="o">.</span><span class="n">max</span>
-            <span class="k">if</span> <span class="n">latest_version</span><span class="p">:</span>
+            <span class="c1"># Convert raw version to SpecifierSet (skip if already set above)</span>
+            <span class="k">if</span> <span class="n">latest_version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">latest_version</span><span class="p">,</span> <span class="n">SpecifierSet</span><span class="p">):</span>
                 <span class="n">latest_version</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">SpecifierSet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;==</span><span class="si">{</span><span class="n">latest_version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">include_latest</span> <span class="k">else</span> <span class="n">SpecifierSet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">latest_version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="p">)</span>
-            <span class="k">elif</span> <span class="n">latest_version</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">latest_version</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Dependency conflict for </span><span class="si">{</span><span class="n">first_req</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">second_req</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;fallback to unpinned version under LATEST strategy: &quot;</span>

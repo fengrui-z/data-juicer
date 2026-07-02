@@ -683,10 +683,13 @@
         <span class="c1">#</span>
 
         <span class="n">read_opts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;read_options&quot;</span><span class="p">)</span>
+        <span class="n">override_num_blocks</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="p">,</span> <span class="s2">&quot;override_num_blocks&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="c1"># 1. load data</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading dataset with Ray...&quot;</span><span class="p">)</span>
-        <span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasetbuilder</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">num_proc</span><span class="o">=</span><span class="n">load_data_np</span><span class="p">,</span> <span class="n">read_options</span><span class="o">=</span><span class="n">read_opts</span><span class="p">)</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasetbuilder</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span>
+            <span class="n">num_proc</span><span class="o">=</span><span class="n">load_data_np</span><span class="p">,</span> <span class="n">read_options</span><span class="o">=</span><span class="n">read_opts</span><span class="p">,</span> <span class="n">override_num_blocks</span><span class="o">=</span><span class="n">override_num_blocks</span>
+        <span class="p">)</span>
         <span class="n">columns</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">()</span>
 
         <span class="c1"># 2. extract processes</span>

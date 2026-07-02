@@ -517,8 +517,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.cache_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">DATA_JUICER_ASSETS_CACHE</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fields</span><span class="p">,</span> <span class="n">MetaKeys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">CameraCalibrationKeys</span><span class="p">,</span> <span class="n">Fields</span><span class="p">,</span> <span class="n">MetaKeys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..base_op</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPERATORS</span><span class="p">,</span> <span class="n">Mapper</span>
@@ -527,6 +526,24 @@
 <span class="n">OP_NAME</span> <span class="o">=</span> <span class="s2">&quot;video_undistort_mapper&quot;</span>
 
 <span class="n">ffmpeg</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;ffmpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;ffmpeg-python&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_global_intrinsics">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.video_undistort_mapper.html#data_juicer.ops.mapper.get_global_intrinsics">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_global_intrinsics</span><span class="p">(</span><span class="n">ks</span><span class="p">):</span>
+    <span class="n">fx</span> <span class="o">=</span> <span class="n">ks</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">fy</span> <span class="o">=</span> <span class="n">ks</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">cx</span> <span class="o">=</span> <span class="n">ks</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="n">cy</span> <span class="o">=</span> <span class="n">ks</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+    <span class="n">global_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">global_k</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">fx</span><span class="p">)</span>
+    <span class="n">global_k</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">fy</span><span class="p">)</span>
+    <span class="n">global_k</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">cx</span><span class="p">)</span>
+    <span class="n">global_k</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">cy</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">global_k</span></div>
+
 
 
 <div class="viewcode-block" id="VideoUndistortMapper">
@@ -541,8 +558,9 @@
 <a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.VideoUndistortMapper.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">output_video_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DATA_JUICER_ASSETS_CACHE</span><span class="p">,</span>
-        <span class="n">tag_field_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MetaKeys</span><span class="o">.</span><span class="n">video_undistortion_tags</span><span class="p">,</span>
+        <span class="n">output_video_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">undistorted_video_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MetaKeys</span><span class="o">.</span><span class="n">undistorted_video</span><span class="p">,</span>
+        <span class="n">camera_calibration_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;camera_calibration&quot;</span><span class="p">,</span>
         <span class="n">batch_size_each_video</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
         <span class="n">crf</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">22</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
@@ -552,47 +570,22 @@
 <span class="sd">        Initialization method.</span>
 
 <span class="sd">        :param output_video_dir: Output directory to save undistorted videos.</span>
-<span class="sd">        :param tag_field_name: The field name to store the tags. It&#39;s</span>
-<span class="sd">            &quot;video_undistortion_tags&quot; in default.</span>
+<span class="sd">        :param undistorted_video_field: The field name to store the tags. It&#39;s</span>
+<span class="sd">            &quot;undistorted_video&quot; in default.</span>
+<span class="sd">        :param camera_calibration_field: The field name where the camera calibration info is stored.</span>
 <span class="sd">        :param batch_size_each_video: Number of frames to process and save per</span>
 <span class="sd">            temporary TS file batch.</span>
 <span class="sd">        :param crf: Constant Rate Factor (CRF) for FFmpeg encoding quality.</span>
 <span class="sd">        :param args: extra args</span>
 <span class="sd">        :param kwargs: extra args</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="c1"># check if only opencv-contrib-python is installed</span>
-        <span class="n">opencv_packages</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">installed_opencv</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">opencv_packages</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;opencv&quot;</span><span class="p">)</span>
-        <span class="p">]</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">importlib.metadata</span>
 
-        <span class="c1"># if not, uninstall all opencv-related modules and reinstall opencv-contrib-python</span>
-        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">installed_opencv</span><span class="p">)</span> <span class="o">!=</span> <span class="p">{</span><span class="s2">&quot;opencv-contrib-python&quot;</span><span class="p">}:</span>
-            <span class="c1"># uninstall all opencv-related modules</span>
-            <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-                <span class="p">[</span>
-                    <span class="s2">&quot;pip&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;uninstall&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;-y&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;opencv-python&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;opencv-python-headless&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;opencv-contrib-python&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;opencv-contrib-python-headless&quot;</span><span class="p">,</span>
-                <span class="p">],</span>
-                <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span>
-
-            <span class="c1"># reinstall opencv-contrib-python</span>
-            <span class="n">LazyLoader</span><span class="o">.</span><span class="n">check_packages</span><span class="p">([</span><span class="s2">&quot;opencv-contrib-python&quot;</span><span class="p">])</span>
-
-            <span class="c1"># fix the version of numpy</span>
-            <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="s2">&quot;numpy==1.26.4&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="n">cv2</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;cv2&quot;</span><span class="p">,</span> <span class="s2">&quot;opencv-contrib-python&quot;</span><span class="p">)</span>
+        <span class="n">cv2_version</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">version</span><span class="p">(</span><span class="s2">&quot;opencv-python&quot;</span><span class="p">)</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;opencv-contrib-python==</span><span class="si">{</span><span class="n">cv2_version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">VideoCapture</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">CAP_PROP_FRAME_HEIGHT</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">CAP_PROP_FRAME_HEIGHT</span>
@@ -607,9 +600,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">output_video_dir</span> <span class="o">=</span> <span class="n">output_video_dir</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span> <span class="o">=</span> <span class="n">tag_field_name</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_video_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;output_video_dir must be specified to save the undistorted videos.&quot;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_video_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">undistorted_video_field</span> <span class="o">=</span> <span class="n">undistorted_video_field</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size_each_video</span> <span class="o">=</span> <span class="n">batch_size_each_video</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">crf</span> <span class="o">=</span> <span class="n">crf</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">crf</span> <span class="o">=</span> <span class="n">crf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">camera_calibration_field</span> <span class="o">=</span> <span class="n">camera_calibration_field</span></div>
 
 
 <div class="viewcode-block" id="VideoUndistortMapper.concatenate_ts_files">
@@ -625,8 +622,10 @@
 
         <span class="c1"># Merge using ffmpeg concat demuxer</span>
         <span class="n">ffmpeg</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">inputs_path</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;concat&quot;</span><span class="p">,</span> <span class="n">safe</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">output</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">video_name</span><span class="si">}</span><span class="s2">.mp4&quot;</span><span class="p">),</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;copy&quot;</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">video_name</span><span class="si">}</span><span class="s2">.mp4&quot;</span><span class="p">),</span>
+            <span class="n">c</span><span class="o">=</span><span class="s2">&quot;copy&quot;</span><span class="p">,</span>
+            <span class="n">movflags</span><span class="o">=</span><span class="s2">&quot;frag_keyframe+empty_moov&quot;</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">overwrite_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># Cleanup temporary TS files and list file</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_counts</span><span class="p">):</span>
@@ -655,6 +654,7 @@
                     <span class="s2">&quot;c:v&quot;</span><span class="p">:</span> <span class="s2">&quot;libx264&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;crf&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">crf</span><span class="p">),</span>
                     <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="n">fps</span><span class="p">,</span>
+                    <span class="s2">&quot;movflags&quot;</span><span class="p">:</span> <span class="s2">&quot;frag_keyframe+empty_moov&quot;</span><span class="p">,</span>
                 <span class="p">},</span>
             <span class="p">)</span>
             <span class="o">.</span><span class="n">overwrite_output</span><span class="p">()</span>
@@ -665,117 +665,144 @@
 <div class="viewcode-block" id="VideoUndistortMapper.process_single">
 <a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.VideoUndistortMapper.process_single">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">process_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-
         <span class="c1"># check if it&#39;s generated already</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">undistorted_video_field</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">sample</span>
 
         <span class="c1"># there is no videos in this sample</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sample</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">video_key</span><span class="p">]:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-        <span class="n">cap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">video_key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">video_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">video_key</span><span class="p">][</span><span class="mi">0</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">camera_calibration_field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_calibration_field</span>
+        <span class="n">intrinsics_field</span> <span class="o">=</span> <span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">intrinsics</span>
+        <span class="n">xi_field</span> <span class="o">=</span> <span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">xi</span>
+        <span class="n">dist_coeffs_field</span> <span class="o">=</span> <span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">dist_coeffs</span>
+        <span class="n">rotation_matrix_field</span> <span class="o">=</span> <span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">rectify_R</span>
+        <span class="n">new_intrinsics_field</span> <span class="o">=</span> <span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">new_intrinsics</span>
 
-        <span class="c1"># Get video properties</span>
-        <span class="n">height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CAP_PROP_FRAME_HEIGHT</span><span class="p">))</span>
-        <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CAP_PROP_FRAME_WIDTH</span><span class="p">))</span>
-        <span class="n">fps</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CAP_PROP_FPS</span><span class="p">)</span>
+        <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">undistorted_video_field</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">if</span> <span class="s2">&quot;intrinsics&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sample</span> <span class="ow">or</span> <span class="n">sample</span><span class="p">[</span><span class="s2">&quot;intrinsics&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The sample must include an &#39;intrinsics&#39; field to store the 3x3 camera intrinsics matrix.&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="s2">&quot;xi&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sample</span> <span class="ow">or</span> <span class="n">sample</span><span class="p">[</span><span class="s2">&quot;xi&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The sample must include an &#39;xi&#39; field to store the parameter xi in CMei&#39;s model.&quot;</span><span class="p">)</span>
-
-        <span class="n">K</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="s2">&quot;intrinsics&quot;</span><span class="p">]</span>  <span class="c1"># 3x3 camera intrinsics.</span>
-        <span class="n">D</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-            <span class="s2">&quot;distortion_coefficients&quot;</span><span class="p">,</span> <span class="kc">None</span>
-        <span class="p">)</span>  <span class="c1"># Distortion coefficients (k1,k2,p1,p2). If D is None then zero distortion is used.</span>
-        <span class="n">xi</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="s2">&quot;xi&quot;</span><span class="p">]</span>  <span class="c1"># The parameter xi for CMei&#39;s model.</span>
-        <span class="n">R</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-            <span class="s2">&quot;rotation_matrix&quot;</span><span class="p">,</span> <span class="kc">None</span>
-        <span class="p">)</span>  <span class="c1"># Rotation transform between the original and object space. If it is None, there is no rotation.</span>
-        <span class="n">new_K</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-            <span class="s2">&quot;intrinsics_new&quot;</span><span class="p">,</span> <span class="kc">None</span>
-        <span class="p">)</span>  <span class="c1"># New camera intrinsics. if new_K is empty then identity intrinsics are used.</span>
-
-        <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="n">xi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">D</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">R</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">new_K</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">new_K</span> <span class="o">=</span> <span class="n">K</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">new_K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_K</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-
-        <span class="n">map1</span><span class="p">,</span> <span class="n">map2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">omnidir</span><span class="o">.</span><span class="n">initUndistortRectifyMap</span><span class="p">(</span>
-            <span class="n">K</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">new_K</span><span class="p">,</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">CV_16SC2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">omnidir</span><span class="o">.</span><span class="n">RECTIFY_PERSPECTIVE</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Initialize the first batch ffmpeg writer</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_video_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">batch_number</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">writer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_ffmpeg_writer</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_video_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">video_name</span><span class="si">}</span><span class="s2">_b</span><span class="si">{</span><span class="n">batch_number</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">.ts&quot;</span><span class="p">),</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">fps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">crf</span>
-        <span class="p">)</span>
-
-        <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="c1"># Read and process frames</span>
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">ret</span><span class="p">:</span>
-                <span class="c1"># End of video stream: close the last writer</span>
-                <span class="n">writer</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-                <span class="n">writer</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-                <span class="k">break</span>
-
-            <span class="c1"># Undistort the frame</span>
-            <span class="n">undistorted_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remap</span><span class="p">(</span>
-                <span class="n">frame</span><span class="p">,</span> <span class="n">map1</span><span class="p">,</span> <span class="n">map2</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">INTER_CUBIC</span><span class="p">,</span> <span class="n">borderMode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">BORDER_CONSTANT</span>
-            <span class="p">)</span>
-
-            <span class="c1"># Convert BGR to RGB before writing to ffmpeg (FFmpeg expects RGB)</span>
-            <span class="n">undistorted_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">undistorted_frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
-
-            <span class="c1"># Write to ffmpeg stdin</span>
-            <span class="n">writer</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">undistorted_frame</span><span class="o">.</span><span class="n">tobytes</span><span class="p">())</span>
-
-            <span class="c1"># Check if the current batch is complete (for idx + 1)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size_each_video</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="c1"># Finalize the current batch writer</span>
-                <span class="n">writer</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-                <span class="n">writer</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-
-                <span class="c1"># Start the next batch writer</span>
-                <span class="n">batch_number</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">writer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_ffmpeg_writer</span><span class="p">(</span>
-                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_video_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">video_name</span><span class="si">}</span><span class="s2">_b</span><span class="si">{</span><span class="n">batch_number</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">.ts&quot;</span><span class="p">),</span>
-                    <span class="n">width</span><span class="p">,</span>
-                    <span class="n">height</span><span class="p">,</span>
-                    <span class="n">fps</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">crf</span><span class="p">,</span>
+        <span class="k">for</span> <span class="n">video_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">video_key</span><span class="p">])):</span>
+            <span class="n">cur_video_calibration</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="n">camera_calibration_field</span><span class="p">][</span><span class="n">video_idx</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">cur_video_calibration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">intrinsics_field</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The sample must include an &#39;</span><span class="si">{</span><span class="n">intrinsics_field</span><span class="si">}</span><span class="s2">&#39; field to store the 3x3 camera intrinsics matrix.&quot;</span>
                 <span class="p">)</span>
 
-            <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">cur_video_calibration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">xi_field</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The sample must include an &#39;</span><span class="si">{</span><span class="n">xi_field</span><span class="si">}</span><span class="s2">&#39; field to store the parameter xi in CMei&#39;s model.&quot;</span>
+                <span class="p">)</span>
 
-        <span class="n">cap</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+            <span class="n">video_path</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">video_key</span><span class="p">][</span><span class="n">video_idx</span><span class="p">]</span>
+            <span class="n">cap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="n">video_path</span><span class="p">)</span>
+            <span class="n">video_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">video_path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="c1"># Merge all temporary TS chunks into the final MP4 file</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">concatenate_ts_files</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_video_dir</span><span class="p">,</span> <span class="n">video_name</span><span class="p">,</span> <span class="n">batch_number</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># Get video properties</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CAP_PROP_FRAME_HEIGHT</span><span class="p">))</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CAP_PROP_FRAME_WIDTH</span><span class="p">))</span>
+            <span class="n">fps</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CAP_PROP_FPS</span><span class="p">)</span>
 
-        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;new_video_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_video_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">video_name</span><span class="si">}</span><span class="s2">.mp4&quot;</span><span class="p">)</span>
-        <span class="p">}</span>
+            <span class="n">K</span> <span class="o">=</span> <span class="n">cur_video_calibration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">intrinsics_field</span><span class="p">)</span>  <span class="c1"># 3x3 camera intrinsics.</span>
+            <span class="n">xi</span> <span class="o">=</span> <span class="n">cur_video_calibration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">xi_field</span><span class="p">)</span>  <span class="c1"># The parameter xi for CMei&#39;s model.</span>
+
+            <span class="n">D</span> <span class="o">=</span> <span class="n">cur_video_calibration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">dist_coeffs_field</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="p">)</span>  <span class="c1"># Distortion coefficients (k1,k2,p1,p2). If D is None then zero distortion is used.</span>
+            <span class="n">R</span> <span class="o">=</span> <span class="n">cur_video_calibration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">rotation_matrix_field</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="p">)</span>  <span class="c1"># Rotation transform between the original and object space. If it is None, there is no rotation.</span>
+            <span class="n">new_K</span> <span class="o">=</span> <span class="n">cur_video_calibration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">new_intrinsics_field</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="p">)</span>  <span class="c1"># New camera intrinsics. if new_K is empty then identity intrinsics are used.</span>
+
+            <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="n">xi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+            <span class="c1"># frames k</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">K</span> <span class="o">=</span> <span class="n">get_global_intrinsics</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+
+                <span class="n">xi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+
+            <span class="n">xi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xi</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">D</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">R</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">new_K</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">new_K</span> <span class="o">=</span> <span class="n">K</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_K</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+            <span class="n">map1</span><span class="p">,</span> <span class="n">map2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">omnidir</span><span class="o">.</span><span class="n">initUndistortRectifyMap</span><span class="p">(</span>
+                <span class="n">K</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">new_K</span><span class="p">,</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">CV_16SC2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">omnidir</span><span class="o">.</span><span class="n">RECTIFY_PERSPECTIVE</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Initialize the first batch ffmpeg writer</span>
+            <span class="n">batch_number</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">writer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_ffmpeg_writer</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_video_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">video_name</span><span class="si">}</span><span class="s2">_b</span><span class="si">{</span><span class="n">batch_number</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">.ts&quot;</span><span class="p">),</span>
+                <span class="n">width</span><span class="p">,</span>
+                <span class="n">height</span><span class="p">,</span>
+                <span class="n">fps</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">crf</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c1"># Read and process frames</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">ret</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">ret</span><span class="p">:</span>
+                    <span class="c1"># End of video stream: close the last writer</span>
+                    <span class="n">writer</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                    <span class="n">writer</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+                    <span class="k">break</span>
+
+                <span class="c1"># Undistort the frame</span>
+                <span class="n">undistorted_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">remap</span><span class="p">(</span>
+                    <span class="n">frame</span><span class="p">,</span> <span class="n">map1</span><span class="p">,</span> <span class="n">map2</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">INTER_CUBIC</span><span class="p">,</span> <span class="n">borderMode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">BORDER_CONSTANT</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Convert BGR to RGB before writing to ffmpeg (FFmpeg expects RGB)</span>
+                <span class="n">undistorted_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">undistorted_frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
+
+                <span class="c1"># Write to ffmpeg stdin</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">undistorted_frame</span><span class="o">.</span><span class="n">tobytes</span><span class="p">())</span>
+
+                <span class="c1"># Check if the current batch is complete (for idx + 1)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size_each_video</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c1"># Finalize the current batch writer</span>
+                    <span class="n">writer</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                    <span class="n">writer</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+                    <span class="c1"># Start the next batch writer</span>
+                    <span class="n">batch_number</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">writer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_ffmpeg_writer</span><span class="p">(</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_video_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">video_name</span><span class="si">}</span><span class="s2">_b</span><span class="si">{</span><span class="n">batch_number</span><span class="si">:</span><span class="s2">04d</span><span class="si">}</span><span class="s2">.ts&quot;</span><span class="p">),</span>
+                        <span class="n">width</span><span class="p">,</span>
+                        <span class="n">height</span><span class="p">,</span>
+                        <span class="n">fps</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">crf</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">cap</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+            <span class="c1"># Merge all temporary TS chunks into the final MP4 file</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">concatenate_ts_files</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_video_dir</span><span class="p">,</span> <span class="n">video_name</span><span class="p">,</span> <span class="n">batch_number</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">out_video</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_video_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">video_name</span><span class="si">}</span><span class="s2">.mp4&quot;</span><span class="p">)</span>
+
+            <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">undistorted_video_field</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out_video</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">sample</span></div>
 </div>

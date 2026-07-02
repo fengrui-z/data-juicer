@@ -571,6 +571,7 @@
 
 <span class="sd">    - **Frame Sampling Methods**:</span>
 <span class="sd">    - &quot;all_keyframes&quot;: Extracts all keyframes from the video.</span>
+<span class="sd">    - &quot;all_frames&quot;: Extracts all frames from the video.</span>
 <span class="sd">    - &quot;uniform&quot;: Extracts a specified number of frames uniformly from the video.</span>
 <span class="sd">    - If `duration` is set, the video is segmented into multiple segments based on the</span>
 <span class="sd">      duration, and frames are extracted from each segment.</span>
@@ -600,10 +601,12 @@
 <span class="sd">        Initialization method.</span>
 <span class="sd">        :param frame_sampling_method: sampling method of extracting frame</span>
 <span class="sd">            videos from the videos. Should be one of</span>
-<span class="sd">            [&quot;all_keyframes&quot;, &quot;uniform&quot;].</span>
-<span class="sd">            The former one extracts all key frames (the number</span>
-<span class="sd">            of which depends on the duration of the video) and the latter</span>
-<span class="sd">            one extract specified number of frames uniformly from the video.</span>
+<span class="sd">            [&quot;all_keyframes&quot;, &quot;all_frames&quot;, &quot;uniform&quot;].</span>
+<span class="sd">            &quot;all_keyframes&quot; extracts all key frames (the number</span>
+<span class="sd">            of which depends on the duration of the video).</span>
+<span class="sd">            &quot;all_frames&quot; extracts every frame of the video.</span>
+<span class="sd">            &quot;uniform&quot; extracts a specified number of frames uniformly</span>
+<span class="sd">            from the video.</span>
 <span class="sd">            If &quot;duration&quot; &gt; 0, frame_sampling_method acts on every segment.</span>
 <span class="sd">            Default: &quot;all_keyframes&quot;.</span>
 <span class="sd">        :param output_format: The output format of the frame videos.</span>
@@ -652,11 +655,11 @@
             <span class="s2">&quot;bytes&quot;</span><span class="p">,</span>
         <span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;output_format &#39;</span><span class="si">{</span><span class="n">output_format</span><span class="si">}</span><span class="s2">&#39; is not supported. Can only be one of [&#39;path&#39;, &#39;bytes&#39;].&quot;</span>
 
-        <span class="k">if</span> <span class="n">frame_sampling_method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;all_keyframes&quot;</span><span class="p">,</span> <span class="s2">&quot;uniform&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">frame_sampling_method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;all_keyframes&quot;</span><span class="p">,</span> <span class="s2">&quot;all_frames&quot;</span><span class="p">,</span> <span class="s2">&quot;uniform&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Frame sampling method &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">frame_sampling_method</span><span class="si">}</span><span class="s2">] is not supported. &quot;</span>
-                <span class="sa">f</span><span class="s1">&#39;Can only be one of [&quot;all_keyframes&quot;, &quot;uniform&quot;].&#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;Can only be one of [&quot;all_keyframes&quot;, &quot;all_frames&quot;, &quot;uniform&quot;].&#39;</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">frame_dir</span> <span class="o">=</span> <span class="n">frame_dir</span>
@@ -686,10 +689,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">video_backend</span> <span class="o">=</span> <span class="n">video_backend</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_backend</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ffmpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;av&quot;</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_sampling_method</span> <span class="o">==</span> <span class="s2">&quot;uniform&quot;</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_backend</span> <span class="o">==</span> <span class="s2">&quot;av&quot;</span><span class="p">,</span> <span class="s2">&quot;Only &#39;av&#39; backend is supported for &#39;uniform&#39; frame sampling method.&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_sampling_method</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;uniform&quot;</span><span class="p">]:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_backend</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="s2">&quot;av&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ffmpeg&quot;</span><span class="p">,</span>
+            <span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;Only &#39;av&#39; and &#39;ffmpeg&#39; backends are supported for &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_sampling_method</span><span class="si">}</span><span class="s2">&#39; frame sampling method.&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_backend</span> <span class="o">==</span> <span class="s2">&quot;av&quot;</span><span class="p">,</span> <span class="s2">&quot;Only &#39;av&#39; backend is supported when duration &gt; 0.&quot;</span></div>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_backend</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="s2">&quot;av&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ffmpeg&quot;</span><span class="p">,</span>
+            <span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;Only &#39;av&#39; and &#39;ffmpeg&#39; backends are supported when duration &gt; 0.&quot;</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_default_frame_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_filepath</span><span class="p">):</span>
@@ -709,21 +718,42 @@
         <span class="c1"># extract frame videos</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_sampling_method</span> <span class="o">==</span> <span class="s2">&quot;all_keyframes&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">:</span>
-                <span class="c1"># only support av backend when duration &gt; 0</span>
-                <span class="n">frames</span> <span class="o">=</span> <span class="n">extract_key_frames_by_seconds</span><span class="p">(</span><span class="n">video</span><span class="o">.</span><span class="n">container</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span>
-                <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">frame</span><span class="o">.</span><span class="n">to_image</span><span class="p">()</span> <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">]</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_backend</span> <span class="o">==</span> <span class="s2">&quot;av&quot;</span><span class="p">:</span>
+                    <span class="n">frames</span> <span class="o">=</span> <span class="n">extract_key_frames_by_seconds</span><span class="p">(</span><span class="n">video</span><span class="o">.</span><span class="n">container</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span>
+                    <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">frame</span><span class="o">.</span><span class="n">to_image</span><span class="p">()</span> <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># For non-av backends, extract keyframes from each segment</span>
+                    <span class="n">video_duration</span> <span class="o">=</span> <span class="n">video</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">duration</span>
+                    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_np</span>
+
+                    <span class="n">timestamps</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">video_duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                    <span class="n">timestamps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">video_duration</span><span class="p">)</span>
+                    <span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">timestamps</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                        <span class="n">kf</span> <span class="o">=</span> <span class="n">video</span><span class="o">.</span><span class="n">extract_keyframes</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="n">timestamps</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">end_time</span><span class="o">=</span><span class="n">timestamps</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+                        <span class="n">frames</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">kf</span><span class="o">.</span><span class="n">frames</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">frames</span> <span class="o">=</span> <span class="n">video</span><span class="o">.</span><span class="n">extract_keyframes</span><span class="p">()</span><span class="o">.</span><span class="n">frames</span>
                 <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_sampling_method</span> <span class="o">==</span> <span class="s2">&quot;all_frames&quot;</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">video</span><span class="o">.</span><span class="n">extract_frames</span><span class="p">()]</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_sampling_method</span> <span class="o">==</span> <span class="s2">&quot;uniform&quot;</span><span class="p">:</span>
-            <span class="c1"># only support av backend if using uniform sampling</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">:</span>
-                <span class="n">frames</span> <span class="o">=</span> <span class="n">extract_video_frames_uniformly_by_seconds</span><span class="p">(</span>
-                    <span class="n">video</span><span class="o">.</span><span class="n">container</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_num</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span>
-                <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_backend</span> <span class="o">==</span> <span class="s2">&quot;av&quot;</span><span class="p">:</span>
+                <span class="c1"># Use legacy av-specific functions</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">:</span>
+                    <span class="n">frames</span> <span class="o">=</span> <span class="n">extract_video_frames_uniformly_by_seconds</span><span class="p">(</span>
+                        <span class="n">video</span><span class="o">.</span><span class="n">container</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_num</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">frames</span> <span class="o">=</span> <span class="n">extract_video_frames_uniformly</span><span class="p">(</span><span class="n">video</span><span class="o">.</span><span class="n">container</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_num</span><span class="p">)</span>
+                <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">frame</span><span class="o">.</span><span class="n">to_image</span><span class="p">()</span> <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">frames</span> <span class="o">=</span> <span class="n">extract_video_frames_uniformly</span><span class="p">(</span><span class="n">video</span><span class="o">.</span><span class="n">container</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_num</span><span class="p">)</span>
-            <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">frame</span><span class="o">.</span><span class="n">to_image</span><span class="p">()</span> <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">]</span>
+                <span class="c1"># Use VideoReader interface (works for ffmpeg and other backends)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">:</span>
+                    <span class="n">frames</span> <span class="o">=</span> <span class="n">video</span><span class="o">.</span><span class="n">extract_frames_uniformly_by_seconds</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_num</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">frames</span> <span class="o">=</span> <span class="n">video</span><span class="o">.</span><span class="n">extract_frames_uniformly</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_num</span><span class="p">)</span>
+                <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Not support sampling method </span><span class="se">\</span>
@@ -759,7 +789,7 @@
 <a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.VideoExtractFramesMapper.process_single">[文档]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">process_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="c1"># check if it&#39;s generated already</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_field</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_field</span> <span class="ow">in</span> <span class="n">sample</span> <span class="ow">and</span> <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_field</span><span class="p">]:</span>
             <span class="k">return</span> <span class="n">sample</span>
 
         <span class="c1"># there is no videos in this sample</span>

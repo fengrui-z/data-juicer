@@ -568,6 +568,28 @@
         <span class="k">return</span> <span class="n">mano_output</span></div>
 
 
+<div class="viewcode-block" id="MANO.build_left">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.common.mano_func.html#data_juicer.ops.common.mano_func.MANO.build_left">[文档]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_left</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_path</span><span class="p">,</span> <span class="n">fix_shapedirs</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a LEFT-hand MANO model.</span>
+
+<span class="sd">        HaWoR uses a separate MANO_LEFT.pkl with is_rhand=False and a</span>
+<span class="sd">        shapedirs bug-fix (https://github.com/vchoutas/smplx/issues/48).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_path: Path to MANO_LEFT.pkl</span>
+<span class="sd">            fix_shapedirs: Apply the left-hand shapedirs fix (default True).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            MANO model configured for left hand.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">model_path</span><span class="o">=</span><span class="n">model_path</span><span class="p">,</span> <span class="n">is_rhand</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fix_shapedirs</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">shapedirs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="n">model</span></div>
+
+
 <div class="viewcode-block" id="MANO.query">
 <a class="viewcode-back" href="../../../../api/data_juicer.ops.common.mano_func.html#data_juicer.ops.common.mano_func.MANO.query">[文档]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hmr_output</span><span class="p">):</span>

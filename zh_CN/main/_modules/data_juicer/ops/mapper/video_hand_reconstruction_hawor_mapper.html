@@ -513,21 +513,14 @@
                 <article class="bd-article">
                   
   <h1>data_juicer.ops.mapper.video_hand_reconstruction_hawor_mapper 源代码</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">PositiveInt</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">data_juicer</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.load</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_ops</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.cache_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DATA_JUICER_ASSETS_CACHE</span><span class="p">,</span>
-    <span class="n">DATA_JUICER_MODELS_CACHE</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fields</span><span class="p">,</span> <span class="n">MetaKeys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.cache_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">DATA_JUICER_MODELS_CACHE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">CameraCalibrationKeys</span><span class="p">,</span> <span class="n">Fields</span><span class="p">,</span> <span class="n">MetaKeys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.model_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_model</span><span class="p">,</span> <span class="n">prepare_model</span>
 
@@ -536,7 +529,7 @@
 
 <span class="n">OP_NAME</span> <span class="o">=</span> <span class="s2">&quot;video_hand_reconstruction_hawor_mapper&quot;</span>
 
-<span class="n">cv2</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;cv2&quot;</span><span class="p">,</span> <span class="s2">&quot;opencv-contrib-python&quot;</span><span class="p">)</span>
+<span class="n">cv2</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;cv2&quot;</span><span class="p">,</span> <span class="s2">&quot;opencv-python&quot;</span><span class="p">)</span>
 <span class="n">ultralytics</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;ultralytics&quot;</span><span class="p">)</span>
 <span class="n">torch</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;torch&quot;</span><span class="p">)</span>
 
@@ -557,15 +550,12 @@
         <span class="n">hawor_model_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hawor.ckpt&quot;</span><span class="p">,</span>
         <span class="n">hawor_config_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;model_config.yaml&quot;</span><span class="p">,</span>
         <span class="n">hawor_detector_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;detector.pt&quot;</span><span class="p">,</span>
-        <span class="n">moge_model_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Ruicheng/moge-2-vitl&quot;</span><span class="p">,</span>
         <span class="n">mano_right_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;path_to_mano_right_pkl&quot;</span><span class="p">,</span>
-        <span class="n">frame_num</span><span class="p">:</span> <span class="n">PositiveInt</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
-        <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">thresh</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">mano_left_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;path_to_mano_left_pkl&quot;</span><span class="p">,</span>
+        <span class="n">frame_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MetaKeys</span><span class="o">.</span><span class="n">video_frames</span><span class="p">,</span>
+        <span class="n">camera_calibration_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;camera_calibration&quot;</span><span class="p">,</span>
         <span class="n">tag_field_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MetaKeys</span><span class="o">.</span><span class="n">hand_reconstruction_hawor_tags</span><span class="p">,</span>
-        <span class="n">frame_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DATA_JUICER_ASSETS_CACHE</span><span class="p">,</span>
-        <span class="n">if_output_moge_info</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">moge_output_info_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DATA_JUICER_ASSETS_CACHE</span><span class="p">,</span>
+        <span class="n">thresh</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
@@ -578,28 +568,18 @@
 <span class="sd">            HaWoR model.</span>
 <span class="sd">        :param hawor_detector_path: The path to &#39;detector.pt&#39; for the HaWoR</span>
 <span class="sd">            model.</span>
-<span class="sd">        :param moge_model_path: The path to the Moge-2 model.</span>
 <span class="sd">        :param mano_right_path: The path to &#39;MANO_RIGHT.pkl&#39;. Users need to</span>
 <span class="sd">            download this file from https://mano.is.tue.mpg.de/ and comply</span>
 <span class="sd">            with the MANO license.</span>
-<span class="sd">        :param frame_num: The number of frames to be extracted uniformly from</span>
-<span class="sd">            the video. If it&#39;s 1, only the middle frame will be extracted. If</span>
-<span class="sd">            it&#39;s 2, only the first and the last frames will be extracted. If</span>
-<span class="sd">            it&#39;s larger than 2, in addition to the first and the last frames,</span>
-<span class="sd">            other frames will be extracted uniformly within the video duration.</span>
-<span class="sd">            If &quot;duration&quot; &gt; 0, frame_num is the number of frames per segment.</span>
-<span class="sd">        :param duration: The duration of each segment in seconds.</span>
-<span class="sd">            If 0, frames are extracted from the entire video.</span>
-<span class="sd">            If duration &gt; 0, the video is segmented into multiple segments</span>
-<span class="sd">            based on duration, and frames are extracted from each segment.</span>
-<span class="sd">        :param thresh: Confidence threshold for hand detection.</span>
+<span class="sd">        :param mano_left_path: The path to &#39;MANO_LEFT.pkl&#39;. Users need to</span>
+<span class="sd">            download this file from https://mano.is.tue.mpg.de/ and comply</span>
+<span class="sd">            with the MANO license. Used for accurate left-hand wrist</span>
+<span class="sd">            offset computation (with shapedirs bug-fix).</span>
+<span class="sd">        :param frame_field: The field name where the video frames are stored.</span>
+<span class="sd">        :param camera_calibration_field: The field name where the camera calibration info is stored.</span>
 <span class="sd">        :param tag_field_name: The field name to store the tags. It&#39;s</span>
 <span class="sd">            &quot;hand_reconstruction_hawor_tags&quot; in default.</span>
-<span class="sd">        :param frame_dir: Output directory to save extracted frames.</span>
-<span class="sd">        :param if_output_moge_info: Whether to save the results from MoGe-2</span>
-<span class="sd">             to an JSON file.</span>
-<span class="sd">        :param moge_output_info_dir: Output directory for saving camera</span>
-<span class="sd">            parameters.</span>
+<span class="sd">        :param thresh: The confidence threshold for hand detection. Default is 0.2.</span>
 <span class="sd">        :param args: extra args</span>
 <span class="sd">        :param kwargs: extra args</span>
 
@@ -612,43 +592,27 @@
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">video_camera_calibration_static_moge_mapper_args</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;model_path&quot;</span><span class="p">:</span> <span class="n">moge_model_path</span><span class="p">,</span>
-            <span class="s2">&quot;frame_num&quot;</span><span class="p">:</span> <span class="n">frame_num</span><span class="p">,</span>
-            <span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="n">duration</span><span class="p">,</span>
-            <span class="s2">&quot;frame_dir&quot;</span><span class="p">:</span> <span class="n">frame_dir</span><span class="p">,</span>
-            <span class="s2">&quot;if_output_points_info&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;if_output_depth_info&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;if_output_mask_info&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;if_output_info&quot;</span><span class="p">:</span> <span class="n">if_output_moge_info</span><span class="p">,</span>
-            <span class="s2">&quot;output_info_dir&quot;</span><span class="p">:</span> <span class="n">moge_output_info_dir</span><span class="p">,</span>
-        <span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fused_ops</span> <span class="o">=</span> <span class="n">load_ops</span><span class="p">(</span>
-            <span class="p">[{</span><span class="s2">&quot;video_camera_calibration_static_moge_mapper&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_camera_calibration_static_moge_mapper_args</span><span class="p">}]</span>
-        <span class="p">)</span>
-
-        <span class="n">hawor_repo_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATA_JUICER_ASSETS_CACHE</span><span class="p">,</span> <span class="s2">&quot;HaWoR&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">hawor_repo_path</span><span class="p">):</span>
-            <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;git&quot;</span><span class="p">,</span> <span class="s2">&quot;clone&quot;</span><span class="p">,</span> <span class="s2">&quot;https://github.com/ThunderVVV/HaWoR.git&quot;</span><span class="p">,</span> <span class="n">hawor_repo_path</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hawor_repo_path</span><span class="p">)</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">hawor.utils.rotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-            <span class="n">angle_axis_to_rotation_matrix</span><span class="p">,</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.common.hawor_func</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">interpolate_bboxes</span><span class="p">,</span>
+            <span class="n">parse_chunks</span><span class="p">,</span>
             <span class="n">rotation_matrix_to_angle_axis</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">lib.eval_utils.custom_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpolate_bboxes</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">lib.pipeline.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_chunks</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">interpolate_bboxes</span> <span class="o">=</span> <span class="n">interpolate_bboxes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parse_chunks</span> <span class="o">=</span> <span class="n">parse_chunks</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">angle_axis_to_rotation_matrix</span> <span class="o">=</span> <span class="n">angle_axis_to_rotation_matrix</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rotation_matrix_to_angle_axis</span> <span class="o">=</span> <span class="n">rotation_matrix_to_angle_axis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame_field</span> <span class="o">=</span> <span class="n">frame_field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hawor_detector_path</span> <span class="o">=</span> <span class="n">hawor_detector_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span> <span class="o">=</span> <span class="n">tag_field_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thresh</span> <span class="o">=</span> <span class="n">thresh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">camera_calibration_field</span> <span class="o">=</span> <span class="n">camera_calibration_field</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">model_key</span> <span class="o">=</span> <span class="n">prepare_model</span><span class="p">(</span>
             <span class="n">model_type</span><span class="o">=</span><span class="s2">&quot;hawor&quot;</span><span class="p">,</span>
             <span class="n">hawor_model_path</span><span class="o">=</span><span class="n">hawor_model_path</span><span class="p">,</span>
             <span class="n">hawor_config_path</span><span class="o">=</span><span class="n">hawor_config_path</span><span class="p">,</span>
             <span class="n">mano_right_path</span><span class="o">=</span><span class="n">mano_right_path</span><span class="p">,</span>
+            <span class="n">mano_left_path</span><span class="o">=</span><span class="n">mano_left_path</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">hawor_detector_path</span><span class="p">):</span>
@@ -659,17 +623,14 @@
                 <span class="p">[</span>
                     <span class="s2">&quot;wget&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;https://huggingface.co/ThunderVVV/HaWoR/resolve/main/external/detector.pt&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;-O&quot;</span><span class="p">,</span>
                     <span class="n">hawor_detector_path</span><span class="p">,</span>
                 <span class="p">],</span>
                 <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hawor_detector_path</span> <span class="o">=</span> <span class="n">hawor_detector_path</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">hawor_detector_path</span> <span class="o">=</span> <span class="n">hawor_detector_path</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">frame_num</span> <span class="o">=</span> <span class="n">frame_num</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="n">duration</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span> <span class="o">=</span> <span class="n">tag_field_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">frame_dir</span> <span class="o">=</span> <span class="n">frame_dir</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">thresh</span> <span class="o">=</span> <span class="n">thresh</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">det_model_key</span> <span class="o">=</span> <span class="n">prepare_model</span><span class="p">(</span><span class="n">model_type</span><span class="o">=</span><span class="s2">&quot;yolo&quot;</span><span class="p">,</span> <span class="n">model_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hawor_detector_path</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="VideoHandReconstructionHaworMapper.detect_track">
@@ -689,49 +650,47 @@
         <span class="n">boxes_</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">tracks</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">img_cv2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">imgfiles</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">(),</span> <span class="n">torch</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">autocast</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">img_cv2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">imgfiles</span><span class="p">):</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">hand_det_model</span><span class="o">.</span><span class="n">track</span><span class="p">(</span><span class="n">img_cv2</span><span class="p">,</span> <span class="n">conf</span><span class="o">=</span><span class="n">thresh</span><span class="p">,</span> <span class="n">persist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">autocast</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">):</span>
-                    <span class="n">results</span> <span class="o">=</span> <span class="n">hand_det_model</span><span class="o">.</span><span class="n">track</span><span class="p">(</span><span class="n">img_cv2</span><span class="p">,</span> <span class="n">conf</span><span class="o">=</span><span class="n">thresh</span><span class="p">,</span> <span class="n">persist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">boxes</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">xyxy</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+                <span class="n">confs</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+                <span class="n">handedness</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">cls</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">track_id</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">track_id</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">boxes</span><span class="p">)</span>
 
-                    <span class="n">boxes</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">xyxy</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                    <span class="n">confs</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                    <span class="n">handedness</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">cls</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">track_id</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">boxes</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">track_id</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">boxes</span><span class="p">)</span>
+                <span class="n">boxes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">boxes</span><span class="p">,</span> <span class="n">confs</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]])</span>
 
-                    <span class="n">boxes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">boxes</span><span class="p">,</span> <span class="n">confs</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]])</span>
+                <span class="n">find_right</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">find_left</span> <span class="o">=</span> <span class="kc">False</span>
 
-                    <span class="n">find_right</span> <span class="o">=</span> <span class="kc">False</span>
-                    <span class="n">find_left</span> <span class="o">=</span> <span class="kc">False</span>
-
-                    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">box</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">boxes</span><span class="p">):</span>
-                        <span class="k">if</span> <span class="n">track_id</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                            <span class="k">if</span> <span class="n">handedness</span><span class="p">[[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                                <span class="nb">id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
-                            <span class="k">else</span><span class="p">:</span>
-                                <span class="nb">id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">5000</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">box</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">boxes</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">track_id</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">handedness</span><span class="p">[[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="nb">id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="nb">id</span> <span class="o">=</span> <span class="n">track_id</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-                        <span class="n">subj</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-                        <span class="n">subj</span><span class="p">[</span><span class="s2">&quot;frame&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
-                        <span class="n">subj</span><span class="p">[</span><span class="s2">&quot;det&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-                        <span class="n">subj</span><span class="p">[</span><span class="s2">&quot;det_box&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">boxes</span><span class="p">[[</span><span class="n">idx</span><span class="p">]]</span>
-                        <span class="n">subj</span><span class="p">[</span><span class="s2">&quot;det_handedness&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">handedness</span><span class="p">[[</span><span class="n">idx</span><span class="p">]]</span>
+                            <span class="nb">id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">5000</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="nb">id</span> <span class="o">=</span> <span class="n">track_id</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                    <span class="n">subj</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                    <span class="n">subj</span><span class="p">[</span><span class="s2">&quot;frame&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+                    <span class="n">subj</span><span class="p">[</span><span class="s2">&quot;det&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">subj</span><span class="p">[</span><span class="s2">&quot;det_box&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">boxes</span><span class="p">[[</span><span class="n">idx</span><span class="p">]]</span>
+                    <span class="n">subj</span><span class="p">[</span><span class="s2">&quot;det_handedness&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">handedness</span><span class="p">[[</span><span class="n">idx</span><span class="p">]]</span>
 
-                        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">find_right</span> <span class="ow">and</span> <span class="n">handedness</span><span class="p">[[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">find_left</span> <span class="ow">and</span> <span class="n">handedness</span><span class="p">[[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
-                            <span class="k">if</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">tracks</span><span class="p">:</span>
-                                <span class="n">tracks</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subj</span><span class="p">)</span>
-                            <span class="k">else</span><span class="p">:</span>
-                                <span class="n">tracks</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">subj</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">find_right</span> <span class="ow">and</span> <span class="n">handedness</span><span class="p">[[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">find_left</span> <span class="ow">and</span> <span class="n">handedness</span><span class="p">[[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">tracks</span><span class="p">:</span>
+                            <span class="n">tracks</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subj</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">tracks</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">subj</span><span class="p">]</span>
 
-                            <span class="k">if</span> <span class="n">handedness</span><span class="p">[[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                                <span class="n">find_right</span> <span class="o">=</span> <span class="kc">True</span>
-                            <span class="k">elif</span> <span class="n">handedness</span><span class="p">[[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                                <span class="n">find_left</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">if</span> <span class="n">handedness</span><span class="p">[[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">find_right</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">elif</span> <span class="n">handedness</span><span class="p">[[</span><span class="n">idx</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">find_left</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">return</span> <span class="n">boxes_</span><span class="p">,</span> <span class="n">tracks</span></div>
 
@@ -744,18 +703,19 @@
         <span class="n">tracks</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">model</span><span class="p">,</span>
         <span class="n">img_focal</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">img_paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+        <span class="n">frame_file_paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
         <span class="n">single_image</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Performs HAWOR 3D hand reconstruction on detected and tracked hand regions.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            imgfiles (list): List of image frames.</span>
+<span class="sd">            imgfiles (list): List of decoded image frames (numpy arrays).</span>
 <span class="sd">            tracks (dict): Dictionary mapping track ID to a list of detection objects.</span>
 <span class="sd">            model (HAWOR): The initialized HAWOR model.</span>
 <span class="sd">            img_focal (float): Camera focal length.</span>
-<span class="sd">            img_paths (list): List of images paths.</span>
+<span class="sd">            frame_file_paths (list): List of file paths readable by HaWoR</span>
+<span class="sd">                (pre-materialized on disk if input was bytes).</span>
 <span class="sd">            single_image (bool): Flag for single-image processing mode.</span>
 
 <span class="sd">        Returns:</span>
@@ -775,7 +735,7 @@
             <span class="n">valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;det&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trk</span><span class="p">])</span>
             <span class="n">is_right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;det_handedness&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trk</span><span class="p">])[</span><span class="n">valid</span><span class="p">]</span>
 
-            <span class="k">if</span> <span class="n">is_right</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">is_right</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">is_right</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">is_right</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">is_right</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
                 <span class="n">left_trk</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">trk</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">right_trk</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">trk</span><span class="p">)</span>
@@ -812,7 +772,7 @@
             <span class="n">is_right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;det_handedness&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trk</span><span class="p">])[</span><span class="n">valid</span><span class="p">]</span>
             <span class="n">frame</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;frame&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trk</span><span class="p">])[</span><span class="n">valid</span><span class="p">]</span>
 
-            <span class="k">if</span> <span class="n">is_right</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">is_right</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">is_right</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">is_right</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">is_right</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
                 <span class="n">is_right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">boxes</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">is_right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">boxes</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
@@ -823,7 +783,7 @@
                 <span class="k">continue</span>
 
             <span class="k">for</span> <span class="n">frame_ck</span><span class="p">,</span> <span class="n">boxes_ck</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">frame_chunks</span><span class="p">,</span> <span class="n">boxes_chunks</span><span class="p">):</span>
-                <span class="n">img_ck</span> <span class="o">=</span> <span class="p">[</span><span class="n">img_paths</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">frame_ck</span><span class="p">]</span>
+                <span class="n">img_ck</span> <span class="o">=</span> <span class="p">[</span><span class="n">frame_file_paths</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">frame_ck</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">is_right</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">do_flip</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -838,24 +798,35 @@
                     <span class="s2">&quot;init_betas&quot;</span><span class="p">:</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;pred_shape&quot;</span><span class="p">][</span><span class="kc">None</span><span class="p">,</span> <span class="p">:],</span>  <span class="c1"># (B, T, 10)</span>
                 <span class="p">}</span>
 
-                <span class="c1"># flip left hand</span>
-                <span class="n">init_root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotation_matrix_to_angle_axis</span><span class="p">(</span><span class="n">data_out</span><span class="p">[</span><span class="s2">&quot;init_root_orient&quot;</span><span class="p">])</span>
-                <span class="n">init_hand_pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotation_matrix_to_angle_axis</span><span class="p">(</span><span class="n">data_out</span><span class="p">[</span><span class="s2">&quot;init_hand_pose&quot;</span><span class="p">])</span>
+                <span class="c1"># Convert to axis-angle (HaWoR native format)</span>
+                <span class="n">init_root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotation_matrix_to_angle_axis</span><span class="p">(</span><span class="n">data_out</span><span class="p">[</span><span class="s2">&quot;init_root_orient&quot;</span><span class="p">])</span>  <span class="c1"># (B, T, 3)</span>
+                <span class="n">init_hand_pose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotation_matrix_to_angle_axis</span><span class="p">(</span><span class="n">data_out</span><span class="p">[</span><span class="s2">&quot;init_hand_pose&quot;</span><span class="p">])</span>  <span class="c1"># (B, T, 15, 3)</span>
+
+                <span class="c1"># Flip Y/Z axis-angle components for left hand</span>
+                <span class="c1"># (this is HaWoR&#39;s convention for run_mano_left)</span>
                 <span class="k">if</span> <span class="n">do_flip</span><span class="p">:</span>
                     <span class="n">init_root</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
                     <span class="n">init_root</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
-                <span class="n">data_out</span><span class="p">[</span><span class="s2">&quot;init_root_orient&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">angle_axis_to_rotation_matrix</span><span class="p">(</span><span class="n">init_root</span><span class="p">)</span>
-                <span class="n">data_out</span><span class="p">[</span><span class="s2">&quot;init_hand_pose&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">angle_axis_to_rotation_matrix</span><span class="p">(</span><span class="n">init_hand_pose</span><span class="p">)</span>
+                    <span class="n">init_hand_pose</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+                    <span class="n">init_hand_pose</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+
+                <span class="n">T</span> <span class="o">=</span> <span class="n">data_out</span><span class="p">[</span><span class="s2">&quot;init_betas&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">betas_all</span> <span class="o">=</span> <span class="n">data_out</span><span class="p">[</span><span class="s2">&quot;init_betas&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="n">T</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>  <span class="c1"># (T, 10)</span>
+                <span class="n">orient_all</span> <span class="o">=</span> <span class="n">init_root</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="n">T</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>  <span class="c1"># (T, 3)</span>
+                <span class="n">hand_pose_all</span> <span class="o">=</span> <span class="n">init_hand_pose</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="n">T</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>  <span class="c1"># (T, 45)</span>
+                <span class="n">transl_all</span> <span class="o">=</span> <span class="n">data_out</span><span class="p">[</span><span class="s2">&quot;init_trans&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="n">T</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>  <span class="c1"># (T, 3)</span>
 
                 <span class="n">s_frame</span> <span class="o">=</span> <span class="n">frame_ck</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">e_frame</span> <span class="o">=</span> <span class="n">frame_ck</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
                 <span class="k">for</span> <span class="n">frame_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">s_frame</span><span class="p">,</span> <span class="n">e_frame</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
-                    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_out</span><span class="p">[</span><span class="s2">&quot;init_betas&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">frame_id</span> <span class="o">-</span> <span class="n">s_frame</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;hand_pose&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_out</span><span class="p">[</span><span class="s2">&quot;init_hand_pose&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">frame_id</span> <span class="o">-</span> <span class="n">s_frame</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;global_orient&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_out</span><span class="p">[</span><span class="s2">&quot;init_root_orient&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">frame_id</span> <span class="o">-</span> <span class="n">s_frame</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;transl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_out</span><span class="p">[</span><span class="s2">&quot;init_trans&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="n">frame_id</span> <span class="o">-</span> <span class="n">s_frame</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+                    <span class="n">fi</span> <span class="o">=</span> <span class="n">frame_id</span> <span class="o">-</span> <span class="n">s_frame</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;betas&quot;</span><span class="p">:</span> <span class="n">betas_all</span><span class="p">[</span><span class="n">fi</span><span class="p">],</span>
+                        <span class="s2">&quot;global_orient&quot;</span><span class="p">:</span> <span class="n">orient_all</span><span class="p">[</span><span class="n">fi</span><span class="p">],</span>
+                        <span class="s2">&quot;hand_pose&quot;</span><span class="p">:</span> <span class="n">hand_pose_all</span><span class="p">[</span><span class="n">fi</span><span class="p">],</span>
+                        <span class="s2">&quot;transl&quot;</span><span class="p">:</span> <span class="n">transl_all</span><span class="p">[</span><span class="n">fi</span><span class="p">],</span>
+                    <span class="p">}</span>
 
                     <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="n">left_results</span><span class="p">[</span><span class="n">frame_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
@@ -867,6 +838,93 @@
         <span class="k">return</span> <span class="n">reformat_results</span></div>
 
 
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_mano_joints</span><span class="p">(</span><span class="n">mano_model</span><span class="p">,</span> <span class="n">global_orient_list</span><span class="p">,</span> <span class="n">hand_pose_list</span><span class="p">,</span> <span class="n">betas_list</span><span class="p">,</span> <span class="n">transl_list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute MANO 21-joint positions in camera space via forward kinematics.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mano_model: MANO model (right or left hand), on GPU.</span>
+<span class="sd">            global_orient_list: List of (3,) axis-angle per frame.</span>
+<span class="sd">            hand_pose_list: List of (45,) axis-angle per frame.</span>
+<span class="sd">            betas_list: List of (10,) shape params per frame.</span>
+<span class="sd">            transl_list: List of (3,) translation per frame.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            numpy array of shape (T, 21, 3) — 21 joint positions in camera space.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_torch</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">hawor.utils.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">aa_to_rotmat</span>
+
+        <span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">global_orient_list</span><span class="p">)</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">mano_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span><span class="o">.</span><span class="n">device</span>
+
+        <span class="c1"># Stack into tensors: (T, ...)</span>
+        <span class="n">orient_aa</span> <span class="o">=</span> <span class="n">_torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">global_orient_list</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>  <span class="c1"># (T, 3)</span>
+        <span class="n">hand_aa</span> <span class="o">=</span> <span class="n">_torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">hand_pose_list</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>  <span class="c1"># (T, 45)</span>
+        <span class="n">betas</span> <span class="o">=</span> <span class="n">_torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">betas_list</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>  <span class="c1"># (T, 10)</span>
+        <span class="n">transl</span> <span class="o">=</span> <span class="n">_torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">transl_list</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>  <span class="c1"># (T, 3)</span>
+
+        <span class="c1"># Convert axis-angle to rotation matrices</span>
+        <span class="n">orient_rotmat</span> <span class="o">=</span> <span class="n">aa_to_rotmat</span><span class="p">(</span><span class="n">orient_aa</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># (T, 1, 3, 3)</span>
+        <span class="n">hand_rotmat</span> <span class="o">=</span> <span class="n">aa_to_rotmat</span><span class="p">(</span><span class="n">hand_aa</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">T</span> <span class="o">*</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># (T, 15, 3, 3)</span>
+
+        <span class="c1"># MANO forward pass on GPU</span>
+        <span class="k">with</span> <span class="n">_torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">mano_out</span> <span class="o">=</span> <span class="n">mano_model</span><span class="p">(</span>
+                <span class="n">global_orient</span><span class="o">=</span><span class="n">orient_rotmat</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span>
+                <span class="n">hand_pose</span><span class="o">=</span><span class="n">hand_rotmat</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span>
+                <span class="n">betas</span><span class="o">=</span><span class="n">betas</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span>
+                <span class="n">transl</span><span class="o">=</span><span class="n">transl</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span>
+                <span class="n">pose2rot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># mano_out.joints: (T, 21, 3) in camera space</span>
+        <span class="n">joints_cam</span> <span class="o">=</span> <span class="n">mano_out</span><span class="o">.</span><span class="n">joints</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>  <span class="c1"># (T, 21, 3)</span>
+        <span class="k">return</span> <span class="n">joints_cam</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_decode_frames</span><span class="p">(</span><span class="n">raw_frames</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Decode raw frames (bytes or paths) to numpy arrays.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            images: list of decoded BGR numpy arrays (None entries skipped)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span> <span class="k">as</span> <span class="n">_logger</span>
+
+        <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">raw_frames</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                <span class="n">image_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+                <span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imdecode</span><span class="p">(</span><span class="n">image_array</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_COLOR</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Frame </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> decode failed, skipping.&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">images</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_materialize_bytes_to_files</span><span class="p">(</span><span class="n">raw_frames</span><span class="p">,</span> <span class="n">temp_dir</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write byte-frames to disk once, return file paths.</span>
+
+<span class="sd">        If frames are already file paths, returns them directly.</span>
+<span class="sd">        This avoids repeated per-chunk temp dir creation and disk I/O.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">raw_frames</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">raw_frames</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">raw_frames</span>
+
+        <span class="n">file_paths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">frame_bytes</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">raw_frames</span><span class="p">):</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;frame_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.jpg&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frame_bytes</span><span class="p">)</span>
+            <span class="n">file_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">file_paths</span>
+
 <div class="viewcode-block" id="VideoHandReconstructionHaworMapper.process_single">
 <a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.VideoHandReconstructionHaworMapper.process_single">[文档]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">process_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -877,126 +935,125 @@
 
         <span class="c1"># there is no video in this sample</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sample</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">video_key</span><span class="p">]:</span>
-            <span class="k">return</span> <span class="p">[]</span>
+            <span class="k">return</span> <span class="n">sample</span>
 
-        <span class="c1"># --- 1. FoV Estimation (MoGe) ---</span>
-        <span class="n">ds_list</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;videos&quot;</span><span class="p">:</span> <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">video_key</span><span class="p">]}]</span>
+        <span class="n">hawor_model</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">,</span> <span class="n">mano_right</span><span class="p">,</span> <span class="n">mano_left</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_key</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">())</span>
+        <span class="n">hand_det_model</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">det_model_key</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">())</span>
 
-        <span class="n">dataset</span> <span class="o">=</span> <span class="n">data_juicer</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">NestedDataset</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="n">ds_list</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">Fields</span><span class="o">.</span><span class="n">meta</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">features</span><span class="p">:</span>
-            <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="p">[{}]</span> <span class="o">*</span> <span class="n">dataset</span><span class="o">.</span><span class="n">num_rows</span><span class="p">)</span>
-        <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fused_ops</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">process</span><span class="p">,</span> <span class="n">num_proc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_rank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">res_list</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+        <span class="n">videos_frames</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_field</span><span class="p">]</span>
+        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="n">all_fov_x</span> <span class="o">=</span> <span class="n">res_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="n">MetaKeys</span><span class="o">.</span><span class="n">static_camera_calibration_moge_tags</span><span class="p">][</span><span class="s2">&quot;hfov_list&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">video_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">videos_frames</span><span class="p">)):</span>
+            <span class="n">cur_camera_calibration</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">camera_calibration_field</span><span class="p">][</span><span class="n">video_idx</span><span class="p">]</span>
+            <span class="n">all_fov_x</span> <span class="o">=</span> <span class="n">cur_camera_calibration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">hfov</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-        <span class="n">temp_frame_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">video_key</span><span class="p">][</span><span class="mi">0</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">frames_root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_dir</span><span class="p">,</span> <span class="n">temp_frame_name</span><span class="p">)</span>
-        <span class="n">frame_names</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">frames_root</span><span class="p">)</span>
-        <span class="n">frames_path</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">frames_root</span><span class="p">,</span> <span class="n">frame_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">frame_name</span> <span class="ow">in</span> <span class="n">frame_names</span><span class="p">])</span>
+            <span class="c1"># If horizontal FoV is not directly available, compute from intrinsics.</span>
+            <span class="c1"># K is in pixel coordinates: hfov = 2 * arctan(cx / fx),</span>
+            <span class="c1"># where cx ≈ width/2 (principal point convention).</span>
+            <span class="k">if</span> <span class="n">all_fov_x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">intrinsics</span> <span class="o">=</span> <span class="n">cur_camera_calibration</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">intrinsics</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">intrinsics</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">all_fov_x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">intrinsics</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The sample must include an &#39;</span><span class="si">{</span><span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">hfov</span><span class="si">}</span><span class="s2">&#39; field or an &#39;</span><span class="si">{</span><span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">intrinsics</span><span class="si">}</span><span class="s2">&#39; field in the camera calibration info to store the horizontal FoV for hand reconstruction.&quot;</span>
+                    <span class="p">)</span>
 
-        <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">temp_frame_path</span> <span class="ow">in</span> <span class="n">frames_path</span><span class="p">:</span>
-            <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">temp_frame_path</span><span class="p">))</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="n">videos_frames</span><span class="p">[</span><span class="n">video_idx</span><span class="p">]</span>
+            <span class="n">images</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode_frames</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
 
-        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
-        <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span> <span class="k">as</span> <span class="n">_logger</span>
 
-        <span class="c1"># Use median FoV across all frames</span>
-        <span class="n">fov_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">all_fov_x</span><span class="p">))</span>
-        <span class="n">img_focal</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">W</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">fov_x</span><span class="p">)</span>
+                <span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Video </span><span class="si">{</span><span class="n">video_idx</span><span class="si">}</span><span class="s2">: all frames decode failed, &quot;</span> <span class="s2">&quot;producing empty hand output.&quot;</span><span class="p">)</span>
+                <span class="n">empty_hand</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;frame_ids&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="s2">&quot;global_orient&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="s2">&quot;hand_pose&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="s2">&quot;betas&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="s2">&quot;transl&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="s2">&quot;joints_cam&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;fov_x&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                        <span class="s2">&quot;img_focal&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                        <span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">empty_hand</span><span class="p">),</span>
+                        <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">empty_hand</span><span class="p">),</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">=</span> <span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
 
-        <span class="c1"># --- 2. Hand Pose and Translation Estimation (HaWoR) ---</span>
-        <span class="k">if</span> <span class="n">rank</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">set_device</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span>
-            <span class="n">device</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;cuda:</span><span class="si">{</span><span class="n">rank</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
+            <span class="c1"># Use median FoV across all frames</span>
+            <span class="n">fov_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">all_fov_x</span><span class="p">))</span>
+            <span class="n">img_focal</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">W</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">fov_x</span><span class="p">)</span>
 
-        <span class="n">hawor_model</span><span class="p">,</span> <span class="n">model_cfg</span><span class="p">,</span> <span class="n">mano_model</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_key</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cuda</span><span class="p">())</span>
-        <span class="n">hand_det_model</span> <span class="o">=</span> <span class="n">ultralytics</span><span class="o">.</span><span class="n">YOLO</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hawor_detector_path</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">tracks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">detect_track</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">hand_det_model</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">thresh</span><span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">tracks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">detect_track</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">hand_det_model</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">thresh</span><span class="p">)</span>
 
-        <span class="n">recon_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hawor_motion_estimation</span><span class="p">(</span>
-            <span class="n">images</span><span class="p">,</span> <span class="n">tracks</span><span class="p">,</span> <span class="n">hawor_model</span><span class="p">,</span> <span class="n">img_focal</span><span class="p">,</span> <span class="n">single_image</span><span class="o">=</span><span class="p">(</span><span class="n">N</span> <span class="o">==</span> <span class="mi">1</span><span class="p">),</span> <span class="n">img_paths</span><span class="o">=</span><span class="n">frames_path</span>
-        <span class="p">)</span>
-        <span class="k">del</span> <span class="n">hand_det_model</span>
+            <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp_dir</span><span class="p">:</span>
+                <span class="n">frame_file_paths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_materialize_bytes_to_files</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">temp_dir</span><span class="p">)</span>
 
-        <span class="c1"># --- 3. Re-calculate Global Translation (MANO Alignment) ---</span>
-        <span class="n">left_frame_id_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">left_beta_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">left_hand_pose_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">left_global_orient_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">left_transl_list</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">recon_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hawor_motion_estimation</span><span class="p">(</span>
+                    <span class="n">images</span><span class="p">,</span>
+                    <span class="n">tracks</span><span class="p">,</span>
+                    <span class="n">hawor_model</span><span class="p">,</span>
+                    <span class="n">img_focal</span><span class="p">,</span>
+                    <span class="n">frame_file_paths</span><span class="o">=</span><span class="n">frame_file_paths</span><span class="p">,</span>
+                    <span class="n">single_image</span><span class="o">=</span><span class="p">(</span><span class="n">N</span> <span class="o">==</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="p">)</span>
 
-        <span class="n">right_frame_id_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">right_beta_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">right_hand_pose_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">right_global_orient_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">right_transl_list</span> <span class="o">=</span> <span class="p">[]</span>
-
-        <span class="k">for</span> <span class="n">img_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+            <span class="c1"># Collect per-hand results in structured format</span>
+            <span class="n">hand_output</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">hand_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">]:</span>
-                <span class="k">if</span> <span class="n">hand_type</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">img_idx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">recon_results</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]:</span>
+                <span class="n">frame_ids</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">global_orient_list</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">hand_pose_list</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">betas_list</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">transl_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="k">for</span> <span class="n">img_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">img_idx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">recon_results</span><span class="p">[</span><span class="n">hand_type</span><span class="p">]:</span>
                         <span class="k">continue</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="n">recon_results</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">][</span><span class="n">img_idx</span><span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">img_idx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">recon_results</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]:</span>
-                        <span class="k">continue</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="n">recon_results</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">][</span><span class="n">img_idx</span><span class="p">]</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">recon_results</span><span class="p">[</span><span class="n">hand_type</span><span class="p">][</span><span class="n">img_idx</span><span class="p">]</span>
+                    <span class="n">frame_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_idx</span><span class="p">)</span>
+                    <span class="n">global_orient_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;global_orient&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>  <span class="c1"># (3,)</span>
+                    <span class="n">hand_pose_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;hand_pose&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>  <span class="c1"># (45,)</span>
+                    <span class="n">betas_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;betas&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>  <span class="c1"># (10,)</span>
+                    <span class="n">transl_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;transl&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>  <span class="c1"># (3,)</span>
 
-                <span class="c1"># Convert results to tensors</span>
-                <span class="n">betas</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-                <span class="n">hand_pose</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;hand_pose&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-                <span class="n">transl</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;transl&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+                <span class="c1"># Compute MANO 21-joint positions in camera space</span>
+                <span class="n">joints_cam</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">T_valid</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">frame_ids</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">T_valid</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">mano_model</span> <span class="o">=</span> <span class="n">mano_left</span> <span class="k">if</span> <span class="n">hand_type</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span> <span class="k">else</span> <span class="n">mano_right</span>
+                    <span class="k">if</span> <span class="n">mano_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">joints_cam</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_mano_joints</span><span class="p">(</span>
+                            <span class="n">mano_model</span><span class="p">,</span>
+                            <span class="n">global_orient_list</span><span class="p">,</span>
+                            <span class="n">hand_pose_list</span><span class="p">,</span>
+                            <span class="n">betas_list</span><span class="p">,</span>
+                            <span class="n">transl_list</span><span class="p">,</span>
+                        <span class="p">)</span>  <span class="c1"># (T, 21, 3) numpy</span>
 
-                <span class="c1"># Forward pass through MANO model</span>
-                <span class="n">model_output</span> <span class="o">=</span> <span class="n">mano_model</span><span class="p">(</span><span class="n">betas</span><span class="o">=</span><span class="n">betas</span><span class="p">,</span> <span class="n">hand_pose</span><span class="o">=</span><span class="n">hand_pose</span><span class="p">)</span>
-                <span class="n">verts_m</span> <span class="o">=</span> <span class="n">model_output</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">joints_m</span> <span class="o">=</span> <span class="n">model_output</span><span class="o">.</span><span class="n">joints</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">hand_output</span><span class="p">[</span><span class="n">hand_type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;frame_ids&quot;</span><span class="p">:</span> <span class="n">frame_ids</span><span class="p">,</span>
+                    <span class="s2">&quot;global_orient&quot;</span><span class="p">:</span> <span class="n">global_orient_list</span><span class="p">,</span>
+                    <span class="s2">&quot;hand_pose&quot;</span><span class="p">:</span> <span class="n">hand_pose_list</span><span class="p">,</span>
+                    <span class="s2">&quot;betas&quot;</span><span class="p">:</span> <span class="n">betas_list</span><span class="p">,</span>
+                    <span class="s2">&quot;transl&quot;</span><span class="p">:</span> <span class="n">transl_list</span><span class="p">,</span>
+                    <span class="s2">&quot;joints_cam&quot;</span><span class="p">:</span> <span class="n">joints_cam</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">if</span> <span class="n">joints_cam</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># (T, 21, 3)</span>
+                <span class="p">}</span>
 
-                <span class="c1"># Flip x-axis for left hand consistency</span>
-                <span class="k">if</span> <span class="n">hand_type</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>
-                    <span class="n">verts_m</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">verts_m</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
-                    <span class="n">joints_m</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">joints_m</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
-
-                <span class="n">wrist</span> <span class="o">=</span> <span class="n">joints_m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-                <span class="c1"># Calculate new translation</span>
-                <span class="n">transl_new</span> <span class="o">=</span> <span class="n">wrist</span> <span class="o">+</span> <span class="n">transl</span>
-
-                <span class="c1"># Store results with the new translation</span>
-                <span class="n">result_new_transl</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-                <span class="n">result_new_transl</span><span class="p">[</span><span class="s2">&quot;transl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">transl_new</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-
-                <span class="k">if</span> <span class="n">hand_type</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>
-                    <span class="n">left_frame_id_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_idx</span><span class="p">)</span>
-                    <span class="n">left_beta_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result_new_transl</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">])</span>
-                    <span class="n">left_hand_pose_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result_new_transl</span><span class="p">[</span><span class="s2">&quot;hand_pose&quot;</span><span class="p">])</span>
-                    <span class="n">left_global_orient_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result_new_transl</span><span class="p">[</span><span class="s2">&quot;global_orient&quot;</span><span class="p">])</span>
-                    <span class="n">left_transl_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result_new_transl</span><span class="p">[</span><span class="s2">&quot;transl&quot;</span><span class="p">])</span>
-
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">right_frame_id_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_idx</span><span class="p">)</span>
-                    <span class="n">right_beta_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result_new_transl</span><span class="p">[</span><span class="s2">&quot;beta&quot;</span><span class="p">])</span>
-                    <span class="n">right_hand_pose_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result_new_transl</span><span class="p">[</span><span class="s2">&quot;hand_pose&quot;</span><span class="p">])</span>
-                    <span class="n">right_global_orient_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result_new_transl</span><span class="p">[</span><span class="s2">&quot;global_orient&quot;</span><span class="p">])</span>
-                    <span class="n">right_transl_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result_new_transl</span><span class="p">[</span><span class="s2">&quot;transl&quot;</span><span class="p">])</span>
-
-        <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;fov_x&quot;</span><span class="p">:</span> <span class="n">fov_x</span><span class="p">,</span>
-            <span class="s2">&quot;left_frame_id_list&quot;</span><span class="p">:</span> <span class="n">left_frame_id_list</span><span class="p">,</span>
-            <span class="s2">&quot;left_beta_list&quot;</span><span class="p">:</span> <span class="n">left_beta_list</span><span class="p">,</span>
-            <span class="s2">&quot;left_hand_pose_list&quot;</span><span class="p">:</span> <span class="n">left_hand_pose_list</span><span class="p">,</span>
-            <span class="s2">&quot;left_global_orient_list&quot;</span><span class="p">:</span> <span class="n">left_global_orient_list</span><span class="p">,</span>
-            <span class="s2">&quot;left_transl_list&quot;</span><span class="p">:</span> <span class="n">left_transl_list</span><span class="p">,</span>
-            <span class="s2">&quot;right_frame_id_list&quot;</span><span class="p">:</span> <span class="n">right_frame_id_list</span><span class="p">,</span>
-            <span class="s2">&quot;right_beta_list&quot;</span><span class="p">:</span> <span class="n">right_beta_list</span><span class="p">,</span>
-            <span class="s2">&quot;right_hand_pose_list&quot;</span><span class="p">:</span> <span class="n">right_hand_pose_list</span><span class="p">,</span>
-            <span class="s2">&quot;right_global_orient_list&quot;</span><span class="p">:</span> <span class="n">right_global_orient_list</span><span class="p">,</span>
-            <span class="s2">&quot;right_transl_list&quot;</span><span class="p">:</span> <span class="n">right_transl_list</span><span class="p">,</span>
-        <span class="p">}</span>
+            <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_field_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;fov_x&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">fov_x</span><span class="p">),</span>
+                    <span class="s2">&quot;img_focal&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">img_focal</span><span class="p">),</span>
+                    <span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="n">hand_output</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="n">hand_output</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">],</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">sample</span></div>
 </div>

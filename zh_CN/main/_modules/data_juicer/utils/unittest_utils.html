@@ -513,7 +513,8 @@
                 <article class="bd-article">
                   
   <h1>data_juicer.utils.unittest_utils 源代码</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
@@ -532,6 +533,14 @@
 
 <span class="n">CLEAR_MODEL</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">FROM_FORK</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_SkipIfFromFork</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FROM_FORK</span>
+
+
+<span class="n">_SKIP_IF_FROM_FORK</span> <span class="o">=</span> <span class="n">_SkipIfFromFork</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="TEST_TAG">
@@ -570,6 +579,32 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;This unit test is activated from a forked repo.&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;This unit test is activated from a dev branch.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="skip_if_from_fork">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.unittest_utils.html#data_juicer.utils.unittest_utils.skip_if_from_fork">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">skip_if_from_fork</span><span class="p">(</span><span class="n">reason</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator that skips test if running from a fork, evaluated at runtime.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+            <span class="n">func</span><span class="o">.</span><span class="n">__unittest_skip__</span> <span class="o">=</span> <span class="n">_SKIP_IF_FROM_FORK</span>
+            <span class="n">func</span><span class="o">.</span><span class="n">__unittest_skip_why__</span> <span class="o">=</span> <span class="n">reason</span>
+            <span class="k">return</span> <span class="n">func</span>
+
+        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">FROM_FORK</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">unittest</span><span class="o">.</span><span class="n">SkipTest</span><span class="p">(</span><span class="n">reason</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># 保留 __test_tags__ 属性</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__test_tags__&quot;</span><span class="p">):</span>
+            <span class="n">wrapper</span><span class="o">.</span><span class="n">__test_tags__</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">__test_tags__</span>
+        <span class="k">return</span> <span class="n">wrapper</span>
+
+    <span class="k">return</span> <span class="n">decorator</span></div>
 
 
 

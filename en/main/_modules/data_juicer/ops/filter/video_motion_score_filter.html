@@ -574,6 +574,7 @@
         <span class="n">max_score</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">float_info</span><span class="o">.</span><span class="n">max</span><span class="p">,</span>
         <span class="n">frame_field</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">sampling_fps</span><span class="p">:</span> <span class="n">PositiveFloat</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">original_fps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PositiveFloat</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PositiveInt</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">PositiveInt</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">PositiveInt</span><span class="p">,</span> <span class="n">PositiveInt</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PositiveInt</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">divisible</span><span class="p">:</span> <span class="n">PositiveInt</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -593,6 +594,11 @@
 <span class="sd">            If frame_field is None, extract frames from the video field.</span>
 <span class="sd">        :param sampling_fps: The sampling rate in frames_per_second for</span>
 <span class="sd">            optical flow calculations.</span>
+<span class="sd">        :param original_fps: The original FPS of the video from which the</span>
+<span class="sd">            frames were extracted. Only used when `frame_field` is specified.</span>
+<span class="sd">            When provided, frames will be sampled at `sampling_fps` rate</span>
+<span class="sd">            by computing `sampling_step = round(original_fps / sampling_fps)`.</span>
+<span class="sd">            If None, all frames will be processed without sampling.</span>
 <span class="sd">        :param size: Resize frames before computing optical flow. If size is a</span>
 <span class="sd">            sequence like (h, w), frame size will be matched to this. If size</span>
 <span class="sd">            is an int, smaller edge of frames will be matched to this number.</span>
@@ -622,6 +628,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">min_score</span> <span class="o">=</span> <span class="n">min_score</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_score</span> <span class="o">=</span> <span class="n">max_score</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampling_fps</span> <span class="o">=</span> <span class="n">sampling_fps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_fps</span> <span class="o">=</span> <span class="n">original_fps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frame_field</span> <span class="o">=</span> <span class="n">frame_field</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
@@ -729,7 +736,18 @@
         <span class="n">video_motion_scores</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">optical_flows</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">prev_frame</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
+
+        <span class="c1"># compute sampling step if original_fps is provided</span>
+        <span class="n">sampling_step</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_fps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_fps</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">effective_fps</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampling_fps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_fps</span><span class="p">)</span>
+            <span class="n">sampling_step</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_fps</span> <span class="o">/</span> <span class="n">effective_fps</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">frame_idx</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frames</span><span class="p">):</span>
+            <span class="c1"># skip frames according to sampling_step</span>
+            <span class="k">if</span> <span class="n">sampling_step</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">frame_idx</span> <span class="o">%</span> <span class="n">sampling_step</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
                 <span class="n">image_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
                 <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imdecode</span><span class="p">(</span><span class="n">image_array</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_COLOR</span><span class="p">)</span>

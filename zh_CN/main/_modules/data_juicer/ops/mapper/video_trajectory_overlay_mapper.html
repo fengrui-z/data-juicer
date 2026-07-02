@@ -1,0 +1,1117 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer.ops.mapper.video_trajectory_overlay_mapper &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/ops/mapper/video_trajectory_overlay_mapper';</script>
+    <script src="../../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/ops/mapper/video_trajectory_overlay_mapper.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/ops/mapper/video_trajectory_overlay_mapper_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/ops/mapper/video_trajectory_overlay_mapper.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/ops/mapper/video_trajectory_overlay_mapper.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/ops/mapper/video_trajectory_overlay_mapper_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/ops/mapper/video_trajectory_overlay_mapper.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">模块代码</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer.ops.mapper.video_trajectory_overlay_mapper</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>data_juicer.ops.mapper.video_trajectory_overlay_mapper 源代码</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fields</span><span class="p">,</span> <span class="n">MetaKeys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..base_op</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPERATORS</span><span class="p">,</span> <span class="n">Mapper</span>
+
+<span class="n">OP_NAME</span> <span class="o">=</span> <span class="s2">&quot;video_trajectory_overlay_mapper&quot;</span>
+
+<span class="n">cv2</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;cv2&quot;</span><span class="p">,</span> <span class="s2">&quot;opencv-contrib-python&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="VideoTrajectoryOverlayMapper">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.VideoTrajectoryOverlayMapper">[文档]</a>
+<span class="nd">@OPERATORS</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">OP_NAME</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VideoTrajectoryOverlayMapper</span><span class="p">(</span><span class="n">Mapper</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prepare VLM-ready frames by sampling and overlaying hand trajectories.</span>
+
+<span class="sd">    Implements the visualization step from paper https://arxiv.org/pdf/2510.21571:</span>
+
+<span class="sd">        &quot;From each segment, we evenly sample 8 frames and highlight hand</span>
+<span class="sd">        trajectories on each frame by projecting the world-space trajectory</span>
+<span class="sd">        of the hand palm from the current frame to the end of the clip.&quot;</span>
+
+<span class="sd">    For each atomic action segment (output of</span>
+<span class="sd">    ``VideoAtomicActionSegmentMapper``), this operator:</span>
+
+<span class="sd">    1. Evenly samples ``n_sample_frames`` frames from the segment.</span>
+<span class="sd">    2. For each sampled frame, projects the **future** world-space wrist</span>
+<span class="sd">       trajectory (from the current frame to the end of the segment) onto</span>
+<span class="sd">       the image using camera intrinsics and cam_c2w.</span>
+<span class="sd">    3. Draws the trajectory as a colored line with a dot at the current</span>
+<span class="sd">       wrist position.</span>
+<span class="sd">    4. Saves the overlay images and stores their paths in the segment.</span>
+
+<span class="sd">    The output is written back into each segment dict under</span>
+<span class="sd">    ``&quot;overlay_frames&quot;``, ready to be consumed by the VLM captioning</span>
+<span class="sd">    operator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># MANO joint index for palm center (middle finger MCP).</span>
+    <span class="c1"># Paper §3.3: &quot;trajectory of the hand palm&quot;</span>
+    <span class="n">PALM_JOINT_INDEX</span> <span class="o">=</span> <span class="mi">9</span>
+
+<div class="viewcode-block" id="VideoTrajectoryOverlayMapper.__init__">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.VideoTrajectoryOverlayMapper.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">segment_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;atomic_action_segments&quot;</span><span class="p">,</span>
+        <span class="n">camera_pose_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MetaKeys</span><span class="o">.</span><span class="n">video_camera_pose_tags</span><span class="p">,</span>
+        <span class="n">moge_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MetaKeys</span><span class="o">.</span><span class="n">camera_calibration_moge_tags</span><span class="p">,</span>
+        <span class="n">frame_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MetaKeys</span><span class="o">.</span><span class="n">video_frames</span><span class="p">,</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">n_sample_frames</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="n">palm_joint_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span>
+        <span class="n">dot_radius</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">line_thickness</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">trajectory_alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialization method.</span>
+
+<span class="sd">        :param segment_field: Meta field storing atomic action segments.</span>
+<span class="sd">        :param camera_pose_field: Meta field storing camera pose (cam_c2w).</span>
+<span class="sd">        :param moge_field: Meta field storing MoGe calibration (for fov_x).</span>
+<span class="sd">        :param frame_field: Field storing frame image paths.</span>
+<span class="sd">        :param save_dir: Directory to save overlay images.  If None, uses</span>
+<span class="sd">            a temp directory derived from the first frame path.</span>
+<span class="sd">        :param n_sample_frames: Number of frames to evenly sample from</span>
+<span class="sd">            each segment.</span>
+<span class="sd">        :param palm_joint_index: MANO joint index for the palm position.</span>
+<span class="sd">            Default 9 = middle finger MCP (palm center proxy).</span>
+<span class="sd">            Joint 0 = wrist root.</span>
+<span class="sd">        :param dot_radius: Radius of the dot at the current wrist position.</span>
+<span class="sd">        :param line_thickness: Thickness of the trajectory line.</span>
+<span class="sd">        :param trajectory_alpha: Alpha blending for the trajectory overlay.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">segment_field</span> <span class="o">=</span> <span class="n">segment_field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">camera_pose_field</span> <span class="o">=</span> <span class="n">camera_pose_field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">moge_field</span> <span class="o">=</span> <span class="n">moge_field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame_field</span> <span class="o">=</span> <span class="n">frame_field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span> <span class="o">=</span> <span class="n">save_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_sample_frames</span> <span class="o">=</span> <span class="n">n_sample_frames</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">palm_joint_index</span> <span class="o">=</span> <span class="n">palm_joint_index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dot_radius</span> <span class="o">=</span> <span class="n">dot_radius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_thickness</span> <span class="o">=</span> <span class="n">line_thickness</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_alpha</span> <span class="o">=</span> <span class="n">trajectory_alpha</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Projection helpers</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_world_to_camera</span><span class="p">(</span>
+        <span class="n">pos_world</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">cam_c2w</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert world position(s) to camera space.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pos_world: (..., 3) world positions.</span>
+<span class="sd">            cam_c2w: (4, 4) camera-to-world transform.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (..., 3) camera-space positions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">cam_c2w</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">cam_c2w</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+        <span class="c1"># cam = R^T @ (world - t)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">pos_world</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">@</span> <span class="n">R</span>  <span class="c1"># equivalent to (R.T @ (p - t).T).T</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_project_to_2d</span><span class="p">(</span>
+        <span class="n">pos_cam</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">K</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fov_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Project camera-space positions to 2D pixel coords.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pos_cam: (..., 3) camera-space positions.</span>
+<span class="sd">            width: image width.</span>
+<span class="sd">            height: image height.</span>
+<span class="sd">            K: (3, 3) intrinsics matrix (preferred). If provided, fov_x</span>
+<span class="sd">                is ignored and fx, fy, cx, cy are taken from K directly.</span>
+<span class="sd">            fov_x: horizontal field of view in radians (fallback when K</span>
+<span class="sd">                is not available).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (..., 2) pixel coordinates (u, v).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">K</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">fx</span> <span class="o">=</span> <span class="n">K</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">fy</span> <span class="o">=</span> <span class="n">K</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">cx</span> <span class="o">=</span> <span class="n">K</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="n">cy</span> <span class="o">=</span> <span class="n">K</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">fov_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fx</span> <span class="o">=</span> <span class="n">width</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">fov_x</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">))</span>
+            <span class="n">fy</span> <span class="o">=</span> <span class="n">fx</span>
+            <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span> <span class="o">=</span> <span class="n">width</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">height</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either K or fov_x must be provided&quot;</span><span class="p">)</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="n">pos_cam</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="n">z_safe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">fx</span> <span class="o">*</span> <span class="n">pos_cam</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">z_safe</span> <span class="o">+</span> <span class="n">cx</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">fy</span> <span class="o">*</span> <span class="n">pos_cam</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">z_safe</span> <span class="o">+</span> <span class="n">cy</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Drawing helpers</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_temporal_color</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Map normalized time t ∈ [0, 1] to BGR color along</span>
+<span class="sd">        blue → green → red gradient.</span>
+
+<span class="sd">        t=0 (current) → blue, t=0.5 → green, t=1 (future end) → red.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># BGR format</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+            <span class="c1"># blue → green</span>
+            <span class="n">ratio</span> <span class="o">=</span> <span class="n">t</span> <span class="o">/</span> <span class="mf">0.5</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">255</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ratio</span><span class="p">))</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">255</span> <span class="o">*</span> <span class="n">ratio</span><span class="p">)</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># green → red</span>
+            <span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.5</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">255</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ratio</span><span class="p">))</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">255</span> <span class="o">*</span> <span class="n">ratio</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_trajectory</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">frame</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">points_2d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">current_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw trajectory line with blue→green→red temporal gradient</span>
+<span class="sd">        and a blue dot at the current palm position.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            frame: BGR image to draw on (modified in place).</span>
+<span class="sd">            points_2d: (N, 2) pixel coordinates of trajectory points.</span>
+<span class="sd">            current_idx: index of the current frame&#39;s position in</span>
+<span class="sd">                points_2d (drawn as a blue dot).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">overlay</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Filter out-of-frame and behind-camera points, keep original index</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">valid_indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">points_2d</span><span class="p">):</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">pt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">w</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">h</span><span class="p">:</span>
+                <span class="n">valid</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">pt</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span>
+                <span class="n">valid_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">valid</span><span class="p">:</span>
+                <span class="c1"># Keep trajectory continuous by clamping</span>
+                <span class="n">valid</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">pt</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">w</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)),</span>
+                        <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">h</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">valid_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># Draw trajectory line with temporal color gradient</span>
+        <span class="n">n_pts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">points_2d</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">valid</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">valid_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">n_pts</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">line_color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temporal_color</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+                <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span>
+                    <span class="n">overlay</span><span class="p">,</span>
+                    <span class="n">valid</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="n">valid</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                    <span class="n">line_color</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">line_thickness</span><span class="p">,</span>
+                    <span class="n">lineType</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Draw current position as a blue dot</span>
+        <span class="k">if</span> <span class="n">current_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">points_2d</span><span class="p">):</span>
+            <span class="n">pt</span> <span class="o">=</span> <span class="n">points_2d</span><span class="p">[</span><span class="n">current_idx</span><span class="p">]</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">pt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">w</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">h</span><span class="p">:</span>
+                <span class="n">blue_bgr</span> <span class="o">=</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># blue in BGR</span>
+                <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span>
+                    <span class="n">overlay</span><span class="p">,</span>
+                    <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">pt</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dot_radius</span><span class="p">,</span>
+                    <span class="n">blue_bgr</span><span class="p">,</span>
+                    <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">lineType</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="c1"># White border for visibility</span>
+                <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span>
+                    <span class="n">overlay</span><span class="p">,</span>
+                    <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">pt</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">pt</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dot_radius</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+                    <span class="mi">1</span><span class="p">,</span>
+                    <span class="n">lineType</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">LINE_AA</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Alpha blend</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">addWeighted</span><span class="p">(</span>
+            <span class="n">overlay</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_alpha</span><span class="p">,</span>
+            <span class="n">frame</span><span class="p">,</span>
+            <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_alpha</span><span class="p">,</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="n">frame</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">frame</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Process one segment</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_segment</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">segment</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">all_frames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">cam_c2w_all</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">intrinsics_list</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fov_x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">file_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process a single segment: sample frames, overlay trajectory.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            intrinsics_list: per-frame (3,3) intrinsics matrices from MoGe.</span>
+<span class="sd">                If provided, used for accurate projection (preferred).</span>
+<span class="sd">            fov_x: fallback horizontal FOV in radians when intrinsics_list</span>
+<span class="sd">                is not available.</span>
+<span class="sd">            file_prefix: prefix added to overlay filenames to avoid</span>
+<span class="sd">                collisions when multiple videos share the same save_dir.</span>
+
+<span class="sd">        Returns the segment dict with ``overlay_frames`` added.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">hand_type</span> <span class="o">=</span> <span class="n">segment</span><span class="p">[</span><span class="s2">&quot;hand_type&quot;</span><span class="p">]</span>
+        <span class="n">valid_fids</span> <span class="o">=</span> <span class="n">segment</span><span class="p">[</span><span class="s2">&quot;valid_frame_ids&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Use joints_world for the palm trajectory (paper §3.3).</span>
+        <span class="c1"># states[:, 0:3] is MANO&#39;s root transl, NOT the actual palm/wrist</span>
+        <span class="c1"># position — there is a significant offset (~10cm) between them.</span>
+        <span class="n">joints_world</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;joints_world&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">joints_world</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">joints_world</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">jw_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">joints_world</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">palm_positions</span> <span class="o">=</span> <span class="n">jw_arr</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">palm_joint_index</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Fallback to states (less accurate)</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">segment</span><span class="p">[</span><span class="s2">&quot;states&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">palm_positions</span> <span class="o">=</span> <span class="n">states</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No joints_world for </span><span class="si">{</span><span class="n">hand_type</span><span class="si">}</span><span class="s2"> segment, &quot;</span> <span class="sa">f</span><span class="s2">&quot;falling back to states[:, 0:3]&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">palm_positions</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">segment</span><span class="p">[</span><span class="s2">&quot;overlay_frames&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">segment</span><span class="p">[</span><span class="s2">&quot;sampled_frame_indices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">return</span> <span class="n">segment</span>
+
+        <span class="c1"># Evenly sample frame indices within the segment</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sample_frames</span><span class="p">:</span>
+            <span class="n">sample_indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sample_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+                <span class="mi">0</span><span class="p">,</span>
+                <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">n_sample_frames</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="n">seg_id</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;segment_id&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">overlay_paths</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">local_idx</span> <span class="ow">in</span> <span class="n">sample_indices</span><span class="p">:</span>
+            <span class="n">fid</span> <span class="o">=</span> <span class="n">valid_fids</span><span class="p">[</span><span class="n">local_idx</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">fid</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_frames</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">all_frames</span><span class="p">[</span><span class="n">fid</span><span class="p">]:</span>
+                <span class="k">continue</span>
+
+            <span class="n">frame_path</span> <span class="o">=</span> <span class="n">all_frames</span><span class="p">[</span><span class="n">fid</span><span class="p">]</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">frame_path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+
+            <span class="c1"># Get future trajectory: from current frame to end of segment</span>
+            <span class="n">future_positions</span> <span class="o">=</span> <span class="n">palm_positions</span><span class="p">[</span><span class="n">local_idx</span><span class="p">:]</span>
+
+            <span class="k">if</span> <span class="n">fid</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cam_c2w_all</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Project all future world positions using the CURRENT frame&#39;s</span>
+            <span class="c1"># camera (we are drawing on the current frame&#39;s image).</span>
+            <span class="n">cam</span> <span class="o">=</span> <span class="n">cam_c2w_all</span><span class="p">[</span><span class="n">fid</span><span class="p">]</span>
+
+            <span class="c1"># Determine per-frame intrinsics for projection</span>
+            <span class="n">frame_K</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">intrinsics_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">fid</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">intrinsics_list</span><span class="p">):</span>
+                <span class="n">frame_K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">intrinsics_list</span><span class="p">[</span><span class="n">fid</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+            <span class="n">points_2d_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">future_positions</span><span class="p">)):</span>
+                <span class="n">pos_cam</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_world_to_camera</span><span class="p">(</span><span class="n">future_positions</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">cam</span><span class="p">)</span>
+                <span class="n">pt_2d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_project_to_2d</span><span class="p">(</span>
+                    <span class="n">pos_cam</span><span class="p">,</span>
+                    <span class="n">w</span><span class="p">,</span>
+                    <span class="n">h</span><span class="p">,</span>
+                    <span class="n">K</span><span class="o">=</span><span class="n">frame_K</span><span class="p">,</span>
+                    <span class="n">fov_x</span><span class="o">=</span><span class="n">fov_x</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">points_2d_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pt_2d</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">points_2d_list</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">points_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">points_2d_list</span><span class="p">)</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_draw_trajectory</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">points_2d</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># Save overlay frame (prefix avoids collisions across videos)</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_prefix</span><span class="si">}</span><span class="s2">_&quot;</span> <span class="k">if</span> <span class="n">file_prefix</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;seg</span><span class="si">{</span><span class="n">seg_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">hand_type</span><span class="si">}</span><span class="s2">_f</span><span class="si">{</span><span class="n">fid</span><span class="si">:</span><span class="s2">06d</span><span class="si">}</span><span class="s2">_overlay.jpg&quot;</span>
+            <span class="n">out_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+            <span class="n">overlay_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
+
+        <span class="n">segment</span><span class="p">[</span><span class="s2">&quot;overlay_frames&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">overlay_paths</span>
+        <span class="n">segment</span><span class="p">[</span><span class="s2">&quot;sampled_frame_indices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">valid_fids</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sample_indices</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_fids</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">segment</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Main entry</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sample_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Derive a short unique prefix from the sample&#39;s video path.</span>
+
+<span class="sd">        Used to namespace overlay files so different videos sharing</span>
+<span class="sd">        the same save_dir do not overwrite each other.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">videos</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_key</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="n">videos</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">videos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">videos</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">videos</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">v</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="s2">&quot;unknown&quot;</span>
+
+<div class="viewcode-block" id="VideoTrajectoryOverlayMapper.process_single">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.VideoTrajectoryOverlayMapper.process_single">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">Fields</span><span class="o">.</span><span class="n">meta</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sample</span>
+
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">]</span>
+        <span class="n">segments</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">segment_field</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">segments</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sample</span>
+
+        <span class="c1"># Get frame paths</span>
+        <span class="n">frame_data</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_field</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">frame_data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sample</span>
+        <span class="n">all_frames</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">frame_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame_data</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">frame_data</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span>
+            <span class="k">else</span> <span class="n">frame_data</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Get cam_c2w</span>
+        <span class="n">cam_pose_list</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">camera_pose_field</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cam_pose_list</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No camera pose data for trajectory overlay.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">sample</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">CameraCalibrationKeys</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.file_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_numpy</span>
+
+        <span class="n">cam_pose</span> <span class="o">=</span> <span class="n">cam_pose_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cam_pose_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">cam_pose_list</span>
+        <span class="n">raw_c2w</span> <span class="o">=</span> <span class="n">cam_pose</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">cam_c2w</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">raw_c2w</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No cam_c2w for trajectory overlay.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">sample</span>
+        <span class="n">cam_c2w_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">load_numpy</span><span class="p">(</span><span class="n">raw_c2w</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="c1"># Get camera intrinsics (prefer full K matrix, fallback to fov_x)</span>
+        <span class="n">intrinsics_list</span><span class="p">,</span> <span class="n">fov_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_intrinsics</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">intrinsics_list</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">fov_x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot determine camera intrinsics, skipping overlay.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">sample</span>
+
+        <span class="c1"># Determine save directory</span>
+        <span class="n">save_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span>
+        <span class="k">if</span> <span class="n">save_dir</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">all_frames</span><span class="p">:</span>
+            <span class="n">save_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">all_frames</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                <span class="s2">&quot;trajectory_overlays&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">save_dir</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Unique prefix to avoid filename collisions across videos</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_prefix</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+
+        <span class="c1"># Process each segment</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">seg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">segments</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">segments</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_segment</span><span class="p">(</span>
+                    <span class="n">seg</span><span class="p">,</span>
+                    <span class="n">all_frames</span><span class="p">,</span>
+                    <span class="n">cam_c2w_all</span><span class="p">,</span>
+                    <span class="n">save_dir</span><span class="p">,</span>
+                    <span class="n">intrinsics_list</span><span class="o">=</span><span class="n">intrinsics_list</span><span class="p">,</span>
+                    <span class="n">fov_x</span><span class="o">=</span><span class="n">fov_x</span><span class="p">,</span>
+                    <span class="n">file_prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Trajectory overlay failed for segment </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">seg</span><span class="p">[</span><span class="s2">&quot;overlay_frames&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">seg</span><span class="p">[</span><span class="s2">&quot;sampled_frame_indices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">meta</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">segment_field</span><span class="p">]</span> <span class="o">=</span> <span class="n">segments</span>
+        <span class="k">return</span> <span class="n">sample</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_intrinsics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract camera intrinsics for projection.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (intrinsics_list, fov_x): intrinsics_list is a per-frame list</span>
+<span class="sd">            of (3,3) K matrices if available (preferred), otherwise None.</span>
+<span class="sd">            fov_x is a scalar fallback FOV in radians.</span>
+<span class="sd">            At least one of them will be non-None if calibration data exists.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">CameraCalibrationKeys</span>
+
+        <span class="n">intrinsics_list</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">fov_x</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Try MoGe calibration — prefer full intrinsics matrix K</span>
+        <span class="n">moge_list</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">moge_field</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="n">moge_list</span><span class="p">:</span>
+            <span class="n">moge</span> <span class="o">=</span> <span class="n">moge_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">moge_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">moge_list</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">moge</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="c1"># Prefer per-frame intrinsics K matrix</span>
+                <span class="n">K_list</span> <span class="o">=</span> <span class="n">moge</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">intrinsics</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">K_list</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">K_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">K_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">intrinsics_list</span> <span class="o">=</span> <span class="n">K_list</span>
+
+                <span class="c1"># Also get hfov as fallback</span>
+                <span class="n">hfov</span> <span class="o">=</span> <span class="n">moge</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">hfov</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">hfov</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hfov</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">hfov</span><span class="p">:</span>
+                        <span class="n">fov_x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">hfov</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">fov_x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hfov</span><span class="p">)</span>
+
+        <span class="c1"># Try HaWoR fov_x (HaWoR uses median of MoGe hfov, most consistent)</span>
+        <span class="k">if</span> <span class="n">fov_x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">hawor_field</span> <span class="o">=</span> <span class="n">MetaKeys</span><span class="o">.</span><span class="n">hand_reconstruction_hawor_tags</span>
+            <span class="n">hawor_list</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">hawor_field</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="k">if</span> <span class="n">hawor_list</span><span class="p">:</span>
+                <span class="n">hawor</span> <span class="o">=</span> <span class="n">hawor_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hawor_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">hawor_list</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hawor</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">hawor_fov</span> <span class="o">=</span> <span class="n">hawor</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fov_x&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">hawor_fov</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">fov_x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hawor_fov</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">intrinsics_list</span><span class="p">,</span> <span class="n">fov_x</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

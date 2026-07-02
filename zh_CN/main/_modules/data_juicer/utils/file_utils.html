@@ -533,6 +533,38 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_PREFIX</span><span class="p">,</span> <span class="n">Fields</span>
 
 
+<div class="viewcode-block" id="load_numpy">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.file_utils.html#data_juicer.utils.file_utils.load_numpy">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_numpy</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a numpy array that may be stored inline or as a .npy file path.</span>
+
+<span class="sd">    :param value: Either a numpy ndarray (returned as-is) or a string</span>
+<span class="sd">        path to a ``.npy`` file.</span>
+<span class="sd">    :returns: numpy ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="c1"># Fallback: convert lists / other array-like to ndarray</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="load_numpy_list">
+<a class="viewcode-back" href="../../../api/data_juicer.utils.file_utils.html#data_juicer.utils.file_utils.load_numpy_list">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_numpy_list</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a list of numpy fields (each may be an array or a path).</span>
+
+<span class="sd">    :param values: list of numpy arrays or string paths to .npy files.</span>
+<span class="sd">    :returns: list of numpy ndarrays</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">load_numpy</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span></div>
+
+
+
 <div class="viewcode-block" id="Sizes">
 <a class="viewcode-back" href="../../../api/data_juicer.utils.file_utils.html#data_juicer.utils.file_utils.Sizes">[文档]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Sizes</span><span class="p">:</span>

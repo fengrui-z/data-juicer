@@ -708,6 +708,43 @@ extracting frames, key frames, and clipping.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.utils.video_utils.VideoReader.extract_frames_uniformly">
+<span class="sig-name descname"><span class="pre">extract_frames_uniformly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer/utils/video_utils.html#VideoReader.extract_frames_uniformly"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.utils.video_utils.VideoReader.extract_frames_uniformly" title="链接到此定义。">#</a></dt>
+<dd><p>Extract a number of frames uniformly distributed across the video.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>frame_num</strong> -- Number of frames to extract. If 1, the middle frame
+is extracted. If 2, the first and last frames. If &gt;2, frames are
+spaced uniformly including the first and last.</p>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of numpy arrays (RGB frames).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.utils.video_utils.VideoReader.extract_frames_uniformly_by_seconds">
+<span class="sig-name descname"><span class="pre">extract_frames_uniformly_by_seconds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer/utils/video_utils.html#VideoReader.extract_frames_uniformly_by_seconds"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.utils.video_utils.VideoReader.extract_frames_uniformly_by_seconds" title="链接到此定义。">#</a></dt>
+<dd><p>Extract frames uniformly from each segment of given duration.</p>
+<p>The video is split into segments of the specified duration, and
+<code class="docutils literal notranslate"><span class="pre">frame_num</span></code> frames are extracted uniformly from each segment.
+Only full-length segments are processed (matching AV behavior);
+a trailing partial segment shorter than <code class="docutils literal notranslate"><span class="pre">duration</span></code> is skipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame_num</strong> -- Number of frames per segment.</p></li>
+<li><p><strong>duration</strong> -- Duration of each segment in seconds.</p></li>
+</ul>
+</dd>
+<dt class="field-even">返回<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of numpy arrays (RGB frames).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="data_juicer.utils.video_utils.VideoReader.check_time_span">
 <span class="sig-name descname"><span class="pre">check_time_span</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/data_juicer/utils/video_utils.html#VideoReader.check_time_span"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.utils.video_utils.VideoReader.check_time_span" title="链接到此定义。">#</a></dt>
 <dd></dd></dl>
@@ -883,6 +920,15 @@ If to_numpy is False, it will return clip data as bytes and save to Clip.encoded
 <dd class="field-even"><p>Return a Frames object.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.utils.video_utils.FFmpegReader.extract_frames_uniformly">
+<span class="sig-name descname"><span class="pre">extract_frames_uniformly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/data_juicer/utils/video_utils.html#FFmpegReader.extract_frames_uniformly"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.utils.video_utils.FFmpegReader.extract_frames_uniformly" title="链接到此定义。">#</a></dt>
+<dd><p>Extract frames uniformly using ffmpeg select filter (single pass).</p>
+<p>Overrides the base class to use a single ffmpeg process with the
+<code class="docutils literal notranslate"><span class="pre">select</span></code> filter, which is much more efficient than seeking for each
+frame individually.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1083,6 +1129,8 @@ will cut the video from the start_seconds to the end of the video.</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.utils.video_utils.VideoReader.extract_frames"><code class="docutils literal notranslate"><span class="pre">VideoReader.extract_frames()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.utils.video_utils.VideoReader.extract_keyframes"><code class="docutils literal notranslate"><span class="pre">VideoReader.extract_keyframes()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.utils.video_utils.VideoReader.extract_clip"><code class="docutils literal notranslate"><span class="pre">VideoReader.extract_clip()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.utils.video_utils.VideoReader.extract_frames_uniformly"><code class="docutils literal notranslate"><span class="pre">VideoReader.extract_frames_uniformly()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.utils.video_utils.VideoReader.extract_frames_uniformly_by_seconds"><code class="docutils literal notranslate"><span class="pre">VideoReader.extract_frames_uniformly_by_seconds()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.utils.video_utils.VideoReader.check_time_span"><code class="docutils literal notranslate"><span class="pre">VideoReader.check_time_span()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.utils.video_utils.VideoReader.close"><code class="docutils literal notranslate"><span class="pre">VideoReader.close()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.utils.video_utils.VideoReader.is_available"><code class="docutils literal notranslate"><span class="pre">VideoReader.is_available()</span></code></a></li>
@@ -1103,6 +1151,7 @@ will cut the video from the start_seconds to the end of the video.</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.utils.video_utils.FFmpegReader.get_metadata"><code class="docutils literal notranslate"><span class="pre">FFmpegReader.get_metadata()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.utils.video_utils.FFmpegReader.extract_frames"><code class="docutils literal notranslate"><span class="pre">FFmpegReader.extract_frames()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.utils.video_utils.FFmpegReader.extract_keyframes"><code class="docutils literal notranslate"><span class="pre">FFmpegReader.extract_keyframes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.utils.video_utils.FFmpegReader.extract_frames_uniformly"><code class="docutils literal notranslate"><span class="pre">FFmpegReader.extract_frames_uniformly()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.utils.video_utils.FFmpegReader.extract_clip"><code class="docutils literal notranslate"><span class="pre">FFmpegReader.extract_clip()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.utils.video_utils.FFmpegReader.close"><code class="docutils literal notranslate"><span class="pre">FFmpegReader.close()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.utils.video_utils.FFmpegReader.is_available"><code class="docutils literal notranslate"><span class="pre">FFmpegReader.is_available()</span></code></a></li>

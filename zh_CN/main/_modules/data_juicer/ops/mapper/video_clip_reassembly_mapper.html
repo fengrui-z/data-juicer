@@ -1,0 +1,1534 @@
+
+<!DOCTYPE html>
+
+
+<html lang="zh-CN" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data_juicer.ops.mapper.video_clip_reassembly_mapper &#8212; Data Juicer</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=34d13042" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=91bfbbb6"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/translations.js?v=540d3cec"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/ops/mapper/video_clip_reassembly_mapper';</script>
+    <script src="../../../../_static/sidebar.js?v=3fc1065c"></script>
+    <script src="../../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="icon" href="../../../../_static/icon.png"/>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="zh-CN"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">跳转至主要内容</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>回到顶部</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search docs..."
+         aria-label="Search docs..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="版本警告"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="网页导航">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index_ZH.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/icon.png" class="logo__image only-light" alt=""/>
+    <img src="../../../../_static/icon.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">Data Juicer</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/ops/mapper/video_clip_reassembly_mapper.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/ops/mapper/video_clip_reassembly_mapper_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/ops/mapper/video_clip_reassembly_mapper.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="搜索" aria-label="搜索" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../docs_index_ZH.html">
+    文档
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-sandbox/zh_CN/main/">
+    Sandbox
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-hub/zh_CN/main/">
+    Hub
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-external" href="https://datajuicer.github.io/data-juicer-agents/zh_CN/main/">
+    Agents
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/fengrui-z/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="亮色"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="暗色"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><div class="navbar-switcher-container">
+  
+  <div class="navbar-dropdown language-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select language: zh-CN">
+      <span class="switcher-icon" aria-hidden="true">🌐</span>
+      <span class="switcher-text">zh-CN</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/ops/mapper/video_clip_reassembly_mapper.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
+        
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/ops/mapper/video_clip_reassembly_mapper_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <div class="navbar-dropdown version-dropdown">
+    <button type="button" 
+            class="navbar-dropdown-trigger" 
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-label="Select version: main">
+      <span class="switcher-icon" aria-hidden="true">📦</span>
+      <span class="switcher-text">main</span>
+      <i class="fa-solid fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+    </button>
+    <div class="navbar-dropdown-panel" role="menu">
+      <div class="dropdown-content">
+        
+        <a href="../../../../../main/_modules/data_juicer/ops/mapper/video_clip_reassembly_mapper.html"
+           class="dropdown-item active"
+           role="menuitem"
+           aria-current="true">
+          main
+        </a>
+        
+      </div>
+    </div>
+  </div>
+  
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index_ZH.html" class="nav-link" aria-label="初始页面">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">模块代码</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data_juicer.ops.mapper.video_clip_reassembly_mapper</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>data_juicer.ops.mapper.video_clip_reassembly_mapper 源代码</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">CameraCalibrationKeys</span><span class="p">,</span> <span class="n">Fields</span><span class="p">,</span> <span class="n">MetaKeys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.file_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_numpy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.lazy_loader</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyLoader</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..base_op</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPERATORS</span><span class="p">,</span> <span class="n">Mapper</span>
+
+<span class="n">OP_NAME</span> <span class="o">=</span> <span class="s2">&quot;video_clip_reassembly_mapper&quot;</span>
+
+<span class="n">cv2</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;cv2&quot;</span><span class="p">,</span> <span class="s2">&quot;opencv-contrib-python&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="VideoClipReassemblyMapper">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.VideoClipReassemblyMapper">[文档]</a>
+<span class="nd">@OPERATORS</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">OP_NAME</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VideoClipReassemblyMapper</span><span class="p">(</span><span class="n">Mapper</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reassemble hand-action results from overlapping video clips.</span>
+
+<span class="sd">    When long videos are chopped into overlapping clips (e.g. 5 s with 2 s</span>
+<span class="sd">    overlap via ``VideoSplitByDurationMapper``), each clip is processed</span>
+<span class="sd">    independently through the 3-D motion labelling pipeline.  This operator</span>
+<span class="sd">    merges the per-clip results back into **one unified result** per original</span>
+<span class="sd">    video, including:</span>
+
+<span class="sd">    * ``hand_action_tags`` — states, actions, valid_frame_ids, joints</span>
+<span class="sd">    * ``video_camera_pose_tags`` — ``cam_c2w`` array</span>
+<span class="sd">    * ``hand_reconstruction_hawor_tags`` — frame_ids converted to global</span>
+<span class="sd">    * ``video_frames`` — per-clip frame path lists merged into one global list</span>
+<span class="sd">    * ``camera_calibration_moge_tags`` — per-clip depth/intrinsics merged</span>
+<span class="sd">    * ``clips`` — replaced with the original video path</span>
+
+<span class="sd">    Clip global offsets are determined automatically by **pixel-matching**</span>
+<span class="sd">    overlapping frames between consecutive clips, rather than assuming an</span>
+<span class="sd">    ideal step size.  This handles ffmpeg keyframe-alignment drift that</span>
+<span class="sd">    causes actual clip boundaries to differ from the nominal</span>
+<span class="sd">    ``(split_duration - overlap_duration) * fps`` calculation.</span>
+
+<span class="sd">    Reference (paper §3.1):</span>
+<span class="sd">        &quot;To enhance efficiency, we chop long videos into overlapping</span>
+<span class="sd">        20-second clips in this stage and recompose their results.&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="VideoClipReassemblyMapper.__init__">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.VideoClipReassemblyMapper.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hand_action_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MetaKeys</span><span class="o">.</span><span class="n">hand_action_tags</span><span class="p">,</span>
+        <span class="n">camera_pose_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MetaKeys</span><span class="o">.</span><span class="n">video_camera_pose_tags</span><span class="p">,</span>
+        <span class="n">hand_reconstruction_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span><span class="n">MetaKeys</span><span class="o">.</span><span class="n">hand_reconstruction_hawor_tags</span><span class="p">),</span>
+        <span class="n">frame_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MetaKeys</span><span class="o">.</span><span class="n">video_frames</span><span class="p">,</span>
+        <span class="n">moge_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MetaKeys</span><span class="o">.</span><span class="n">camera_calibration_moge_tags</span><span class="p">,</span>
+        <span class="n">clip_field</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;clips&quot;</span><span class="p">,</span>
+        <span class="n">video_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;videos&quot;</span><span class="p">,</span>
+        <span class="n">split_duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">overlap_duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hand_action_field</span> <span class="o">=</span> <span class="n">hand_action_field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">camera_pose_field</span> <span class="o">=</span> <span class="n">camera_pose_field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hand_reconstruction_field</span> <span class="o">=</span> <span class="n">hand_reconstruction_field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame_field</span> <span class="o">=</span> <span class="n">frame_field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">moge_field</span> <span class="o">=</span> <span class="n">moge_field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clip_field</span> <span class="o">=</span> <span class="n">clip_field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_key</span> <span class="o">=</span> <span class="n">video_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">split_duration</span> <span class="o">=</span> <span class="n">split_duration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overlap_duration</span> <span class="o">=</span> <span class="n">overlap_duration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fps</span> <span class="o">=</span> <span class="n">fps</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Detect actual clip offsets via frame content matching</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_frame_hash</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute a fast content hash for a frame image file.&quot;&quot;&quot;</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">img</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">tobytes</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_detect_clip_offsets</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">per_clip_frames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">nominal_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine the global frame offset for each clip.</span>
+
+<span class="sd">        Compares the first frame of clip[i] against frames of clip[i-1]</span>
+<span class="sd">        to find the actual overlap point.  Falls back to the nominal step</span>
+<span class="sd">        if pixel matching fails.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of global offsets, one per clip.  offsets[0] is always 0.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_clips</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">per_clip_frames</span><span class="p">)</span>
+        <span class="n">offsets</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">ci</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_clips</span><span class="p">):</span>
+            <span class="n">prev_frames</span> <span class="o">=</span> <span class="n">per_clip_frames</span><span class="p">[</span><span class="n">ci</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">curr_frames</span> <span class="o">=</span> <span class="n">per_clip_frames</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">curr_frames</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">prev_frames</span><span class="p">:</span>
+                <span class="n">step</span> <span class="o">=</span> <span class="n">nominal_step</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_frames</span><span class="p">)</span>
+                <span class="n">offsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offsets</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">step</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Hash the first frame of the current clip</span>
+            <span class="n">h_curr_0</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_frame_hash</span><span class="p">(</span><span class="n">curr_frames</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">h_curr_0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">step</span> <span class="o">=</span> <span class="n">nominal_step</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_frames</span><span class="p">)</span>
+                <span class="n">offsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offsets</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">step</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Search for a match in the previous clip</span>
+            <span class="c1"># Start from a reasonable range around the nominal step</span>
+            <span class="n">search_start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">nominal_step</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_frames</span><span class="p">))</span> <span class="o">-</span> <span class="mi">30</span><span class="p">)</span>
+            <span class="n">search_end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">prev_frames</span><span class="p">),</span> <span class="p">(</span><span class="n">nominal_step</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_frames</span><span class="p">))</span> <span class="o">+</span> <span class="mi">30</span><span class="p">)</span>
+
+            <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">search_start</span><span class="p">,</span> <span class="n">search_end</span><span class="p">):</span>
+                <span class="n">h_prev</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_frame_hash</span><span class="p">(</span><span class="n">prev_frames</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">h_prev</span> <span class="o">==</span> <span class="n">h_curr_0</span><span class="p">:</span>
+                    <span class="c1"># Verify with a second frame to avoid hash collision</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">curr_frames</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_frames</span><span class="p">):</span>
+                        <span class="n">h_c1</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_frame_hash</span><span class="p">(</span><span class="n">curr_frames</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">h_p1</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_frame_hash</span><span class="p">(</span><span class="n">prev_frames</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+                        <span class="k">if</span> <span class="n">h_c1</span> <span class="o">!=</span> <span class="n">h_p1</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                    <span class="n">offsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offsets</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">j</span><span class="p">)</span>
+                    <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Clip </span><span class="si">{</span><span class="n">ci</span><span class="si">}</span><span class="s2">: detected offset </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> from clip </span><span class="si">{</span><span class="n">ci</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2"> &quot;</span> <span class="sa">f</span><span class="s2">&quot;(global offset </span><span class="si">{</span><span class="n">offsets</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">break</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+                <span class="n">step</span> <span class="o">=</span> <span class="n">nominal_step</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_frames</span><span class="p">)</span>
+                <span class="n">offsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offsets</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">step</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Clip </span><span class="si">{</span><span class="n">ci</span><span class="si">}</span><span class="s2">: frame matching failed, using nominal &quot;</span> <span class="sa">f</span><span class="s2">&quot;step </span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2"> (global offset </span><span class="si">{</span><span class="n">offsets</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">offsets</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># World-frame alignment between clips</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_alignment_transforms</span><span class="p">(</span>
+        <span class="n">cam_pose_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+        <span class="n">offsets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">clip_lengths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute 4x4 transforms to align each clip&#39;s world frame to clip 0.</span>
+
+<span class="sd">        Uses cam_c2w matrices from the overlap region:</span>
+<span class="sd">            T_0i = c2w_0[g] @ inv(c2w_i[local])</span>
+<span class="sd">        where g is a global frame index present in both clips.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of (4, 4) transforms.  transforms[0] = identity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rotation</span>
+
+        <span class="n">n_clips</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cam_pose_list</span><span class="p">)</span>
+        <span class="n">transforms</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)]</span>
+
+        <span class="k">for</span> <span class="n">ci</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_clips</span><span class="p">):</span>
+            <span class="n">cp_prev</span> <span class="o">=</span> <span class="n">cam_pose_list</span><span class="p">[</span><span class="n">ci</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">cp_curr</span> <span class="o">=</span> <span class="n">cam_pose_list</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">cp_prev</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cp_prev</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">cp_curr</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cp_curr</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">transforms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transforms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+                <span class="k">continue</span>
+
+            <span class="n">raw_prev</span> <span class="o">=</span> <span class="n">cp_prev</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">cam_c2w</span><span class="p">)</span>
+            <span class="n">raw_curr</span> <span class="o">=</span> <span class="n">cp_curr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">cam_c2w</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">raw_prev</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">raw_curr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">transforms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transforms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+                <span class="k">continue</span>
+
+            <span class="n">c2w_prev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">load_numpy</span><span class="p">(</span><span class="n">raw_prev</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">c2w_curr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">load_numpy</span><span class="p">(</span><span class="n">raw_curr</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+            <span class="c1"># Overlap: clip_curr[k] corresponds to clip_prev[offsets[ci] - offsets[ci-1] + k]</span>
+            <span class="n">step_in_prev</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span> <span class="o">-</span> <span class="n">offsets</span><span class="p">[</span><span class="n">ci</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">overlap_len</span> <span class="o">=</span> <span class="n">clip_lengths</span><span class="p">[</span><span class="n">ci</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">step_in_prev</span>
+
+            <span class="k">if</span> <span class="n">overlap_len</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">transforms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transforms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Compute T for each overlap frame, then average</span>
+            <span class="n">Rs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">ts</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">overlap_len</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">c2w_curr</span><span class="p">))):</span>
+                <span class="n">prev_idx</span> <span class="o">=</span> <span class="n">step_in_prev</span> <span class="o">+</span> <span class="n">k</span>
+                <span class="k">if</span> <span class="n">prev_idx</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">c2w_prev</span><span class="p">):</span>
+                    <span class="k">break</span>
+                <span class="n">T_local</span> <span class="o">=</span> <span class="n">c2w_prev</span><span class="p">[</span><span class="n">prev_idx</span><span class="p">]</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">c2w_curr</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="n">Rs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">T_local</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+                <span class="n">ts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">T_local</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">Rs</span><span class="p">:</span>
+                <span class="n">transforms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transforms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Robust average: median translation, mean quaternion rotation</span>
+            <span class="n">t_median</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ts</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">quats</span> <span class="o">=</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Rs</span><span class="p">))</span><span class="o">.</span><span class="n">as_quat</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">quats</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">quats</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">quats</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">quats</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">quats</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">mean_quat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">quats</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">mean_quat</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mean_quat</span><span class="p">)</span>
+            <span class="n">R_mean</span> <span class="o">=</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">from_quat</span><span class="p">(</span><span class="n">mean_quat</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
+
+            <span class="c1"># This gives T: prev_world -&gt; curr_world</span>
+            <span class="c1"># Chain with the accumulated transform to get clip_0 world</span>
+            <span class="n">T_prev_curr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">T_prev_curr</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">R_mean</span>
+            <span class="n">T_prev_curr</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">t_median</span>
+            <span class="n">transforms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transforms</span><span class="p">[</span><span class="n">ci</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">@</span> <span class="n">T_prev_curr</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Clip </span><span class="si">{</span><span class="n">ci</span><span class="si">}</span><span class="s2"> alignment: rotation &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">Rotation</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">R_mean</span><span class="p">)</span><span class="o">.</span><span class="n">magnitude</span><span class="p">())</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">°, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;translation </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">t_median</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">m&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">transforms</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_transform_to_hand_data</span><span class="p">(</span>
+        <span class="n">hand_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">T</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transform a clip&#39;s hand states/joints from its local world frame</span>
+<span class="sd">        to the target world frame using rigid transform T (4x4).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rotation</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">hand_data</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">hand_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;states&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">hand_data</span>
+
+        <span class="n">R</span> <span class="o">=</span> <span class="n">T</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">T</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+        <span class="n">R_rot</span> <span class="o">=</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">from_matrix</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+
+        <span class="n">states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hand_data</span><span class="p">[</span><span class="s2">&quot;states&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="c1"># Transform positions</span>
+        <span class="n">states</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span> <span class="o">@</span> <span class="n">states</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">+</span> <span class="n">t</span>
+        <span class="c1"># Transform orientations</span>
+        <span class="n">orig_rots</span> <span class="o">=</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">from_euler</span><span class="p">(</span><span class="s2">&quot;xyz&quot;</span><span class="p">,</span> <span class="n">states</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="n">degrees</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">new_rots</span> <span class="o">=</span> <span class="n">R_rot</span> <span class="o">*</span> <span class="n">orig_rots</span>
+        <span class="n">states</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_rots</span><span class="o">.</span><span class="n">as_euler</span><span class="p">(</span><span class="s2">&quot;xyz&quot;</span><span class="p">,</span> <span class="n">degrees</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">hand_data</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;states&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">states</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="c1"># Transform joints_world</span>
+        <span class="n">jw</span> <span class="o">=</span> <span class="n">hand_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;joints_world&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">jw</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">jw</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">jw_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">jw</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="c1"># (T, 21, 3) -&gt; transform each joint</span>
+            <span class="n">orig_shape</span> <span class="o">=</span> <span class="n">jw_arr</span><span class="o">.</span><span class="n">shape</span>
+            <span class="n">flat</span> <span class="o">=</span> <span class="n">jw_arr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">flat_aligned</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span> <span class="o">@</span> <span class="n">flat</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">+</span> <span class="n">t</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;joints_world&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flat_aligned</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                <span class="n">orig_shape</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="c1"># Recompute actions from transformed states</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.mapper.video_hand_motion_smooth_mapper</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">_recompute_actions</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;actions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_recompute_actions</span><span class="p">(</span><span class="n">states</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_transform_to_c2w</span><span class="p">(</span>
+        <span class="n">c2w</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">T</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transform cam_c2w array from local world to target world frame.&quot;&quot;&quot;</span>
+        <span class="c1"># c2w maps camera -&gt; local_world</span>
+        <span class="c1"># T maps local_world -&gt; target_world</span>
+        <span class="c1"># new_c2w = T @ c2w</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;ij,njk-&gt;nik&quot;</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">c2w</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># helpers</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_empty_hand_result</span><span class="p">(</span><span class="n">hand_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;hand_type&quot;</span><span class="p">:</span> <span class="n">hand_type</span><span class="p">,</span>
+            <span class="s2">&quot;states&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;actions&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;valid_frame_ids&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;joints_cam&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;joints_world&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="p">}</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_recompute_actions</span><span class="p">(</span><span class="n">states</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Recompute 7-DoF actions from 8-dim states.&quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rotation</span>
+
+        <span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">T</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">actions</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">states</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">R_prev</span> <span class="o">=</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">from_euler</span><span class="p">(</span>
+                <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+                <span class="n">states</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span>
+                <span class="n">degrees</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">R_next</span> <span class="o">=</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">from_euler</span><span class="p">(</span>
+                <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+                <span class="n">states</span><span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span>
+                <span class="n">degrees</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">R_delta</span> <span class="o">=</span> <span class="n">R_next</span> <span class="o">*</span> <span class="n">R_prev</span><span class="o">.</span><span class="n">inv</span><span class="p">()</span>
+            <span class="n">actions</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">R_delta</span><span class="o">.</span><span class="n">as_euler</span><span class="p">(</span><span class="s2">&quot;xyz&quot;</span><span class="p">,</span> <span class="n">degrees</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">actions</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">T</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">actions</span><span class="p">[</span><span class="n">T</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="n">T</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">actions</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_nominal_step</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the nominal step from constructor params (fallback).&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_duration</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_duration</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">fps</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">split_duration</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">overlap_duration</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fps</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_blend_weight</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">clip_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">local_fid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">n_clips</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">clip_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">overlap_prev</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">overlap_next</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the blending weight for a frame given its clip position.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            overlap_prev: number of frames this clip overlaps with the</span>
+<span class="sd">                previous clip (ramp-up at start).</span>
+<span class="sd">            overlap_next: number of frames this clip overlaps with the</span>
+<span class="sd">                next clip (ramp-down at end).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">if</span> <span class="n">clip_idx</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">overlap_prev</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">local_fid</span> <span class="o">&lt;</span> <span class="n">overlap_prev</span><span class="p">:</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="n">local_fid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">overlap_prev</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">clip_idx</span> <span class="o">&lt;</span> <span class="n">n_clips</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">overlap_next</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">local_fid</span> <span class="o">&gt;=</span> <span class="n">clip_len</span> <span class="o">-</span> <span class="n">overlap_next</span><span class="p">:</span>
+            <span class="n">frames_from_end</span> <span class="o">=</span> <span class="n">clip_len</span> <span class="o">-</span> <span class="n">local_fid</span>
+            <span class="n">w_end</span> <span class="o">=</span> <span class="n">frames_from_end</span> <span class="o">/</span> <span class="p">(</span><span class="n">overlap_next</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">w_end</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">w</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># video_frames merge</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_video_frames</span><span class="p">(</span>
+        <span class="n">per_clip_frames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">offsets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge per-clip frame path lists into one global ordered list.&quot;&quot;&quot;</span>
+        <span class="n">total_frames</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">ci</span><span class="p">,</span> <span class="n">clip_frames</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">per_clip_frames</span><span class="p">):</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">clip_frames</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">end</span> <span class="o">&gt;</span> <span class="n">total_frames</span><span class="p">:</span>
+                <span class="n">total_frames</span> <span class="o">=</span> <span class="n">end</span>
+
+        <span class="n">merged</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">total_frames</span>
+        <span class="k">for</span> <span class="n">ci</span><span class="p">,</span> <span class="n">clip_frames</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">per_clip_frames</span><span class="p">):</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">local_fid</span><span class="p">,</span> <span class="n">frame_path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clip_frames</span><span class="p">):</span>
+                <span class="n">gfid</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">local_fid</span>
+                <span class="k">if</span> <span class="n">gfid</span> <span class="o">&lt;</span> <span class="n">total_frames</span> <span class="ow">and</span> <span class="n">merged</span><span class="p">[</span><span class="n">gfid</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">merged</span><span class="p">[</span><span class="n">gfid</span><span class="p">]</span> <span class="o">=</span> <span class="n">frame_path</span>
+
+        <span class="c1"># Fill any remaining None slots</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">merged</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">merged</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">delta</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">merged</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">-</span> <span class="n">delta</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">merged</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">delta</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">merged</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">merged</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">delta</span><span class="p">]</span>
+                        <span class="k">break</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span> <span class="ow">and</span> <span class="n">merged</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">delta</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">merged</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">merged</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">delta</span><span class="p">]</span>
+                        <span class="k">break</span>
+
+        <span class="k">return</span> <span class="n">merged</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># moge calibration merge</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_moge</span><span class="p">(</span>
+        <span class="n">moge_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+        <span class="n">offsets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge per-clip MoGe calibration results into one global result.&quot;&quot;&quot;</span>
+        <span class="n">total_frames</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">ci</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">moge_list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">m</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;depth&quot;</span><span class="p">,</span> <span class="s2">&quot;hfov&quot;</span><span class="p">,</span> <span class="s2">&quot;intrinsics&quot;</span><span class="p">,</span> <span class="s2">&quot;vfov&quot;</span><span class="p">):</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">end</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">end</span> <span class="o">&gt;</span> <span class="n">total_frames</span><span class="p">:</span>
+                        <span class="n">total_frames</span> <span class="o">=</span> <span class="n">end</span>
+                    <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">total_frames</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">moge_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">moge_list</span> <span class="k">else</span> <span class="p">{}</span>
+
+        <span class="n">per_frame_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">scalar_fields</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">moge_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">m</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">per_frame_keys</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scalar_fields</span><span class="p">:</span>
+                    <span class="n">scalar_fields</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="n">merged</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">scalar_fields</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">per_frame_keys</span><span class="p">:</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">total_frames</span>
+            <span class="k">for</span> <span class="n">ci</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">moge_list</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">m</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="n">vals</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">local_fid</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vals</span><span class="p">):</span>
+                    <span class="n">gfid</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">local_fid</span>
+                    <span class="k">if</span> <span class="n">gfid</span> <span class="o">&lt;</span> <span class="n">total_frames</span> <span class="ow">and</span> <span class="n">arr</span><span class="p">[</span><span class="n">gfid</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">arr</span><span class="p">[</span><span class="n">gfid</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">delta</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)):</span>
+                        <span class="k">if</span> <span class="n">i</span> <span class="o">-</span> <span class="n">delta</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">arr</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">delta</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">delta</span><span class="p">]</span>
+                            <span class="k">break</span>
+                        <span class="k">if</span> <span class="n">i</span> <span class="o">+</span> <span class="n">delta</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="ow">and</span> <span class="n">arr</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">delta</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">delta</span><span class="p">]</span>
+                            <span class="k">break</span>
+            <span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">arr</span>
+
+        <span class="k">return</span> <span class="n">merged</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># hand action merge</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_hand_across_clips</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">clips_hand_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+        <span class="n">hand_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">n_clips</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">offsets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">clip_lengths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge one hand&#39;s data across all clips into a single trajectory.&quot;&quot;&quot;</span>
+        <span class="n">clip_entries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">clip_idx</span><span class="p">,</span> <span class="n">hand_data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clips_hand_data</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">hand_data</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">hand_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;states&quot;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">global_offset</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">clip_idx</span><span class="p">]</span>
+            <span class="n">local_ids</span> <span class="o">=</span> <span class="n">hand_data</span><span class="p">[</span><span class="s2">&quot;valid_frame_ids&quot;</span><span class="p">]</span>
+            <span class="n">global_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">fid</span> <span class="o">+</span> <span class="n">global_offset</span> <span class="k">for</span> <span class="n">fid</span> <span class="ow">in</span> <span class="n">local_ids</span><span class="p">]</span>
+
+            <span class="n">jw</span> <span class="o">=</span> <span class="n">hand_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;joints_world&quot;</span><span class="p">)</span>
+            <span class="n">jc</span> <span class="o">=</span> <span class="n">hand_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;joints_cam&quot;</span><span class="p">)</span>
+            <span class="n">clip_entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;clip_idx&quot;</span><span class="p">:</span> <span class="n">clip_idx</span><span class="p">,</span>
+                    <span class="s2">&quot;local_ids&quot;</span><span class="p">:</span> <span class="n">local_ids</span><span class="p">,</span>
+                    <span class="s2">&quot;global_ids&quot;</span><span class="p">:</span> <span class="n">global_ids</span><span class="p">,</span>
+                    <span class="s2">&quot;states&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hand_data</span><span class="p">[</span><span class="s2">&quot;states&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+                    <span class="s2">&quot;joints_world&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">jw</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="k">if</span> <span class="n">jw</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">jw</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">),</span>
+                    <span class="s2">&quot;joints_cam&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">jc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="k">if</span> <span class="n">jc</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">jc</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">clip_entries</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_empty_hand_result</span><span class="p">(</span><span class="n">hand_type</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">clip_entries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="n">clip_entries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">src</span> <span class="o">=</span> <span class="n">clips_hand_data</span><span class="p">[</span><span class="n">e</span><span class="p">[</span><span class="s2">&quot;clip_idx&quot;</span><span class="p">]]</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;hand_type&quot;</span><span class="p">:</span> <span class="n">hand_type</span><span class="p">,</span>
+                <span class="s2">&quot;states&quot;</span><span class="p">:</span> <span class="n">src</span><span class="p">[</span><span class="s2">&quot;states&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;actions&quot;</span><span class="p">:</span> <span class="n">src</span><span class="p">[</span><span class="s2">&quot;actions&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;valid_frame_ids&quot;</span><span class="p">:</span> <span class="n">e</span><span class="p">[</span><span class="s2">&quot;global_ids&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;joints_cam&quot;</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;joints_cam&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+                <span class="s2">&quot;joints_world&quot;</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;joints_world&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+            <span class="p">}</span>
+
+        <span class="c1"># Global frame range</span>
+        <span class="n">all_gids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">clip_entries</span><span class="p">:</span>
+            <span class="n">all_gids</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="s2">&quot;global_ids&quot;</span><span class="p">])</span>
+        <span class="n">min_fid</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">all_gids</span><span class="p">)</span>
+        <span class="n">max_fid</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">all_gids</span><span class="p">)</span>
+        <span class="n">n_total</span> <span class="o">=</span> <span class="n">max_fid</span> <span class="o">-</span> <span class="n">min_fid</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="n">state_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_total</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">weight_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_total</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">has_jw</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="s2">&quot;joints_world&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">clip_entries</span><span class="p">)</span>
+        <span class="n">has_jc</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="s2">&quot;joints_cam&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">clip_entries</span><span class="p">)</span>
+        <span class="n">jw_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_total</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="k">if</span> <span class="n">has_jw</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">jc_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_total</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="k">if</span> <span class="n">has_jc</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">clip_entries</span><span class="p">:</span>
+            <span class="n">ci</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;clip_idx&quot;</span><span class="p">]</span>
+            <span class="n">clip_len</span> <span class="o">=</span> <span class="n">clip_lengths</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span>
+            <span class="c1"># Compute overlap with previous clip</span>
+            <span class="k">if</span> <span class="n">ci</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">prev_end</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">ci</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">clip_lengths</span><span class="p">[</span><span class="n">ci</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">overlap_prev</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">prev_end</span> <span class="o">-</span> <span class="n">offsets</span><span class="p">[</span><span class="n">ci</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">overlap_prev</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c1"># Compute overlap with next clip</span>
+            <span class="k">if</span> <span class="n">ci</span> <span class="o">&lt;</span> <span class="n">n_clips</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">next_offset</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">ci</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">this_end</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span> <span class="o">+</span> <span class="n">clip_len</span>
+                <span class="n">overlap_next</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">this_end</span> <span class="o">-</span> <span class="n">next_offset</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">overlap_next</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">gfid</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">&quot;global_ids&quot;</span><span class="p">]):</span>
+                <span class="n">local_fid</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;local_ids&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">gfid</span> <span class="o">-</span> <span class="n">min_fid</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_blend_weight</span><span class="p">(</span>
+                    <span class="n">ci</span><span class="p">,</span>
+                    <span class="n">local_fid</span><span class="p">,</span>
+                    <span class="n">n_clips</span><span class="p">,</span>
+                    <span class="n">clip_len</span><span class="p">,</span>
+                    <span class="n">overlap_prev</span><span class="p">,</span>
+                    <span class="n">overlap_next</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">state_sum</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;states&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">w</span>
+                <span class="n">weight_sum</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">w</span>
+                <span class="k">if</span> <span class="n">has_jw</span> <span class="ow">and</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;joints_world&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">&quot;joints_world&quot;</span><span class="p">]):</span>
+                    <span class="n">jw_sum</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;joints_world&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">w</span>
+                <span class="k">if</span> <span class="n">has_jc</span> <span class="ow">and</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;joints_cam&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">&quot;joints_cam&quot;</span><span class="p">]):</span>
+                    <span class="n">jc_sum</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;joints_cam&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">w</span>
+
+        <span class="n">valid_mask</span> <span class="o">=</span> <span class="n">weight_sum</span> <span class="o">&gt;</span> <span class="mf">1e-8</span>
+        <span class="n">valid_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_empty_hand_result</span><span class="p">(</span><span class="n">hand_type</span><span class="p">)</span>
+
+        <span class="n">w_col</span> <span class="o">=</span> <span class="n">weight_sum</span><span class="p">[</span><span class="n">valid_idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="n">merged_states</span> <span class="o">=</span> <span class="n">state_sum</span><span class="p">[</span><span class="n">valid_idx</span><span class="p">]</span> <span class="o">/</span> <span class="n">w_col</span>
+        <span class="n">merged_fids</span> <span class="o">=</span> <span class="p">(</span><span class="n">valid_idx</span> <span class="o">+</span> <span class="n">min_fid</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="n">merged_jw</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">has_jw</span><span class="p">:</span>
+            <span class="n">merged_jw</span> <span class="o">=</span> <span class="p">(</span><span class="n">jw_sum</span><span class="p">[</span><span class="n">valid_idx</span><span class="p">]</span> <span class="o">/</span> <span class="n">weight_sum</span><span class="p">[</span><span class="n">valid_idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="n">merged_jc</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">has_jc</span><span class="p">:</span>
+            <span class="n">merged_jc</span> <span class="o">=</span> <span class="p">(</span><span class="n">jc_sum</span><span class="p">[</span><span class="n">valid_idx</span><span class="p">]</span> <span class="o">/</span> <span class="n">weight_sum</span><span class="p">[</span><span class="n">valid_idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recompute_actions</span><span class="p">(</span><span class="n">merged_states</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;hand_type&quot;</span><span class="p">:</span> <span class="n">hand_type</span><span class="p">,</span>
+            <span class="s2">&quot;states&quot;</span><span class="p">:</span> <span class="n">merged_states</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;actions&quot;</span><span class="p">:</span> <span class="n">actions</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="s2">&quot;valid_frame_ids&quot;</span><span class="p">:</span> <span class="n">merged_fids</span><span class="p">,</span>
+            <span class="s2">&quot;joints_cam&quot;</span><span class="p">:</span> <span class="n">merged_jc</span> <span class="k">if</span> <span class="n">merged_jc</span> <span class="k">else</span> <span class="p">[],</span>
+            <span class="s2">&quot;joints_world&quot;</span><span class="p">:</span> <span class="n">merged_jw</span> <span class="k">if</span> <span class="n">merged_jw</span> <span class="k">else</span> <span class="p">[],</span>
+        <span class="p">}</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># camera pose (cam_c2w) merge</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_cam_c2w</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">cam_pose_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+        <span class="n">offsets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">clip_lengths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge per-clip cam_c2w (N,4,4) arrays into a single global array.&quot;&quot;&quot;</span>
+        <span class="n">n_clips</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cam_pose_list</span><span class="p">)</span>
+
+        <span class="n">clip_c2ws</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ci</span><span class="p">,</span> <span class="n">cp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cam_pose_list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">cp</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">cam_c2w</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">raw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">load_numpy</span><span class="p">(</span><span class="n">raw</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">clip_c2ws</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ci</span><span class="p">,</span> <span class="n">arr</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">clip_c2ws</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cam_pose_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">cam_pose_list</span> <span class="k">else</span> <span class="p">{}</span>
+
+        <span class="n">max_global</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">ci</span><span class="p">,</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">clip_c2ws</span><span class="p">:</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">end</span> <span class="o">&gt;</span> <span class="n">max_global</span><span class="p">:</span>
+                <span class="n">max_global</span> <span class="o">=</span> <span class="n">end</span>
+
+        <span class="n">c2w_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">max_global</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">w_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">max_global</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ci</span><span class="p">,</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">clip_c2ws</span><span class="p">:</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span>
+            <span class="n">clip_len</span> <span class="o">=</span> <span class="n">clip_lengths</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span>
+            <span class="c1"># Compute overlap with previous clip</span>
+            <span class="k">if</span> <span class="n">ci</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">prev_end</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">ci</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">clip_lengths</span><span class="p">[</span><span class="n">ci</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">overlap_prev</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">prev_end</span> <span class="o">-</span> <span class="n">offset</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">overlap_prev</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c1"># Compute overlap with next clip</span>
+            <span class="k">if</span> <span class="n">ci</span> <span class="o">&lt;</span> <span class="n">n_clips</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">next_offset</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">ci</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">this_end</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">clip_len</span>
+                <span class="n">overlap_next</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">this_end</span> <span class="o">-</span> <span class="n">next_offset</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">overlap_next</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">for</span> <span class="n">local_fid</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="p">)):</span>
+                <span class="n">gfid</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">local_fid</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_blend_weight</span><span class="p">(</span>
+                    <span class="n">ci</span><span class="p">,</span>
+                    <span class="n">local_fid</span><span class="p">,</span>
+                    <span class="n">n_clips</span><span class="p">,</span>
+                    <span class="n">clip_len</span><span class="p">,</span>
+                    <span class="n">overlap_prev</span><span class="p">,</span>
+                    <span class="n">overlap_next</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">c2w_sum</span><span class="p">[</span><span class="n">gfid</span><span class="p">]</span> <span class="o">+=</span> <span class="n">arr</span><span class="p">[</span><span class="n">local_fid</span><span class="p">]</span> <span class="o">*</span> <span class="n">w</span>
+                <span class="n">w_sum</span><span class="p">[</span><span class="n">gfid</span><span class="p">]</span> <span class="o">+=</span> <span class="n">w</span>
+
+        <span class="n">valid</span> <span class="o">=</span> <span class="n">w_sum</span> <span class="o">&gt;</span> <span class="mf">1e-8</span>
+        <span class="k">for</span> <span class="n">gfid</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_global</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="n">gfid</span><span class="p">]:</span>
+                <span class="n">c2w_sum</span><span class="p">[</span><span class="n">gfid</span><span class="p">]</span> <span class="o">/=</span> <span class="n">w_sum</span><span class="p">[</span><span class="n">gfid</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">c2w_sum</span><span class="p">[</span><span class="n">gfid</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+        <span class="n">merged</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">cp</span> <span class="ow">in</span> <span class="n">cam_pose_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cp</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">cp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">cam_c2w</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">merged</span><span class="p">:</span>
+                        <span class="n">merged</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                <span class="k">break</span>
+
+        <span class="n">merged</span><span class="p">[</span><span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">cam_c2w</span><span class="p">]</span> <span class="o">=</span> <span class="n">c2w_sum</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">merged</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># hawor reconstruction merge</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_hawor</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hawor_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+        <span class="n">offsets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge per-clip HaWoR results: convert local frame_ids to global.&quot;&quot;&quot;</span>
+        <span class="n">n_clips</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hawor_list</span><span class="p">)</span>
+
+        <span class="n">merged</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">hw</span> <span class="ow">in</span> <span class="n">hawor_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">hw</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hw</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;fov_x&quot;</span><span class="p">,</span> <span class="s2">&quot;img_focal&quot;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">hw</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">merged</span><span class="p">:</span>
+                        <span class="n">merged</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">hw</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="k">break</span>
+
+        <span class="n">hand_types</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">hw</span> <span class="ow">in</span> <span class="n">hawor_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">hw</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hw</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">hw</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hw</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+                        <span class="n">hand_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ht</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">hand_types</span><span class="p">):</span>
+            <span class="n">seen_global</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="n">merged_fids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">merged_transl</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">merged_orient</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">merged_pose</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">merged_betas</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">merged_joints_cam</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">ci</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_clips</span><span class="p">):</span>
+                <span class="n">hw</span> <span class="o">=</span> <span class="n">hawor_list</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">hw</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hw</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="n">hand</span> <span class="o">=</span> <span class="n">hw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ht</span><span class="p">,</span> <span class="p">{})</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">hand</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hand</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">continue</span>
+
+                <span class="n">fids</span> <span class="o">=</span> <span class="n">hand</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;frame_ids&quot;</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="n">offsets</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span>
+                <span class="n">transl</span> <span class="o">=</span> <span class="n">hand</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;transl&quot;</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="n">orient</span> <span class="o">=</span> <span class="n">hand</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;global_orient&quot;</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="n">pose</span> <span class="o">=</span> <span class="n">hand</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hand_pose&quot;</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="n">betas</span> <span class="o">=</span> <span class="n">hand</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;betas&quot;</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="n">jc</span> <span class="o">=</span> <span class="n">hand</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;joints_cam&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">local_fid</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fids</span><span class="p">):</span>
+                    <span class="n">gfid</span> <span class="o">=</span> <span class="n">local_fid</span> <span class="o">+</span> <span class="n">offset</span>
+                    <span class="k">if</span> <span class="n">gfid</span> <span class="ow">in</span> <span class="n">seen_global</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">seen_global</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gfid</span><span class="p">)</span>
+                    <span class="n">merged_fids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gfid</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">transl</span><span class="p">):</span>
+                        <span class="n">merged_transl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transl</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">orient</span><span class="p">):</span>
+                        <span class="n">merged_orient</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">orient</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">pose</span><span class="p">):</span>
+                        <span class="n">merged_pose</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pose</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">betas</span><span class="p">):</span>
+                        <span class="n">merged_betas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">betas</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">jc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">jc</span><span class="p">):</span>
+                        <span class="n">merged_joints_cam</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">jc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">merged_fids</span><span class="p">:</span>
+                <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">merged_fids</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="n">merged_fids</span> <span class="o">=</span> <span class="p">[</span><span class="n">merged_fids</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">order</span><span class="p">]</span>
+                <span class="n">merged_transl</span> <span class="o">=</span> <span class="p">[</span><span class="n">merged_transl</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">order</span><span class="p">]</span> <span class="k">if</span> <span class="n">merged_transl</span> <span class="k">else</span> <span class="p">[]</span>
+                <span class="n">merged_orient</span> <span class="o">=</span> <span class="p">[</span><span class="n">merged_orient</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">order</span><span class="p">]</span> <span class="k">if</span> <span class="n">merged_orient</span> <span class="k">else</span> <span class="p">[]</span>
+                <span class="n">merged_pose</span> <span class="o">=</span> <span class="p">[</span><span class="n">merged_pose</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">order</span><span class="p">]</span> <span class="k">if</span> <span class="n">merged_pose</span> <span class="k">else</span> <span class="p">[]</span>
+                <span class="n">merged_betas</span> <span class="o">=</span> <span class="p">[</span><span class="n">merged_betas</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">order</span><span class="p">]</span> <span class="k">if</span> <span class="n">merged_betas</span> <span class="k">else</span> <span class="p">[]</span>
+                <span class="n">merged_joints_cam</span> <span class="o">=</span> <span class="p">[</span><span class="n">merged_joints_cam</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">order</span><span class="p">]</span> <span class="k">if</span> <span class="n">merged_joints_cam</span> <span class="k">else</span> <span class="kc">None</span>
+
+            <span class="n">merged</span><span class="p">[</span><span class="n">ht</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;frame_ids&quot;</span><span class="p">:</span> <span class="n">merged_fids</span><span class="p">,</span>
+                <span class="s2">&quot;transl&quot;</span><span class="p">:</span> <span class="n">merged_transl</span><span class="p">,</span>
+                <span class="s2">&quot;global_orient&quot;</span><span class="p">:</span> <span class="n">merged_orient</span><span class="p">,</span>
+                <span class="s2">&quot;hand_pose&quot;</span><span class="p">:</span> <span class="n">merged_pose</span><span class="p">,</span>
+                <span class="s2">&quot;betas&quot;</span><span class="p">:</span> <span class="n">merged_betas</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="n">merged_joints_cam</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">merged</span><span class="p">[</span><span class="n">ht</span><span class="p">][</span><span class="s2">&quot;joints_cam&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">merged_joints_cam</span>
+
+        <span class="k">return</span> <span class="n">merged</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># main entry</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+<div class="viewcode-block" id="VideoClipReassemblyMapper.process_single">
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.VideoClipReassemblyMapper.process_single">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">Fields</span><span class="o">.</span><span class="n">meta</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sample</span>
+
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">meta</span><span class="p">]</span>
+        <span class="n">hand_action_list</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hand_action_field</span><span class="p">)</span>
+
+        <span class="c1"># --- detect actual clip offsets from frame content ---</span>
+        <span class="n">per_clip_frames</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_field</span><span class="p">)</span>
+        <span class="n">has_multi_clips</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">per_clip_frames</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">per_clip_frames</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">per_clip_frames</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">per_clip_frames</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_multi_clips</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sample</span>
+
+        <span class="n">n_clips</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">per_clip_frames</span><span class="p">)</span>
+        <span class="n">clip_lengths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">cf</span><span class="p">)</span> <span class="k">for</span> <span class="n">cf</span> <span class="ow">in</span> <span class="n">per_clip_frames</span><span class="p">]</span>
+        <span class="n">nominal_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_nominal_step</span><span class="p">()</span>
+
+        <span class="n">offsets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detect_clip_offsets</span><span class="p">(</span><span class="n">per_clip_frames</span><span class="p">,</span> <span class="n">nominal_step</span><span class="p">)</span>
+        <span class="n">total_frames</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">off</span> <span class="o">+</span> <span class="n">clen</span> <span class="k">for</span> <span class="n">off</span><span class="p">,</span> <span class="n">clen</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">offsets</span><span class="p">,</span> <span class="n">clip_lengths</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Clip offsets: </span><span class="si">{</span><span class="n">offsets</span><span class="si">}</span><span class="s2">, clip_lengths: </span><span class="si">{</span><span class="n">clip_lengths</span><span class="si">}</span><span class="s2">, &quot;</span> <span class="sa">f</span><span class="s2">&quot;total_frames: </span><span class="si">{</span><span class="n">total_frames</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># --- merge video_frames ---</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">merged_frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_video_frames</span><span class="p">(</span>
+                <span class="n">per_clip_frames</span><span class="p">,</span>
+                <span class="n">offsets</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_field</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">merged_frames</span><span class="p">]</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Merged </span><span class="si">{</span><span class="n">n_clips</span><span class="si">}</span><span class="s2"> clip frame lists into &quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">merged_frames</span><span class="p">)</span><span class="si">}</span><span class="s2"> global frames&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;video_frames reassembly failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># --- merge moge ---</span>
+        <span class="n">moge_list</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">moge_field</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">moge_list</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">moge_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">moge_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">merged_moge</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_moge</span><span class="p">(</span><span class="n">moge_list</span><span class="p">,</span> <span class="n">offsets</span><span class="p">)</span>
+                <span class="n">meta</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">moge_field</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">merged_moge</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MoGe reassembly failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># --- compute world-frame alignment transforms ---</span>
+        <span class="n">cam_pose_list</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">camera_pose_field</span><span class="p">)</span>
+        <span class="n">align_transforms</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">cam_pose_list</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">cam_pose_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">align_transforms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_alignment_transforms</span><span class="p">(</span>
+                    <span class="n">cam_pose_list</span><span class="p">,</span>
+                    <span class="n">offsets</span><span class="p">,</span>
+                    <span class="n">clip_lengths</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Alignment transform computation failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># --- align hand actions to clip 0&#39;s world frame, then merge ---</span>
+        <span class="k">if</span> <span class="n">hand_action_list</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">hand_action_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">align_transforms</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">ci</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">hand_action_list</span><span class="p">)):</span>
+                    <span class="n">T</span> <span class="o">=</span> <span class="n">align_transforms</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">hand_action_list</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)):</span>
+                        <span class="k">for</span> <span class="n">ht</span> <span class="ow">in</span> <span class="n">hand_action_list</span><span class="p">[</span><span class="n">ci</span><span class="p">]:</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">hand_action_list</span><span class="p">[</span><span class="n">ci</span><span class="p">][</span><span class="n">ht</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_transform_to_hand_data</span><span class="p">(</span>
+                                    <span class="n">hand_action_list</span><span class="p">[</span><span class="n">ci</span><span class="p">][</span><span class="n">ht</span><span class="p">],</span>
+                                    <span class="n">T</span><span class="p">,</span>
+                                <span class="p">)</span>
+                            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                                    <span class="sa">f</span><span class="s2">&quot;Alignment failed clip </span><span class="si">{</span><span class="n">ci</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ht</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                                <span class="p">)</span>
+
+        <span class="c1"># --- merge hand actions ---</span>
+        <span class="k">if</span> <span class="n">hand_action_list</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">hand_action_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">hand_types</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">clip_result</span> <span class="ow">in</span> <span class="n">hand_action_list</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">clip_result</span><span class="p">:</span>
+                    <span class="n">hand_types</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">clip_result</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+            <span class="n">merged_result</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">ht</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">hand_types</span><span class="p">):</span>
+                <span class="n">per_clip</span> <span class="o">=</span> <span class="p">[(</span><span class="n">cr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ht</span><span class="p">)</span> <span class="k">if</span> <span class="n">cr</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">hand_action_list</span><span class="p">]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">merged_result</span><span class="p">[</span><span class="n">ht</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_hand_across_clips</span><span class="p">(</span>
+                        <span class="n">per_clip</span><span class="p">,</span>
+                        <span class="n">ht</span><span class="p">,</span>
+                        <span class="n">n_clips</span><span class="p">,</span>
+                        <span class="n">offsets</span><span class="p">,</span>
+                        <span class="n">clip_lengths</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Hand &#39;</span><span class="si">{</span><span class="n">ht</span><span class="si">}</span><span class="s2">&#39; reassembly failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. &quot;</span> <span class="sa">f</span><span class="s2">&quot;Falling back to first clip.&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">first_valid</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+                        <span class="p">(</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">per_clip</span> <span class="k">if</span> <span class="n">d</span> <span class="ow">and</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;states&quot;</span><span class="p">)),</span>
+                        <span class="kc">None</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">merged_result</span><span class="p">[</span><span class="n">ht</span><span class="p">]</span> <span class="o">=</span> <span class="n">first_valid</span> <span class="k">if</span> <span class="n">first_valid</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_empty_hand_result</span><span class="p">(</span><span class="n">ht</span><span class="p">)</span>
+
+            <span class="n">meta</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hand_action_field</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">merged_result</span><span class="p">]</span>
+
+        <span class="c1"># --- align cam_c2w to clip 0&#39;s world frame, then merge ---</span>
+        <span class="n">cam_pose_list</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">camera_pose_field</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cam_pose_list</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">cam_pose_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Apply alignment transforms to each clip&#39;s c2w before merging</span>
+            <span class="k">if</span> <span class="n">align_transforms</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">ci</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cam_pose_list</span><span class="p">)):</span>
+                    <span class="n">cp</span> <span class="o">=</span> <span class="n">cam_pose_list</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">cp</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                        <span class="k">continue</span>
+                    <span class="n">raw</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">cam_c2w</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">raw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">T</span> <span class="o">=</span> <span class="n">align_transforms</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)):</span>
+                        <span class="k">continue</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">c2w_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                            <span class="n">load_numpy</span><span class="p">(</span><span class="n">raw</span><span class="p">),</span>
+                            <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="n">aligned</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_transform_to_c2w</span><span class="p">(</span><span class="n">c2w_arr</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+                        <span class="n">cam_pose_list</span><span class="p">[</span><span class="n">ci</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">cp</span><span class="p">)</span>
+                        <span class="n">cam_pose_list</span><span class="p">[</span><span class="n">ci</span><span class="p">][</span><span class="n">CameraCalibrationKeys</span><span class="o">.</span><span class="n">cam_c2w</span><span class="p">]</span> <span class="o">=</span> <span class="n">aligned</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;cam_c2w alignment failed clip </span><span class="si">{</span><span class="n">ci</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">merged_cam</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_cam_c2w</span><span class="p">(</span>
+                    <span class="n">cam_pose_list</span><span class="p">,</span>
+                    <span class="n">offsets</span><span class="p">,</span>
+                    <span class="n">clip_lengths</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">meta</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">camera_pose_field</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">merged_cam</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cam_c2w reassembly failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># --- merge hawor ---</span>
+        <span class="n">hawor_list</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hand_reconstruction_field</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">hawor_list</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">hawor_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">merged_hawor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_hawor</span><span class="p">(</span><span class="n">hawor_list</span><span class="p">,</span> <span class="n">offsets</span><span class="p">)</span>
+                <span class="n">meta</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hand_reconstruction_field</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">merged_hawor</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;HaWoR reassembly failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># --- merge clips → original video ---</span>
+        <span class="n">clips</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clip_field</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">clips</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">clips</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">clips</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">videos</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">videos</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">videos</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">videos</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">clip_field</span><span class="p">]</span> <span class="o">=</span> <span class="n">videos</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sample</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">clip_field</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">clips</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="k">return</span> <span class="n">sample</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Data-Juicer Team.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
+    <br/>
+  </p>
+</div>
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  使用 <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1构建.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
