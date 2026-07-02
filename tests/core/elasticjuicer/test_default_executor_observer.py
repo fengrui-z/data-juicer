@@ -3,6 +3,7 @@ from types import SimpleNamespace
 from data_juicer.core.executor.default_executor import (
     _create_elastic_juicer_observer,
 )
+from data_juicer.core.elasticjuicer.mode import ElasticJuicerMode
 
 
 def test_observer_factory_is_disabled_by_default(tmp_path):
@@ -33,3 +34,19 @@ def test_observer_factory_honors_explicit_profile_dir(tmp_path):
     observer = _create_elastic_juicer_observer(cfg, str(tmp_path / "work"))
 
     assert observer.output_path == profile_dir / "observations.jsonl"
+
+
+def test_legacy_adaptive_mode_enables_observer(tmp_path):
+    cfg = SimpleNamespace(
+        elastic_juicer_mode="off",
+        elastic_juicer_profile_dir=None,
+        adaptive_batch_size=True,
+    )
+
+    observer = _create_elastic_juicer_observer(
+        cfg,
+        str(tmp_path),
+        ElasticJuicerMode.APPLY,
+    )
+
+    assert observer is not None

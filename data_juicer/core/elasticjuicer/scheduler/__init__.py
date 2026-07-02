@@ -8,10 +8,12 @@ Provides:
 
 from .micro_scheduler import MicroScheduler, PIDController, BatchSizeController
 from .scheduler_config import SchedulerConfig
+from .static_recommender import StaticBatchRecommender
 
 __all__ = [
     "MicroScheduler",
     "PIDController",
     "BatchSizeController",
     "SchedulerConfig",
+    "StaticBatchRecommender",
 ]

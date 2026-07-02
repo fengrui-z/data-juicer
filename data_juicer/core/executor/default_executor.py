@@ -26,18 +26,63 @@ from data_juicer.utils.ckpt_utils import CheckpointManager
 from data_juicer.utils.sample import random_sample
 
 
-def _create_elastic_juicer_observer(cfg, work_dir):
-    """Build the optional observe-only hook without initializing an executor."""
+def _elastic_juicer_profile_dir(cfg, work_dir):
+    profile_dir = getattr(cfg, "elastic_juicer_profile_dir", None)
+    return profile_dir or os.path.join(work_dir, "elastic_juicer")
 
-    if getattr(cfg, "elastic_juicer_mode", "off") != "observe":
+
+def _resolve_elastic_juicer_mode(cfg):
+    from data_juicer.core.elasticjuicer.mode import resolve_mode
+
+    return resolve_mode(
+        getattr(cfg, "elastic_juicer_mode", "off"),
+        getattr(cfg, "adaptive_batch_size", False),
+    )
+
+
+def _create_elastic_juicer_observer(cfg, work_dir, mode=None):
+    """Build the optional profiling hook without initializing an executor."""
+
+    from data_juicer.core.elasticjuicer.mode import ElasticJuicerMode
+
+    mode = mode or _resolve_elastic_juicer_mode(cfg)
+    if mode is ElasticJuicerMode.OFF:
         return None
 
     from data_juicer.core.elasticjuicer.profiler import ExecutionObserver
 
-    profile_dir = getattr(cfg, "elastic_juicer_profile_dir", None)
-    if not profile_dir:
-        profile_dir = os.path.join(work_dir, "elastic_juicer")
-    return ExecutionObserver(profile_dir)
+    return ExecutionObserver(_elastic_juicer_profile_dir(cfg, work_dir))
+
+
+def _create_static_batch_recommender(cfg, work_dir, mode=None):
+    from data_juicer.core.elasticjuicer.mode import ElasticJuicerMode
+
+    mode = mode or _resolve_elastic_juicer_mode(cfg)
+    if mode not in (ElasticJuicerMode.RECOMMEND, ElasticJuicerMode.APPLY):
+        return None
+
+    from data_juicer.core.elasticjuicer.scheduler import StaticBatchRecommender
+
+    return StaticBatchRecommender(_elastic_juicer_profile_dir(cfg, work_dir))
+
+
+def _run_static_batch_recommendation(
+    dataset,
+    operators,
+    adapter,
+    recommender,
+    mode,
+):
+    if recommender is None:
+        return []
+
+    from data_juicer.core.elasticjuicer.mode import ElasticJuicerMode
+
+    candidate_batch_sizes = adapter.adapt_workloads(dataset, operators)
+    recommendations = recommender.recommend(operators, candidate_batch_sizes)
+    if mode is ElasticJuicerMode.APPLY:
+        recommender.apply(operators, recommendations)
+    return recommendations
 
 
 class DefaultExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin):
@@ -72,9 +117,16 @@ class DefaultExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin):
 
         self.np = self.cfg.get("np", None) or 1
 
+        self.elastic_juicer_mode = _resolve_elastic_juicer_mode(self.cfg)
         self.elastic_juicer_observer = _create_elastic_juicer_observer(
             self.cfg,
             self.work_dir,
+            self.elastic_juicer_mode,
+        )
+        self.elastic_juicer_recommender = _create_static_batch_recommender(
+            self.cfg,
+            self.work_dir,
+            self.elastic_juicer_mode,
         )
 
         # only enable it when using cache
@@ -215,16 +267,17 @@ class DefaultExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin):
             logger.info(f"Start OP fusion and reordering with strategy " f"[{self.cfg.fusion_strategy}]...")
             ops = fuse_operators(ops, probe_res)
 
-        # adaptive batch size
-        if self.cfg.adaptive_batch_size:
-            # calculate the adaptive batch size
-            bs_per_op = self.adapter.adapt_workloads(dataset, ops)
-            assert len(bs_per_op) == len(ops)
-            # update the adaptive batch size
-            logger.info(f"Adapt batch sizes for each OP to {bs_per_op}")
-            for i, op in enumerate(ops):
-                if op.is_batched_op():
-                    op.batch_size = bs_per_op[i]
+        recommendations = _run_static_batch_recommendation(
+            dataset,
+            ops,
+            self.adapter,
+            self.elastic_juicer_recommender,
+            self.elastic_juicer_mode,
+        )
+        if recommendations:
+            logger.info(
+                "ElasticJuicer static batch plan: " f"{[item.recommended_batch_size for item in recommendations]}"
+            )
 
         # 3. data process with DAG monitoring
         # - If tracer is open, trace each op after it's processed

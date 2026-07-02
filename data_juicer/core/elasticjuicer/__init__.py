@@ -8,6 +8,7 @@ multimodal data processing pipelines.
 __version__ = "0.1.0"
 
 from .contracts import (
+    BatchRecommendation,
     BatchDecision,
     BatchObservation,
     ClusterState,
@@ -18,7 +19,10 @@ from .contracts import (
     TopologyMode,
 )
 
+from .mode import ElasticJuicerMode, resolve_mode
+
 __all__ = [
+    "BatchRecommendation",
     "BatchDecision",
     "BatchObservation",
     "ClusterState",
@@ -27,4 +31,6 @@ __all__ = [
     "StageExecutionObservation",
     "StageMetrics",
     "TopologyMode",
+    "ElasticJuicerMode",
+    "resolve_mode",
 ]

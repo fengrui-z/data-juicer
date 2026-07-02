@@ -610,10 +610,11 @@ def init_configs(args: Optional[List[str]] = None, which_entry: object = None, l
                 "--elastic_juicer_mode",
                 type=str,
                 default="off",
-                choices=["off", "observe"],
+                choices=["off", "observe", "recommend", "apply"],
                 help=(
-                    "ElasticJuicer execution mode. 'off' preserves existing behavior; "
-                    "'observe' records per-operator execution profiles without changing scheduling."
+                    "ElasticJuicer execution mode: 'off' preserves existing behavior; "
+                    "'observe' records profiles; 'recommend' additionally writes a static "
+                    "batch plan; 'apply' applies that plan before execution."
                 ),
             )
             parser.add_argument(

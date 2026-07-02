@@ -152,6 +152,30 @@ class StageExecutionObservation:
         return asdict(self)
 
 
+@dataclass(frozen=True)
+class BatchRecommendation:
+    """Static per-stage batch-size recommendation."""
+
+    stage_name: str
+    current_batch_size: int
+    recommended_batch_size: int
+    eligible: bool
+    reason: str
+
+    def __post_init__(self):
+        if not self.stage_name:
+            raise ValueError("stage_name must not be empty")
+        if self.current_batch_size < 1:
+            raise ValueError("current_batch_size must be at least 1")
+        if self.recommended_batch_size < 1:
+            raise ValueError("recommended_batch_size must be at least 1")
+        if not self.reason:
+            raise ValueError("reason must not be empty")
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+
 @dataclass
 class StageMetrics:
     """Windowed performance metrics for one executable operator stage."""
