@@ -168,46 +168,38 @@ class Captain:
             Processed results or None if queue empty
         """
         start_time = time.time()
-        
-        # Get current batch size recommendation
+
         if self.micro_scheduler:
-            current_batch_size = self.micro_scheduler.controller.current_batch_size
+            current_batch_size = self.micro_scheduler.get_batch_size()
         else:
             current_batch_size = self.config.initial_batch_size
-        
-        # Dequeue samples if not provided
+
         if sample_batch is None:
             if len(self.queue) == 0:
                 return None
-            
+
             actual_batch_size = min(current_batch_size, len(self.queue))
             sample_batch = [self.queue.popleft() for _ in range(actual_batch_size)]
         else:
             actual_batch_size = len(sample_batch)
-        
-        # Extract features for prediction (if enabled)
+
         predicted_memory_mb = None
         if self.predictor and self.feature_extractor and len(sample_batch) > 0:
             features = self.feature_extractor.extract_from_sample(sample_batch[0])
-            features.batch_size = actual_batch_size  # Set batch size
+            features.batch_size = actual_batch_size
             prediction = self.predictor.predict(features)
             if prediction:
                 predicted_memory_mb = prediction.predicted_memory_mb
-        
-        # Monitor execution
+
         with self.monitor.measure_execution(
-            self.config.stage_name, 
+            self.config.stage_name,
             actual_batch_size
         ):
             try:
-                # Execute operator
                 results = operator_func(sample_batch)
-                
-                # Record success
                 self.samples_processed += actual_batch_size
-                
-            except MemoryError as e:
-                # OOM event - get approximate snapshot
+
+            except (MemoryError, RuntimeError) as e:
                 snapshot_approx = ResourceSnapshot(
                     timestamp=time.time(),
                     batch_size=actual_batch_size,
@@ -216,6 +208,9 @@ class Captain:
                     latency_ms=0
                 )
                 self._handle_oom(actual_batch_size, snapshot_approx)
+                for s in reversed(sample_batch):
+                    self.queue.appendleft(s)
+                self.metrics.queue_depth = len(self.queue)
                 raise
         
         # Get recorded stats
@@ -304,22 +299,19 @@ class Captain:
             self.tower_callback(self.metrics)
     
     def _check_quota_compliance(self):
-        """
-        Check if current resource usage is within Tower's quota
-        
-        If exceeding quota, apply throttling
-        """
         if not self.quota:
             return
-        
-        # Check memory quota
-        current_memory_mb = psutil.virtual_memory().used / (1024 * 1024)
+
+        op_stats = self.monitor.get_stats(self.config.stage_name)
+        if not op_stats or not op_stats.snapshots:
+            return
+
+        current_memory_mb = op_stats.snapshots[-1].memory_mb
         if current_memory_mb > self.quota.memory_quota_mb:
-            # Exceeding memory quota, reduce batch size
             if self.micro_scheduler:
                 reduction_ratio = self.quota.memory_quota_mb / current_memory_mb
                 new_batch_size = max(
-                    1, 
+                    1,
                     int(self.micro_scheduler.controller.current_batch_size * reduction_ratio)
                 )
                 self.micro_scheduler.controller.current_batch_size = new_batch_size

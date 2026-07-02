@@ -282,20 +282,34 @@ class MemoryPredictor:
         return stats
     
     def export_model(self) -> dict:
-        """Export model parameters for serialization"""
         return {
             'op_name': self.op_name,
             'weights': self.weights.tolist() if self.weights is not None else None,
             'intercept': self.intercept,
             'window_size': self.window_size,
             'total_updates': self.total_updates,
+            'feature_history': [v.tolist() for v in self.feature_history],
+            'memory_history': list(self.memory_history),
+            'error_history': list(self.error_history),
             'stats': self.get_model_stats(),
         }
-    
+
     def import_model(self, model_data: dict):
-        """Import model parameters"""
         self.op_name = model_data['op_name']
         if model_data['weights'] is not None:
             self.weights = np.array(model_data['weights'])
         self.intercept = model_data['intercept']
         self.total_updates = model_data.get('total_updates', 0)
+
+        self.feature_history = deque(
+            [np.array(v) for v in model_data.get('feature_history', [])],
+            maxlen=self.window_size,
+        )
+        self.memory_history = deque(
+            model_data.get('memory_history', []),
+            maxlen=self.window_size,
+        )
+        self.error_history = deque(
+            model_data.get('error_history', []),
+            maxlen=self.window_size,
+        )

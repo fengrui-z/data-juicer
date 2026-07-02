@@ -17,57 +17,10 @@ References:
 """
 
 import time
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
-from enum import Enum
-import numpy as np
 from collections import deque
+from typing import Dict, List, Optional
 
-
-class TopologyMode(Enum):
-    """Topology execution mode based on transfer cost and resource availability"""
-    CO_LOCATION = "co_location"  # Operators on same node (high transfer cost)
-    DISTRIBUTED = "distributed"   # Operators on different nodes (high parallelism)
-    ADAPTIVE = "adaptive"         # Let Tower decide based on current state
-
-
-@dataclass
-class StageMetrics:
-    """Performance metrics for an operator stage"""
-    stage_name: str
-    queue_depth: int = 0              # Number of pending samples
-    current_parallelism: int = 1      # Current number of actors
-    throughput: float = 0.0           # Samples/sec
-    avg_latency_ms: float = 0.0       # Average processing latency
-    cpu_utilization: float = 0.0      # % CPU used
-    memory_utilization: float = 0.0   # % Memory used
-    gpu_utilization: float = 0.0      # % GPU used (if applicable)
-    oom_count: int = 0                # Number of OOM events
-    last_update: float = field(default_factory=time.time)
-
-
-@dataclass
-class ResourceQuota:
-    """Resource allocation quota for a Captain"""
-    captain_id: str
-    target_parallelism: int           # Target number of actors
-    cpu_quota: float                  # CPU cores allocated
-    memory_quota_mb: float            # Memory budget in MB
-    gpu_quota: float = 0.0            # GPU cores allocated (0-1)
-    target_throughput: float = 0.0    # Target samples/sec (SLO)
-    topology_mode: TopologyMode = TopologyMode.ADAPTIVE
-
-
-@dataclass
-class ClusterState:
-    """Global cluster resource state"""
-    total_cpu_cores: int
-    total_memory_mb: float
-    total_gpu_count: int
-    available_cpu_cores: float
-    available_memory_mb: float
-    available_gpus: float
-    timestamp: float = field(default_factory=time.time)
+from ..contracts import ClusterState, ResourceQuota, StageMetrics, TopologyMode
 
 
 class Tower:
@@ -110,9 +63,12 @@ class Tower:
         
         # Track all stages and their metrics
         self.stages: Dict[str, StageMetrics] = {}
-        
+
         # Track resource quotas allocated to each Captain
         self.quotas: Dict[str, ResourceQuota] = {}
+
+        # Map captain_id -> stage_name for reliable lookup
+        self._captain_to_stage: Dict[str, str] = {}
         
         # Metrics history for trend analysis
         self.metrics_history: Dict[str, deque] = {}
@@ -126,31 +82,24 @@ class Tower:
         self.total_requests = 0
     
     def register_stage(self, stage_name: str, initial_parallelism: int = 1) -> str:
-        """
-        Register a new operator stage with Tower
-        
-        Args:
-            stage_name: Name of the operator stage
-            initial_parallelism: Initial number of actors
-            
-        Returns:
-            captain_id: Unique ID for the Captain managing this stage
-        """
-        captain_id = f"captain_{stage_name}_{int(time.time())}"
-        
-        # Initialize stage metrics
+        if stage_name in self.stages:
+            existing_id = self._captain_id_for_stage(stage_name)
+            if existing_id is not None:
+                return existing_id
+
+        captain_id = f"captain_{stage_name}_{id(self.stages) & 0xFFFF:04x}_{len(self.stages)}"
+
         self.stages[stage_name] = StageMetrics(
             stage_name=stage_name,
             current_parallelism=initial_parallelism
         )
-        
-        # Initialize metrics history
+
         self.metrics_history[stage_name] = deque(maxlen=self.history_window)
-        
-        # Allocate initial quota
-        initial_quota = self._compute_initial_quota(stage_name, initial_parallelism)
+
+        initial_quota = self._compute_initial_quota(captain_id, initial_parallelism)
         self.quotas[captain_id] = initial_quota
-        
+        self._captain_to_stage[captain_id] = stage_name
+
         return captain_id
     
     def update_stage_metrics(self, stage_name: str, metrics: StageMetrics):
@@ -183,57 +132,46 @@ class Tower:
             self.sla_violations += 1
     
     def allocate_resources(self) -> Dict[str, ResourceQuota]:
-        """
-        Compute and allocate resource quotas to all Captains
-        
-        This is the core global decision-making function. It:
-        1. Analyzes global bottlenecks (queue depths, latencies)
-        2. Computes target parallelism for each stage
-        3. Allocates CPU/GPU/memory budgets
-        4. Returns updated quotas for Captains to enforce
-        
-        Returns:
-            Updated resource quotas for all Captains
-        """
         current_time = time.time()
-        
-        # Rate limit allocation updates (avoid thrashing)
+
         if current_time - self.last_allocation_time < self.update_interval:
             return self.quotas
-        
+
         self.last_allocation_time = current_time
-        
-        # Identify bottleneck stages
+
         bottlenecks = self._identify_bottlenecks()
-        
-        # Compute resource allocation strategy
-        for captain_id, quota in self.quotas.items():
+
+        stage_parallelism: Dict[str, int] = {}
+        for captain_id in self.quotas:
             stage_name = self._get_stage_from_captain(captain_id)
             if stage_name not in self.stages:
                 continue
-            
-            metrics = self.stages[stage_name]
-            
-            # Decide target parallelism based on queue depth and throughput
-            target_parallelism = self._compute_target_parallelism(
-                metrics, 
-                is_bottleneck=(stage_name in bottlenecks)
+            stage_parallelism[stage_name] = self._compute_target_parallelism(
+                self.stages[stage_name],
+                is_bottleneck=(stage_name in bottlenecks),
             )
-            
-            # Allocate resources proportionally
-            resource_allocation = self._allocate_stage_resources(
-                stage_name, 
-                target_parallelism
-            )
-            
-            # Update quota
+
+        total_parallelism = max(1, sum(stage_parallelism.values()))
+
+        for captain_id, quota in self.quotas.items():
+            stage_name = self._get_stage_from_captain(captain_id)
+            if stage_name not in stage_parallelism:
+                continue
+
+            target_parallelism = stage_parallelism[stage_name]
+            weight = target_parallelism / total_parallelism
+
             quota.target_parallelism = target_parallelism
-            quota.cpu_quota = resource_allocation['cpu']
-            quota.memory_quota_mb = resource_allocation['memory_mb']
-            quota.gpu_quota = resource_allocation['gpu']
-            quota.target_throughput = self._compute_target_throughput(metrics)
-            quota.topology_mode = self._decide_topology(stage_name, metrics)
-        
+            quota.cpu_quota = self.cluster.available_cpu_cores * weight
+            quota.memory_quota_mb = self.cluster.available_memory_mb * weight
+            quota.gpu_quota = self.cluster.available_gpus * weight
+            quota.target_throughput = self._compute_target_throughput(
+                self.stages[stage_name]
+            )
+            quota.topology_mode = self._decide_topology(
+                stage_name, self.stages[stage_name]
+            )
+
         return self.quotas
     
     def _identify_bottlenecks(self) -> List[str]:
@@ -319,40 +257,6 @@ class Tower:
         
         return max(1, target)  # At least 1 actor
     
-    def _allocate_stage_resources(
-        self, 
-        stage_name: str, 
-        target_parallelism: int
-    ) -> Dict[str, float]:
-        """
-        Allocate CPU/GPU/memory to a stage based on target parallelism
-        
-        Args:
-            stage_name: Name of the stage
-            target_parallelism: Target number of actors
-            
-        Returns:
-            Resource allocation dict with 'cpu', 'memory_mb', 'gpu'
-        """
-        # Simple proportional allocation (can be enhanced with OCS annotations)
-        total_stages = len(self.stages)
-        
-        if total_stages == 0:
-            cpu_share = self.cluster.available_cpu_cores
-            memory_share = self.cluster.available_memory_mb
-            gpu_share = self.cluster.available_gpus
-        else:
-            # Equal share for now (TODO: weight by OCS cost)
-            cpu_share = self.cluster.available_cpu_cores / total_stages
-            memory_share = self.cluster.available_memory_mb / total_stages
-            gpu_share = self.cluster.available_gpus / total_stages
-        
-        return {
-            'cpu': cpu_share * target_parallelism,
-            'memory_mb': memory_share * target_parallelism,
-            'gpu': gpu_share * target_parallelism
-        }
-    
     def _compute_target_throughput(self, metrics: StageMetrics) -> float:
         """
         Compute target throughput to meet SLA
@@ -427,33 +331,31 @@ class Tower:
         return max(1, min(cpu_limit, memory_limit))
     
     def _get_stage_from_captain(self, captain_id: str) -> str:
-        """Extract stage name from captain ID"""
-        # captain_video_decoder_1234567890 -> video_decoder
-        parts = captain_id.split('_')
-        if len(parts) >= 3:
-            return '_'.join(parts[1:-1])
-        return captain_id
+        return self._captain_to_stage.get(captain_id, captain_id)
     
     def _compute_initial_quota(
-        self, 
-        stage_name: str, 
+        self,
+        captain_id: str,
         parallelism: int
     ) -> ResourceQuota:
-        """Compute initial resource quota for a new stage"""
-        captain_id = f"captain_{stage_name}_{int(time.time())}"
-        
-        # Equal share allocation initially
         total_stages = max(1, len(self.stages))
-        
+
         return ResourceQuota(
             captain_id=captain_id,
             target_parallelism=parallelism,
             cpu_quota=self.cluster.available_cpu_cores / total_stages,
             memory_quota_mb=self.cluster.available_memory_mb / total_stages,
             gpu_quota=self.cluster.available_gpus / total_stages,
-            target_throughput=10.0,  # Default
+            target_throughput=10.0,
             topology_mode=TopologyMode.ADAPTIVE
         )
+
+    def _captain_id_for_stage(self, stage_name: str) -> Optional[str]:
+        prefix = f"captain_{stage_name}_"
+        for captain_id in self.quotas:
+            if captain_id.startswith(prefix):
+                return captain_id
+        return None
     
     def get_sla_compliance_rate(self) -> float:
         """

@@ -15,7 +15,6 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, asdict
 import numpy as np
-from scipy.optimize import curve_fit
 
 from .resource_monitor import OpExecutionStats, ResourceSnapshot
 from .ocs_annotator import OpCostSignature
@@ -92,32 +91,37 @@ class ProfilingStore:
         self._load_all()
     
     def _load_all(self):
-        """Load all stored profiles"""
-        # Load execution stats
         stats_file = self.storage_dir / "execution_stats.pkl"
         if stats_file.exists():
-            with open(stats_file, 'rb') as f:
-                self.execution_stats = pickle.load(f)
-        
-        # Load OCS signatures
+            try:
+                with open(stats_file, 'rb') as f:
+                    self.execution_stats = pickle.load(f)
+            except Exception:
+                self.execution_stats = {}
+
         ocs_file = self.storage_dir / "ocs_signatures.json"
         if ocs_file.exists():
-            with open(ocs_file, 'r') as f:
-                data = json.load(f)
-                self.ocs_signatures = {
-                    name: OpCostSignature.from_dict(sig)
-                    for name, sig in data.items()
-                }
-        
-        # Load throughput curves
+            try:
+                with open(ocs_file, 'r') as f:
+                    data = json.load(f)
+                    self.ocs_signatures = {
+                        name: OpCostSignature.from_dict(sig)
+                        for name, sig in data.items()
+                    }
+            except Exception:
+                self.ocs_signatures = {}
+
         curves_file = self.storage_dir / "throughput_curves.json"
         if curves_file.exists():
-            with open(curves_file, 'r') as f:
-                data = json.load(f)
-                self.throughput_curves = {
-                    name: ResourceThroughputCurve.from_dict(curve)
-                    for name, curve in data.items()
-                }
+            try:
+                with open(curves_file, 'r') as f:
+                    data = json.load(f)
+                    self.throughput_curves = {
+                        name: ResourceThroughputCurve.from_dict(curve)
+                        for name, curve in data.items()
+                    }
+            except Exception:
+                self.throughput_curves = {}
     
     def save_all(self):
         """Persist all profiles to disk"""

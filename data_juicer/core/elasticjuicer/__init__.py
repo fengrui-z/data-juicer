@@ -7,5 +7,22 @@ multimodal data processing pipelines.
 
 __version__ = "0.1.0"
 
-# Lazy imports to avoid circular dependencies
-__all__ = ["profiler"]
+from .contracts import (
+    BatchDecision,
+    BatchObservation,
+    ClusterState,
+    MemoryState,
+    ResourceQuota,
+    StageMetrics,
+    TopologyMode,
+)
+
+__all__ = [
+    "BatchDecision",
+    "BatchObservation",
+    "ClusterState",
+    "MemoryState",
+    "ResourceQuota",
+    "StageMetrics",
+    "TopologyMode",
+]

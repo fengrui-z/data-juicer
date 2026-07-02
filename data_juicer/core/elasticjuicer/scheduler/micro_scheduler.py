@@ -17,38 +17,17 @@ Key Features:
 
 import time
 import psutil
-from typing import Optional, Dict, Any, Callable
-from dataclasses import dataclass
+from typing import Optional, Dict, Any
 from collections import deque
 import numpy as np
+
+from ..contracts import Clock, MemoryState, MemoryStateProvider
 
 try:
     import GPUtil
     GPU_AVAILABLE = True
 except ImportError:
     GPU_AVAILABLE = False
-
-
-@dataclass
-class MemoryState:
-    """Current memory state"""
-    timestamp: float
-    # CPU memory
-    total_memory_mb: float
-    used_memory_mb: float
-    available_memory_mb: float
-    memory_percent: float
-    # GPU memory (if available)
-    gpu_total_mb: Optional[float] = None
-    gpu_used_mb: Optional[float] = None
-    gpu_available_mb: Optional[float] = None
-    gpu_percent: Optional[float] = None
-    
-    def get_available_memory(self, use_gpu: bool = False) -> float:
-        """Get available memory in MB"""
-        if use_gpu and self.gpu_available_mb is not None:
-            return self.gpu_available_mb
-        return self.available_memory_mb
 
 
 class PIDController:
@@ -72,6 +51,7 @@ class PIDController:
         kd: float = 0.05,
         setpoint: float = 1000.0,
         output_limits: tuple = (1, 1000),
+        clock: Clock = time.time,
     ):
         """
         Initialize PID controller.
@@ -88,6 +68,7 @@ class PIDController:
         self.kd = kd
         self.setpoint = setpoint
         self.output_limits = output_limits
+        self._clock = clock
         
         # State
         self.last_error = 0.0
@@ -109,7 +90,7 @@ class PIDController:
         error = self.setpoint - current_value
         
         # Calculate time delta
-        current_time = time.time()
+        current_time = self._clock()
         if self.last_time is None or dt is not None:
             dt = dt or 0.1  # Default dt
         else:
@@ -175,6 +156,8 @@ class BatchSizeController:
         use_gpu: bool = False,
         enable_prediction: bool = True,
         memory_predictor = None,
+        memory_state_provider: Optional[MemoryStateProvider] = None,
+        clock: Clock = time.time,
     ):
         """
         Initialize batch size controller.
@@ -197,6 +180,8 @@ class BatchSizeController:
         self.use_gpu = use_gpu
         self.enable_prediction = enable_prediction
         self.memory_predictor = memory_predictor
+        self._memory_state_provider = memory_state_provider
+        self._clock = clock
         
         # PID controller for smooth adjustments
         # Setpoint will be dynamically updated based on available memory
@@ -206,6 +191,7 @@ class BatchSizeController:
             kd=0.1,      # Small derivative gain
             setpoint=safety_buffer_mb,
             output_limits=(min_batch_size, max_batch_size),
+            clock=clock,
         )
         
         # History
@@ -220,6 +206,9 @@ class BatchSizeController:
         
     def get_memory_state(self) -> MemoryState:
         """Get current memory state"""
+        if self._memory_state_provider is not None:
+            return self._memory_state_provider()
+
         # CPU memory
         mem = psutil.virtual_memory()
         total_mb = mem.total / (1024 * 1024)
@@ -246,7 +235,7 @@ class BatchSizeController:
                 pass
         
         return MemoryState(
-            timestamp=time.time(),
+            timestamp=self._clock(),
             total_memory_mb=total_mb,
             used_memory_mb=used_mb,
             available_memory_mb=available_mb,
@@ -377,7 +366,7 @@ class BatchSizeController:
         
         # Record history
         self.batch_size_history.append({
-            'timestamp': time.time(),
+            'timestamp': self._clock(),
             'old_batch': old_batch_size,
             'new_batch': next_batch_size,
             'available_mb': memory_state.get_available_memory(self.use_gpu),
@@ -391,7 +380,7 @@ class BatchSizeController:
     def report_oom(self, batch_size: int, memory_mb: float):
         """Report an OOM event to adjust strategy"""
         self.oom_events.append({
-            'timestamp': time.time(),
+            'timestamp': self._clock(),
             'batch_size': batch_size,
             'memory_mb': memory_mb,
         })
@@ -451,6 +440,8 @@ class MicroScheduler:
         safety_buffer_mb: float = 1000.0,
         use_gpu: bool = False,
         enable_auto_adjust: bool = True,
+        memory_state_provider: Optional[MemoryStateProvider] = None,
+        clock: Clock = time.time,
     ):
         """
         Initialize micro-scheduler.
@@ -478,6 +469,8 @@ class MicroScheduler:
             use_gpu=use_gpu,
             enable_prediction=memory_predictor is not None,
             memory_predictor=memory_predictor,
+            memory_state_provider=memory_state_provider,
+            clock=clock,
         )
         
         # State
@@ -515,16 +508,10 @@ class MicroScheduler:
         return new_batch_size
     
     def update(self, actual_memory_used: float, sample_features=None):
-        """
-        Update scheduler with feedback from actual execution.
-        
-        Args:
-            actual_memory_used: Actual memory used in MB
-            sample_features: Sample features (for predictor update)
-        """
-        # Update memory predictor if available
         if self.memory_predictor and sample_features:
             self.memory_predictor.observe(sample_features, actual_memory_used)
+
+        self.controller.update_batch_size()
     
     def report_oom(self, batch_size: int, memory_mb: float):
         """Report OOM event"""
