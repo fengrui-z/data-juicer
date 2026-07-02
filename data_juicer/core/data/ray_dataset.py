@@ -106,6 +106,46 @@ class RayDataset(DJDataset):
         else:
             self._auto_proc = auto_op_parallelism
 
+        from data_juicer.core.elasticjuicer.mode import resolve_mode
+
+        self._elastic_juicer_mode = resolve_mode(
+            getattr(cfg, "elastic_juicer_mode", "off") if cfg else "off",
+            getattr(cfg, "adaptive_batch_size", False) if cfg else False,
+        )
+        self._elastic_juicer_min_batch_size = getattr(cfg, "elastic_juicer_min_batch_size", 1) if cfg else 1
+        self._elastic_juicer_max_batch_size = getattr(cfg, "elastic_juicer_max_batch_size", 1000) if cfg else 1000
+        self._elastic_juicer_metrics_collector = None
+
+    def _ray_adaptive_actor_spec(self, op, method_name):
+        from data_juicer.core.elasticjuicer.mode import ElasticJuicerMode
+
+        if self._elastic_juicer_mode is not ElasticJuicerMode.DYNAMIC:
+            return None
+
+        from data_juicer.core.elasticjuicer.runtime.ray_microbatch import (
+            RayAdaptiveActor,
+            build_ray_actor_kwargs,
+            create_ray_metrics_collector,
+        )
+
+        if self._elastic_juicer_metrics_collector is None:
+            self._elastic_juicer_metrics_collector = create_ray_metrics_collector()
+        kwargs = build_ray_actor_kwargs(
+            op,
+            method_name,
+            min_batch_size=self._elastic_juicer_min_batch_size,
+            max_batch_size=self._elastic_juicer_max_batch_size,
+            metrics_sink=self._elastic_juicer_metrics_collector,
+        )
+        return RayAdaptiveActor, kwargs
+
+    def get_elastic_juicer_metrics(self):
+        """Return aggregated actor metrics, or an empty mapping when disabled."""
+
+        if self._elastic_juicer_metrics_collector is None:
+            return {}
+        return ray.get(self._elastic_juicer_metrics_collector.snapshot.remote())
+
     def schema(self) -> Schema:
         """Get dataset schema.
 
@@ -237,14 +277,19 @@ class RayDataset(DJDataset):
 
                 try:
                     if op.use_ray_actor():
-                        compute = get_compute_strategy(op.__class__, concurrency=op.num_proc)
+                        actor_spec = self._ray_adaptive_actor_spec(op, "process")
+                        actor_class = actor_spec[0] if actor_spec else op.__class__
+                        constructor_args = None if actor_spec else op._init_args
+                        constructor_kwargs = actor_spec[1] if actor_spec else op._init_kwargs
+                        actor_batch_size = self._elastic_juicer_max_batch_size if actor_spec else batch_size
+                        compute = get_compute_strategy(actor_class, concurrency=op.num_proc)
                         self.data = self.data.map_batches(
-                            op.__class__,
+                            actor_class,
                             fn_args=None,
                             fn_kwargs=None,
-                            fn_constructor_args=op._init_args,
-                            fn_constructor_kwargs=op._init_kwargs,
-                            batch_size=batch_size,
+                            fn_constructor_args=constructor_args,
+                            fn_constructor_kwargs=constructor_kwargs,
+                            batch_size=actor_batch_size,
                             num_cpus=op.num_cpus,
                             num_gpus=op.num_gpus,
                             compute=compute,
@@ -280,14 +325,19 @@ class RayDataset(DJDataset):
                     )
                     cached_columns.add(Fields.stats)
                 if op.use_ray_actor():
-                    compute = get_compute_strategy(op.__class__, concurrency=op.num_proc)
+                    actor_spec = self._ray_adaptive_actor_spec(op, "compute_stats")
+                    actor_class = actor_spec[0] if actor_spec else op.__class__
+                    constructor_args = None if actor_spec else op._init_args
+                    constructor_kwargs = actor_spec[1] if actor_spec else op._init_kwargs
+                    actor_batch_size = self._elastic_juicer_max_batch_size if actor_spec else batch_size
+                    compute = get_compute_strategy(actor_class, concurrency=op.num_proc)
                     self.data = self.data.map_batches(
-                        op.__class__,
+                        actor_class,
                         fn_args=None,
                         fn_kwargs=None,
-                        fn_constructor_args=op._init_args,
-                        fn_constructor_kwargs=op._init_kwargs,
-                        batch_size=batch_size,
+                        fn_constructor_args=constructor_args,
+                        fn_constructor_kwargs=constructor_kwargs,
+                        batch_size=actor_batch_size,
                         num_cpus=op.num_cpus,
                         num_gpus=op.num_gpus,
                         compute=compute,

@@ -8,6 +8,8 @@ from ..scheduler.oom import is_oom_error
 
 
 def _batch_length(batch) -> int:
+    if hasattr(batch, "num_rows"):
+        return int(batch.num_rows)
     if isinstance(batch, Mapping):
         for value in batch.values():
             try:
@@ -19,6 +21,8 @@ def _batch_length(batch) -> int:
 
 
 def _slice_batch(batch, start: int, end: int, total: int):
+    if hasattr(batch, "num_rows") and callable(getattr(batch, "slice", None)):
+        return batch.slice(start, end - start)
     if isinstance(batch, Mapping):
         sliced = {}
         for key, value in batch.items():
@@ -36,6 +40,10 @@ def _merge_outputs(outputs: List[Any]):
         return []
 
     first = outputs[0]
+    if hasattr(first, "schema") and hasattr(first, "num_rows"):
+        import pyarrow
+
+        return pyarrow.concat_tables(outputs)
     if isinstance(first, Mapping):
         merged = {}
         for output in outputs:
