@@ -33,6 +33,16 @@ from data_juicer.utils.ckpt_utils import CheckpointStrategy, RayCheckpointManage
 from data_juicer.utils.config_utils import ConfigAccessor
 from data_juicer.utils.lazy_loader import LazyLoader
 
+
+def _resolve_elastic_juicer_mode(cfg):
+    from data_juicer.core.elasticjuicer.mode import resolve_mode
+
+    return resolve_mode(
+        getattr(cfg, "elastic_juicer_mode", "off"),
+        getattr(cfg, "adaptive_batch_size", False),
+    )
+
+
 ray = LazyLoader("ray")
 
 
@@ -212,6 +222,8 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         if self.ckpt_manager.checkpoint_enabled:
             logger.info(f"Checkpoint strategy: {self.ckpt_manager.checkpoint_strategy.value}")
             logger.info(f"Checkpoint directory: {self.ckpt_manager.ckpt_dir}")
+
+        self.elastic_juicer_mode = _resolve_elastic_juicer_mode(self.cfg)
 
         # Initialize RayExporter for final output
         logger.info("Preparing exporter...")
@@ -455,6 +467,15 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         else:
             logger.info("No convergence points found, processing with simple partitioning")
             final_dataset = self._process_with_simple_partitioning(dataset, ops)
+
+        # Log ElasticJuicer metrics if available
+        if self.elastic_juicer_mode.value != "off":
+            try:
+                elastic_metrics = final_dataset.get_elastic_juicer_metrics()
+                if elastic_metrics:
+                    logger.info(f"ElasticJuicer Ray metrics: {elastic_metrics}")
+            except Exception as e:
+                logger.warning(f"Could not collect ElasticJuicer metrics: {e}")
 
         # Export final dataset
         logger.info("Exporting final dataset...")

@@ -1,6 +1,22 @@
 from .adapter import Adapter
 from .analyzer import Analyzer
 from .data import NestedDataset
+from .elasticjuicer import (
+    AllocationPlan,
+    BatchDecision,
+    BatchObservation,
+    ClusterState,
+    ElasticJuicer,
+    ElasticJuicerMode,
+    MemoryState,
+    ResourceQuota,
+    ResourceQuotaSnapshot,
+    StageMetrics,
+    TopologyMode,
+    TowerMode,
+    detect_cluster_state,
+    resolve_mode,
+)
 from .executor import (
     DefaultExecutor,
     ExecutorBase,
@@ -26,4 +42,18 @@ __all__ = [
     "RayExporter",
     "Monitor",
     "Tracer",
+    "ElasticJuicer",
+    "ElasticJuicerMode",
+    "AllocationPlan",
+    "BatchDecision",
+    "BatchObservation",
+    "ClusterState",
+    "MemoryState",
+    "ResourceQuota",
+    "ResourceQuotaSnapshot",
+    "StageMetrics",
+    "TopologyMode",
+    "TowerMode",
+    "detect_cluster_state",
+    "resolve_mode",
 ]

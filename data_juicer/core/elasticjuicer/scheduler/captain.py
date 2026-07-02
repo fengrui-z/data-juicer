@@ -121,6 +121,9 @@ class Captain:
         """
         self.quota = quota
 
+        # Update parallelism based on Tower's allocation
+        self.metrics.current_parallelism = quota.target_parallelism
+
         # Update micro-scheduler constraints if quota changed
         if self.micro_scheduler and quota.memory_quota_mb > 0:
             # Adjust max batch size based on memory quota
@@ -129,6 +132,9 @@ class Captain:
             self.micro_scheduler.controller.max_batch_size = min(
                 self.micro_scheduler.controller.max_batch_size, estimated_max_batch
             )
+
+    def update_parallelism(self, parallelism: int):
+        self.metrics.current_parallelism = max(1, parallelism)
 
     def enqueue_samples(self, samples: List):
         """
@@ -250,7 +256,6 @@ class Captain:
             self.metrics.gpu_utilization = snapshot.gpu_utilization or 0
             self.metrics.queue_depth = len(self.queue)
             self.metrics.oom_count = self.oom_events
-            self.metrics.current_parallelism = 1  # Single-actor for now
 
         # Check if should report to Tower
         current_time = time.time()

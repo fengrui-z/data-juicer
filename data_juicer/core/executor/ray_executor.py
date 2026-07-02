@@ -17,6 +17,16 @@ from data_juicer.ops import OPEnvManager, load_ops
 from data_juicer.ops.op_fusion import fuse_operators
 from data_juicer.utils.lazy_loader import LazyLoader
 
+
+def _resolve_elastic_juicer_mode(cfg):
+    from data_juicer.core.elasticjuicer.mode import resolve_mode
+
+    return resolve_mode(
+        getattr(cfg, "elastic_juicer_mode", "off"),
+        getattr(cfg, "adaptive_batch_size", False),
+    )
+
+
 ray = LazyLoader("ray")
 
 
@@ -131,6 +141,8 @@ class RayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin):
                 conflict_resolve_strategy=self.cfg.conflict_resolve_strategy,
             )
 
+        self.elastic_juicer_mode = _resolve_elastic_juicer_mode(self.cfg)
+
     def run(self, load_data_np: Optional[PositiveInt] = None, skip_export: bool = False, skip_return: bool = False):
         """
         Running the dataset process pipeline
@@ -197,6 +209,15 @@ class RayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin):
             # Get metrics after execution
             duration = time.time() - start_time
             output_rows = dataset.data.count()
+
+            # Log ElasticJuicer metrics if available
+            if self.elastic_juicer_mode.value != "off":
+                try:
+                    elastic_metrics = dataset.get_elastic_juicer_metrics()
+                    if elastic_metrics:
+                        logger.info(f"ElasticJuicer Ray metrics: {elastic_metrics}")
+                except Exception as e:
+                    logger.warning(f"Could not collect ElasticJuicer metrics: {e}")
 
             # Post-execute DAG monitoring (log operation completion events with real metrics)
             if self.pipeline_dag:

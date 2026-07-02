@@ -105,6 +105,42 @@ def _install_local_microbatch_runtime(cfg, operators, mode):
     return runtime
 
 
+def _create_elastic_juicer_coordinator(cfg, operators, mode):
+    from data_juicer.core.elasticjuicer.mode import ElasticJuicerMode
+
+    if mode is not ElasticJuicerMode.DYNAMIC:
+        return None
+
+    from data_juicer.core.elasticjuicer import ElasticJuicer, TowerMode
+    from data_juicer.core.elasticjuicer.scheduler.captain import CaptainConfig
+
+    coordinator = ElasticJuicer(
+        tower_mode=TowerMode.SHADOW,
+        rebalance_interval_sec=5.0,
+    )
+
+    for op in operators:
+        if not callable(getattr(op, "is_batched_op", None)) or not op.is_batched_op():
+            continue
+        stage_name = getattr(op, "_name", op.__class__.__name__)
+        initial_batch_size = max(
+            getattr(cfg, "elastic_juicer_min_batch_size", 1),
+            min(
+                getattr(cfg, "elastic_juicer_max_batch_size", 1000),
+                int(getattr(op, "batch_size", 1)),
+            ),
+        )
+        config = CaptainConfig(
+            stage_name=stage_name,
+            initial_batch_size=initial_batch_size,
+            min_batch_size=getattr(cfg, "elastic_juicer_min_batch_size", 1),
+            max_batch_size=getattr(cfg, "elastic_juicer_max_batch_size", 1000),
+        )
+        coordinator.register_captain(config)
+
+    return coordinator
+
+
 class DefaultExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin):
     """
     This Executor class is used to process a specific dataset.
@@ -148,6 +184,7 @@ class DefaultExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin):
             self.work_dir,
             self.elastic_juicer_mode,
         )
+        self.elastic_juicer_coordinator = None
 
         # only enable it when using cache
         if self.cfg.use_cache:
@@ -303,12 +340,21 @@ class DefaultExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin):
             ops,
             self.elastic_juicer_mode,
         )
+        self.elastic_juicer_coordinator = _create_elastic_juicer_coordinator(
+            self.cfg,
+            ops,
+            self.elastic_juicer_mode,
+        )
 
         # 3. data process with DAG monitoring
         # - If tracer is open, trace each op after it's processed
         # - If checkpoint is open, clean the cache files after each process
         logger.info("Processing data with DAG monitoring...")
         tstart = time()
+
+        if self.elastic_juicer_coordinator is not None:
+            self.elastic_juicer_coordinator.start()
+            logger.info("ElasticJuicer coordinator started")
 
         # Pre-execute DAG monitoring (log operation start events)
         if self.pipeline_dag:
@@ -329,6 +375,11 @@ class DefaultExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin):
         # Post-execute DAG monitoring (log operation completion events)
         if self.pipeline_dag:
             self._post_execute_operations_with_dag_monitoring(ops)
+
+        if self.elastic_juicer_coordinator is not None:
+            self.elastic_juicer_coordinator.stop()
+            status = self.elastic_juicer_coordinator.get_status()
+            logger.info(f"ElasticJuicer coordinator stopped: {status}")
 
         tend = time()
         logger.info(f"All OPs are done in {tend - tstart:.3f}s.")

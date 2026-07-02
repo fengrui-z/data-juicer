@@ -19,6 +19,13 @@ class TopologyMode(Enum):
     ADAPTIVE = "adaptive"
 
 
+class TowerMode(str, Enum):
+    """Whether a Tower plan is advisory or applied to registered controllers."""
+
+    SHADOW = "shadow"
+    CLOSED_LOOP = "closed_loop"
+
+
 @dataclass(frozen=True)
 class MemoryState:
     """Point-in-time host/device memory observation, measured in MB."""
@@ -228,6 +235,79 @@ class ResourceQuota:
         for name in ("cpu_quota", "memory_quota_mb", "gpu_quota", "target_throughput"):
             if getattr(self, name) < 0:
                 raise ValueError(f"{name} must be non-negative")
+
+
+@dataclass(frozen=True)
+class ResourceQuotaSnapshot:
+    """Immutable quota embedded in a versioned allocation plan."""
+
+    captain_id: str
+    stage_name: str
+    target_parallelism: int
+    cpu_quota: float
+    memory_quota_mb: float
+    gpu_quota: float = 0.0
+    target_throughput: float = 0.0
+    topology_mode: TopologyMode = TopologyMode.ADAPTIVE
+
+    def __post_init__(self):
+        ResourceQuota(
+            captain_id=self.captain_id,
+            target_parallelism=self.target_parallelism,
+            cpu_quota=self.cpu_quota,
+            memory_quota_mb=self.memory_quota_mb,
+            gpu_quota=self.gpu_quota,
+            target_throughput=self.target_throughput,
+            topology_mode=self.topology_mode,
+        )
+        if not self.stage_name:
+            raise ValueError("stage_name must not be empty")
+
+    def to_quota(self) -> ResourceQuota:
+        return ResourceQuota(
+            captain_id=self.captain_id,
+            target_parallelism=self.target_parallelism,
+            cpu_quota=self.cpu_quota,
+            memory_quota_mb=self.memory_quota_mb,
+            gpu_quota=self.gpu_quota,
+            target_throughput=self.target_throughput,
+            topology_mode=self.topology_mode,
+        )
+
+    def to_dict(self) -> dict:
+        data = asdict(self)
+        data["topology_mode"] = self.topology_mode.value
+        return data
+
+
+@dataclass(frozen=True)
+class AllocationPlan:
+    """Immutable result of one Tower planning generation."""
+
+    generation: int
+    created_at: float
+    mode: TowerMode
+    bottlenecks: tuple[str, ...]
+    quotas: tuple[ResourceQuotaSnapshot, ...]
+
+    def __post_init__(self):
+        if self.generation < 1:
+            raise ValueError("generation must be at least 1")
+        captain_ids = [quota.captain_id for quota in self.quotas]
+        if len(captain_ids) != len(set(captain_ids)):
+            raise ValueError("allocation plan contains duplicate captain IDs")
+
+    def quota_map(self) -> dict[str, ResourceQuota]:
+        return {snapshot.captain_id: snapshot.to_quota() for snapshot in self.quotas}
+
+    def to_dict(self) -> dict:
+        return {
+            "generation": self.generation,
+            "created_at": self.created_at,
+            "mode": self.mode.value,
+            "bottlenecks": list(self.bottlenecks),
+            "quotas": [quota.to_dict() for quota in self.quotas],
+        }
 
 
 @dataclass
