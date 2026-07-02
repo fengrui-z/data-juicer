@@ -102,7 +102,7 @@ def test_oom_preserves_order_after_requeue():
     assert list(captain.queue) == ["a", "b", "c", "d"]
 
 
-def test_runtime_error_also_triggers_requeue():
+def test_cuda_oom_runtime_error_triggers_requeue():
     captain = _make_captain()
     samples = [1, 2, 3]
     captain.enqueue_samples(samples)
@@ -114,6 +114,19 @@ def test_runtime_error_also_triggers_requeue():
         captain.process_batch(cuda_oom)
 
     assert list(captain.queue) == [1, 2, 3]
+
+
+def test_unrelated_runtime_error_is_not_requeued():
+    captain = _make_captain()
+    captain.enqueue_samples([1, 2, 3])
+
+    def broken_op(batch):
+        raise RuntimeError("invalid tensor shape")
+
+    with pytest.raises(RuntimeError, match="invalid tensor"):
+        captain.process_batch(broken_op)
+
+    assert list(captain.queue) == []
 
 
 def test_successful_batch_does_not_requeue():

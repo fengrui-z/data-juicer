@@ -58,7 +58,11 @@ def _create_static_batch_recommender(cfg, work_dir, mode=None):
     from data_juicer.core.elasticjuicer.mode import ElasticJuicerMode
 
     mode = mode or _resolve_elastic_juicer_mode(cfg)
-    if mode not in (ElasticJuicerMode.RECOMMEND, ElasticJuicerMode.APPLY):
+    if mode not in (
+        ElasticJuicerMode.RECOMMEND,
+        ElasticJuicerMode.APPLY,
+        ElasticJuicerMode.DYNAMIC,
+    ):
         return None
 
     from data_juicer.core.elasticjuicer.scheduler import StaticBatchRecommender
@@ -80,9 +84,25 @@ def _run_static_batch_recommendation(
 
     candidate_batch_sizes = adapter.adapt_workloads(dataset, operators)
     recommendations = recommender.recommend(operators, candidate_batch_sizes)
-    if mode is ElasticJuicerMode.APPLY:
+    if mode in (ElasticJuicerMode.APPLY, ElasticJuicerMode.DYNAMIC):
         recommender.apply(operators, recommendations)
     return recommendations
+
+
+def _install_local_microbatch_runtime(cfg, operators, mode):
+    from data_juicer.core.elasticjuicer.mode import ElasticJuicerMode
+
+    if mode is not ElasticJuicerMode.DYNAMIC:
+        return None
+
+    from data_juicer.core.elasticjuicer.runtime import LocalMicrobatchRuntime
+
+    runtime = LocalMicrobatchRuntime(
+        min_batch_size=getattr(cfg, "elastic_juicer_min_batch_size", 1),
+        max_batch_size=getattr(cfg, "elastic_juicer_max_batch_size", 1000),
+    )
+    runtime.install(operators)
+    return runtime
 
 
 class DefaultExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin):
@@ -278,6 +298,11 @@ class DefaultExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin):
             logger.info(
                 "ElasticJuicer static batch plan: " f"{[item.recommended_batch_size for item in recommendations]}"
             )
+        self.elastic_juicer_local_runtime = _install_local_microbatch_runtime(
+            self.cfg,
+            ops,
+            self.elastic_juicer_mode,
+        )
 
         # 3. data process with DAG monitoring
         # - If tracer is open, trace each op after it's processed

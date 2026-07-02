@@ -55,8 +55,10 @@ op_fusion: false                                            # whether to fuse op
 fusion_strategy: 'probe'                                    # OP fusion strategy. Support ['greedy', 'probe'] now. 'greedy' means keep the basic OP order and put the fused OP to the last of each fused OP group. 'probe' means Data-Juicer will probe the running speed for each OP at the beginning and reorder the OPs and fused OPs according to their probed speed (fast to slow). It's 'probe' in default.
 cache_compress: null                                        # the compression method of the cache file, which can be specified in ['gzip', 'zstd', 'lz4']. If this parameter is None, the cache file will not be compressed. We recommend you turn on this argument when your input dataset is larger than tens of GB and your disk space is not enough.
 adaptive_batch_size: false                                  # whether to use adaptive batch sizes for each OP according to the probed results. It's False in default.
-elastic_juicer_mode: 'off'                                  # ElasticJuicer mode: 'off', 'observe', 'recommend', or 'apply'.
+elastic_juicer_mode: 'off'                                  # ElasticJuicer mode: 'off', 'observe', 'recommend', 'apply', or 'dynamic'.
 elastic_juicer_profile_dir: null                            # observation output directory; defaults to <work_dir>/elastic_juicer.
+elastic_juicer_min_batch_size: 1                            # minimum inner micro-batch size in dynamic mode.
+elastic_juicer_max_batch_size: 1000                         # stable outer batch and maximum inner batch in dynamic mode.
 
 # for multimodal data processing
 image_key: 'images'                                         # key name of field to store the list of sample image paths.

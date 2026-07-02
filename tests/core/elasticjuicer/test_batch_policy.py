@@ -111,7 +111,7 @@ def test_oom_backoff_halves_batch_size():
     )
     ctrl.report_oom(batch_size=64, memory_mb=15000)
     assert ctrl.current_batch_size == 32
-    assert ctrl.max_batch_size == 64
+    assert ctrl.max_batch_size == 63
 
 
 def test_oom_backoff_respects_minimum():

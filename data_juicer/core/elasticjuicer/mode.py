@@ -8,6 +8,7 @@ class ElasticJuicerMode(str, Enum):
     OBSERVE = "observe"
     RECOMMEND = "recommend"
     APPLY = "apply"
+    DYNAMIC = "dynamic"
 
 
 def resolve_mode(configured_mode="off", legacy_adaptive_batch_size=False):
@@ -21,8 +22,10 @@ def resolve_mode(configured_mode="off", legacy_adaptive_batch_size=False):
 
     if not legacy_adaptive_batch_size:
         return mode
-    if mode in (ElasticJuicerMode.OFF, ElasticJuicerMode.APPLY):
+    if mode is ElasticJuicerMode.OFF:
         return ElasticJuicerMode.APPLY
+    if mode in (ElasticJuicerMode.APPLY, ElasticJuicerMode.DYNAMIC):
+        return mode
     raise ValueError(
         "adaptive_batch_size=True conflicts with elastic_juicer_mode="
         f"{mode.value!r}; use elastic_juicer_mode='apply'"

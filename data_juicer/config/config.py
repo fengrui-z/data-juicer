@@ -610,11 +610,12 @@ def init_configs(args: Optional[List[str]] = None, which_entry: object = None, l
                 "--elastic_juicer_mode",
                 type=str,
                 default="off",
-                choices=["off", "observe", "recommend", "apply"],
+                choices=["off", "observe", "recommend", "apply", "dynamic"],
                 help=(
                     "ElasticJuicer execution mode: 'off' preserves existing behavior; "
                     "'observe' records profiles; 'recommend' additionally writes a static "
-                    "batch plan; 'apply' applies that plan before execution."
+                    "batch plan; 'apply' applies that plan before execution; "
+                    "'dynamic' additionally enables lossless local micro-batching."
                 ),
             )
             parser.add_argument(
@@ -625,6 +626,18 @@ def init_configs(args: Optional[List[str]] = None, which_entry: object = None, l
                     "Directory for ElasticJuicer observation files. Defaults to "
                     "<work_dir>/elastic_juicer when observe mode is enabled."
                 ),
+            )
+            parser.add_argument(
+                "--elastic_juicer_min_batch_size",
+                type=PositiveInt,
+                default=1,
+                help="Minimum inner micro-batch size in ElasticJuicer dynamic mode.",
+            )
+            parser.add_argument(
+                "--elastic_juicer_max_batch_size",
+                type=PositiveInt,
+                default=1000,
+                help="Stable outer batch and maximum inner batch in dynamic mode.",
             )
             parser.add_argument(
                 "--process",
