@@ -67,17 +67,6 @@ class Captain:
         self.config = config
         self.tower_callback = tower_callback
 
-        # Micro-scheduler for batch size control
-        if config.enable_micro_scheduler:
-            self.micro_scheduler = MicroScheduler(
-                initial_batch_size=config.initial_batch_size, max_batch_size=1024, min_batch_size=1
-            )
-        else:
-            self.micro_scheduler = None
-
-        # Resource monitoring
-        self.monitor = ResourceMonitor()
-
         # Memory prediction
         if config.enable_prediction:
             self.predictor = MemoryPredictor(op_name=config.stage_name)
@@ -85,6 +74,20 @@ class Captain:
         else:
             self.predictor = None
             self.feature_extractor = None
+
+        # Micro-scheduler for batch size control
+        if config.enable_micro_scheduler:
+            self.micro_scheduler = MicroScheduler(
+                memory_predictor=self.predictor,
+                initial_batch_size=config.initial_batch_size,
+                max_batch_size=1024,
+                min_batch_size=1,
+            )
+        else:
+            self.micro_scheduler = None
+
+        # Resource monitoring
+        self.monitor = ResourceMonitor()
 
         # Current resource quota from Tower
         self.quota: Optional[ResourceQuota] = None
@@ -160,8 +163,22 @@ class Captain:
         """
         start_time = time.time()
 
+        prediction_features = None
+        prediction_sample = sample_batch[0] if sample_batch else (self.queue[0] if self.queue else None)
+        if self.feature_extractor and prediction_sample is not None:
+            prediction_features = self.feature_extractor.extract_from_sample(prediction_sample)
+            prediction_features.batch_size = (
+                len(sample_batch)
+                if sample_batch is not None
+                else (
+                    self.micro_scheduler.controller.current_batch_size
+                    if self.micro_scheduler
+                    else self.config.initial_batch_size
+                )
+            )
+
         if self.micro_scheduler:
-            current_batch_size = self.micro_scheduler.get_batch_size()
+            current_batch_size = self.micro_scheduler.get_batch_size(prediction_features)
         else:
             current_batch_size = self.config.initial_batch_size
 
@@ -174,13 +191,8 @@ class Captain:
         else:
             actual_batch_size = len(sample_batch)
 
-        predicted_memory_mb = None
-        if self.predictor and self.feature_extractor and len(sample_batch) > 0:
-            features = self.feature_extractor.extract_from_sample(sample_batch[0])
-            features.batch_size = actual_batch_size
-            prediction = self.predictor.predict(features)
-            if prediction:
-                predicted_memory_mb = prediction.predicted_memory_mb
+        if prediction_features is not None:
+            prediction_features.batch_size = actual_batch_size
 
         with self.monitor.measure_execution(self.config.stage_name, actual_batch_size):
             try:
@@ -207,16 +219,13 @@ class Captain:
         op_stats = self.monitor.get_stats(self.config.stage_name)
         if op_stats and op_stats.snapshots:
             snapshot = op_stats.snapshots[-1]  # Get latest snapshot
-            # Update predictor with actual memory usage
-            if self.predictor and self.feature_extractor and len(sample_batch) > 0:
-                features = self.feature_extractor.extract_from_sample(sample_batch[0])
-                self.predictor.observe(features, snapshot.memory_mb)
-
-            # Update micro-scheduler
             if self.micro_scheduler:
                 self.micro_scheduler.update(
-                    actual_memory_used=snapshot.memory_mb, sample_features=None  # Already updated predictor above
+                    actual_memory_used=snapshot.memory_mb,
+                    sample_features=prediction_features,
                 )
+            elif self.predictor and prediction_features is not None:
+                self.predictor.observe(prediction_features, snapshot.memory_mb)
 
             # Update metrics
             latency_ms = snapshot.latency_ms

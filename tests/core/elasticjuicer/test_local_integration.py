@@ -138,3 +138,21 @@ def test_monitor_and_captain_consistent():
     stats = monitor.get_stats("mon_op")
     assert stats is not None
     assert stats.total_samples == captain.samples_processed
+
+
+def test_captain_shares_predictor_with_micro_scheduler():
+    config = CaptainConfig(
+        stage_name="predictive_op",
+        initial_batch_size=2,
+        enable_micro_scheduler=True,
+        enable_prediction=True,
+    )
+    captain = Captain(config)
+    captain.micro_scheduler.controller._memory_state_provider = lambda: _mem_state(8000)
+    captain.enqueue_samples([{"text": "a"}, {"text": "bb"}])
+
+    captain.process_batch(lambda batch: batch)
+
+    assert captain.micro_scheduler.memory_predictor is captain.predictor
+    assert len(captain.predictor.feature_history) == 1
+    assert captain.predictor.feature_history[0][0] == 2

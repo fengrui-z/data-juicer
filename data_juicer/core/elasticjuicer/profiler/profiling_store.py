@@ -12,57 +12,61 @@ Supports online learning and model updating.
 import json
 import pickle
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Optional
 from dataclasses import dataclass, asdict
 import numpy as np
 
 from .resource_monitor import OpExecutionStats, ResourceSnapshot
 from .ocs_annotator import OpCostSignature
 
+PROFILE_SCHEMA_VERSION = 1
+PROFILE_FILENAME = "profiles.json"
+
 
 @dataclass
 class ResourceThroughputCurve:
     """
     Resource-throughput relationship for an operator.
-    
+
     Models T(r, b) where:
     - T = throughput (samples/sec)
     - r = resource allocation (memory, GPU)
     - b = batch size
     """
+
     op_name: str
     # Curve parameters (fitted from data)
     coefficients: Dict[str, float]
     # Model type: 'linear', 'polynomial', 'power'
-    model_type: str = 'linear'
+    model_type: str = "linear"
     # Goodness of fit
     r_squared: float = 0.0
     # Sample count used for fitting
     n_samples: int = 0
-    
+
     def predict_throughput(self, batch_size: int, memory_mb: float) -> float:
         """Predict throughput given batch size and memory"""
-        if self.model_type == 'linear':
+        if self.model_type == "linear":
             # T = a * batch_size + b * memory + c
-            a = self.coefficients.get('batch_coef', 0)
-            b = self.coefficients.get('memory_coef', 0)
-            c = self.coefficients.get('intercept', 0)
+            a = self.coefficients.get("batch_coef", 0)
+            b = self.coefficients.get("memory_coef", 0)
+            c = self.coefficients.get("intercept", 0)
             return max(0, a * batch_size + b * memory_mb + c)
-        
-        elif self.model_type == 'power':
+
+        elif self.model_type == "power":
             # T = a * batch_size^b
-            a = self.coefficients.get('scale', 1)
-            b = self.coefficients.get('power', 1)
-            return a * (batch_size ** b)
-        
+            a = self.coefficients.get("scale", 1)
+            b = self.coefficients.get("power", 1)
+            return a * (batch_size**b)
+
         return 0.0
-    
+
     def to_dict(self) -> Dict:
         """Convert to dictionary"""
         return asdict(self)
-    
+
     @classmethod
-    def from_dict(cls, data: Dict) -> 'ResourceThroughputCurve':
+    def from_dict(cls, data: Dict) -> "ResourceThroughputCurve":
         """Create from dictionary"""
         return cls(**data)
 
@@ -70,215 +74,270 @@ class ResourceThroughputCurve:
 class ProfilingStore:
     """
     Persistent store for operator profiling data.
-    
+
     Provides:
     - Storage and retrieval of execution stats
     - Resource-throughput curve fitting
     - Online model updates
     - Query interface for schedulers
     """
-    
-    def __init__(self, storage_dir: str = "./elastic_juicer_profiles"):
+
+    def __init__(
+        self,
+        storage_dir: str = "./elastic_juicer_profiles",
+        allow_legacy_pickle: bool = False,
+    ):
         self.storage_dir = Path(storage_dir)
         self.storage_dir.mkdir(parents=True, exist_ok=True)
-        
+        self.allow_legacy_pickle = allow_legacy_pickle
+        self.load_errors = []
+
         # In-memory caches
         self.execution_stats: Dict[str, OpExecutionStats] = {}
         self.ocs_signatures: Dict[str, OpCostSignature] = {}
         self.throughput_curves: Dict[str, ResourceThroughputCurve] = {}
-        
+
         # Load existing data
         self._load_all()
-    
-    def _load_all(self):
-        stats_file = self.storage_dir / "execution_stats.pkl"
-        if stats_file.exists():
-            try:
-                with open(stats_file, 'rb') as f:
-                    self.execution_stats = pickle.load(f)
-            except Exception:
-                self.execution_stats = {}
 
+    def _load_all(self):
+        profile_file = self.storage_dir / PROFILE_FILENAME
+        if profile_file.exists():
+            try:
+                with profile_file.open("r", encoding="utf-8") as source:
+                    data = json.load(source)
+                self._load_profile_payload(data)
+                return
+            except Exception as error:
+                self.load_errors.append(f"{PROFILE_FILENAME}: {error}")
+
+        # Legacy JSON files are safe to import automatically.
         ocs_file = self.storage_dir / "ocs_signatures.json"
         if ocs_file.exists():
             try:
-                with open(ocs_file, 'r') as f:
+                with ocs_file.open("r", encoding="utf-8") as f:
                     data = json.load(f)
-                    self.ocs_signatures = {
-                        name: OpCostSignature.from_dict(sig)
-                        for name, sig in data.items()
-                    }
-            except Exception:
-                self.ocs_signatures = {}
+                    self.ocs_signatures = {name: OpCostSignature.from_dict(sig) for name, sig in data.items()}
+            except Exception as error:
+                self.load_errors.append(f"{ocs_file.name}: {error}")
 
         curves_file = self.storage_dir / "throughput_curves.json"
         if curves_file.exists():
             try:
-                with open(curves_file, 'r') as f:
+                with curves_file.open("r", encoding="utf-8") as f:
                     data = json.load(f)
                     self.throughput_curves = {
-                        name: ResourceThroughputCurve.from_dict(curve)
-                        for name, curve in data.items()
+                        name: ResourceThroughputCurve.from_dict(curve) for name, curve in data.items()
                     }
-            except Exception:
-                self.throughput_curves = {}
-    
+            except Exception as error:
+                self.load_errors.append(f"{curves_file.name}: {error}")
+
+        if self.allow_legacy_pickle:
+            self.migrate_legacy_pickle()
+
     def save_all(self):
-        """Persist all profiles to disk"""
-        # Save execution stats
+        """Persist all profiles as one versioned, atomically replaced JSON file."""
+
+        payload = {
+            "schema_version": PROFILE_SCHEMA_VERSION,
+            "execution_stats": {name: self._stats_to_dict(stats) for name, stats in self.execution_stats.items()},
+            "ocs_signatures": {name: signature.to_dict() for name, signature in self.ocs_signatures.items()},
+            "throughput_curves": {name: curve.to_dict() for name, curve in self.throughput_curves.items()},
+        }
+        output_path = self.storage_dir / PROFILE_FILENAME
+        temporary_path = output_path.with_suffix(".tmp")
+        with temporary_path.open("w", encoding="utf-8") as output:
+            json.dump(payload, output, indent=2, sort_keys=True)
+            output.write("\n")
+            output.flush()
+        temporary_path.replace(output_path)
+
+    def _load_profile_payload(self, data: Dict):
+        version = data.get("schema_version")
+        if version != PROFILE_SCHEMA_VERSION:
+            raise ValueError(f"unsupported profile schema version: {version}")
+        self.execution_stats = {
+            name: self._stats_from_dict(stats) for name, stats in data.get("execution_stats", {}).items()
+        }
+        self.ocs_signatures = {
+            name: OpCostSignature.from_dict(signature) for name, signature in data.get("ocs_signatures", {}).items()
+        }
+        self.throughput_curves = {
+            name: ResourceThroughputCurve.from_dict(curve) for name, curve in data.get("throughput_curves", {}).items()
+        }
+
+    @staticmethod
+    def _stats_to_dict(stats: OpExecutionStats) -> Dict:
+        return {
+            "op_name": stats.op_name,
+            "snapshots": [snapshot.to_dict() for snapshot in stats.snapshots],
+        }
+
+    @staticmethod
+    def _stats_from_dict(data: Dict) -> OpExecutionStats:
+        stats = OpExecutionStats(op_name=data["op_name"])
+        for snapshot in data.get("snapshots", []):
+            stats.update(ResourceSnapshot(**snapshot))
+        return stats
+
+    def migrate_legacy_pickle(self) -> bool:
+        """Explicitly import the trusted legacy pickle and immediately write JSON."""
+
         stats_file = self.storage_dir / "execution_stats.pkl"
-        with open(stats_file, 'wb') as f:
-            pickle.dump(self.execution_stats, f)
-        
-        # Save OCS signatures
-        ocs_file = self.storage_dir / "ocs_signatures.json"
-        with open(ocs_file, 'w') as f:
-            data = {
-                name: sig.to_dict()
-                for name, sig in self.ocs_signatures.items()
-            }
-            json.dump(data, f, indent=2)
-        
-        # Save throughput curves
-        curves_file = self.storage_dir / "throughput_curves.json"
-        with open(curves_file, 'w') as f:
-            data = {
-                name: curve.to_dict()
-                for name, curve in self.throughput_curves.items()
-            }
-            json.dump(data, f, indent=2)
-    
+        if not stats_file.exists():
+            return False
+        try:
+            with stats_file.open("rb") as source:
+                loaded = pickle.load(source)
+            if not isinstance(loaded, dict):
+                raise ValueError("legacy execution stats must be a mapping")
+            if not all(isinstance(value, OpExecutionStats) for value in loaded.values()):
+                raise ValueError("legacy execution stats contain invalid values")
+            self.execution_stats = loaded
+            self.save_all()
+            return True
+        except Exception as error:
+            self.load_errors.append(f"{stats_file.name}: {error}")
+            return False
+
     def update_execution_stats(self, op_name: str, stats: OpExecutionStats):
         """Update execution statistics for an operator"""
         self.execution_stats[op_name] = stats
         self._fit_throughput_curve(op_name, stats)
-    
+
     def update_ocs_signature(self, op_name: str, signature: OpCostSignature):
         """Update OCS signature for an operator"""
         self.ocs_signatures[op_name] = signature
-    
+
     def get_execution_stats(self, op_name: str) -> Optional[OpExecutionStats]:
         """Get execution statistics for an operator"""
         return self.execution_stats.get(op_name)
-    
+
     def get_ocs_signature(self, op_name: str) -> Optional[OpCostSignature]:
         """Get OCS signature for an operator"""
         return self.ocs_signatures.get(op_name)
-    
+
     def get_throughput_curve(self, op_name: str) -> Optional[ResourceThroughputCurve]:
         """Get resource-throughput curve for an operator"""
         return self.throughput_curves.get(op_name)
-    
+
     def _fit_throughput_curve(self, op_name: str, stats: OpExecutionStats):
         """
         Fit resource-throughput curve from execution statistics.
-        
+
         Uses online learning approach (inspired by Autothrottle).
         """
         if len(stats.snapshots) < 5:
             # Not enough data points
             return
-        
+
         # Extract features and target
         batch_sizes = np.array([s.batch_size for s in stats.snapshots])
         memories = np.array([s.memory_mb for s in stats.snapshots])
         throughputs = np.array([s.throughput for s in stats.snapshots])
-        
+
         # Filter out invalid data
         valid_idx = throughputs > 0
         if valid_idx.sum() < 5:
             return
-        
+
         batch_sizes = batch_sizes[valid_idx]
         memories = memories[valid_idx]
         throughputs = throughputs[valid_idx]
-        
+
         try:
             # Try linear model first: T = a*batch + b*mem + c
             X = np.column_stack([batch_sizes, memories, np.ones_like(batch_sizes)])
-            coeffs, residuals, _, _ = np.linalg.lstsq(X, throughputs, rcond=None)
-            
+            coeffs, _, _, _ = np.linalg.lstsq(X, throughputs, rcond=None)
+
             # Calculate R²
-            ss_res = residuals[0] if len(residuals) > 0 else 0
+            predicted = X @ coeffs
+            ss_res = np.sum((throughputs - predicted) ** 2)
             ss_tot = np.sum((throughputs - np.mean(throughputs)) ** 2)
             r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0
-            
+
             curve = ResourceThroughputCurve(
                 op_name=op_name,
                 coefficients={
-                    'batch_coef': float(coeffs[0]),
-                    'memory_coef': float(coeffs[1]),
-                    'intercept': float(coeffs[2]),
+                    "batch_coef": float(coeffs[0]),
+                    "memory_coef": float(coeffs[1]),
+                    "intercept": float(coeffs[2]),
                 },
-                model_type='linear',
+                model_type="linear",
                 r_squared=float(r_squared),
                 n_samples=len(batch_sizes),
             )
-            
+
             self.throughput_curves[op_name] = curve
-            
-        except Exception as e:
-            # Fitting failed, use simple mean
-            pass
-    
+
+        except (ValueError, np.linalg.LinAlgError) as error:
+            self.load_errors.append(f"curve fit for {op_name}: {error}")
+
     def predict_memory_for_batch(self, op_name: str, batch_size: int) -> Optional[float]:
         """
         Predict memory usage for a given batch size.
-        
+
         Based on historical data with online learning.
         """
         stats = self.execution_stats.get(op_name)
         if not stats or len(stats.snapshots) < 3:
             return None
-        
+
         # Simple linear regression: memory = a * batch_size + b
-        batch_sizes = np.array([s.batch_size for s in stats.snapshots])
-        memories = np.array([s.memory_mb for s in stats.snapshots])
-        
+        valid_snapshots = [
+            snapshot for snapshot in stats.snapshots if snapshot.batch_size > 0 and snapshot.memory_mb >= 0
+        ]
+        if len(valid_snapshots) < 3:
+            return None
+        batch_sizes = np.array([s.batch_size for s in valid_snapshots])
+        memories = np.array([s.memory_mb for s in valid_snapshots])
+
         try:
             # Fit linear model
             coeffs = np.polyfit(batch_sizes, memories, deg=1)
             predicted = coeffs[0] * batch_size + coeffs[1]
             return float(predicted)
-        except Exception:
+        except (ValueError, np.linalg.LinAlgError, FloatingPointError):
             # Fall back to average
             return float(np.mean(memories))
-    
-    def get_safe_batch_size(self, op_name: str, available_memory_mb: float, 
-                           safety_margin: float = 0.9) -> int:
+
+    def get_safe_batch_size(self, op_name: str, available_memory_mb: float, safety_margin: float = 0.9) -> int:
         """
         Recommend safe batch size given available memory.
-        
+
         Args:
             op_name: Operator name
             available_memory_mb: Available memory in MB
             safety_margin: Use only this fraction of available memory (default 90%)
-            
+
         Returns:
             Recommended batch size
         """
         stats = self.execution_stats.get(op_name)
         if not stats or len(stats.snapshots) < 3:
             return 1  # Conservative default
-        
+
         # Find batch sizes and their memory usage
-        batch_sizes = np.array([s.batch_size for s in stats.snapshots])
-        memories = np.array([s.memory_mb for s in stats.snapshots])
-        
+        valid = [snapshot for snapshot in stats.snapshots if snapshot.batch_size > 0 and snapshot.memory_mb > 0]
+        if len(valid) < 3:
+            return 1
+        batch_sizes = np.array([s.batch_size for s in valid])
+        memories = np.array([s.memory_mb for s in valid])
+
         # Calculate memory per sample
         mem_per_sample = memories / batch_sizes
         avg_mem_per_sample = np.median(mem_per_sample)  # Use median for robustness
-        
+
         # Calculate safe batch size
         target_memory = available_memory_mb * safety_margin
         safe_batch = int(target_memory / avg_mem_per_sample)
-        
+
         return max(1, safe_batch)
-    
+
     def export_report(self, output_file: str):
         """Export profiling report as markdown"""
         lines = ["# ElasticJuicer Profiling Report\n"]
-        
+
         lines.append("## Operator Execution Statistics\n")
         for op_name, stats in sorted(self.execution_stats.items()):
             lines.append(f"### {op_name}\n")
@@ -291,7 +350,7 @@ class ProfilingStore:
             if stats.peak_gpu_memory_mb:
                 lines.append(f"- Peak GPU Memory: {stats.peak_gpu_memory_mb:.2f} MB")
             lines.append("")
-        
+
         lines.append("\n## OCS Signatures\n")
         for op_name, sig in sorted(self.ocs_signatures.items()):
             lines.append(f"### {op_name}")
@@ -301,6 +360,6 @@ class ProfilingStore:
             lines.append(f"- Failure Cost: {sig.failure_cost.value}")
             lines.append(f"- State Free: {sig.state_free}")
             lines.append("")
-        
-        with open(output_file, 'w') as f:
-            f.writelines(line + '\n' for line in lines)
+
+        with open(output_file, "w") as f:
+            f.writelines(line + "\n" for line in lines)

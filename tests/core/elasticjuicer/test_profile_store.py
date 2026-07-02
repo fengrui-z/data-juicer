@@ -1,4 +1,5 @@
 import json
+import pickle
 import pytest
 import tempfile
 from pathlib import Path
@@ -59,6 +60,10 @@ def test_save_and_load_roundtrip():
         loaded = store2.get_execution_stats("op_x")
         assert loaded is not None
         assert loaded.total_batches == 6
+        payload = json.loads((Path(tmpdir) / "profiles.json").read_text())
+        assert payload["schema_version"] == 1
+        assert not (Path(tmpdir) / "profiles.tmp").exists()
+        assert not (Path(tmpdir) / "execution_stats.pkl").exists()
 
 
 def test_throughput_curve_fitted_with_enough_data():
@@ -121,6 +126,42 @@ def test_corrupted_stats_file_handled():
         assert store.get_execution_stats("anything") is None
 
 
+def test_corrupted_versioned_profile_is_reported(tmp_path):
+    (tmp_path / "profiles.json").write_text("{not json")
+
+    store = ProfilingStore(storage_dir=str(tmp_path))
+
+    assert store.execution_stats == {}
+    assert store.load_errors
+    assert "profiles.json" in store.load_errors[0]
+
+
+def test_unknown_profile_schema_is_rejected(tmp_path):
+    (tmp_path / "profiles.json").write_text(json.dumps({"schema_version": 999}))
+
+    store = ProfilingStore(storage_dir=str(tmp_path))
+
+    assert store.execution_stats == {}
+    assert "unsupported profile schema" in store.load_errors[0]
+
+
+def test_legacy_pickle_requires_explicit_opt_in(tmp_path):
+    stats = OpExecutionStats(op_name="legacy")
+    stats.update(_make_snapshots(1)[0])
+    with (tmp_path / "execution_stats.pkl").open("wb") as output:
+        pickle.dump({"legacy": stats}, output)
+
+    safe_store = ProfilingStore(storage_dir=str(tmp_path))
+    assert safe_store.get_execution_stats("legacy") is None
+
+    migrated_store = ProfilingStore(
+        storage_dir=str(tmp_path),
+        allow_legacy_pickle=True,
+    )
+    assert migrated_store.get_execution_stats("legacy") is not None
+    assert (tmp_path / "profiles.json").exists()
+
+
 def test_resource_throughput_curve_predict():
     curve = ResourceThroughputCurve(
         op_name="test",
@@ -138,7 +179,7 @@ def test_resource_throughput_curve_power_model():
         model_type="power",
     )
     t = curve.predict_throughput(batch_size=10, memory_mb=0)
-    assert abs(t - 5.0 * (10 ** 0.8)) < 1e-6
+    assert abs(t - 5.0 * (10**0.8)) < 1e-6
 
 
 def test_export_report(tmp_path):

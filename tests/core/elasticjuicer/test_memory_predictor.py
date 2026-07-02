@@ -126,3 +126,55 @@ def test_model_stats_reflect_training():
     assert stats["total_updates"] == 10
     assert stats["samples_in_window"] == 10
     assert "avg_prediction_error_mb" in stats
+
+
+def test_compact_model_roundtrip_predicts_without_history():
+    predictor = MemoryPredictor(op_name="compact", min_samples_for_prediction=3)
+    for index in range(6):
+        predictor.observe(
+            _make_features(text_length=100 + index * 20),
+            actual_memory_mb=20 + index * 3,
+        )
+
+    exported = predictor.export_model(include_history=False)
+    restored = MemoryPredictor(op_name="other")
+    restored.import_model(exported)
+
+    assert len(restored.feature_history) == 0
+    assert restored.predict(_make_features(text_length=150)) is not None
+
+
+def test_import_rejects_unknown_schema_version():
+    predictor = MemoryPredictor(op_name="test")
+    model = predictor.export_model()
+    model["schema_version"] = 999
+
+    with pytest.raises(ValueError, match="unsupported"):
+        predictor.import_model(model)
+
+
+def test_import_rejects_feature_schema_mismatch():
+    predictor = MemoryPredictor(op_name="test")
+    model = predictor.export_model()
+    model["feature_names"] = ["unknown"]
+
+    with pytest.raises(ValueError, match="feature schema"):
+        predictor.import_model(model)
+
+
+def test_recommendation_applies_safety_margin_once():
+    predictor = MemoryPredictor(op_name="test")
+
+    def predict_batch_memory(_features, target_batch_size):
+        memory = target_batch_size * 10
+        return PredictionResult(memory, memory, memory)
+
+    predictor.predict_batch_memory = predict_batch_memory
+    recommendation = predictor.recommend_batch_size(
+        _make_features(),
+        available_memory_mb=100,
+        safety_margin=0.5,
+        max_batch_size=10,
+    )
+
+    assert recommendation == 5
