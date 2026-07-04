@@ -22,8 +22,8 @@ from typing import Optional, Callable, List
 from collections import deque
 import psutil
 
-from ..scheduler.micro_scheduler import MicroScheduler, BatchSizeController
-from ..scheduler.tower import ResourceQuota, StageMetrics, TopologyMode
+from ..contracts import ResourceQuota, StageMetrics
+from ..scheduler.micro_scheduler import MicroScheduler
 from ..profiler.resource_monitor import ResourceMonitor, ResourceSnapshot
 from ..predictor.memory_predictor import MemoryPredictor
 from ..predictor.feature_extractor import FeatureExtractor

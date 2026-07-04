@@ -1,9 +1,13 @@
+import json
+from dataclasses import FrozenInstanceError
+
 import pytest
 
 from data_juicer.core.elasticjuicer.contracts import (
     ClusterState,
     StageMetrics,
     TopologyMode,
+    TowerMode,
 )
 from data_juicer.core.elasticjuicer.scheduler.tower import Tower
 
@@ -177,3 +181,103 @@ def test_rate_limiting_prevents_thrashing():
     q2 = tower.allocate_resources()
 
     assert q1 is q2
+
+
+def test_registration_conserves_initial_resources():
+    tower = Tower(cluster_state=_cluster(cpu=12, mem_mb=24000, gpu=3))
+    tower.register_stage("s1", initial_parallelism=1)
+    tower.register_stage("s2", initial_parallelism=2)
+
+    assert sum(q.cpu_quota for q in tower.quotas.values()) == pytest.approx(12)
+    assert sum(q.memory_quota_mb for q in tower.quotas.values()) == pytest.approx(24000)
+    assert sum(q.gpu_quota for q in tower.quotas.values()) == pytest.approx(3)
+
+
+def test_update_stage_metrics_rejects_stale_sample():
+    tower = Tower(cluster_state=_cluster())
+    tower.register_stage("s1")
+    current_timestamp = tower.stages["s1"].last_update
+    stale = StageMetrics(
+        stage_name="s1",
+        queue_depth=999,
+        last_update=current_timestamp - 1,
+    )
+
+    assert tower.update_stage_metrics("s1", stale) is False
+    assert tower.stages["s1"].queue_depth == 0
+    assert tower.total_requests == 0
+
+
+def test_allocation_plan_is_immutable():
+    tower = Tower(cluster_state=_cluster())
+    tower.register_stage("s1")
+    plan = tower.plan_allocation()
+
+    with pytest.raises(FrozenInstanceError):
+        plan.generation = 99
+    with pytest.raises(FrozenInstanceError):
+        plan.quotas[0].cpu_quota = 0
+
+
+def test_shadow_rebalance_does_not_mutate_live_quota():
+    class Controller:
+        def __init__(self):
+            self.calls = []
+
+        def set_quota(self, quota):
+            self.calls.append(quota)
+
+    tower = Tower(
+        cluster_state=_cluster(),
+        mode=TowerMode.SHADOW,
+        update_interval_sec=0,
+    )
+    captain_id = tower.register_stage("s1")
+    controller = Controller()
+    tower.register_controller(captain_id, controller)
+    tower.stages["s1"].queue_depth = 1000
+    tower.stages["s1"].throughput = 1
+    original_parallelism = tower.quotas[captain_id].target_parallelism
+
+    plan = tower.rebalance(force=True)
+
+    assert plan.quotas[0].target_parallelism > original_parallelism
+    assert tower.quotas[captain_id].target_parallelism == original_parallelism
+    assert controller.calls == []
+
+
+def test_closed_loop_rebalance_broadcasts_quota():
+    class Controller:
+        def __init__(self):
+            self.calls = []
+
+        def set_quota(self, quota):
+            self.calls.append(quota)
+
+    tower = Tower(
+        cluster_state=_cluster(),
+        mode=TowerMode.CLOSED_LOOP,
+        update_interval_sec=0,
+    )
+    captain_id = tower.register_stage("s1")
+    controller = Controller()
+    tower.register_controller(captain_id, controller)
+    tower.stages["s1"].queue_depth = 1000
+    tower.stages["s1"].throughput = 1
+
+    plan = tower.rebalance(force=True)
+
+    assert controller.calls == [tower.quotas[captain_id]]
+    assert tower.quotas[captain_id].target_parallelism == (plan.quotas[0].target_parallelism)
+
+
+def test_save_plan_writes_complete_json(tmp_path):
+    tower = Tower(cluster_state=_cluster())
+    tower.register_stage("s1")
+    plan = tower.rebalance(force=True)
+    destination = tmp_path / "plans" / "latest.json"
+
+    tower.save_plan(destination)
+
+    assert json.loads(destination.read_text()) == plan.to_dict()
+    assert list(destination.parent.glob("*.tmp")) == []
