@@ -68,6 +68,16 @@ class ElasticJuicer:
         with self._lock:
             return self.tower.rebalance(force=force)
 
+    def update_stage_metrics(self, stage_name: str, metrics) -> bool:
+        """Update one Captain/Tower metrics snapshot from an external runtime."""
+
+        with self._lock:
+            captain = self.captains.get(stage_name)
+            if captain is None:
+                return False
+            captain.metrics = metrics
+            return self.tower.update_stage_metrics(stage_name, metrics)
+
     def start(self):
         if self.is_running:
             return

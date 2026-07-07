@@ -114,7 +114,7 @@ class RayDataset(DJDataset):
         )
         self._elastic_juicer_min_batch_size = getattr(cfg, "elastic_juicer_min_batch_size", 1) if cfg else 1
         self._elastic_juicer_max_batch_size = getattr(cfg, "elastic_juicer_max_batch_size", 1000) if cfg else 1000
-        self._elastic_juicer_metrics_collector = None
+        self._elastic_juicer_metrics_collector = getattr(cfg, "_ej_metrics_collector_ref", None) if cfg else None
 
     def _ray_adaptive_actor_spec(self, op, method_name):
         from data_juicer.core.elasticjuicer.mode import ElasticJuicerMode

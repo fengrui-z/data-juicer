@@ -36,11 +36,23 @@ class CaptainConfig:
 
     stage_name: str
     initial_batch_size: int = 32
+    min_batch_size: int = 1
+    max_batch_size: int = 1024
     report_interval_sec: float = 1.0  # How often to report to Tower
     quota_check_interval_sec: float = 0.5  # How often to check quota
     enable_micro_scheduler: bool = True  # Use JABAS-style control
     enable_prediction: bool = True  # Use memory prediction
     emergency_backoff_ratio: float = 0.5  # OOM backoff ratio
+
+    def __post_init__(self):
+        if not self.stage_name:
+            raise ValueError("stage_name must not be empty")
+        if self.min_batch_size < 1:
+            raise ValueError("min_batch_size must be at least 1")
+        if self.max_batch_size < self.min_batch_size:
+            raise ValueError("max_batch_size must be >= min_batch_size")
+        if not self.min_batch_size <= self.initial_batch_size <= self.max_batch_size:
+            raise ValueError("initial_batch_size must be within batch size bounds")
 
 
 class Captain:
@@ -80,8 +92,8 @@ class Captain:
             self.micro_scheduler = MicroScheduler(
                 memory_predictor=self.predictor,
                 initial_batch_size=config.initial_batch_size,
-                max_batch_size=1024,
-                min_batch_size=1,
+                min_batch_size=config.min_batch_size,
+                max_batch_size=config.max_batch_size,
             )
         else:
             self.micro_scheduler = None

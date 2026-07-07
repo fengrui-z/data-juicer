@@ -224,6 +224,9 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             logger.info(f"Checkpoint directory: {self.ckpt_manager.ckpt_dir}")
 
         self.elastic_juicer_mode = _resolve_elastic_juicer_mode(self.cfg)
+        self.elastic_juicer_coordinator = None
+        self.elastic_juicer_metrics_collector = None
+        self.elastic_juicer_metrics_bridge = None
 
         # Initialize RayExporter for final output
         logger.info("Preparing exporter...")
@@ -353,6 +356,76 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             logger.warning(f"Auto partition configuration failed: {e}")
             logger.info("Falling back to manual partition configuration")
 
+    def _start_elastic_ray_runtime(self, ops: List) -> None:
+        """Start driver-side ElasticJuicer runtime for Ray dynamic mode."""
+
+        from data_juicer.core.elasticjuicer.mode import ElasticJuicerMode
+
+        if self.elastic_juicer_mode is not ElasticJuicerMode.DYNAMIC:
+            return
+
+        from data_juicer.core.elasticjuicer import ElasticJuicer, TowerMode
+        from data_juicer.core.elasticjuicer.runtime import MetricsBridge
+        from data_juicer.core.elasticjuicer.runtime.ray_microbatch import (
+            create_ray_metrics_collector,
+        )
+        from data_juicer.core.elasticjuicer.scheduler.captain import CaptainConfig
+
+        self.elastic_juicer_metrics_collector = create_ray_metrics_collector()
+        setattr(self.cfg, "_ej_metrics_collector_ref", self.elastic_juicer_metrics_collector)
+
+        self.elastic_juicer_coordinator = ElasticJuicer(
+            tower_mode=TowerMode.CLOSED_LOOP,
+            rebalance_interval_sec=getattr(self.cfg, "elastic_juicer_rebalance_interval", 5.0),
+        )
+
+        min_batch_size = getattr(self.cfg, "elastic_juicer_min_batch_size", 1)
+        max_batch_size = getattr(self.cfg, "elastic_juicer_max_batch_size", 1000)
+        registered = 0
+        for op in ops:
+            if not callable(getattr(op, "is_batched_op", None)) or not op.is_batched_op():
+                continue
+            stage_name = getattr(op, "_name", op.__class__.__name__)
+            initial_batch_size = max(
+                min_batch_size,
+                min(max_batch_size, int(getattr(op, "batch_size", min_batch_size))),
+            )
+            self.elastic_juicer_coordinator.register_captain(
+                CaptainConfig(
+                    stage_name=stage_name,
+                    initial_batch_size=initial_batch_size,
+                    min_batch_size=min_batch_size,
+                    max_batch_size=max_batch_size,
+                )
+            )
+            registered += 1
+
+        self.elastic_juicer_metrics_bridge = MetricsBridge(
+            self.elastic_juicer_coordinator,
+            self.elastic_juicer_metrics_collector,
+            poll_interval=getattr(self.cfg, "elastic_juicer_metrics_poll_interval", 1.0),
+        )
+        self.elastic_juicer_metrics_bridge.start()
+        self.elastic_juicer_coordinator.start()
+        logger.info(f"ElasticJuicer Ray runtime started with {registered} captains")
+
+    def _stop_elastic_ray_runtime(self) -> None:
+        """Flush and stop driver-side ElasticJuicer runtime if it was started."""
+
+        if self.elastic_juicer_metrics_bridge is not None:
+            try:
+                self.elastic_juicer_metrics_bridge.bridge_cycle()
+            except Exception as e:
+                logger.warning(f"Could not flush ElasticJuicer Ray metrics: {e}")
+            self.elastic_juicer_metrics_bridge.stop()
+            self.elastic_juicer_metrics_bridge = None
+
+        if self.elastic_juicer_coordinator is not None:
+            self.elastic_juicer_coordinator.stop()
+            status = self.elastic_juicer_coordinator.get_status()
+            logger.info(f"ElasticJuicer Ray coordinator stopped: {status}")
+            self.elastic_juicer_coordinator = None
+
     def run(self, load_data_np: Optional[PositiveInt] = None, skip_return=False):
         """
         Run the simplified partitioned dataset processing pipeline.
@@ -430,52 +503,56 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         # Prepare operations
         logger.info("Preparing operations...")
         ops = self._prepare_operators()
+        self._start_elastic_ray_runtime(ops)
 
-        # Handle auto partition mode BEFORE initializing DAG
-        # (DAG needs final partition count)
-        if self.partition_mode == "auto":
-            self._configure_auto_partitioning(dataset, ops)
+        try:
+            # Handle auto partition mode BEFORE initializing DAG
+            # (DAG needs final partition count)
+            if self.partition_mode == "auto":
+                self._configure_auto_partitioning(dataset, ops)
 
-        # Initialize DAG execution planning with final partition count
-        # Pass ops to avoid redundant loading
-        self._initialize_dag_execution(self.cfg, ops=ops)
+            # Initialize DAG execution planning with final partition count
+            # Pass ops to avoid redundant loading
+            self._initialize_dag_execution(self.cfg, ops=ops)
 
-        # Log job start with DAG context
-        # Handle both dataset_path (string) and dataset (dict) configurations
-        dataset_info = {}
-        if hasattr(self.cfg, "dataset_path") and self.cfg.dataset_path:
-            dataset_info["dataset_path"] = self.cfg.dataset_path
-        if hasattr(self.cfg, "dataset") and self.cfg.dataset:
-            dataset_info["dataset"] = self.cfg.dataset
+            # Log job start with DAG context
+            # Handle both dataset_path (string) and dataset (dict) configurations
+            dataset_info = {}
+            if hasattr(self.cfg, "dataset_path") and self.cfg.dataset_path:
+                dataset_info["dataset_path"] = self.cfg.dataset_path
+            if hasattr(self.cfg, "dataset") and self.cfg.dataset:
+                dataset_info["dataset"] = self.cfg.dataset
 
-        job_config = {
-            **dataset_info,
-            "work_dir": self.work_dir,
-            "executor_type": self.executor_type,
-            "dag_node_count": len(self.pipeline_dag.nodes) if self.pipeline_dag else 0,
-            "dag_edge_count": len(self.pipeline_dag.edges) if self.pipeline_dag else 0,
-            "parallel_groups_count": len(self.pipeline_dag.parallel_groups) if self.pipeline_dag else 0,
-        }
-        self.log_job_start(job_config, len(ops))
+            job_config = {
+                **dataset_info,
+                "work_dir": self.work_dir,
+                "executor_type": self.executor_type,
+                "dag_node_count": len(self.pipeline_dag.nodes) if self.pipeline_dag else 0,
+                "dag_edge_count": len(self.pipeline_dag.edges) if self.pipeline_dag else 0,
+                "parallel_groups_count": len(self.pipeline_dag.parallel_groups) if self.pipeline_dag else 0,
+            }
+            self.log_job_start(job_config, len(ops))
 
-        # Detect convergence points for global operations
-        convergence_points = self._detect_convergence_points(self.cfg)
+            # Detect convergence points for global operations
+            convergence_points = self._detect_convergence_points(self.cfg)
 
-        if convergence_points:
-            logger.info(f"Found convergence points at operations: {convergence_points}")
-            final_dataset = self._process_with_convergence(dataset, ops, convergence_points)
-        else:
-            logger.info("No convergence points found, processing with simple partitioning")
-            final_dataset = self._process_with_simple_partitioning(dataset, ops)
+            if convergence_points:
+                logger.info(f"Found convergence points at operations: {convergence_points}")
+                final_dataset = self._process_with_convergence(dataset, ops, convergence_points)
+            else:
+                logger.info("No convergence points found, processing with simple partitioning")
+                final_dataset = self._process_with_simple_partitioning(dataset, ops)
 
-        # Log ElasticJuicer metrics if available
-        if self.elastic_juicer_mode.value != "off":
-            try:
-                elastic_metrics = final_dataset.get_elastic_juicer_metrics()
-                if elastic_metrics:
-                    logger.info(f"ElasticJuicer Ray metrics: {elastic_metrics}")
-            except Exception as e:
-                logger.warning(f"Could not collect ElasticJuicer metrics: {e}")
+            # Log ElasticJuicer metrics if available
+            if self.elastic_juicer_mode.value != "off":
+                try:
+                    elastic_metrics = final_dataset.get_elastic_juicer_metrics()
+                    if elastic_metrics:
+                        logger.info(f"ElasticJuicer Ray metrics: {elastic_metrics}")
+                except Exception as e:
+                    logger.warning(f"Could not collect ElasticJuicer metrics: {e}")
+        finally:
+            self._stop_elastic_ray_runtime()
 
         # Export final dataset
         logger.info("Exporting final dataset...")
