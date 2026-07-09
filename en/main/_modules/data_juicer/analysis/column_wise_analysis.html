@@ -673,8 +673,15 @@
                 <span class="n">subfig</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s2">&quot;0.85&quot;</span><span class="p">)</span>
 
             <span class="c1"># numeric or string via nan. Apply different plot method for them.</span>
+            <span class="c1"># Boolean columns (numpy, pandas nullable, or pyarrow-backed) have</span>
+            <span class="c1"># a non-NaN `top` in overall_result but must be treated as numeric</span>
+            <span class="c1"># for histogram/boxplot — numpy.histogram does not support boolean</span>
+            <span class="c1"># subtraction, and wordcloud requires string keys.</span>
+            <span class="n">is_bool</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_bool_dtype</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
             <span class="n">sampled_top</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">overall_result</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;top&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">sampled_top</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">sampled_top</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_bool</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">is_bool</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
                 <span class="c1"># numeric or numeric list -- draw histogram and box plot for</span>
                 <span class="c1"># this stat</span>
                 <span class="n">percentiles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">overall_result</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="k">if</span> <span class="n">show_percentiles</span> <span class="k">else</span> <span class="kc">None</span>
