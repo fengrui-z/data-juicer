@@ -68,6 +68,7 @@ class RayAdaptiveMapperActor:
         resource_class: Optional[str] = None,
         profile_report_max_attempts: int = 5,
         profile_ack_fn: Optional[Callable] = None,
+        controller_policy: str = "ej",
     ):
         operator_args = tuple(operator_args or ())
         operator_kwargs = dict(operator_kwargs or {})
@@ -75,14 +76,41 @@ class RayAdaptiveMapperActor:
 
         self.operator = operator_class(*operator_args, **operator_kwargs)
         self.op_name = op_name or getattr(self.operator, "_name", None) or operator_class.__name__
-        self.controller = AdaptiveBatchController(
-            initial_batch_size=initial_batch_size,
-            min_batch_size=min_batch_size,
-            max_batch_size=max_batch_size,
-            oom_reprobe_successes=oom_reprobe_successes,
-            max_oom_reprobes=max_oom_reprobes,
-            recovery_requires_hint=True,
-        )
+        if controller_policy == "ej":
+            self.controller = AdaptiveBatchController(
+                initial_batch_size=initial_batch_size,
+                min_batch_size=min_batch_size,
+                max_batch_size=max_batch_size,
+                oom_reprobe_successes=oom_reprobe_successes,
+                max_oom_reprobes=max_oom_reprobes,
+                recovery_requires_hint=True,
+            )
+        else:
+            # Experiment baseline policies share the same lossless harness;
+            # only the batch-size decision policy differs.
+            from .baseline_controllers import make_baseline_controller
+
+            peak_memory_probe = None
+            total_bytes = None
+            if controller_policy == "proportional":
+                import torch
+
+                torch.cuda.init()
+                total_bytes = torch.cuda.get_device_properties(0).total_memory
+
+                def peak_memory_probe():
+                    peak = torch.cuda.max_memory_allocated()
+                    torch.cuda.reset_peak_memory_stats()
+                    return peak
+
+            self.controller = make_baseline_controller(
+                controller_policy,
+                initial_batch_size=initial_batch_size,
+                min_batch_size=min_batch_size,
+                max_batch_size=max_batch_size,
+                peak_memory_probe=peak_memory_probe,
+                total_bytes=total_bytes,
+            )
         self.job_id = job_id
         self.actor_id = actor_id or uuid4().hex
         self.actor_incarnation_id = actor_incarnation_id or uuid4().hex

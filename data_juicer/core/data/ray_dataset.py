@@ -121,6 +121,9 @@ class RayDataset(DJDataset):
         self._elastic_juicer_profile_seed_timeout_sec = 2.0
         self._elastic_juicer_partition_id = None
         self._elastic_juicer_captain_enabled = bool(cfg and cfg.get("elastic_juicer_captain_enabled", False))
+        self._elastic_juicer_controller_policy = str(
+            (cfg.get("elastic_juicer_controller_policy", "ej") if cfg else "ej") or "ej"
+        )
         self._elastic_juicer_captain_lifecycle = None
         if self._elastic_juicer_captain_enabled and not self._elastic_juicer_adaptive_batching:
             raise ValueError("elastic_juicer_captain_enabled requires elastic_juicer_adaptive_batching")
@@ -447,6 +450,9 @@ class RayDataset(DJDataset):
                                         self, "_elastic_juicer_profile_seed_timeout_sec", 2.0
                                     ),
                                     "partition_id": getattr(self, "_elastic_juicer_partition_id", None),
+                                    "controller_policy": getattr(
+                                        self, "_elastic_juicer_controller_policy", "ej"
+                                    ),
                                 },
                                 batch_size=batch_size,
                                 num_cpus=op.num_cpus,
