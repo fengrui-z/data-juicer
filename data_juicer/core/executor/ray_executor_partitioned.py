@@ -715,8 +715,19 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         # (created lazily by RayDataset from these cfg attributes): profiles
         # survive driver restarts for the same pipeline + work_dir, guarded by
         # pipeline fingerprint and the service's profile TTL.
+        #
+        # Path choice: honor an explicit cfg.elastic_juicer_profiles_path when
+        # set (stable across job ids -- required for cross-restart inheritance,
+        # since every resumed run gets a fresh job-id-scoped work_dir); only
+        # fall back to the job-scoped work_dir path otherwise.
+        try:
+            explicit_profiles_path = self.cfg.get("elastic_juicer_profiles_path", None)
+        except AttributeError:
+            explicit_profiles_path = getattr(self.cfg, "elastic_juicer_profiles_path", None)
         if work_dir:
-            profiles_path = os.path.join(work_dir, "elastic_juicer_stage_profiles.json")
+            profiles_path = explicit_profiles_path or os.path.join(
+                work_dir, "elastic_juicer_stage_profiles.json"
+            )
             fingerprint = manifest["pipeline_fingerprint"]
             try:
                 self.cfg.elastic_juicer_profiles_path = profiles_path
