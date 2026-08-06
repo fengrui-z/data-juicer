@@ -124,6 +124,8 @@ class RayDataset(DJDataset):
         self._elastic_juicer_controller_policy = str(
             (cfg.get("elastic_juicer_controller_policy", "ej") if cfg else "ej") or "ej"
         )
+        cost_column = cfg.get("elastic_juicer_cost_column", None) if cfg else None
+        self._elastic_juicer_cost_column = str(cost_column) if cost_column else None
         self._elastic_juicer_captain_lifecycle = None
         if self._elastic_juicer_captain_enabled and not self._elastic_juicer_adaptive_batching:
             raise ValueError("elastic_juicer_captain_enabled requires elastic_juicer_adaptive_batching")
@@ -452,6 +454,9 @@ class RayDataset(DJDataset):
                                     "partition_id": getattr(self, "_elastic_juicer_partition_id", None),
                                     "controller_policy": getattr(
                                         self, "_elastic_juicer_controller_policy", "ej"
+                                    ),
+                                    "cost_column": getattr(
+                                        self, "_elastic_juicer_cost_column", None
                                     ),
                                 },
                                 batch_size=batch_size,

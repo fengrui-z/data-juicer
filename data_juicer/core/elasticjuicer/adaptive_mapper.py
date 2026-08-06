@@ -112,6 +112,7 @@ class OOMSafeAdaptiveMapper:
         before_slice: Optional[Callable[[], None]] = None,
         snapshot_callback: Optional[Callable] = None,
         label: str = "",
+        batch_cost_fn: Optional[Callable[[Any], float]] = None,
     ):
         if max_retries_per_slice < 0:
             raise ValueError("max_retries_per_slice must be non-negative")
@@ -124,6 +125,7 @@ class OOMSafeAdaptiveMapper:
         self.before_slice = before_slice
         self.snapshot_callback = snapshot_callback
         self.label = label or "op"
+        self.batch_cost_fn = batch_cost_fn
         self.oom_retries = 0
         self.successful_slices = 0
 
@@ -131,6 +133,17 @@ class OOMSafeAdaptiveMapper:
         total_rows = _batch_length(batch)
         if total_rows == 0:
             return self.mapper(batch, *args, **kwargs)
+
+        # Cost-aware controllers get a per-row cost observation for the
+        # incoming block before any slicing decision. Best-effort: a missing
+        # cost column must never break processing.
+        if self.batch_cost_fn is not None:
+            observe_cost = getattr(self.controller, "observe_batch_cost", None)
+            if observe_cost is not None:
+                try:
+                    observe_cost(float(self.batch_cost_fn(batch)))
+                except Exception:  # noqa: BLE001 - diagnostics must not fail the pipeline
+                    pass
 
         outputs = []
         offset = 0

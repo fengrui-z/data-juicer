@@ -22,6 +22,58 @@ from .quota import (
 from .stage_identity import operator_fingerprint
 
 
+def _make_batch_cost_fn(cost_column: Optional[str]):
+    """Build a per-row-cost extractor for cost-aware controllers.
+
+    Returns None when no cost column is configured. Two modes:
+    - numeric column name: mean of that column over the batch;
+    - "images_filesize": mean file size of the batch's ``images`` paths —
+      an input-side proxy usable BEFORE the op runs (file size correlates
+      with decoded pixel count on drift workloads).
+    Failures surface as exceptions the harness treats as "no signal".
+    """
+
+    if not cost_column:
+        return None
+
+    if cost_column == "images_filesize":
+        import os
+
+        def extract_filesize(batch):
+            if hasattr(batch, "column_names") and "images" in batch.column_names:
+                paths = batch.column("images").to_pylist()
+            elif isinstance(batch, Mapping) and "images" in batch:
+                paths = list(batch["images"])
+            else:
+                raise KeyError("batch has no 'images' column")
+            sizes = []
+            for row in paths:
+                if row is None:
+                    continue
+                path = row[0] if isinstance(row, (list, tuple)) and row else row
+                if isinstance(path, str):
+                    sizes.append(os.path.getsize(path))
+            if not sizes:
+                raise ValueError("no image paths found in batch")
+            return float(sum(sizes)) / len(sizes)
+
+        return extract_filesize
+
+    def extract(batch):
+        if hasattr(batch, "column_names") and cost_column in batch.column_names:
+            column = batch.column(cost_column)
+            values = [v for v in column.to_pylist() if v is not None]
+        elif isinstance(batch, Mapping) and cost_column in batch:
+            values = [v for v in batch[cost_column] if v is not None]
+        else:
+            raise KeyError(f"cost column {cost_column!r} not present in batch")
+        if not values:
+            raise ValueError(f"cost column {cost_column!r} has no values")
+        return float(sum(values)) / len(values)
+
+    return extract
+
+
 def _detect_resource_class() -> str:
     """Best-effort device class so profiles never cross incompatible hardware."""
 
@@ -69,6 +121,7 @@ class RayAdaptiveMapperActor:
         profile_report_max_attempts: int = 5,
         profile_ack_fn: Optional[Callable] = None,
         controller_policy: str = "ej",
+        cost_column: Optional[str] = None,
     ):
         operator_args = tuple(operator_args or ())
         operator_kwargs = dict(operator_kwargs or {})
@@ -92,7 +145,7 @@ class RayAdaptiveMapperActor:
 
             peak_memory_probe = None
             total_bytes = None
-            if controller_policy == "proportional":
+            if controller_policy in ("proportional", "costaware"):
                 import torch
 
                 torch.cuda.init()
@@ -103,14 +156,25 @@ class RayAdaptiveMapperActor:
                     torch.cuda.reset_peak_memory_stats()
                     return peak
 
-            self.controller = make_baseline_controller(
-                controller_policy,
-                initial_batch_size=initial_batch_size,
-                min_batch_size=min_batch_size,
-                max_batch_size=max_batch_size,
-                peak_memory_probe=peak_memory_probe,
-                total_bytes=total_bytes,
-            )
+            if controller_policy == "costaware":
+                from .cost_aware_controller import CostAwareController
+
+                self.controller = CostAwareController(
+                    initial_batch_size=initial_batch_size,
+                    min_batch_size=min_batch_size,
+                    max_batch_size=max_batch_size,
+                    peak_memory_probe=peak_memory_probe,
+                    total_bytes=total_bytes,
+                )
+            else:
+                self.controller = make_baseline_controller(
+                    controller_policy,
+                    initial_batch_size=initial_batch_size,
+                    min_batch_size=min_batch_size,
+                    max_batch_size=max_batch_size,
+                    peak_memory_probe=peak_memory_probe,
+                    total_bytes=total_bytes,
+                )
         self.job_id = job_id
         self.actor_id = actor_id or uuid4().hex
         self.actor_incarnation_id = actor_incarnation_id or uuid4().hex
@@ -162,6 +226,7 @@ class RayAdaptiveMapperActor:
             before_slice=self._apply_pending_quota,
             snapshot_callback=None if self.metrics_reporter is None else self.metrics_reporter.report,
             label=self.op_name,
+            batch_cost_fn=_make_batch_cost_fn(cost_column),
         )
         self.control_poller = None
         if control_service is not None:
