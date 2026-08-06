@@ -35,6 +35,7 @@ class CostAwareController(BaselineBatchController):
         max_growth_factor: float = 1.5,
         min_model_samples: int = 3,
         max_trend_factor: float = 1.10,
+        fit_decay: float = 0.94,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
@@ -50,6 +51,9 @@ class CostAwareController(BaselineBatchController):
             raise ValueError("min_model_samples must be at least 1")
         if max_trend_factor < 1:
             raise ValueError("max_trend_factor must be >= 1")
+        if not 0 < fit_decay <= 1:
+            raise ValueError("fit_decay must be in (0, 1]")
+        self.fit_decay = fit_decay
         self.peak_memory_probe = peak_memory_probe
         self.budget_bytes = float(total_bytes) * target_fraction
         self.max_growth_factor = max_growth_factor
@@ -107,6 +111,12 @@ class CostAwareController(BaselineBatchController):
 
     def observe_oom(self, batch_size: int) -> int:
         self._record_oom(batch_size)
+        # Consume the peak window: it is contaminated by the failed attempt's
+        # partial allocations, and must not leak into the retry's sample.
+        try:
+            self.peak_memory_probe()
+        except Exception:  # noqa: BLE001 - probe failure must not break recovery
+            pass
         # Prefer the learned model (with an extra safety margin) over blind
         # halving; fall back to halving while the model is still unreliable.
         predicted = self._predicted_batch_size(safety_factor=self._safety_factor())
@@ -120,7 +130,15 @@ class CostAwareController(BaselineBatchController):
     # -- model ----------------------------------------------------------------
 
     def _fit_sample(self, total_cost: float, peak_bytes: float) -> None:
-        self._samples += 1
+        # Recency-weighted least squares: decay old evidence so the model
+        # tracks the current cost regime on drift workloads (the VRAM-per-cost
+        # ratio itself can shift across sections, e.g. compression effects).
+        d = self.fit_decay
+        self._sum_x *= d
+        self._sum_y *= d
+        self._sum_xx *= d
+        self._sum_xy *= d
+        self._samples = self._samples * d + 1.0
         self._sum_x += total_cost
         self._sum_y += peak_bytes
         self._sum_xx += total_cost * total_cost

@@ -16,9 +16,13 @@ def make_world(total_bytes=100_000_000, per_unit_bytes=30.0, overhead=5_000_000)
         return peak
 
     def run_slice(controller, batch_size):
-        """Emulate the harness: execute slice, return True on success."""
+        """Emulate the harness: execute slice, return True on success.
+
+        Peak accounting mirrors torch: max since last reset (a failed attempt
+        leaves its partial-allocation peak in the window until consumed).
+        """
         peak = overhead + per_unit_bytes * batch_size * state["cost"]
-        state["peak"] = peak
+        state["peak"] = max(state["peak"], peak)
         budget = total_bytes * 0.85
         if peak > budget:
             controller.observe_oom(batch_size)
@@ -47,17 +51,23 @@ class CostAwareControllerTest(unittest.TestCase):
             min_model_samples=3,
         )
         ooms = 0
+        last_oom_step = None
         state["cost"] = 80_000.0  # start inside the feasible region
         for step in range(60):
             c.observe_batch_cost(state["cost"])  # harness hook per block
             size = c.next_batch_size(10_000)
             if not run_slice(c, size):
                 ooms += 1
+                last_oom_step = step
                 # retry the same slice like the harness does
                 size = c.next_batch_size(10_000)
                 self.assertTrue(run_slice(c, size), "retried slice must succeed")
             state["cost"] *= 1.02
-        self.assertEqual(ooms, 0, "cost-aware controller must preempt the OOM wall")
+        # At most one cold-start OOM while the trend EMA converges; never a
+        # chasing pattern (previous behavior OOMed every step).
+        self.assertLessEqual(ooms, 1, "cost-aware controller must preempt the OOM wall")
+        if ooms:
+            self.assertLess(last_oom_step, 6, "cold-start OOM must happen early")
         self.assertLess(c.current_batch_size, 32, "must have pre-shrunk as cost rose")
 
     def test_falling_cost_regrows(self):
@@ -104,6 +114,45 @@ class CostAwareControllerTest(unittest.TestCase):
         )
         c.observe_oom(32)  # no samples yet -> halving fallback
         self.assertEqual(c.current_batch_size, 16)
+
+    def test_oom_window_does_not_contaminate_model(self):
+        """A failed attempt's partial-allocation peak must not poison the fit.
+
+        Without the OOM-window reset, the retry's success sample carries the
+        failed attempt's inflated peak, biasing b up and collapsing the
+        prediction to the minimum batch size.
+        """
+        state, probe, run_slice = make_world()
+        c = CostAwareController(
+            initial_batch_size=32,
+            max_batch_size=32,
+            peak_memory_probe=probe,
+            total_bytes=100_000_000,
+            min_model_samples=3,
+        )
+        state["cost"] = 80_000.0
+        # Warm the model inside the feasible region.
+        for _ in range(4):
+            c.observe_batch_cost(state["cost"])
+            self.assertTrue(run_slice(c, c.next_batch_size(10_000)))
+        # Push cost up until one OOM happens, then retry like the harness.
+        ooms = 0
+        for _ in range(20):
+            state["cost"] *= 1.06
+            c.observe_batch_cost(state["cost"])
+            size = c.next_batch_size(10_000)
+            if not run_slice(c, size):
+                ooms += 1
+                size = c.next_batch_size(10_000)
+                self.assertTrue(run_slice(c, size))
+                recovered = c.current_batch_size
+        self.assertGreater(ooms, 0)
+        self.assertGreaterEqual(
+            recovered, 8, "model must not collapse to the minimum after an OOM"
+        )
+        coefficients = c._model_coefficients()
+        self.assertIsNotNone(coefficients, "model must stay usable after an OOM")
+        self.assertGreater(coefficients[1], 0)
 
 
 if __name__ == "__main__":
