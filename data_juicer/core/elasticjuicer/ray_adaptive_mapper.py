@@ -145,7 +145,7 @@ class RayAdaptiveMapperActor:
 
             peak_memory_probe = None
             total_bytes = None
-            if controller_policy in ("proportional", "costaware"):
+            if controller_policy in ("proportional", "costaware", "hybrid"):
                 import torch
 
                 torch.cuda.init()
@@ -160,6 +160,16 @@ class RayAdaptiveMapperActor:
                 from .cost_aware_controller import CostAwareController
 
                 self.controller = CostAwareController(
+                    initial_batch_size=initial_batch_size,
+                    min_batch_size=min_batch_size,
+                    max_batch_size=max_batch_size,
+                    peak_memory_probe=peak_memory_probe,
+                    total_bytes=total_bytes,
+                )
+            elif controller_policy == "hybrid":
+                from .hybrid_controller import HybridController
+
+                self.controller = HybridController(
                     initial_batch_size=initial_batch_size,
                     min_batch_size=min_batch_size,
                     max_batch_size=max_batch_size,
