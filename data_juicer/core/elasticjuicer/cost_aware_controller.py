@@ -145,14 +145,29 @@ class CostAwareController(BaselineBatchController):
         self._sum_xy += total_cost * peak_bytes
 
     def _model_coefficients(self):
-        """Return (a, b) for peak = a + b * total_cost, or None if unusable."""
+        """Return (a, b) for peak = a + b * total_cost, or None if unusable.
+
+        Samples on drifting workloads are near-collinear (batch tracks the
+        budget, so x = batch*cost clusters), which makes the raw least-
+        squares slope numerically unstable. A ridge term on the denominator
+        and a spread check keep the fit honest: without real x-spread we
+        fall back to a ratio estimator (forced through the mean point).
+        """
         n = self._samples
         if n < self.min_model_samples:
             return None
+        mean_x = self._sum_x / n
         denom = n * self._sum_xx - self._sum_x * self._sum_x
-        if denom <= 0:
-            return None
-        b = (n * self._sum_xy - self._sum_x * self._sum_y) / denom
+        ridge = 1e-6 * (n * mean_x * mean_x + 1.0)
+        if denom <= ridge:
+            # Not enough spread for a slope: ratio estimator through the mean.
+            if mean_x <= 0 or self._sum_y <= 0:
+                return None
+            b = self._sum_y / self._sum_x
+            if b <= 0:
+                return None
+            return 0.0, b
+        b = (n * self._sum_xy - self._sum_x * self._sum_y) / (denom + ridge)
         if b <= 0:
             return None
         a = (self._sum_y - b * self._sum_x) / n
