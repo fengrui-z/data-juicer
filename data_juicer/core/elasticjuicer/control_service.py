@@ -12,9 +12,24 @@ from .quota import ActorRegistration, QuotaEnvelope, current_time_ms
 
 _ActorKey = Tuple[str, str]
 
-STAGE_PROFILE_SCHEMA_VERSION = 1
+STAGE_PROFILE_SCHEMA_VERSION = 2
 STAGE_PROFILES_FILE_SCHEMA_VERSION = 1
 _DEFAULT_RESOURCE_CLASS = "default"
+
+
+def _merge_cost_models(current: Optional[Dict], update: Optional[Dict]) -> Optional[Dict]:
+    """Keep the cost-model snapshot with the most evidence."""
+
+    if current is None:
+        return update
+    if update is None:
+        return current
+    try:
+        current_samples = float(current.get("samples", 0))
+        update_samples = float(update.get("samples", 0))
+    except (TypeError, ValueError):
+        return update
+    return update if update_samples >= current_samples else current
 
 
 def _profile_to_dict(profile: "StageProfile") -> Dict:
@@ -32,6 +47,7 @@ def _profile_from_dict(data: Dict) -> "StageProfile":
         op_fingerprint=data.get("op_fingerprint", ""),
         resource_class=data.get("resource_class", _DEFAULT_RESOURCE_CLASS),
         partition_id=data.get("partition_id"),
+        cost_model=data.get("cost_model"),
         schema_version=data.get("schema_version", STAGE_PROFILE_SCHEMA_VERSION),
     )
 
@@ -122,6 +138,7 @@ class StageProfile:
     op_fingerprint: str = ""
     resource_class: str = _DEFAULT_RESOURCE_CLASS
     partition_id: Optional[int] = None
+    cost_model: Optional[Dict] = None
     schema_version: int = STAGE_PROFILE_SCHEMA_VERSION
 
     def __post_init__(self):
@@ -133,8 +150,8 @@ class StageProfile:
             raise ValueError("op_fingerprint must be a string")
         if not isinstance(self.resource_class, str) or not self.resource_class:
             raise ValueError("resource_class must be a non-empty string")
-        if self.safe_batch_size is None and self.oom_upper_bound is None:
-            raise ValueError("a stage profile must carry at least one learned bound")
+        if self.safe_batch_size is None and self.oom_upper_bound is None and not self.cost_model:
+            raise ValueError("a stage profile must carry at least one learned bound or a cost model")
         if self.safe_batch_size is not None and self.safe_batch_size < 1:
             raise ValueError("safe_batch_size must be positive")
         if self.oom_upper_bound is not None and self.oom_upper_bound < 1:
@@ -147,6 +164,8 @@ class StageProfile:
             raise ValueError("partition_id must be a non-negative integer or None")
         if self.schema_version != STAGE_PROFILE_SCHEMA_VERSION:
             raise ValueError(f"unsupported stage profile schema_version: {self.schema_version}")
+        if self.cost_model is not None and not isinstance(self.cost_model, dict):
+            raise ValueError("cost_model must be a dict or None")
 
     @property
     def store_key(self) -> Tuple[str, str, str]:
@@ -366,6 +385,7 @@ class ControlService:
         safe_batch_size = max(safe_sizes) if safe_sizes else None
         if safe_batch_size is not None and oom_upper_bound is not None:
             safe_batch_size = min(safe_batch_size, max(1, oom_upper_bound - 1))
+        cost_model = _merge_cost_models(current.cost_model, update.cost_model)
         return StageProfile(
             job_id=update.job_id,
             stage_id=update.stage_id,
@@ -376,6 +396,7 @@ class ControlService:
             op_fingerprint=update.op_fingerprint,
             resource_class=update.resource_class,
             partition_id=update.partition_id,
+            cost_model=cost_model,
         )
 
     def get_stage_profile(

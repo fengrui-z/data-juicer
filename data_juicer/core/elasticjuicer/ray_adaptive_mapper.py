@@ -320,9 +320,17 @@ class RayAdaptiveMapperActor:
             safe_batch_size=profile.safe_batch_size,
             oom_upper_bound=profile.oom_upper_bound,
         )
+        seed_cost_model = getattr(self.controller, "seed_cost_model", None)
+        model_seeded = False
+        if seed_cost_model is not None and getattr(profile, "cost_model", None):
+            try:
+                model_seeded = bool(seed_cost_model(profile.cost_model))
+            except Exception as error:  # noqa: BLE001 - advisory seed, fail closed
+                logger.warning(f"ElasticJuicer cost-model seed rejected; starting unseeded: {error}")
         logger.info(
             f"ElasticJuicer seeded actor {self.actor_id} on stage {self.stage_id} from a prior "
-            f"incarnation profile: batch_size={seeded_size}, oom_upper_bound={self.controller.oom_upper_bound}"
+            f"incarnation profile: batch_size={seeded_size}, oom_upper_bound={self.controller.oom_upper_bound}, "
+            f"cost_model={'seeded' if model_seeded else 'none'}"
         )
 
     def _report_stage_profile(self) -> None:
@@ -350,6 +358,13 @@ class RayAdaptiveMapperActor:
 
         self._profile_reports_attempted += 1
         self._profile_report_attempts_for_current += 1
+        export_cost_model = getattr(self.controller, "export_cost_model", None)
+        cost_model = None
+        if export_cost_model is not None:
+            try:
+                cost_model = export_cost_model()
+            except Exception:  # noqa: BLE001 - model export is advisory
+                cost_model = None
         try:
             profile = StageProfile(
                 job_id=self.job_id,
@@ -361,6 +376,7 @@ class RayAdaptiveMapperActor:
                 op_fingerprint=self.op_fingerprint,
                 resource_class=self.resource_class,
                 partition_id=self.partition_id,
+                cost_model=cost_model,
             )
             reference = self._remote_method(self._profile_control_service.report_stage_profile, profile)
             self._await_profile_ack(reference)

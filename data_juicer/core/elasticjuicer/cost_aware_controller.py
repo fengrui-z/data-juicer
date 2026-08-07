@@ -191,6 +191,62 @@ class CostAwareController(BaselineBatchController):
         # OOM-based prediction keeps extra margin below the implied boundary.
         return 0.75
 
+    # -- cross-restart persistence --------------------------------------------
+
+    def export_cost_model(self) -> Optional[dict]:
+        """Snapshot the fitted memory model for profile persistence.
+
+        Only exported once the model has enough evidence to be useful; a
+        restarted incarnation then inherits the fit instead of refitting
+        from scratch (phase-3c follow-up: model inheritance across restarts).
+        """
+        if self._samples < self.min_model_samples:
+            return None
+        return {
+            "samples": self._samples,
+            "sum_x": self._sum_x,
+            "sum_y": self._sum_y,
+            "sum_xx": self._sum_xx,
+            "sum_xy": self._sum_xy,
+            "cost_trend": self._cost_trend,
+            "last_block_cost": self._last_block_cost,
+            "fit_decay": self.fit_decay,
+        }
+
+    def seed_cost_model(self, data: Optional[dict]) -> bool:
+        """Adopt a persisted model snapshot as the initial prior (advisory).
+
+        Returns True when adopted. Any malformed input degrades to an
+        unseeded start (fail closed, never brick the incarnation).
+        """
+        if not isinstance(data, dict):
+            return False
+        required = ("samples", "sum_x", "sum_y", "sum_xx", "sum_xy")
+        try:
+            values = {key: float(data[key]) for key in required}
+        except (KeyError, TypeError, ValueError):
+            return False
+        if values["samples"] < self.min_model_samples or values["samples"] <= 0:
+            return False
+        if values["sum_x"] < 0 or values["sum_y"] < 0:
+            return False
+        self._samples = values["samples"]
+        self._sum_x = values["sum_x"]
+        self._sum_y = values["sum_y"]
+        self._sum_xx = values["sum_xx"]
+        self._sum_xy = values["sum_xy"]
+        trend = data.get("cost_trend")
+        if isinstance(trend, (int, float)) and trend > 0:
+            self._cost_trend = float(trend)
+        last_cost = data.get("last_block_cost")
+        if isinstance(last_cost, (int, float)) and last_cost > 0:
+            self._last_block_cost = float(last_cost)
+            # Adopt it as the pending cost prior too, so predictions work
+            # immediately after seeding (the first block's observation
+            # replaces it anyway).
+            self._pending_cost = float(last_cost)
+        return True
+
     def _damp(self, current: int, target: int, allow_shrink: bool) -> int:
         if target >= current:
             capped = current * self.max_growth_factor

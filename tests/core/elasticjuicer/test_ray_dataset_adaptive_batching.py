@@ -269,6 +269,8 @@ def test_enabled_flag_installs_one_actor_local_adaptive_wrapper(actor_pool_strat
             "profile_seed_enabled": False,
             "profile_seed_timeout_sec": 2.0,
             "partition_id": None,
+            "controller_policy": "ej",
+            "cost_column": None,
         },
         batch_size=16,
         num_cpus=operator.num_cpus,

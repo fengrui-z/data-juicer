@@ -115,6 +115,98 @@ class CostAwareControllerTest(unittest.TestCase):
         c.observe_oom(32)  # no samples yet -> halving fallback
         self.assertEqual(c.current_batch_size, 16)
 
+    def test_cost_model_export_seed_roundtrip(self):
+        """Phase-3c follow-up: the fitted model must survive a restart."""
+        state, probe, run_slice = make_world()
+        teacher = CostAwareController(
+            initial_batch_size=32,
+            max_batch_size=32,
+            peak_memory_probe=probe,
+            total_bytes=100_000_000,
+            min_model_samples=3,
+        )
+        self.assertIsNone(teacher.export_cost_model(), "no export before enough evidence")
+        state["cost"] = 80_000.0
+        for _ in range(6):
+            teacher.observe_batch_cost(state["cost"])
+            run_slice(teacher, teacher.next_batch_size(10_000))
+        snapshot = teacher.export_cost_model()
+        self.assertIsNotNone(snapshot)
+
+        student = CostAwareController(
+            initial_batch_size=32,
+            max_batch_size=32,
+            peak_memory_probe=probe,
+            total_bytes=100_000_000,
+            min_model_samples=3,
+        )
+        self.assertTrue(student.seed_cost_model(snapshot))
+        teacher_pred = teacher._predicted_batch_size()
+        student_pred = student._predicted_batch_size()
+        self.assertIsNotNone(student_pred)
+        self.assertEqual(teacher_pred, student_pred, "seeded student must predict like the teacher")
+
+    def test_seed_cost_model_rejects_malformed(self):
+        c = CostAwareController(
+            initial_batch_size=8,
+            max_batch_size=32,
+            peak_memory_probe=lambda: 0,
+            total_bytes=100_000_000,
+        )
+        for bad in (None, {}, {"samples": "x"}, {"samples": -1}, {"samples": 0.5}):
+            self.assertFalse(c.seed_cost_model(bad), f"must reject {bad!r}")
+
+    def test_cost_model_profile_persistence_roundtrip(self):
+        """Snapshot survives StageProfile merge + atomic save/load."""
+        import tempfile
+
+        from data_juicer.core.elasticjuicer.control_service import (
+            ControlService,
+            StageProfile,
+            load_stage_profiles,
+            save_stage_profiles,
+        )
+
+        snapshot = {
+            "samples": 5.0,
+            "sum_x": 1.0e9,
+            "sum_y": 4.0e10,
+            "sum_xx": 1.0e18,
+            "sum_xy": 4.0e19,
+            "cost_trend": 1.02,
+            "last_block_cost": 80000.0,
+            "fit_decay": 0.94,
+        }
+        profile = StageProfile(
+            job_id="job",
+            stage_id="stage-1",
+            op_name="op",
+            safe_batch_size=8,
+            oom_upper_bound=None,
+            observed_at_ms=1,
+            cost_model=snapshot,
+        )
+        merged = ControlService._merge_stage_profile(None, profile)
+        self.assertEqual(merged.cost_model, snapshot)
+        richer = StageProfile(
+            job_id="job",
+            stage_id="stage-1",
+            op_name="op",
+            safe_batch_size=8,
+            oom_upper_bound=None,
+            observed_at_ms=2,
+            cost_model={**snapshot, "samples": 9.0},
+        )
+        merged = ControlService._merge_stage_profile(merged, richer)
+        self.assertEqual(merged.cost_model["samples"], 9.0, "keep the most-evidenced model")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = f"{tmp}/profiles.json"
+            save_stage_profiles(path, [merged], "fingerprint-abc")
+            restored = load_stage_profiles(path, "fingerprint-abc")
+        self.assertEqual(len(restored), 1)
+        self.assertEqual(restored[0].cost_model["samples"], 9.0)
+
     def test_oom_window_does_not_contaminate_model(self):
         """A failed attempt's partial-allocation peak must not poison the fit.
 
