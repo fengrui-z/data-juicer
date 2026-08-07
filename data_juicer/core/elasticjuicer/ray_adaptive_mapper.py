@@ -345,8 +345,20 @@ class RayAdaptiveMapperActor:
         if self._profile_control_service is None or not self.job_id:
             return
         state = self.controller.state
-        learned = (state.success_lower_bound, state.oom_upper_bound)
-        if learned == (None, None) or learned == self._last_reported_profile:
+        export_cost_model = getattr(self.controller, "export_cost_model", None)
+        cost_model = None
+        if export_cost_model is not None:
+            try:
+                cost_model = export_cost_model()
+            except Exception:  # noqa: BLE001 - model export is advisory
+                cost_model = None
+        # Report when bounds change OR when the cost model gained material
+        # evidence since the last report (bounds can freeze early while the
+        # model keeps improving; without this the persisted profile carries
+        # no model -- observed in the first inheritance experiment).
+        model_samples = int(float(cost_model.get("samples", 0))) if cost_model else 0
+        learned = (state.success_lower_bound, state.oom_upper_bound, model_samples // 8)
+        if learned == (None, None, 0) or learned == self._last_reported_profile:
             return
         if learned != self._pending_profile_learned:
             self._pending_profile_learned = learned
@@ -358,13 +370,6 @@ class RayAdaptiveMapperActor:
 
         self._profile_reports_attempted += 1
         self._profile_report_attempts_for_current += 1
-        export_cost_model = getattr(self.controller, "export_cost_model", None)
-        cost_model = None
-        if export_cost_model is not None:
-            try:
-                cost_model = export_cost_model()
-            except Exception:  # noqa: BLE001 - model export is advisory
-                cost_model = None
         try:
             profile = StageProfile(
                 job_id=self.job_id,
