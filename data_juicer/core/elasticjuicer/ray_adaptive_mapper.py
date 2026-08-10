@@ -11,6 +11,7 @@ from .actor_resource_sampler import ActorResourceSampler
 from .adaptive_mapper import OOMSafeAdaptiveMapper
 from .async_metrics_sink import ActorControlMetrics, AsyncMetricsReporter
 from .batch_controller import AdaptiveBatchController
+from .config_contract import CUDA_CONTROLLER_POLICIES
 from .control_service import ActorControlPoller
 from .oom import is_oom_error
 from .quota import (
@@ -145,9 +146,11 @@ class RayAdaptiveMapperActor:
 
             peak_memory_probe = None
             total_bytes = None
-            if controller_policy in ("proportional", "costaware", "hybrid", "safebo", "bandit"):
+            if controller_policy in CUDA_CONTROLLER_POLICIES:
                 import torch
 
+                if not torch.cuda.is_available():
+                    raise RuntimeError(f"ElasticJuicer controller policy {controller_policy!r} requires a CUDA actor")
                 torch.cuda.init()
                 total_bytes = torch.cuda.get_device_properties(0).total_memory
 
@@ -183,9 +186,7 @@ class RayAdaptiveMapperActor:
                 )
 
                 controller_class = (
-                    SafeBatchOptimizationController
-                    if controller_policy == "safebo"
-                    else BanditController
+                    SafeBatchOptimizationController if controller_policy == "safebo" else BanditController
                 )
                 self.controller = controller_class(
                     initial_batch_size=initial_batch_size,

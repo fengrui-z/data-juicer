@@ -124,7 +124,7 @@ Seeding. A new incarnation performs one bounded, best-effort `get_stage_profile`
 
 Failure semantics. Any fetch failure, timeout, or missing profile degrades to an unseeded start; any report failure degrades to a no-op. Seeding is a latency optimization only and MUST NOT affect losslessness.
 
-Configuration. The product path enables seeding with `elastic_juicer_profile_seed` (default `true` when `elastic_juicer_adaptive_batching` is enabled). The actor constructor flag `profile_seed_enabled` defaults to `false` so unit tests and embedders opt in explicitly.
+Configuration. The product path enables seeding with `elastic_juicer_profile_seed`. It defaults to `false` until the cross-restart benefit and non-regression gates in `elasticjuicer_configuration.md` pass. The actor constructor flag `profile_seed_enabled` also defaults to `false`, so production jobs, unit tests, and embedders all opt in explicitly.
 
 ## 5. EJ-9b message contract
 

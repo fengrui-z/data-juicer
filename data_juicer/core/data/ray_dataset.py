@@ -108,6 +108,13 @@ class RayDataset(DJDataset):
             self._auto_proc = auto_op_parallelism
 
     def _configure_elastic_juicer(self, cfg) -> None:
+        from data_juicer.core.elasticjuicer.config_contract import (
+            normalize_elastic_juicer_config,
+            validate_elastic_juicer_config,
+        )
+
+        if cfg is not None:
+            normalize_elastic_juicer_config(cfg)
         self._elastic_juicer_cfg = cfg
         self._elastic_juicer_adaptive_batching = bool(cfg and cfg.get("elastic_juicer_adaptive_batching", False))
         self._elastic_juicer_job_id = None
@@ -132,9 +139,8 @@ class RayDataset(DJDataset):
         if not self._elastic_juicer_adaptive_batching:
             return
 
+        validate_elastic_juicer_config(cfg, require_job_id=True)
         job_id = cfg.get("job_id")
-        if not job_id:
-            raise ValueError("elastic_juicer_adaptive_batching requires a resolved job_id")
         metrics_max_in_flight = int(cfg.get("elastic_juicer_metrics_max_in_flight", 64))
         if metrics_max_in_flight < 1:
             raise ValueError("elastic_juicer_metrics_max_in_flight must be at least 1")
@@ -447,17 +453,15 @@ class RayDataset(DJDataset):
                                     "control_service": self._elastic_juicer_control_service,
                                     "control_poll_interval_sec": self._elastic_juicer_control_poll_interval_sec,
                                     "sample_interval_sec": self._elastic_juicer_sample_interval_sec,
-                                    "profile_seed_enabled": getattr(self, "_elastic_juicer_profile_seed_enabled", False),
+                                    "profile_seed_enabled": getattr(
+                                        self, "_elastic_juicer_profile_seed_enabled", False
+                                    ),
                                     "profile_seed_timeout_sec": getattr(
                                         self, "_elastic_juicer_profile_seed_timeout_sec", 2.0
                                     ),
                                     "partition_id": getattr(self, "_elastic_juicer_partition_id", None),
-                                    "controller_policy": getattr(
-                                        self, "_elastic_juicer_controller_policy", "ej"
-                                    ),
-                                    "cost_column": getattr(
-                                        self, "_elastic_juicer_cost_column", None
-                                    ),
+                                    "controller_policy": getattr(self, "_elastic_juicer_controller_policy", "ej"),
+                                    "cost_column": getattr(self, "_elastic_juicer_cost_column", None),
                                 },
                                 batch_size=batch_size,
                                 num_cpus=op.num_cpus,

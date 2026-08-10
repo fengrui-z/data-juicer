@@ -815,6 +815,37 @@ def build_base_parser() -> ArgumentParser:
         "for batched Mapper operators in Ray actor mode. It's False "
         "by default.",
     )
+    from data_juicer.core.elasticjuicer.config_contract import CONTROLLER_POLICIES
+
+    parser.add_argument(
+        "--elastic_juicer_controller_policy",
+        type=str,
+        default="ej",
+        choices=sorted(CONTROLLER_POLICIES),
+        help="Actor-local batch controller. Only 'ej' is stable; all other "
+        "policies require elastic_juicer_experimental_policies=true.",
+    )
+    parser.add_argument(
+        "--elastic_juicer_experimental_policies",
+        type=bool,
+        default=False,
+        help="Explicit opt-in for baseline and research controller policies. "
+        "It is False by default and does not enable adaptive batching itself.",
+    )
+    parser.add_argument(
+        "--elastic_juicer_cost_column",
+        type=str,
+        default=None,
+        help="Optional pre-operation numeric cost feature consumed by cost-aware "
+        "experimental policies. Null selects their documented no-signal fallback.",
+    )
+    parser.add_argument(
+        "--elastic_juicer_profiles_path",
+        type=str,
+        default=None,
+        help="Optional absolute local path for stage-profile persistence across "
+        "driver restarts. The partitioned executor otherwise uses its work_dir.",
+    )
     parser.add_argument(
         "--elastic_juicer_metrics_max_in_flight",
         type=int,
@@ -929,15 +960,13 @@ def build_base_parser() -> ArgumentParser:
         "--elastic_juicer_profile_seed_timeout_sec",
         type=float,
         default=2.0,
-        help="Bounded wait for the one-shot stage-profile seed fetch and "
-        "for profile report acknowledgements.",
+        help="Bounded wait for the one-shot stage-profile seed fetch and " "for profile report acknowledgements.",
     )
     parser.add_argument(
         "--elastic_juicer_profile_ttl_ms",
         type=int,
         default=1800000,
-        help="Maximum stage-profile age served to a new incarnation; "
-        "older profiles are discarded on read.",
+        help="Maximum stage-profile age served to a new incarnation; " "older profiles are discarded on read.",
     )
     parser.add_argument(
         "--elastic_juicer_lease_ttl_ms",
@@ -1028,6 +1057,12 @@ def init_configs(args: Optional[List[str]] = None, which_entry: object = None, l
             with timing_context("Parsing arguments"):
                 cfg = parser.parse_args(args=args)
 
+                from data_juicer.core.elasticjuicer.config_contract import (
+                    normalize_elastic_juicer_config,
+                )
+
+                normalize_elastic_juicer_config(cfg)
+
                 if cfg.executor_type == "ray":
                     os.environ[RAY_JOB_ENV_VAR] = "1"
 
@@ -1064,6 +1099,11 @@ def init_configs(args: Optional[List[str]] = None, which_entry: object = None, l
 
         # show the final config tables before the process started
         if not load_configs_only:
+            from data_juicer.core.elasticjuicer.config_contract import (
+                effective_elastic_juicer_config,
+            )
+
+            logger.info("ElasticJuicer effective configuration: " f"{effective_elastic_juicer_config(cfg)}")
             display_config(cfg)
 
         global global_cfg, global_parser
