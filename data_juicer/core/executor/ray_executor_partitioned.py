@@ -1180,7 +1180,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         rows_per_partition = max(1, math.ceil(total_rows / num_partitions))
 
         explicit_op_ids = getattr(self, "_explicit_actor_op_ids", set())
-        demands = {}
+        demand_list = []
         for op, stage_key in eligible:
             result = probe_results.get(stage_key)
             if result is None:
@@ -1193,26 +1193,29 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
                 logger.warning(f"ElasticJuicer auto-parallelism: degenerate probe for {stage_key}; skipping")
                 continue
             explicit = id(op) in explicit_op_ids
-            demands[stage_key] = StageDemand(
-                stage_key=stage_key,
-                op_name=getattr(op, "_name", None) or op.__class__.__name__,
-                probed_throughput_rps=throughput,
-                effective_peak_bytes=peak_bytes,
-                batch_size=batch_size,
-                available_batches=max(1, rows_per_partition // batch_size),
-                num_gpus=float(getattr(op, "num_gpus", 1.0) or 1.0),
-                num_cpus=float(getattr(op, "num_cpus", 1.0) or 1.0),
-                oom_upper_bound=getattr(result, "oom_upper_bound", None),
-                explicit=explicit,
-                explicit_actors=self._actor_pool_capacity(op.num_proc) if explicit else None,
+            demand_list.append(
+                StageDemand(
+                    stage_key=stage_key,
+                    op_name=getattr(op, "_name", None) or op.__class__.__name__,
+                    probed_throughput_rps=throughput,
+                    effective_peak_bytes=peak_bytes,
+                    batch_size=batch_size,
+                    available_batches=max(1, rows_per_partition // batch_size),
+                    num_gpus=float(getattr(op, "num_gpus", 1.0) or 1.0),
+                    num_cpus=float(getattr(op, "num_cpus", 1.0) or 1.0),
+                    oom_upper_bound=getattr(result, "oom_upper_bound", None),
+                    explicit=explicit,
+                    explicit_actors=self._actor_pool_capacity(op.num_proc) if explicit else None,
+                )
             )
-        if not demands:
+        if not demand_list:
             logger.warning("ElasticJuicer auto-parallelism disabled: no usable probe results")
             return
+        demands = {demand.stage_key: demand for demand in demand_list}
 
         max_replicas = int(self._ej_cfg_get("elastic_juicer_max_gpu_workers_per_device", 4))
         try:
-            plan = plan_parallelism(demands, cluster, max_replicas_per_device=max_replicas)
+            plan = plan_parallelism(demand_list, cluster, max_replicas_per_device=max_replicas)
         except Exception as error:
             logger.warning(f"ElasticJuicer auto-parallelism disabled: planning failed ({error})")
             return
@@ -1280,6 +1283,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
 
         sink = self._ej_cfg_get("_elastic_juicer_metrics_sink", None)
         if sink is None:
+            logger.info("ElasticJuicer replan: no metrics sink on cfg; observations empty")
             return {}
         try:
             snapshot = ray.get(sink.snapshot.remote(), timeout=15)
@@ -1287,7 +1291,12 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             logger.warning(f"ElasticJuicer replan: metrics snapshot failed ({error})")
             return {}
         events = (snapshot or {}).get("events", [])
-        return aggregate_stage_observations(events, partition_id=partition_id)
+        observations = aggregate_stage_observations(events, partition_id=partition_id)
+        logger.info(
+            f"ElasticJuicer replan: partition {partition_id} sink events={len(events)} "
+            f"stages_observed={len(observations)}"
+        )
+        return observations
 
     def _run_partitions_serial_with_replan(self, partitions, ops, processed_partitions) -> None:
         """Sequential partition loop with replanning at each boundary."""
@@ -1303,6 +1312,15 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             rows = self._partition_expected_rows.get(partition_id, 0)
             goodput = rows / wall_sec if wall_sec > 0 else 0.0
             observations = self._ej_collect_partition_observations(partition_id)
+            detail = {
+                key: (
+                    f"rps={value.rows_per_sec:.1f}",
+                    f"oom={value.oom_batches}",
+                    f"bpr={None if value.bytes_per_row is None else round(value.bytes_per_row / 1048576, 1)}",
+                )
+                for key, value in observations.items()
+            }
+            logger.info(f"ElasticJuicer replan: partition {partition_id} observations {detail}")
             try:
                 changes = controller.on_partition_complete(partition_id, observations, goodput)
             except Exception as error:

@@ -131,6 +131,27 @@ def save_runtime_plan(path: str, plan: RuntimePlan) -> None:
     atomic_write_json(path, plan.to_dict())
 
 
+def device_replica_counts(stages: Dict[str, StagePlan]) -> Dict[int, int]:
+    """Total replicas placed on each device across all stages."""
+
+    counts: Dict[int, int] = {}
+    for stage_plan in stages.values():
+        for device_id in stage_plan.device_ids:
+            counts[device_id] = counts.get(device_id, 0) + 1
+    return counts
+
+
+def colocated_actor_budget(cluster: ClusterSpec, stages: Dict[str, StagePlan], device_id: int) -> int:
+    """Per-actor VRAM envelope: the device budget shared over colocated replicas.
+
+    The envelope never drops below the stage's own probed peak, so a stage
+    that already fits is never told to shrink below what it measured.
+    """
+
+    replicas = max(1, device_replica_counts(stages).get(device_id, 0))
+    return max(1, cluster.device_memory_budget_bytes // replicas)
+
+
 class _DeviceState:
     __slots__ = ("memory_used", "gpu_fraction_used", "replicas")
 
@@ -263,7 +284,11 @@ def plan_parallelism(
         stage_plan.planned_actors += 1
         stage_plan.device_ids.append(device_id)
 
-    # Phase 3: per-actor VRAM budgets and batch hard caps.
+    # Phase 3: per-actor VRAM budgets and batch hard caps.  The budget is
+    # the device budget divided over colocated replicas (capped by the free
+    # space left on the device), so drift detection later compares apples
+    # to apples against the envelope every actor actually owns.
+    device_replicas = device_replica_counts(plan.stages)
     for stage_key, stage_plan in plan.stages.items():
         demand = demand_by_key[stage_key]
         device_ids = stage_plan.device_ids
@@ -271,7 +296,11 @@ def plan_parallelism(
         if device_ids:
             device = devices[device_ids[0]]
             free_on_device = cluster.device_memory_budget_bytes - (device.memory_used - demand.effective_peak_bytes)
-            per_actor_budget = max(demand.effective_peak_bytes, free_on_device)
+            shared_budget = max(
+                demand.effective_peak_bytes,
+                cluster.device_memory_budget_bytes // max(1, device_replicas.get(device_ids[0], 1)),
+            )
+            per_actor_budget = max(demand.effective_peak_bytes, min(free_on_device, shared_budget))
         stage_plan.per_actor_vram_budget_bytes = int(per_actor_budget)
         cap = _batch_hard_cap(demand, stage_plan.per_actor_vram_budget_bytes)
         if demand.oom_upper_bound is not None:

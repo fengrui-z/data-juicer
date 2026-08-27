@@ -25,6 +25,8 @@ import time
 from dataclasses import dataclass, field
 from typing import Any, Dict, Iterable, List, Optional
 
+from loguru import logger
+
 from .parallelism_planner import ClusterSpec, RuntimePlan, StageDemand
 
 PLAN_EVENTS_FILENAME = "plan_events.jsonl"
@@ -221,6 +223,8 @@ class PartitionReplanController:
         return candidates
 
     def _recompute_budget_and_cap(self, stage_key: str) -> int:
+        from .parallelism_planner import device_replica_counts
+
         stage_plan = self.plan.stages[stage_key]
         demand = self.demands[stage_key]
         device_ids = stage_plan.device_ids
@@ -228,7 +232,12 @@ class PartitionReplanController:
         if device_ids:
             used = self._device_memory_used.get(device_ids[0], 0)
             free_after_release = self.cluster.device_memory_budget_bytes - (used - demand.effective_peak_bytes)
-            budget = max(demand.effective_peak_bytes, free_after_release)
+            replicas = max(1, device_replica_counts(self.plan.stages).get(device_ids[0], 1))
+            shared_budget = max(
+                demand.effective_peak_bytes,
+                self.cluster.device_memory_budget_bytes // replicas,
+            )
+            budget = max(demand.effective_peak_bytes, min(free_after_release, shared_budget))
         stage_plan.per_actor_vram_budget_bytes = int(budget)
         cap = max(1, int(budget // max(demand.per_row_vram_bytes, 1e-9)))
         if demand.oom_upper_bound is not None:
@@ -285,12 +294,22 @@ class PartitionReplanController:
                 continue
 
             baseline = self.baseline_bytes_per_row.get(stage_key)
-            if (
+            pressure = self._budget_pressure(stage_key, observation)
+            drifted = bool(
                 baseline
                 and observation.bytes_per_row is not None
                 and observation.bytes_per_row > baseline * self.config.drift_threshold
+            )
+            logger.debug(
+                f"[ElasticJuicer replan-eval] partition {partition_id} stage={stage_key} "
+                f"actors={stage_plan.planned_actors} baseline_bpr={baseline} "
+                f"obs_bpr={observation.bytes_per_row} drifted={drifted} pressure={pressure} "
+                f"budget={stage_plan.per_actor_vram_budget_bytes}"
+            )
+            if (
+                drifted
                 and stage_plan.planned_actors > self.config.min_actors
-                and self._budget_pressure(stage_key, observation)
+                and pressure
             ):
                 changes.append(self._scale(stage_key, partition_id, -1, action="scale_down", reason=(
                     f"per-row VRAM {observation.bytes_per_row:.0f}B > baseline "

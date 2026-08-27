@@ -1162,7 +1162,10 @@ def init_configs(args: Optional[List[str]] = None, which_entry: object = None, l
 
                 normalize_elastic_juicer_config(cfg)
 
-                if cfg.executor_type == "ray":
+                if cfg.executor_type in ("ray", "ray_partitioned"):
+                    # Ray-Data executors must not inherit the local-process
+                    # `np` default into operator num_proc: actor concurrency
+                    # is owned by the executor/planner, not by cfg.np.
                     os.environ[RAY_JOB_ENV_VAR] = "1"
 
                 if cfg.custom_operator_paths:

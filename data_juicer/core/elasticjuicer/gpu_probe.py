@@ -239,7 +239,7 @@ def probe_stage_on_worker(
     started = time.time()
     torch.cuda.init()
     torch.cuda.synchronize()
-    gpu_name = torch.cuda.get_device_name(torch.current_device())
+    gpu_name = torch.cuda.get_device_name(torch.cuda.current_device())
 
     free_before, _total = torch.cuda.mem_get_info()
     min_free_observed = free_before
