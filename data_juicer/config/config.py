@@ -982,6 +982,105 @@ def build_base_parser() -> ArgumentParser:
         help="Bounded capacity of the job-scoped async metrics sink; the "
         "oldest events are dropped and counted when it is full.",
     )
+    parser.add_argument(
+        "--elastic_juicer_auto_parallelism",
+        type=bool,
+        default=False,
+        help="Enable ElasticJuicer throughput-aware actor planning: preflight "
+        "GPU probes plus a constraint-aware actor plan applied before "
+        "partitions, with boundary replanning in serial partition mode. "
+        "It's False by default.",
+    )
+    parser.add_argument(
+        "--elastic_juicer_probe_enabled",
+        type=bool,
+        default=True,
+        help="Run preflight GPU probes before planning. Only meaningful with "
+        "elastic_juicer_auto_parallelism=true; cached results are reused "
+        "when the operator/GPU/parameter fingerprint is unchanged.",
+    )
+    parser.add_argument(
+        "--elastic_juicer_replan_enabled",
+        type=bool,
+        default=True,
+        help="Replan actor counts at partition boundaries in serial "
+        "partition mode. Only meaningful with "
+        "elastic_juicer_auto_parallelism=true.",
+    )
+    parser.add_argument(
+        "--gpu_probe_warmup_batches",
+        type=int,
+        default=1,
+        help="Warmup batches discarded before steady-state probe timing.",
+    )
+    parser.add_argument(
+        "--gpu_probe_steady_batches",
+        type=int,
+        default=3,
+        help="Steady-state batches timed for probe throughput.",
+    )
+    parser.add_argument(
+        "--gpu_probe_sample_rows",
+        type=int,
+        default=256,
+        help="Rows sampled from the head of the input dataset for probing.",
+    )
+    parser.add_argument(
+        "--gpu_probe_batch_cap_multiplier",
+        type=int,
+        default=8,
+        help="Upper bound multiplier for the OOM-boundary upward probe.",
+    )
+    parser.add_argument(
+        "--gpu_probe_memory_headroom",
+        type=float,
+        default=0.10,
+        help="Headroom added to measured probe peak memory.",
+    )
+    parser.add_argument(
+        "--gpu_probe_timeout_seconds",
+        type=float,
+        default=None,
+        help="Optional per-stage probe timeout in seconds.",
+    )
+    parser.add_argument(
+        "--elastic_juicer_max_gpu_workers_per_device",
+        type=int,
+        default=4,
+        help="Maximum actor replicas the planner may place on one GPU device.",
+    )
+    parser.add_argument(
+        "--elastic_juicer_device_memory_budget_fraction",
+        type=float,
+        default=0.90,
+        help="Fraction of device memory the planner may allocate in total.",
+    )
+    parser.add_argument(
+        "--elastic_juicer_device_memory_bytes",
+        type=int,
+        default=None,
+        help="Optional explicit device memory override for planning; the "
+        "executor otherwise queries nvidia-smi.",
+    )
+    parser.add_argument(
+        "--elastic_juicer_drift_threshold",
+        type=float,
+        default=1.3,
+        help="Per-row VRAM ratio above the probe baseline that triggers "
+        "boundary scale-down.",
+    )
+    parser.add_argument(
+        "--elastic_juicer_marginal_gain_epsilon",
+        type=float,
+        default=0.03,
+        help="Minimum goodput gain required to keep a boundary scale-up.",
+    )
+    parser.add_argument(
+        "--elastic_juicer_parallelism_cooldown_partitions",
+        type=int,
+        default=1,
+        help="Minimum partition gap between two changes for one stage.",
+    )
 
     return parser
 

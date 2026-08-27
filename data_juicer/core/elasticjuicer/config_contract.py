@@ -55,6 +55,50 @@ def controller_policy_stability(policy: str) -> str:
     raise ValueError(f"unknown ElasticJuicer controller policy: {policy!r}")
 
 
+def _validate_auto_parallelism_options(cfg: Any) -> None:
+    """Validate the probe/plan/replan option block for auto-parallelism."""
+
+    from .gpu_probe import ProbeParams
+    from .parallelism_controller import ReplanConfig
+
+    auto_parallelism = bool(_get(cfg, "elastic_juicer_auto_parallelism", False))
+    probe_enabled = bool(_get(cfg, "elastic_juicer_probe_enabled", True))
+    replan_enabled = bool(_get(cfg, "elastic_juicer_replan_enabled", True))
+
+    if not auto_parallelism:
+        active_options = []
+        if not probe_enabled:
+            active_options.append("elastic_juicer_probe_enabled=false")
+        if not replan_enabled:
+            active_options.append("elastic_juicer_replan_enabled=false")
+        if active_options:
+            raise ValueError(
+                f"{', '.join(active_options)} is only meaningful with elastic_juicer_auto_parallelism=true"
+            )
+        return
+
+    ProbeParams(
+        warmup_batches=int(_get(cfg, "gpu_probe_warmup_batches", 1)),
+        steady_batches=int(_get(cfg, "gpu_probe_steady_batches", 3)),
+        sample_rows=int(_get(cfg, "gpu_probe_sample_rows", 256)),
+        batch_cap_multiplier=int(_get(cfg, "gpu_probe_batch_cap_multiplier", 8)),
+        memory_headroom=float(_get(cfg, "gpu_probe_memory_headroom", 0.10)),
+        timeout_seconds=_get(cfg, "gpu_probe_timeout_seconds", None),
+    ).validate()
+    ReplanConfig(
+        drift_threshold=float(_get(cfg, "elastic_juicer_drift_threshold", 1.3)),
+        marginal_gain_epsilon=float(_get(cfg, "elastic_juicer_marginal_gain_epsilon", 0.03)),
+        cooldown_partitions=int(_get(cfg, "elastic_juicer_parallelism_cooldown_partitions", 1)),
+    ).validate()
+
+    max_workers = int(_get(cfg, "elastic_juicer_max_gpu_workers_per_device", 4))
+    if max_workers < 1:
+        raise ValueError("elastic_juicer_max_gpu_workers_per_device must be >= 1")
+    budget_fraction = float(_get(cfg, "elastic_juicer_device_memory_budget_fraction", 0.90))
+    if not 0.0 < budget_fraction <= 1.0:
+        raise ValueError("elastic_juicer_device_memory_budget_fraction must be in (0, 1]")
+
+
 def validate_elastic_juicer_config(cfg: Any, *, require_job_id: bool = False) -> None:
     """Fail fast on invalid public ElasticJuicer configuration.
 
@@ -114,6 +158,10 @@ def validate_elastic_juicer_config(cfg: Any, *, require_job_id: bool = False) ->
     if require_job_id and enabled and not _get(cfg, "job_id", None):
         raise ValueError("elastic_juicer_adaptive_batching requires a resolved job_id")
 
+    _validate_auto_parallelism_options(cfg)
+    if require_job_id and bool(_get(cfg, "elastic_juicer_auto_parallelism", False)) and not _get(cfg, "job_id", None):
+        raise ValueError("elastic_juicer_auto_parallelism requires a resolved job_id")
+
 
 def effective_elastic_juicer_config(cfg: Any) -> Dict[str, Any]:
     """Return a compact, safe-to-log snapshot of the effective public contract."""
@@ -137,6 +185,10 @@ def effective_elastic_juicer_config(cfg: Any) -> Dict[str, Any]:
         "profile_seed": bool(_get(cfg, "elastic_juicer_profile_seed", False)),
         "profiles_path": profiles_path,
         "profile_ttl_ms": int(_get(cfg, "elastic_juicer_profile_ttl_ms", 1_800_000)),
+        "auto_parallelism": bool(_get(cfg, "elastic_juicer_auto_parallelism", False)),
+        "probe_enabled": bool(_get(cfg, "elastic_juicer_probe_enabled", True)),
+        "replan_enabled": bool(_get(cfg, "elastic_juicer_replan_enabled", True)),
+        "max_gpu_workers_per_device": int(_get(cfg, "elastic_juicer_max_gpu_workers_per_device", 4)),
     }
 
 

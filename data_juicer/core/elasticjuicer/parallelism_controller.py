@@ -1,0 +1,382 @@
+"""Partition-boundary actor replanning (the outer throughput loop).
+
+Between partitions the driver aggregates actor metrics events and applies
+two deterministic rules per stage:
+
+- drift-down: observed per-row VRAM moved above the probed baseline past
+  ``drift_threshold`` and the per-actor budget is under pressure, so one
+  replica is removed and its VRAM budget is redistributed to the
+  remaining actors (batch hard cap recomputed);
+- scale-up gate: per-actor throughput fell far below the probed steady
+  rate, so one replica is added behind a marginal-gain gate -- if the
+  next partition's goodput gain is below ``marginal_gain_epsilon`` the
+  addition is reverted and the stage is frozen.
+
+Batch size remains owned by the actor-local controller; this module only
+changes replica counts and the batch hard-cap envelope.  All decisions
+are appended to ``plan_events.jsonl`` for auditability.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import time
+from dataclasses import dataclass, field
+from typing import Any, Dict, Iterable, List, Optional
+
+from .parallelism_planner import ClusterSpec, RuntimePlan, StageDemand
+
+PLAN_EVENTS_FILENAME = "plan_events.jsonl"
+
+OOM_ERROR_MARKER = "outofmemory"
+
+
+@dataclass(frozen=True)
+class ReplanConfig:
+    drift_threshold: float = 1.3
+    marginal_gain_epsilon: float = 0.03
+    cooldown_partitions: int = 1
+    min_actors: int = 1
+    underperformance_ratio: float = 0.6
+
+    def validate(self) -> None:
+        if self.drift_threshold <= 1.0:
+            raise ValueError("elastic_juicer_drift_threshold must be > 1.0")
+        if not 0.0 <= self.marginal_gain_epsilon <= 1.0:
+            raise ValueError("elastic_juicer_marginal_gain_epsilon must be in [0, 1]")
+        if self.cooldown_partitions < 0:
+            raise ValueError("elastic_juicer_parallelism_cooldown_partitions must be >= 0")
+        if self.min_actors < 1:
+            raise ValueError("min_actors must be >= 1")
+        if not 0.0 < self.underperformance_ratio <= 1.0:
+            raise ValueError("underperformance_ratio must be in (0, 1]")
+
+
+@dataclass
+class StageObservation:
+    """Aggregated metrics for one stage in one partition."""
+
+    stage_key: str
+    succeeded_batches: int = 0
+    oom_batches: int = 0
+    rows_per_sec: float = 0.0
+    bytes_per_row: Optional[float] = None
+    sample_count: int = 0
+
+
+def _event_attr(event: Any, name: str, default: Any = None) -> Any:
+    if isinstance(event, dict):
+        return event.get(name, default)
+    return getattr(event, name, default)
+
+
+def aggregate_stage_observations(
+    events: Iterable[Any],
+    partition_id: Optional[int] = None,
+) -> Dict[str, StageObservation]:
+    """Fold metrics-sink events into per-stage observations for a partition.
+
+    Accepts ActorMetricsEvent instances or plain dicts (tests).  Events
+    from other partitions are ignored; per-row VRAM is derived from CUDA
+    peak allocations so drift detection needs no cost column.
+    """
+
+    observations: Dict[str, StageObservation] = {}
+    throughputs: Dict[str, List[float]] = {}
+    bytes_per_row_values: Dict[str, List[float]] = {}
+    for event in events:
+        event_partition = _event_attr(event, "partition_id", None)
+        if partition_id is not None and event_partition != partition_id:
+            continue
+        stage_key = _event_attr(event, "stage_id") or _event_attr(event, "op_name")
+        if not stage_key:
+            continue
+        snapshot = _event_attr(event, "snapshot")
+        if snapshot is None:
+            continue
+        observation = observations.setdefault(stage_key, StageObservation(stage_key=stage_key))
+        error_type = _event_attr(snapshot, "error_type", None) or ""
+        succeeded = bool(_event_attr(snapshot, "succeeded", True))
+        if not succeeded and OOM_ERROR_MARKER in str(error_type).lower():
+            observation.oom_batches += 1
+            continue
+        if not succeeded:
+            continue
+        observation.succeeded_batches += 1
+        throughput = _event_attr(snapshot, "throughput", 0.0)
+        if throughput and throughput > 0:
+            throughputs.setdefault(stage_key, []).append(float(throughput))
+        cuda = _event_attr(snapshot, "cuda", None)
+        batch_size = _event_attr(snapshot, "batch_size", 0)
+        if cuda is not None and batch_size:
+            peak_bytes = float(_event_attr(cuda, "peak_allocated_mb", 0.0)) * 1024 * 1024
+            if peak_bytes > 0:
+                bytes_per_row_values.setdefault(stage_key, []).append(peak_bytes / float(batch_size))
+        observation.sample_count += 1
+
+    for stage_key, observation in observations.items():
+        values = throughputs.get(stage_key)
+        if values:
+            observation.rows_per_sec = sorted(values)[len(values) // 2]
+        per_row = bytes_per_row_values.get(stage_key)
+        if per_row:
+            observation.bytes_per_row = sorted(per_row)[len(per_row) // 2]
+    return observations
+
+
+@dataclass
+class PlanChange:
+    partition_id: int
+    stage_key: str
+    op_name: str
+    action: str
+    reason: str
+    actors_before: int
+    actors_after: int
+    batch_hard_cap_before: int
+    batch_hard_cap_after: int
+    timestamp_ms: int = field(default_factory=lambda: int(time.time() * 1000))
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "partition_id": self.partition_id,
+            "stage_key": self.stage_key,
+            "op_name": self.op_name,
+            "action": self.action,
+            "reason": self.reason,
+            "actors_before": self.actors_before,
+            "actors_after": self.actors_after,
+            "batch_hard_cap_before": self.batch_hard_cap_before,
+            "batch_hard_cap_after": self.batch_hard_cap_after,
+            "timestamp_ms": self.timestamp_ms,
+        }
+
+
+class PartitionReplanController:
+    """Deterministic outer loop; one instance per job."""
+
+    def __init__(
+        self,
+        plan: RuntimePlan,
+        demands: Dict[str, StageDemand],
+        cluster: ClusterSpec,
+        config: ReplanConfig,
+        *,
+        baseline_bytes_per_row: Optional[Dict[str, float]] = None,
+        events_path: Optional[str] = None,
+        max_replicas_per_device: Optional[int] = None,
+    ):
+        config.validate()
+        self.plan = plan
+        self.demands = dict(demands)
+        self.cluster = cluster
+        self.config = config
+        self.events_path = events_path
+        self.max_replicas_per_device = (
+            max_replicas_per_device
+            if max_replicas_per_device is not None
+            else plan.max_replicas_per_device
+        )
+        self.baseline_bytes_per_row = dict(baseline_bytes_per_row or {})
+        self._last_change_partition: Dict[str, int] = {}
+        self._frozen_stages: set = set()
+        self._pending_scale_up: Dict[str, Dict[str, Any]] = {}
+        self._device_memory_used: Dict[int, int] = {}
+        for stage_plan in plan.stages.values():
+            demand = self.demands.get(stage_plan.stage_key)
+            if demand is None:
+                continue
+            for device_id in stage_plan.device_ids:
+                self._device_memory_used[device_id] = (
+                    self._device_memory_used.get(device_id, 0) + demand.effective_peak_bytes
+                )
+
+    # ------------------------------------------------------------------
+    # constraint helpers (mirror the planner, evaluated against live state)
+    # ------------------------------------------------------------------
+
+    def _cpu_free(self) -> float:
+        used = 0.0
+        for stage_plan in self.plan.stages.values():
+            demand = self.demands.get(stage_plan.stage_key)
+            if demand is not None:
+                used += stage_plan.planned_actors * demand.num_cpus
+        return self.cluster.total_cpus - used
+
+    def _device_candidates(self, demand: StageDemand) -> List[int]:
+        replicas: Dict[int, int] = {}
+        for stage_plan in self.plan.stages.values():
+            for device_id in stage_plan.device_ids:
+                replicas[device_id] = replicas.get(device_id, 0) + 1
+        candidates = []
+        for device_id in range(self.cluster.num_devices):
+            if replicas.get(device_id, 0) >= self.max_replicas_per_device:
+                continue
+            used = self._device_memory_used.get(device_id, 0)
+            if used + demand.effective_peak_bytes > self.cluster.device_memory_budget_bytes:
+                continue
+            candidates.append(device_id)
+        candidates.sort(key=lambda d: (self._device_memory_used.get(d, 0), d))
+        return candidates
+
+    def _recompute_budget_and_cap(self, stage_key: str) -> int:
+        stage_plan = self.plan.stages[stage_key]
+        demand = self.demands[stage_key]
+        device_ids = stage_plan.device_ids
+        budget = self.cluster.device_memory_budget_bytes
+        if device_ids:
+            used = self._device_memory_used.get(device_ids[0], 0)
+            free_after_release = self.cluster.device_memory_budget_bytes - (used - demand.effective_peak_bytes)
+            budget = max(demand.effective_peak_bytes, free_after_release)
+        stage_plan.per_actor_vram_budget_bytes = int(budget)
+        cap = max(1, int(budget // max(demand.per_row_vram_bytes, 1e-9)))
+        if demand.oom_upper_bound is not None:
+            cap = min(cap, max(1, demand.oom_upper_bound - 1))
+        stage_plan.batch_hard_cap = cap
+        return cap
+
+    # ------------------------------------------------------------------
+    # public entry point
+    # ------------------------------------------------------------------
+
+    def on_partition_complete(
+        self,
+        partition_id: int,
+        observations: Dict[str, StageObservation],
+        goodput_rows_per_sec: float,
+    ) -> List[PlanChange]:
+        """Apply the replan rules once per finished partition."""
+
+        changes: List[PlanChange] = []
+        for stage_key in sorted(self.plan.stages):
+            stage_plan = self.plan.stages[stage_key]
+            demand = self.demands.get(stage_key)
+            if demand is None or stage_plan.fixed:
+                continue
+
+            # Resolve a pending marginal-gain check first.
+            pending = self._pending_scale_up.pop(stage_key, None)
+            if pending is not None:
+                previous_goodput = pending["goodput_before"]
+                gain = 0.0
+                if previous_goodput > 0:
+                    gain = (goodput_rows_per_sec - previous_goodput) / previous_goodput
+                if gain < self.config.marginal_gain_epsilon:
+                    changes.append(self._scale(stage_key, partition_id, -1, action="revert_scale_up", reason=(
+                        f"marginal goodput gain {gain:.3f} < epsilon "
+                        f"{self.config.marginal_gain_epsilon}; stage frozen"
+                    )))
+                    self._frozen_stages.add(stage_key)
+                    continue
+                # Gain met: treat the resolution as a change of this
+                # partition so the cooldown applies before the next move.
+                self._last_change_partition[stage_key] = partition_id
+                continue
+
+            if stage_key in self._frozen_stages:
+                continue
+            observation = observations.get(stage_key)
+            if observation is None or observation.sample_count == 0:
+                continue
+
+            last_change = self._last_change_partition.get(stage_key)
+            if last_change is not None and partition_id - last_change < self.config.cooldown_partitions:
+                continue
+
+            baseline = self.baseline_bytes_per_row.get(stage_key)
+            if (
+                baseline
+                and observation.bytes_per_row is not None
+                and observation.bytes_per_row > baseline * self.config.drift_threshold
+                and stage_plan.planned_actors > self.config.min_actors
+                and self._budget_pressure(stage_key, observation)
+            ):
+                changes.append(self._scale(stage_key, partition_id, -1, action="scale_down", reason=(
+                    f"per-row VRAM {observation.bytes_per_row:.0f}B > baseline "
+                    f"{baseline:.0f}B x {self.config.drift_threshold} "
+                    f"(oom_batches={observation.oom_batches}); redistributing budget"
+                )))
+                continue
+
+            expected_rps = demand.probed_throughput_rps * self.config.underperformance_ratio
+            if (
+                observation.rows_per_sec > 0
+                and observation.rows_per_sec < expected_rps
+                and stage_plan.planned_actors < demand.available_batches
+                and self._cpu_free() >= demand.num_cpus
+            ):
+                candidates = self._device_candidates(demand)
+                if candidates:
+                    change = self._scale(stage_key, partition_id, +1, action="scale_up", reason=(
+                        f"per-actor throughput {observation.rows_per_sec:.1f} rows/s below "
+                        f"{self.config.underperformance_ratio:.0%} of probed "
+                        f"{demand.probed_throughput_rps:.1f} rows/s"
+                    ))
+                    self._pending_scale_up[stage_key] = {"goodput_before": goodput_rows_per_sec}
+                    changes.append(change)
+
+        if changes and self.events_path:
+            self._append_events(changes)
+        return changes
+
+    # ------------------------------------------------------------------
+    # internals
+    # ------------------------------------------------------------------
+
+    def _budget_pressure(self, stage_key: str, observation: StageObservation) -> bool:
+        stage_plan = self.plan.stages[stage_key]
+        if observation.oom_batches > 0:
+            return True
+        if observation.bytes_per_row is None:
+            return False
+        return observation.bytes_per_row * self.demands[stage_key].batch_size > stage_plan.per_actor_vram_budget_bytes
+
+    def _scale(self, stage_key: str, partition_id: int, delta: int, *, action: str, reason: str) -> PlanChange:
+        stage_plan = self.plan.stages[stage_key]
+        demand = self.demands[stage_key]
+        actors_before = stage_plan.planned_actors
+        cap_before = stage_plan.batch_hard_cap
+        if delta > 0:
+            candidates = self._device_candidates(demand)
+            if not candidates:
+                raise RuntimeError(f"cannot scale up stage {stage_key}: no device has capacity")
+            device_id = candidates[0]
+            stage_plan.device_ids.append(device_id)
+            self._device_memory_used[device_id] = (
+                self._device_memory_used.get(device_id, 0) + demand.effective_peak_bytes
+            )
+        else:
+            if stage_plan.planned_actors <= self.config.min_actors:
+                raise RuntimeError(f"cannot scale down stage {stage_key}: already at min_actors")
+            device_id = stage_plan.device_ids.pop()
+            self._device_memory_used[device_id] = max(
+                0, self._device_memory_used.get(device_id, 0) - demand.effective_peak_bytes
+            )
+        stage_plan.planned_actors += delta
+        cap_after = self._recompute_budget_and_cap(stage_key)
+        self._last_change_partition[stage_key] = partition_id
+        return PlanChange(
+            partition_id=partition_id,
+            stage_key=stage_key,
+            op_name=stage_plan.op_name,
+            action=action,
+            reason=reason,
+            actors_before=actors_before,
+            actors_after=stage_plan.planned_actors,
+            batch_hard_cap_before=cap_before,
+            batch_hard_cap_after=cap_after,
+        )
+
+    def _append_events(self, changes: List[PlanChange]) -> None:
+        try:
+            directory = os.path.dirname(os.path.abspath(self.events_path))
+            os.makedirs(directory, exist_ok=True)
+            with open(self.events_path, "a") as handle:
+                for change in changes:
+                    handle.write(json.dumps(change.to_dict(), sort_keys=True) + "\n")
+                handle.flush()
+                os.fsync(handle.fileno())
+        except OSError:
+            # Auditability loss must never fail the data path.
+            pass

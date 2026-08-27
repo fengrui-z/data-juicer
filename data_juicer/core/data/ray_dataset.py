@@ -398,6 +398,26 @@ class RayDataset(DJDataset):
         registry[id(op)] = (op, stage_id)
         return stage_id
 
+    @staticmethod
+    def _actor_pool_for(op):
+        """Resolve operator concurrency to an actor pool strategy.
+
+        Scalar ``num_proc`` keeps a fixed pool.  ``(min, max)`` tuples build
+        an elastic pool whose size Ray may grow from ``min_size`` up to
+        ``max_size`` under queue pressure; the floor is never dropped below
+        ``min_size``.
+        """
+
+        concurrency = getattr(op, "num_proc", None)
+        if isinstance(concurrency, (tuple, list)) and len(concurrency) >= 2:
+            min_size = int(concurrency[0])
+            max_size = int(concurrency[1])
+            if min_size < 1 or max_size < min_size:
+                op_name = getattr(op, "_name", None) or op.__class__.__name__
+                raise ValueError(f"invalid actor concurrency bounds {concurrency!r} for op {op_name!r}")
+            return ActorPoolStrategy(min_size=min_size, max_size=max_size)
+        return ActorPoolStrategy(size=concurrency)
+
     def _run_single_op(self, op, cached_columns=None, tracer=None, stage_id=None):
         # Use cached columns to avoid calling self.data.columns() which breaks pipeline
         if cached_columns is None:
@@ -433,8 +453,15 @@ class RayDataset(DJDataset):
                                 RayAdaptiveMapperActor,
                             )
 
-                            compute = ActorPoolStrategy(size=op.num_proc)
+                            compute = self._actor_pool_for(op)
                             resolved_stage_id = stage_id or self._next_elastic_juicer_stage_id(op)
+                            # A throughput-aware plan may lower the batch
+                            # envelope below the configured batch size; the
+                            # controller then starts at the capped value.
+                            plan_hard_cap = getattr(op, "_elastic_juicer_batch_hard_cap", None)
+                            effective_batch_size = batch_size
+                            if plan_hard_cap is not None and int(plan_hard_cap) >= 1:
+                                effective_batch_size = min(batch_size, int(plan_hard_cap))
                             self.data = self.data.map_batches(
                                 RayAdaptiveMapperActor,
                                 fn_args=None,
@@ -443,8 +470,8 @@ class RayDataset(DJDataset):
                                     "operator_class": op.__class__,
                                     "operator_args": op._init_args,
                                     "operator_kwargs": op._init_kwargs,
-                                    "initial_batch_size": batch_size,
-                                    "max_batch_size": batch_size,
+                                    "initial_batch_size": effective_batch_size,
+                                    "max_batch_size": effective_batch_size,
                                     "metrics_sink": self._elastic_juicer_metrics_sink,
                                     "metrics_max_in_flight": getattr(self, "_elastic_juicer_metrics_max_in_flight", 64),
                                     "job_id": self._elastic_juicer_job_id,
@@ -471,7 +498,7 @@ class RayDataset(DJDataset):
                                 runtime_env=op.runtime_env,
                             )
                         else:
-                            compute = ActorPoolStrategy(size=op.num_proc)
+                            compute = self._actor_pool_for(op)
                             self.data = self.data.map_batches(
                                 op.__class__,
                                 fn_args=None,
@@ -521,7 +548,7 @@ class RayDataset(DJDataset):
                         f"to preserve shared dedup state across workers"
                     )
                 if op.use_ray_actor() and not use_instance_for_ray_tasks:
-                    compute = ActorPoolStrategy(size=op.num_proc)
+                    compute = self._actor_pool_for(op)
                     self.data = self.data.map_batches(
                         op.__class__,
                         fn_args=None,

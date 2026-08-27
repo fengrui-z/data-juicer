@@ -191,4 +191,8 @@ def test_normalization_and_effective_config_are_deterministic():
         "profile_seed": True,
         "profiles_path": "/tmp/ej-profiles.json",
         "profile_ttl_ms": 1_800_000,
+        "auto_parallelism": False,
+        "probe_enabled": True,
+        "replan_enabled": True,
+        "max_gpu_workers_per_device": 4,
     }

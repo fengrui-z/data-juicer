@@ -468,6 +468,10 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         self._configure_operator_parallelism(ops)
         self._resolve_max_concurrent_partitions(ops)
 
+        # ElasticJuicer throughput-aware auto-parallelism: preflight probes
+        # + actor plan, applied to operator clones before partition threads.
+        self._elastic_juicer_autoscale_setup(dataset, ops)
+
         # Initialize DAG execution planning with final partition count
         # Pass ops to avoid redundant loading
         self._initialize_dag_execution(self.cfg, ops=ops)
@@ -580,40 +584,55 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             "driver threads and checkpointing support..."
         )
         processed_partitions = [None] * len(partitions)
-        original_concurrency = self._scale_operator_parallelism(ops, max_workers)
 
-        try:
-            # Capture the per-partition resource plan in an isolated template.
-            # Restore the original operators before any worker starts so later
-            # convergence stages never depend on thread-pool shutdown timing.
-            isolate_operators = max_workers > 1
-            partition_ops_template = self._clone_partition_operators(ops) if isolate_operators else ops
-        finally:
-            self._restore_operator_parallelism(original_concurrency)
+        autoscale_state = getattr(self, "_ej_autoscale_state", None)
+        use_serial_replan = bool(autoscale_state and autoscale_state["replan_enabled"] and max_workers == 1)
+        if use_serial_replan:
+            logger.info(
+                "ElasticJuicer auto-parallelism: serial partition execution with "
+                "boundary replanning enabled"
+            )
+            self._run_partitions_serial_with_replan(partitions, ops, processed_partitions)
+        else:
+            if autoscale_state:
+                logger.info(
+                    "ElasticJuicer auto-parallelism: static plan only; boundary "
+                    "replanning requires max_concurrent_partitions=1"
+                )
+            original_concurrency = self._scale_operator_parallelism(ops, max_workers)
 
-        with ThreadPoolExecutor(max_workers=max_workers, thread_name_prefix="ray-partition") as executor:
-            futures = {
-                executor.submit(
-                    self._process_partition,
-                    partition,
-                    i,
-                    len(partitions),
-                    partition_ops_template,
-                    isolate_operators,
-                ): i
-                for i, partition in enumerate(partitions)
-            }
             try:
-                for future in as_completed(futures):
-                    partition_id, processed_data = future.result()
-                    processed_partitions[partition_id] = processed_data
-            except BaseException:
-                # Running Ray Dataset executions cannot be forcefully
-                # interrupted here, but queued driver work should not start
-                # after the job has already failed.
-                for future in futures:
-                    future.cancel()
-                raise
+                # Capture the per-partition resource plan in an isolated template.
+                # Restore the original operators before any worker starts so later
+                # convergence stages never depend on thread-pool shutdown timing.
+                isolate_operators = max_workers > 1
+                partition_ops_template = self._clone_partition_operators(ops) if isolate_operators else ops
+            finally:
+                self._restore_operator_parallelism(original_concurrency)
+
+            with ThreadPoolExecutor(max_workers=max_workers, thread_name_prefix="ray-partition") as executor:
+                futures = {
+                    executor.submit(
+                        self._process_partition,
+                        partition,
+                        i,
+                        len(partitions),
+                        partition_ops_template,
+                        isolate_operators,
+                    ): i
+                    for i, partition in enumerate(partitions)
+                }
+                try:
+                    for future in as_completed(futures):
+                        partition_id, processed_data = future.result()
+                        processed_partitions[partition_id] = processed_data
+                except BaseException:
+                    # Running Ray Dataset executions cannot be forcefully
+                    # interrupted here, but queued driver work should not start
+                    # after the job has already failed.
+                    for future in futures:
+                        future.cancel()
+                    raise
 
         # Merge all processed partitions back into a single dataset
         logger.info("Merging processed partitions...")
@@ -987,6 +1006,315 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
     def _restore_auto_operator_parallelism(original_concurrency) -> None:
         """Compatibility wrapper for the former auto-only restorer."""
         PartitionedRayExecutor._restore_operator_parallelism(original_concurrency)
+
+    # ------------------------------------------------------------------
+    # ElasticJuicer throughput-aware auto-parallelism (probe + plan + replan)
+    # ------------------------------------------------------------------
+
+    def _ej_cfg_get(self, key, default=None):
+        try:
+            return ConfigAccessor.get(self.cfg, key, default)
+        except Exception:
+            return getattr(self.cfg, key, default)
+
+    def _ej_build_cluster_spec(self):
+        from data_juicer.core.elasticjuicer.parallelism_planner import ClusterSpec
+
+        try:
+            resources = ray.cluster_resources()
+            total_cpus = float(resources.get("CPU", 0))
+            num_devices = int(float(resources.get("GPU", 0)))
+        except Exception as error:
+            logger.warning(f"ElasticJuicer auto-parallelism: cannot read cluster resources ({error})")
+            return None
+        if total_cpus <= 0 or num_devices < 1:
+            logger.warning("ElasticJuicer auto-parallelism: cluster reports no usable CPU/GPU")
+            return None
+
+        memory_override = self._ej_cfg_get("elastic_juicer_device_memory_bytes", None)
+        device_memory_bytes = None
+        if memory_override:
+            device_memory_bytes = int(memory_override)
+        else:
+            try:
+                import subprocess
+
+                output = subprocess.check_output(
+                    ["nvidia-smi", "--query-gpu=memory.total", "--format=csv,noheader,nounits", "-i", "0"],
+                    timeout=15,
+                )
+                device_memory_bytes = int(float(output.decode().splitlines()[0].strip())) * 1024 * 1024
+            except Exception as error:
+                logger.warning(f"ElasticJuicer auto-parallelism: nvidia-smi unavailable ({error})")
+        if not device_memory_bytes or device_memory_bytes <= 0:
+            logger.warning(
+                "ElasticJuicer auto-parallelism disabled: device memory unknown; "
+                "set elastic_juicer_device_memory_bytes to override"
+            )
+            return None
+        budget_fraction = float(self._ej_cfg_get("elastic_juicer_device_memory_budget_fraction", 0.90))
+        return ClusterSpec(
+            total_cpus=total_cpus,
+            num_devices=num_devices,
+            device_memory_bytes=device_memory_bytes,
+            device_memory_budget_fraction=budget_fraction,
+        )
+
+    def _elastic_juicer_autoscale_setup(self, dataset, ops) -> None:
+        """Run preflight probes and build the actor plan before partitions.
+
+        No-op unless ``elastic_juicer_auto_parallelism`` is enabled.  The
+        plan is applied to operator ``num_proc`` values and batch hard caps;
+        explicit user ``num_proc`` settings always take precedence.
+        """
+
+        self._ej_autoscale_state = None
+        if not bool(self._ej_cfg_get("elastic_juicer_auto_parallelism", False)):
+            return
+
+        from data_juicer.core.elasticjuicer.gpu_probe import (
+            PROBE_RESULTS_FILENAME,
+            ProbeParams,
+            StageProbeSpec,
+            load_probe_results,
+            probe_gpu_stages,
+        )
+        from data_juicer.core.elasticjuicer.parallelism_controller import (
+            PLAN_EVENTS_FILENAME,
+            PartitionReplanController,
+            ReplanConfig,
+        )
+        from data_juicer.core.elasticjuicer.parallelism_planner import (
+            RUNTIME_PLAN_FILENAME,
+            StageDemand,
+            plan_parallelism,
+            save_runtime_plan,
+        )
+        from data_juicer.core.elasticjuicer.stage_identity import STAGE_IDENTITY_ATTR
+
+        work_dir = self.work_dir
+        if not work_dir:
+            logger.warning("ElasticJuicer auto-parallelism disabled: no work_dir")
+            return
+
+        eligible = []
+        for index, op in enumerate(ops):
+            if not op.use_ray_actor() or not op.is_batched_op():
+                continue
+            num_gpus = float(getattr(op, "num_gpus", 0) or 0)
+            if num_gpus <= 0:
+                continue
+            stage_key = getattr(op, STAGE_IDENTITY_ATTR, None) or f"stage-{index:06d}:{op._name}"
+            eligible.append((op, stage_key))
+        if not eligible:
+            logger.info("ElasticJuicer auto-parallelism: no eligible GPU batched actor operators")
+            return
+
+        cluster = self._ej_build_cluster_spec()
+        if cluster is None:
+            return
+
+        params = ProbeParams(
+            warmup_batches=int(self._ej_cfg_get("gpu_probe_warmup_batches", 1)),
+            steady_batches=int(self._ej_cfg_get("gpu_probe_steady_batches", 3)),
+            sample_rows=int(self._ej_cfg_get("gpu_probe_sample_rows", 256)),
+            batch_cap_multiplier=int(self._ej_cfg_get("gpu_probe_batch_cap_multiplier", 8)),
+            memory_headroom=float(self._ej_cfg_get("gpu_probe_memory_headroom", 0.10)),
+            timeout_seconds=self._ej_cfg_get("gpu_probe_timeout_seconds", None),
+        )
+        probe_enabled = bool(self._ej_cfg_get("elastic_juicer_probe_enabled", True))
+        results_path = os.path.join(work_dir, PROBE_RESULTS_FILENAME)
+
+        sample_rows_list = dataset.data.take(params.sample_rows)
+        sample_columns = {}
+        if sample_rows_list:
+            for key in sample_rows_list[0].keys():
+                sample_columns[key] = [row.get(key) for row in sample_rows_list]
+        if not sample_columns:
+            logger.warning("ElasticJuicer auto-parallelism disabled: empty probe sample")
+            return
+
+        if probe_enabled:
+            specs = [
+                StageProbeSpec(
+                    stage_key=stage_key,
+                    op_name=getattr(op, "_name", None) or op.__class__.__name__,
+                    op_class=op.__class__,
+                    init_args=tuple(getattr(op, "_init_args", ())),
+                    init_kwargs=dict(getattr(op, "_init_kwargs", {})),
+                    batch_size=int(getattr(op, "batch_size", 1) or 1),
+                    num_gpus=float(getattr(op, "num_gpus", 1.0) or 1.0),
+                )
+                for op, stage_key in eligible
+            ]
+            cost_column = self._ej_cfg_get("elastic_juicer_cost_column", None)
+            probe_results = probe_gpu_stages(
+                specs, sample_columns, params, results_path, cost_column=cost_column
+            )
+        else:
+            cached = load_probe_results(results_path)
+            if cached is None:
+                logger.warning(
+                    "ElasticJuicer auto-parallelism disabled: probing turned off "
+                    f"and no cached probe results at {results_path}"
+                )
+                return
+            from data_juicer.core.elasticjuicer.gpu_probe import StageProbeResult
+
+            probe_results = {}
+            for _op, stage_key in eligible:
+                entry = cached["stages"].get(stage_key)
+                if isinstance(entry, dict):
+                    probe_results[stage_key] = StageProbeResult(
+                        **{key: entry[key] for key in entry if key in StageProbeResult.__dataclass_fields__}
+                    )
+
+        num_partitions = self.num_partitions
+        if not isinstance(num_partitions, int) or num_partitions < 1:
+            num_partitions = 1
+        try:
+            total_rows = dataset.data.count()
+        except Exception as error:
+            logger.warning(f"ElasticJuicer auto-parallelism: row count unavailable ({error}); using sample size")
+            total_rows = len(next(iter(sample_columns.values())))
+        rows_per_partition = max(1, math.ceil(total_rows / num_partitions))
+
+        explicit_op_ids = getattr(self, "_explicit_actor_op_ids", set())
+        demands = {}
+        for op, stage_key in eligible:
+            result = probe_results.get(stage_key)
+            if result is None:
+                logger.warning(f"ElasticJuicer auto-parallelism: no probe result for {stage_key}; skipping")
+                continue
+            batch_size = int(getattr(op, "batch_size", 1) or 1)
+            peak_bytes = int(getattr(result, "peak_bytes_with_headroom", 0))
+            throughput = float(getattr(result, "throughput_rows_per_sec", 0.0))
+            if peak_bytes <= 0 or throughput <= 0:
+                logger.warning(f"ElasticJuicer auto-parallelism: degenerate probe for {stage_key}; skipping")
+                continue
+            explicit = id(op) in explicit_op_ids
+            demands[stage_key] = StageDemand(
+                stage_key=stage_key,
+                op_name=getattr(op, "_name", None) or op.__class__.__name__,
+                probed_throughput_rps=throughput,
+                effective_peak_bytes=peak_bytes,
+                batch_size=batch_size,
+                available_batches=max(1, rows_per_partition // batch_size),
+                num_gpus=float(getattr(op, "num_gpus", 1.0) or 1.0),
+                num_cpus=float(getattr(op, "num_cpus", 1.0) or 1.0),
+                oom_upper_bound=getattr(result, "oom_upper_bound", None),
+                explicit=explicit,
+                explicit_actors=self._actor_pool_capacity(op.num_proc) if explicit else None,
+            )
+        if not demands:
+            logger.warning("ElasticJuicer auto-parallelism disabled: no usable probe results")
+            return
+
+        max_replicas = int(self._ej_cfg_get("elastic_juicer_max_gpu_workers_per_device", 4))
+        try:
+            plan = plan_parallelism(demands, cluster, max_replicas_per_device=max_replicas)
+        except Exception as error:
+            logger.warning(f"ElasticJuicer auto-parallelism disabled: planning failed ({error})")
+            return
+        save_runtime_plan(os.path.join(work_dir, RUNTIME_PLAN_FILENAME), plan)
+
+        replan_config = ReplanConfig(
+            drift_threshold=float(self._ej_cfg_get("elastic_juicer_drift_threshold", 1.3)),
+            marginal_gain_epsilon=float(self._ej_cfg_get("elastic_juicer_marginal_gain_epsilon", 0.03)),
+            cooldown_partitions=int(self._ej_cfg_get("elastic_juicer_parallelism_cooldown_partitions", 1)),
+        )
+        baseline_bytes_per_row = {}
+        for stage_key, result in probe_results.items():
+            batch_size = int(getattr(result, "probed_batch_size", 0) or 0)
+            peak_bytes = int(getattr(result, "effective_peak_bytes", 0) or 0)
+            if batch_size > 0 and peak_bytes > 0:
+                baseline_bytes_per_row[stage_key] = peak_bytes / float(batch_size)
+        controller = PartitionReplanController(
+            plan,
+            demands,
+            cluster,
+            replan_config,
+            baseline_bytes_per_row=baseline_bytes_per_row,
+            events_path=os.path.join(work_dir, PLAN_EVENTS_FILENAME),
+            max_replicas_per_device=max_replicas,
+        )
+
+        self._ej_autoscale_state = {
+            "replan_enabled": bool(self._ej_cfg_get("elastic_juicer_replan_enabled", True)),
+            "controller": controller,
+            "stage_ops": [(stage_key, op) for op, stage_key in eligible if stage_key in demands],
+        }
+        self._ej_apply_plan_to_ops(ops)
+        # Planned stages behave like explicit actor budgets for partition
+        # worker limiting and concurrency division.
+        for stage_key, op in self._ej_autoscale_state["stage_ops"]:
+            self._explicit_actor_op_ids.add(id(op))
+        summary = ", ".join(
+            f"{key}: actors={stage_plan.planned_actors} batch_cap={stage_plan.batch_hard_cap}"
+            for key, stage_plan in plan.stages.items()
+        )
+        logger.info(f"ElasticJuicer auto-parallelism plan ready: {summary}")
+
+    def _ej_apply_plan_to_ops(self, ops) -> None:
+        """Write the current plan onto operator objects before cloning."""
+
+        state = getattr(self, "_ej_autoscale_state", None)
+        if not state:
+            return
+        plan = state["controller"].plan
+        by_id = {id(op): stage_key for stage_key, op in state["stage_ops"]}
+        for op in ops:
+            stage_key = by_id.get(id(op))
+            if stage_key is None or stage_key not in plan.stages:
+                continue
+            stage_plan = plan.stages[stage_key]
+            op.num_proc = stage_plan.planned_actors
+            op._elastic_juicer_batch_hard_cap = stage_plan.batch_hard_cap
+
+    def _ej_collect_partition_observations(self, partition_id: int):
+        """Aggregate metrics-sink events for one finished partition."""
+
+        from data_juicer.core.elasticjuicer.parallelism_controller import (
+            aggregate_stage_observations,
+        )
+
+        sink = self._ej_cfg_get("_elastic_juicer_metrics_sink", None)
+        if sink is None:
+            return {}
+        try:
+            snapshot = ray.get(sink.snapshot.remote(), timeout=15)
+        except Exception as error:
+            logger.warning(f"ElasticJuicer replan: metrics snapshot failed ({error})")
+            return {}
+        events = (snapshot or {}).get("events", [])
+        return aggregate_stage_observations(events, partition_id=partition_id)
+
+    def _run_partitions_serial_with_replan(self, partitions, ops, processed_partitions) -> None:
+        """Sequential partition loop with replanning at each boundary."""
+
+        state = self._ej_autoscale_state
+        controller = state["controller"]
+        for i, partition in enumerate(partitions):
+            self._ej_apply_plan_to_ops(ops)
+            start = time.perf_counter()
+            partition_id, processed_data = self._process_partition(partition, i, len(partitions), ops, True)
+            wall_sec = time.perf_counter() - start
+            processed_partitions[partition_id] = processed_data
+            rows = self._partition_expected_rows.get(partition_id, 0)
+            goodput = rows / wall_sec if wall_sec > 0 else 0.0
+            observations = self._ej_collect_partition_observations(partition_id)
+            try:
+                changes = controller.on_partition_complete(partition_id, observations, goodput)
+            except Exception as error:
+                logger.warning(f"ElasticJuicer replan skipped for partition {partition_id}: {error}")
+                continue
+            for change in changes:
+                logger.info(
+                    f"[ElasticJuicer replan] partition {partition_id}: {change.action} "
+                    f"{change.op_name} actors {change.actors_before}->{change.actors_after} "
+                    f"batch_cap {change.batch_hard_cap_before}->{change.batch_hard_cap_after} "
+                    f"({change.reason})"
+                )
 
     def _wrap_with_precomputed_parallelism(self, dataset) -> RayDataset:
         """Wrap data without recalculating shared operator resources."""
