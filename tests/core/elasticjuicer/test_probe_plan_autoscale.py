@@ -234,6 +234,55 @@ class PlannerTest(unittest.TestCase):
         second = plan_parallelism(list(demands), cluster, max_replicas_per_device=2)
         self.assertEqual(first.to_dict()["stages"], second.to_dict()["stages"])
 
+    def test_fixture_batches_do_not_over_provision_actors(self):
+        # The 4096-row smoke fixture: 8 partitions x batch 16 -> 32 batches
+        # per partition. The old planner provisioned one actor per batch
+        # (32 actors vs the 8-actor static baseline, ~56% slower); the
+        # economics gates must stop growth exactly at the baseline.
+        cluster = self._cluster(num_devices=8, mem_gib=80, cpus=256.0)
+        demand = self._demand("fixture", peak_mib=256, batch_size=16, batches=32)
+        plan = plan_parallelism([demand], cluster, max_replicas_per_device=4)
+        self.assertEqual(plan.stages["fixture"].planned_actors, 8)
+
+    def test_startup_amortization_floor_caps_actors(self):
+        # batch_seconds = 8 rows / 8 rows-per-sec = 1s, so an actor owning
+        # fewer than ceil(0.10 * 100s / 1s) = 10 batches cannot amortize its
+        # 100s startup; ceil(32 / 10) -> at most 3 actors.
+        cluster = self._cluster(num_devices=2, mem_gib=64, cpus=256.0)
+        demand = self._demand("slowstart", rps=8.0, peak_mib=16, batch_size=8, batches=32)
+        demand.actor_startup_seconds = 100.0
+        plan = plan_parallelism([demand], cluster, max_replicas_per_device=8)
+        self.assertEqual(plan.stages["slowstart"].planned_actors, 3)
+
+    def test_relaxed_gates_recover_one_actor_per_batch(self):
+        # Opting out of both floors restores the old over-provisioning
+        # behavior, proving the caps are gate-driven, not hardcoded.
+        cluster = self._cluster(num_devices=8, mem_gib=80, cpus=256.0)
+        demand = self._demand("relaxed", peak_mib=256, batch_size=16, batches=32)
+        plan = plan_parallelism(
+            [demand],
+            cluster,
+            max_replicas_per_device=4,
+            min_batches_per_actor=1,
+            min_marginal_makespan_gain=0.0,
+        )
+        self.assertEqual(plan.stages["relaxed"].planned_actors, 32)
+
+    def test_planning_gates_are_recorded(self):
+        cluster = self._cluster(mem_gib=64)
+        demand = self._demand("gates", peak_mib=16, batches=32)
+        demand.actor_startup_seconds = 2.0
+        plan = plan_parallelism([demand], cluster, max_replicas_per_device=4)
+        gates = plan.planning_gates
+        self.assertEqual(gates["min_batches_per_actor"], 4)
+        self.assertEqual(gates["startup_amortization_ratio"], 0.10)
+        self.assertEqual(gates["min_marginal_makespan_gain"], 0.10)
+        stage = gates["per_stage"]["gates"]
+        self.assertEqual(stage["actor_startup_seconds"], 2.0)
+        self.assertGreaterEqual(stage["per_actor_batch_floor"], 1)
+        # the persisted runtime plan exposes the gates for audits
+        self.assertIn("planning_gates", plan.to_dict())
+
 
 def _event(stage="stage:a", partition=0, batch_size=8, peak_mb=100.0, throughput=50.0, ok=True, error=None):
     class _Snap:
@@ -382,6 +431,122 @@ class ReplanControllerTest(unittest.TestCase):
             self.assertEqual(lines[0]["action"], "scale_down")
             self.assertEqual(lines[0]["partition_id"], 0)
 
+    def _wide_controller(self, *, device_ids, events_path=None):
+        num_devices = max(device_ids) + 1
+        cluster = ClusterSpec(
+            total_cpus=64.0,
+            num_devices=num_devices,
+            device_memory_bytes=80 * 1024**3,
+            device_memory_budget_fraction=1.0,
+        )
+        demand = StageDemand(
+            stage_key="stage:a",
+            op_name="op_a",
+            probed_throughput_rps=100.0,
+            effective_peak_bytes=1 * 1024**3,
+            batch_size=8,
+            available_batches=100,
+            num_gpus=0.25,
+            num_cpus=1.0,
+        )
+        plan = plan_parallelism([demand], cluster, max_replicas_per_device=8)
+        plan.stages["stage:a"].planned_actors = len(device_ids)
+        plan.stages["stage:a"].device_ids = list(device_ids)
+        controller = PartitionReplanController(
+            plan,
+            {"stage:a": demand},
+            cluster,
+            ReplanConfig(),
+            baseline_bytes_per_row={"stage:a": 100.0 * 1024**2 / 8},
+            events_path=events_path,
+        )
+        # Re-derive the stored budget for the mutated layout so before/after
+        # envelope comparisons reflect the actual placement.
+        controller._recompute_budget_and_cap("stage:a")
+        return controller, plan
+
+    def test_drift_scale_down_is_device_level_envelope_step(self):
+        # 8 devices x 3 replicas = 24 actors: one replica must come off
+        # EVERY device (24 -> 16), never a cosmetic 24 -> 23 whose per-device
+        # maxima and budget stay unchanged.
+        device_ids = [device for device in range(8) for _ in range(3)]
+        controller, plan = self._wide_controller(device_ids=device_ids)
+        baseline_per_row = 100.0 * 1024**2 / 8
+        before_budget = plan.stages["stage:a"].per_actor_vram_budget_bytes
+        before_cap = plan.stages["stage:a"].batch_hard_cap
+        changes = controller.on_partition_complete(
+            0, self._obs(baseline_per_row * 2.0, oom=1), goodput_rows_per_sec=100
+        )
+        self.assertEqual(len(changes), 1)
+        change = changes[0]
+        self.assertEqual(change.action, "scale_down")
+        self.assertEqual(change.actors_before, 24)
+        self.assertEqual(change.actors_after, 16)
+        self.assertEqual(change.stage_max_replicas_per_device_before, 3)
+        self.assertEqual(change.stage_max_replicas_per_device_after, 2)
+        self.assertEqual(change.device_ids_after.count(0), 2)
+        self.assertTrue(change.effective)
+        self.assertGreater(change.per_actor_vram_budget_after, before_budget)
+        self.assertGreater(change.batch_hard_cap_after, before_cap)
+
+    def test_drift_scale_down_at_one_replica_per_device_is_noop(self):
+        # 8 actors, one per device: shedding actors cannot change the
+        # resource envelope, so the action is recorded as an honest no-op.
+        device_ids = list(range(8))
+        controller, plan = self._wide_controller(device_ids=device_ids)
+        baseline_per_row = 100.0 * 1024**2 / 8
+        changes = controller.on_partition_complete(
+            0, self._obs(baseline_per_row * 2.0, oom=1), goodput_rows_per_sec=100
+        )
+        self.assertEqual(len(changes), 1)
+        change = changes[0]
+        self.assertEqual(change.action, "scale_down")
+        self.assertFalse(change.effective)
+        self.assertEqual(change.actors_before, 8)
+        self.assertEqual(change.actors_after, 8)
+        self.assertEqual(change.device_ids_after, device_ids)
+        self.assertEqual(change.stage_max_replicas_per_device_after, 1)
+        self.assertIn("no-op", change.reason)
+
+    def test_revert_sheds_recorded_device_not_generic_targets(self):
+        controller, plan = self._wide_controller(device_ids=[0, 1, 1])
+        observation = self._obs(bytes_per_row=None, rps=10.0)
+        changes = controller.on_partition_complete(0, observation, goodput_rows_per_sec=10.0)
+        self.assertEqual([c.action for c in changes], ["scale_up"])
+        self.assertEqual(sorted(plan.stages["stage:a"].device_ids), [0, 0, 1, 1])
+        # Low marginal gain -> exact undo of the recorded device (0). A
+        # generic device-level step would also shed a replica from device 1.
+        changes = controller.on_partition_complete(1, observation, goodput_rows_per_sec=10.05)
+        self.assertEqual([c.action for c in changes], ["revert_scale_up"])
+        self.assertEqual(sorted(changes[0].device_ids_after), [0, 1, 1])
+        self.assertEqual(plan.stages["stage:a"].planned_actors, 3)
+
+    def test_plan_events_record_envelope_fields(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "plan_events.jsonl")
+            controller, _plan = self._controller(events_path=path)
+            baseline_per_row = 100.0 * 1024**2 / 8
+            controller.on_partition_complete(
+                0, self._obs(baseline_per_row * 2.0, oom=1), goodput_rows_per_sec=100
+            )
+            with open(path) as handle:
+                lines = [json.loads(line) for line in handle]
+            self.assertEqual(len(lines), 1)
+            record = lines[0]
+            for key in (
+                "device_ids_before",
+                "device_ids_after",
+                "stage_max_replicas_per_device_before",
+                "stage_max_replicas_per_device_after",
+                "plan_max_colocated_replicas_before",
+                "plan_max_colocated_replicas_after",
+                "per_actor_vram_budget_before",
+                "per_actor_vram_budget_after",
+                "effective",
+            ):
+                self.assertIn(key, record)
+            self.assertTrue(record["effective"])
+
 
 class AutoParallelismContractTest(unittest.TestCase):
     def test_sub_options_require_main_flag(self):
@@ -414,6 +579,18 @@ class AutoParallelismContractTest(unittest.TestCase):
         self.assertTrue(snapshot["auto_parallelism"])
         self.assertTrue(snapshot["probe_enabled"])
         self.assertTrue(snapshot["replan_enabled"])
+
+    def test_planner_economics_options_validated(self):
+        base = {"elastic_juicer_auto_parallelism": True}
+        with self.assertRaises(ValueError):
+            validate_elastic_juicer_config({**base, "elastic_juicer_min_batches_per_actor": 0})
+        with self.assertRaises(ValueError):
+            validate_elastic_juicer_config({**base, "elastic_juicer_startup_amortization_ratio": 1.5})
+        with self.assertRaises(ValueError):
+            validate_elastic_juicer_config({**base, "elastic_juicer_min_marginal_makespan_gain": 1.0})
+        with self.assertRaises(ValueError):
+            validate_elastic_juicer_config({**base, "elastic_juicer_actor_startup_seconds": -1.0})
+        validate_elastic_juicer_config({**base, "elastic_juicer_actor_startup_seconds": 2.0})
 
 
 if __name__ == "__main__":

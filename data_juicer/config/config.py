@@ -1081,6 +1081,34 @@ def build_base_parser() -> ArgumentParser:
         default=1,
         help="Minimum partition gap between two changes for one stage.",
     )
+    parser.add_argument(
+        "--elastic_juicer_min_batches_per_actor",
+        type=int,
+        default=4,
+        help="Minimum batches each extra planned actor must own; actors that "
+        "cannot amortize their startup are not provisioned.",
+    )
+    parser.add_argument(
+        "--elastic_juicer_startup_amortization_ratio",
+        type=float,
+        default=0.10,
+        help="Fraction of one actor's startup cost its owned batches must "
+        "cover before a new actor is justified.",
+    )
+    parser.add_argument(
+        "--elastic_juicer_min_marginal_makespan_gain",
+        type=float,
+        default=0.10,
+        help="Minimum round-count (makespan) gain for adding one more actor "
+        "to a stage.",
+    )
+    parser.add_argument(
+        "--elastic_juicer_actor_startup_seconds",
+        type=float,
+        default=None,
+        help="Optional override of the probed actor startup cost used by "
+        "the planner's amortization floor.",
+    )
 
     return parser
 

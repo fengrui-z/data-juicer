@@ -9,7 +9,10 @@ throughput) until the next assignment would violate any constraint:
 - measured per-device memory (probed peak + headroom);
 - per-device replica limit;
 - available batches for the stage;
-- capacity reserved by explicitly configured operators.
+- capacity reserved by explicitly configured operators;
+- the economics of one more actor: each extra actor must own enough
+  batches to amortize its startup and must reduce the stage's batch
+  round count (a necessary condition for a real makespan gain).
 
 If the minimum plan (one actor per stage) does not fit, planning fails
 fast instead of hiding the problem through overcommitment.
@@ -18,6 +21,7 @@ fast instead of hiding the problem through overcommitment.
 from __future__ import annotations
 
 import json
+import math
 import os
 import time
 from dataclasses import asdict, dataclass, field
@@ -27,6 +31,10 @@ from .gpu_probe import atomic_write_json
 
 RUNTIME_PLAN_SCHEMA_VERSION = 1
 RUNTIME_PLAN_FILENAME = "runtime_plan.json"
+
+DEFAULT_MIN_BATCHES_PER_ACTOR = 4
+DEFAULT_STARTUP_AMORTIZATION_RATIO = 0.10
+DEFAULT_MIN_MARGINAL_MAKESPAN_GAIN = 0.10
 
 
 class PlanInfeasibleError(RuntimeError):
@@ -75,6 +83,7 @@ class StageDemand:
     oom_upper_bound: Optional[int] = None
     explicit: bool = False
     explicit_actors: Optional[int] = None
+    actor_startup_seconds: float = 0.0
 
     def __post_init__(self):
         if not self.stage_key:
@@ -93,6 +102,8 @@ class StageDemand:
             raise ValueError("num_cpus must be positive")
         if self.explicit and (self.explicit_actors or 0) < 1:
             raise ValueError("explicit stages need explicit_actors >= 1")
+        if self.actor_startup_seconds < 0:
+            raise ValueError("actor_startup_seconds must be non-negative")
 
     @property
     def per_row_vram_bytes(self) -> float:
@@ -116,12 +127,14 @@ class RuntimePlan:
     cluster: Optional[ClusterSpec] = None
     generated_at_ms: int = field(default_factory=lambda: int(time.time() * 1000))
     max_replicas_per_device: int = 1
+    planning_gates: Dict = field(default_factory=dict)
 
     def to_dict(self) -> Dict:
         return {
             "schema_version": RUNTIME_PLAN_SCHEMA_VERSION,
             "generated_at_ms": self.generated_at_ms,
             "max_replicas_per_device": self.max_replicas_per_device,
+            "planning_gates": dict(self.planning_gates),
             "cluster": asdict(self.cluster) if self.cluster else None,
             "stages": {key: asdict(value) for key, value in self.stages.items()},
         }
@@ -171,12 +184,64 @@ def _batch_hard_cap(demand: StageDemand, per_actor_budget_bytes: int) -> int:
     return max(1, cap)
 
 
+def _rounds(available_batches: int, actors: int) -> int:
+    """Batch rounds needed to drain ``available_batches`` with ``actors``."""
+
+    return max(1, math.ceil(available_batches / max(1, actors)))
+
+
+def _per_actor_batch_floor(
+    demand: StageDemand,
+    min_batches_per_actor: int,
+    startup_amortization_ratio: float,
+) -> int:
+    """Minimum batches the (n+1)-th actor must own to justify its startup.
+
+    Two additive terms:
+
+    - structural: ``min(min_batches_per_actor, B // 2)`` so every stage can
+      always reach at least two actors when batches allow, while a short
+      stage (e.g. 32 batches) never gets one-actor-per-batch plans;
+    - startup: batches whose compute covers ``ratio * actor_startup_seconds``.
+      The probed batch rate overestimates the pipeline rate (dedicated
+      device, in-memory samples, no input pipeline), so this term is
+      deliberately advisory; the structural floor is the default guard.
+    """
+
+    structural = max(1, min(min_batches_per_actor, demand.available_batches // 2))
+    if demand.actor_startup_seconds <= 0 or demand.probed_throughput_rps <= 0:
+        return structural
+    batch_seconds = demand.batch_size / demand.probed_throughput_rps
+    if batch_seconds <= 0:
+        return structural
+    startup_floor = max(
+        1, math.ceil(startup_amortization_ratio * demand.actor_startup_seconds / batch_seconds)
+    )
+    return max(structural, startup_floor)
+
+
+def _marginal_makespan_gain(available_batches: int, actors: int) -> float:
+    """Round-count reduction fraction from adding one actor to the stage.
+
+    Reducing a stage's round count is a necessary condition for reducing
+    the job makespan (the makespan is the max over stages of rounds * batch
+    time), so gating on per-stage round gain never over-promises.
+    """
+
+    before = _rounds(available_batches, actors)
+    after = _rounds(available_batches, actors + 1)
+    return (before - after) / before
+
+
 def plan_parallelism(
     demands: List[StageDemand],
     cluster: ClusterSpec,
     *,
     max_replicas_per_device: int = 1,
     reserved_cpus: float = 0.0,
+    min_batches_per_actor: int = DEFAULT_MIN_BATCHES_PER_ACTOR,
+    startup_amortization_ratio: float = DEFAULT_STARTUP_AMORTIZATION_RATIO,
+    min_marginal_makespan_gain: float = DEFAULT_MIN_MARGINAL_MAKESPAN_GAIN,
 ) -> RuntimePlan:
     """Assign actors to GPU stages under every resource constraint.
 
@@ -190,6 +255,12 @@ def plan_parallelism(
         raise ValueError("max_replicas_per_device must be >= 1")
     if reserved_cpus < 0:
         raise ValueError("reserved_cpus must be non-negative")
+    if min_batches_per_actor < 1:
+        raise ValueError("min_batches_per_actor must be >= 1")
+    if not 0.0 <= startup_amortization_ratio <= 1.0:
+        raise ValueError("startup_amortization_ratio must be in [0, 1]")
+    if not 0.0 <= min_marginal_makespan_gain < 1.0:
+        raise ValueError("min_marginal_makespan_gain must be in [0, 1)")
 
     devices = [_DeviceState() for _ in range(cluster.num_devices)]
     cpu_used = reserved_cpus
@@ -261,8 +332,16 @@ def plan_parallelism(
             device_ids=[device_id],
         )
 
-    # Phase 2: repeatedly add one actor to the bottleneck stage.
+    # Phase 2: repeatedly add one actor to the bottleneck stage, but only
+    # when the extra actor is economically justified:
+    #   (G1) its round-count (makespan) gain clears the marginal-gain gate;
+    #   (G2) it can still own enough batches to amortize its startup;
+    #   (G3) it fits the CPU / GPU / memory / replica constraints.
     demand_by_key = {demand.stage_key: demand for demand in demands}
+    batch_floor_by_key = {
+        demand.stage_key: _per_actor_batch_floor(demand, min_batches_per_actor, startup_amortization_ratio)
+        for demand in demands
+    }
     while True:
         candidates = []
         for demand in demands:
@@ -271,6 +350,11 @@ def plan_parallelism(
             stage_plan = plan.stages[demand.stage_key]
             device_id = _fits_extra(demand, stage_plan)
             if device_id is None:
+                continue
+            actors = stage_plan.planned_actors
+            if _rounds(demand.available_batches, actors + 1) < batch_floor_by_key[demand.stage_key]:
+                continue
+            if _marginal_makespan_gain(demand.available_batches, actors) < min_marginal_makespan_gain:
                 continue
             candidates.append((demand.probed_throughput_rps, demand.stage_key, device_id))
         if not candidates:
@@ -284,23 +368,45 @@ def plan_parallelism(
         stage_plan.planned_actors += 1
         stage_plan.device_ids.append(device_id)
 
+    plan.planning_gates = {
+        "min_batches_per_actor": min_batches_per_actor,
+        "startup_amortization_ratio": startup_amortization_ratio,
+        "min_marginal_makespan_gain": min_marginal_makespan_gain,
+        "per_stage": {
+            demand.stage_key: {
+                "actor_startup_seconds": demand.actor_startup_seconds,
+                "per_actor_batch_floor": batch_floor_by_key[demand.stage_key],
+            }
+            for demand in demands
+        },
+    }
+
     # Phase 3: per-actor VRAM budgets and batch hard caps.  The budget is
     # the device budget divided over colocated replicas (capped by the free
     # space left on the device), so drift detection later compares apples
-    # to apples against the envelope every actor actually owns.
+    # to apples against the envelope every actor actually owns.  Because a
+    # stage's actors all share the same budget, it is derived from the most
+    # replicated device the stage occupies (conservative for every actor).
     device_replicas = device_replica_counts(plan.stages)
     for stage_key, stage_plan in plan.stages.items():
         demand = demand_by_key[stage_key]
         device_ids = stage_plan.device_ids
         per_actor_budget = cluster.device_memory_budget_bytes
         if device_ids:
-            device = devices[device_ids[0]]
-            free_on_device = cluster.device_memory_budget_bytes - (device.memory_used - demand.effective_peak_bytes)
-            shared_budget = max(
-                demand.effective_peak_bytes,
-                cluster.device_memory_budget_bytes // max(1, device_replicas.get(device_ids[0], 1)),
-            )
-            per_actor_budget = max(demand.effective_peak_bytes, min(free_on_device, shared_budget))
+            per_device_budget = {}
+            for device_id in set(device_ids):
+                device = devices[device_id]
+                free_on_device = (
+                    cluster.device_memory_budget_bytes - (device.memory_used - demand.effective_peak_bytes)
+                )
+                shared_budget = max(
+                    demand.effective_peak_bytes,
+                    cluster.device_memory_budget_bytes // max(1, device_replicas.get(device_id, 1)),
+                )
+                per_device_budget[device_id] = max(
+                    demand.effective_peak_bytes, min(free_on_device, shared_budget)
+                )
+            per_actor_budget = min(per_device_budget.values())
         stage_plan.per_actor_vram_budget_bytes = int(per_actor_budget)
         cap = _batch_hard_cap(demand, stage_plan.per_actor_vram_budget_bytes)
         if demand.oom_upper_bound is not None:
@@ -318,6 +424,9 @@ def plan_from_probe_results(
     max_replicas_per_device: int = 1,
     rows_per_partition: int,
     reserved_cpus: float = 0.0,
+    min_batches_per_actor: int = DEFAULT_MIN_BATCHES_PER_ACTOR,
+    startup_amortization_ratio: float = DEFAULT_STARTUP_AMORTIZATION_RATIO,
+    min_marginal_makespan_gain: float = DEFAULT_MIN_MARGINAL_MAKESPAN_GAIN,
 ) -> RuntimePlan:
     """Build StageDemand rows from probe results + executor op metadata."""
 
@@ -341,6 +450,7 @@ def plan_from_probe_results(
                 oom_upper_bound=result.oom_upper_bound,
                 explicit=bool(info.get("explicit", False)),
                 explicit_actors=info.get("explicit_actors"),
+                actor_startup_seconds=float(info.get("actor_startup_seconds", 0.0) or 0.0),
             )
         )
     return plan_parallelism(
@@ -348,4 +458,7 @@ def plan_from_probe_results(
         cluster,
         max_replicas_per_device=max_replicas_per_device,
         reserved_cpus=reserved_cpus,
+        min_batches_per_actor=min_batches_per_actor,
+        startup_amortization_ratio=startup_amortization_ratio,
+        min_marginal_makespan_gain=min_marginal_makespan_gain,
     )

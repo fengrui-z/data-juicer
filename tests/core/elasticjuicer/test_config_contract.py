@@ -195,4 +195,8 @@ def test_normalization_and_effective_config_are_deterministic():
         "probe_enabled": True,
         "replan_enabled": True,
         "max_gpu_workers_per_device": 4,
+        "min_batches_per_actor": 4,
+        "startup_amortization_ratio": 0.10,
+        "min_marginal_makespan_gain": 0.10,
+        "actor_startup_seconds": None,
     }

@@ -91,6 +91,19 @@ def _validate_auto_parallelism_options(cfg: Any) -> None:
         cooldown_partitions=int(_get(cfg, "elastic_juicer_parallelism_cooldown_partitions", 1)),
     ).validate()
 
+    min_batches_per_actor = int(_get(cfg, "elastic_juicer_min_batches_per_actor", 4))
+    if min_batches_per_actor < 1:
+        raise ValueError("elastic_juicer_min_batches_per_actor must be >= 1")
+    startup_amortization_ratio = float(_get(cfg, "elastic_juicer_startup_amortization_ratio", 0.10))
+    if not 0.0 <= startup_amortization_ratio <= 1.0:
+        raise ValueError("elastic_juicer_startup_amortization_ratio must be in [0, 1]")
+    min_marginal_makespan_gain = float(_get(cfg, "elastic_juicer_min_marginal_makespan_gain", 0.10))
+    if not 0.0 <= min_marginal_makespan_gain < 1.0:
+        raise ValueError("elastic_juicer_min_marginal_makespan_gain must be in [0, 1)")
+    actor_startup_seconds = _get(cfg, "elastic_juicer_actor_startup_seconds", None)
+    if actor_startup_seconds is not None and float(actor_startup_seconds) < 0:
+        raise ValueError("elastic_juicer_actor_startup_seconds must be non-negative or null")
+
     max_workers = int(_get(cfg, "elastic_juicer_max_gpu_workers_per_device", 4))
     if max_workers < 1:
         raise ValueError("elastic_juicer_max_gpu_workers_per_device must be >= 1")
@@ -189,6 +202,14 @@ def effective_elastic_juicer_config(cfg: Any) -> Dict[str, Any]:
         "probe_enabled": bool(_get(cfg, "elastic_juicer_probe_enabled", True)),
         "replan_enabled": bool(_get(cfg, "elastic_juicer_replan_enabled", True)),
         "max_gpu_workers_per_device": int(_get(cfg, "elastic_juicer_max_gpu_workers_per_device", 4)),
+        "min_batches_per_actor": int(_get(cfg, "elastic_juicer_min_batches_per_actor", 4)),
+        "startup_amortization_ratio": float(_get(cfg, "elastic_juicer_startup_amortization_ratio", 0.10)),
+        "min_marginal_makespan_gain": float(_get(cfg, "elastic_juicer_min_marginal_makespan_gain", 0.10)),
+        "actor_startup_seconds": (
+            None
+            if _get(cfg, "elastic_juicer_actor_startup_seconds", None) is None
+            else float(_get(cfg, "elastic_juicer_actor_startup_seconds"))
+        ),
     }
 
 

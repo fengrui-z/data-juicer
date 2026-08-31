@@ -517,6 +517,10 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             logger.info("Exporting final dataset...")
             self.exporter.export(final_dataset.data, columns=columns)
         finally:
+            try:
+                self._ej_persist_metrics_sidecar()
+            except Exception as error:
+                logger.warning(f"ElasticJuicer metrics sidecar: final flush failed ({error})")
             if captain_lifecycle is not None:
                 captain_lifecycle.close()
 
@@ -1085,6 +1089,9 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             ReplanConfig,
         )
         from data_juicer.core.elasticjuicer.parallelism_planner import (
+            DEFAULT_MIN_BATCHES_PER_ACTOR,
+            DEFAULT_MIN_MARGINAL_MAKESPAN_GAIN,
+            DEFAULT_STARTUP_AMORTIZATION_RATIO,
             RUNTIME_PLAN_FILENAME,
             StageDemand,
             plan_parallelism,
@@ -1193,6 +1200,12 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
                 logger.warning(f"ElasticJuicer auto-parallelism: degenerate probe for {stage_key}; skipping")
                 continue
             explicit = id(op) in explicit_op_ids
+            startup_override = self._ej_cfg_get("elastic_juicer_actor_startup_seconds", None)
+            actor_startup_seconds = (
+                float(startup_override)
+                if startup_override is not None
+                else float(getattr(result, "init_seconds", 0.0) or 0.0)
+            )
             demand_list.append(
                 StageDemand(
                     stage_key=stage_key,
@@ -1206,6 +1219,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
                     oom_upper_bound=getattr(result, "oom_upper_bound", None),
                     explicit=explicit,
                     explicit_actors=self._actor_pool_capacity(op.num_proc) if explicit else None,
+                    actor_startup_seconds=actor_startup_seconds,
                 )
             )
         if not demand_list:
@@ -1215,7 +1229,28 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
 
         max_replicas = int(self._ej_cfg_get("elastic_juicer_max_gpu_workers_per_device", 4))
         try:
-            plan = plan_parallelism(demand_list, cluster, max_replicas_per_device=max_replicas)
+            plan = plan_parallelism(
+                demand_list,
+                cluster,
+                max_replicas_per_device=max_replicas,
+                min_batches_per_actor=int(
+                    self._ej_cfg_get(
+                        "elastic_juicer_min_batches_per_actor", DEFAULT_MIN_BATCHES_PER_ACTOR
+                    )
+                ),
+                startup_amortization_ratio=float(
+                    self._ej_cfg_get(
+                        "elastic_juicer_startup_amortization_ratio",
+                        DEFAULT_STARTUP_AMORTIZATION_RATIO,
+                    )
+                ),
+                min_marginal_makespan_gain=float(
+                    self._ej_cfg_get(
+                        "elastic_juicer_min_marginal_makespan_gain",
+                        DEFAULT_MIN_MARGINAL_MAKESPAN_GAIN,
+                    )
+                ),
+            )
         except Exception as error:
             logger.warning(f"ElasticJuicer auto-parallelism disabled: planning failed ({error})")
             return
@@ -1298,6 +1333,72 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         )
         return observations
 
+    def _ej_persist_metrics_sidecar(self) -> int:
+        """Append unseen metrics-sink events to the durable JSONL sidecar.
+
+        The sink keeps a bounded deque that can evict old events under load,
+        so the driver drains it incrementally: every serial-partition
+        boundary and the job exit path persist events not yet written, keyed
+        by ``(actor_incarnation_id, sequence)``.  Experiments count OOM
+        probes, recovery, and adaptation evidence from this file instead of
+        Ray logs (which may be deduplicated or truncated).
+        """
+
+        from data_juicer.core.elasticjuicer.async_metrics_sink import (
+            METRICS_EVENTS_FILENAME,
+            serialize_metrics_event,
+        )
+
+        sink = self._ej_cfg_get("_elastic_juicer_metrics_sink", None)
+        if sink is None:
+            return 0
+        try:
+            snapshot = ray.get(sink.snapshot.remote(), timeout=15)
+        except Exception as error:
+            logger.warning(f"ElasticJuicer metrics sidecar: snapshot failed ({error})")
+            return 0
+        events = (snapshot or {}).get("events", [])
+        if not events:
+            return 0
+        written = getattr(self, "_ej_sidecar_written_keys", None)
+        if written is None:
+            written = set()
+            self._ej_sidecar_written_keys = written
+        fresh = []
+        for event in events:
+            if isinstance(event, dict):
+                key = (event.get("actor_incarnation_id"), event.get("sequence"))
+                payload = event
+            else:
+                key = (
+                    getattr(event, "actor_incarnation_id", None),
+                    getattr(event, "sequence", None),
+                )
+                try:
+                    payload = serialize_metrics_event(event)
+                except Exception as error:
+                    logger.debug(f"ElasticJuicer metrics sidecar: skip unserializable event ({error})")
+                    continue
+            if key in written:
+                continue
+            written.add(key)
+            fresh.append(json.dumps(payload, sort_keys=True, default=str))
+        if not fresh:
+            return 0
+        path = os.path.join(self.work_dir, METRICS_EVENTS_FILENAME)
+        try:
+            os.makedirs(self.work_dir, exist_ok=True)
+            with open(path, "a") as handle:
+                for line in fresh:
+                    handle.write(line + "\n")
+                handle.flush()
+                os.fsync(handle.fileno())
+        except OSError as error:
+            logger.warning(f"ElasticJuicer metrics sidecar: write failed ({error})")
+            return 0
+        logger.info(f"ElasticJuicer metrics sidecar: persisted {len(fresh)} events to {path}")
+        return len(fresh)
+
     def _run_partitions_serial_with_replan(self, partitions, ops, processed_partitions) -> None:
         """Sequential partition loop with replanning at each boundary."""
 
@@ -1312,6 +1413,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             rows = self._partition_expected_rows.get(partition_id, 0)
             goodput = rows / wall_sec if wall_sec > 0 else 0.0
             observations = self._ej_collect_partition_observations(partition_id)
+            self._ej_persist_metrics_sidecar()
             detail = {
                 key: (
                     f"rps={value.rows_per_sec:.1f}",

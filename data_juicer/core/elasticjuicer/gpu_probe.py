@@ -102,6 +102,7 @@ class StageProbeResult:
     probe_duration_sec: float
     rows_probed: int
     cache_hit: bool = False
+    init_seconds: float = 0.0
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -237,6 +238,7 @@ def probe_stage_on_worker(
 
     params = ProbeParams(**params_dict)
     started = time.time()
+    init_started = time.perf_counter()
     torch.cuda.init()
     torch.cuda.synchronize()
     gpu_name = torch.cuda.get_device_name(torch.cuda.current_device())
@@ -246,6 +248,9 @@ def probe_stage_on_worker(
 
     operator = op_class(*init_args, **init_kwargs)
     torch.cuda.synchronize()
+    # Actor startup proxy: CUDA context creation plus operator construction
+    # (model load) is the dominant fixed cost of bringing one more actor up.
+    init_seconds = time.perf_counter() - init_started
     free_after_init, _ = torch.cuda.mem_get_info()
     resident_bytes = max(0, free_before - free_after_init)
 
@@ -314,6 +319,7 @@ def probe_stage_on_worker(
         "oom_upper_bound": oom_upper_bound,
         "probe_duration_sec": float(time.time() - started),
         "rows_probed": int(rows),
+        "init_seconds": float(init_seconds),
     }
 
 
@@ -406,6 +412,7 @@ def probe_gpu_stages(
             probe_duration_sec=raw["probe_duration_sec"],
             rows_probed=raw["rows_probed"],
             cache_hit=False,
+            init_seconds=float(raw.get("init_seconds", 0.0) or 0.0),
         )
 
     save_probe_results(results_path, results)

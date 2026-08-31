@@ -1,13 +1,42 @@
 """Job-scoped, fire-and-forget runtime metrics transport for Ray actors."""
 
+from __future__ import annotations
+
 import time
 from collections import deque
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass, is_dataclass
 from typing import Callable, Deque, Optional
 
 from .actor_resource_sampler import ActorResourceSnapshot
 
 METRICS_EVENT_SCHEMA_VERSION = 1
+METRICS_EVENTS_FILENAME = "elastic_juicer_metrics_events.jsonl"
+
+
+def _jsonable(value):
+    """Coerce nested control-plane values into JSON-serializable ones."""
+
+    if value is None or isinstance(value, (bool, int, float, str)):
+        return value
+    if is_dataclass(value):
+        return _jsonable(asdict(value))
+    if isinstance(value, dict):
+        return {str(key): _jsonable(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple, set, frozenset)):
+        return [_jsonable(item) for item in value]
+    return str(value)
+
+
+def serialize_metrics_event(event: ActorMetricsEvent) -> dict:
+    """Flatten one metrics event into a stable JSON dict for the sidecar.
+
+    The driver persists the sink's bounded buffer to
+    ``METRICS_EVENTS_FILENAME``; experiments count OOM probes, recovery and
+    adaptation evidence from this file instead of Ray logs (which may be
+    deduplicated or truncated).
+    """
+
+    return _jsonable(asdict(event))
 
 
 @dataclass(frozen=True)

@@ -5,16 +5,25 @@ two deterministic rules per stage:
 
 - drift-down: observed per-row VRAM moved above the probed baseline past
   ``drift_threshold`` and the per-actor budget is under pressure, so one
-  replica is removed and its VRAM budget is redistributed to the
-  remaining actors (batch hard cap recomputed);
+  replica is removed from every device currently at the stage's per-device
+  maximum (a device-level envelope step, e.g. 4->3 replicas per device) and
+  the freed VRAM budget is redistributed to the remaining actors (batch
+  hard cap recomputed).  When the stage already runs one replica per
+  device, dropping actors cannot change the envelope, so the decision is
+  recorded as a no-op instead of shrinking only the actor count;
 - scale-up gate: per-actor throughput fell far below the probed steady
   rate, so one replica is added behind a marginal-gain gate -- if the
   next partition's goodput gain is below ``marginal_gain_epsilon`` the
   addition is reverted and the stage is frozen.
 
 Batch size remains owned by the actor-local controller; this module only
-changes replica counts and the batch hard-cap envelope.  All decisions
-are appended to ``plan_events.jsonl`` for auditability.
+changes replica counts and the batch hard-cap envelope.  Every action
+records its full resource envelope before/after (placement, per-device
+replica maxima, colocated maxima, per-actor budget, hard cap) plus an
+``effective`` flag that is true only when the envelope actually moved;
+shrinking the actor list alone (e.g. 32->31 with the per-device maximum
+unchanged) is recorded as a no-op.  All decisions are appended to
+``plan_events.jsonl`` for auditability.
 """
 
 from __future__ import annotations
@@ -27,7 +36,7 @@ from typing import Any, Dict, Iterable, List, Optional
 
 from loguru import logger
 
-from .parallelism_planner import ClusterSpec, RuntimePlan, StageDemand
+from .parallelism_planner import ClusterSpec, RuntimePlan, StageDemand, device_replica_counts
 
 PLAN_EVENTS_FILENAME = "plan_events.jsonl"
 
@@ -139,6 +148,15 @@ class PlanChange:
     batch_hard_cap_before: int
     batch_hard_cap_after: int
     timestamp_ms: int = field(default_factory=lambda: int(time.time() * 1000))
+    device_ids_before: List[int] = field(default_factory=list)
+    device_ids_after: List[int] = field(default_factory=list)
+    stage_max_replicas_per_device_before: int = 0
+    stage_max_replicas_per_device_after: int = 0
+    plan_max_colocated_replicas_before: int = 0
+    plan_max_colocated_replicas_after: int = 0
+    per_actor_vram_budget_before: int = 0
+    per_actor_vram_budget_after: int = 0
+    effective: bool = False
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -151,6 +169,15 @@ class PlanChange:
             "actors_after": self.actors_after,
             "batch_hard_cap_before": self.batch_hard_cap_before,
             "batch_hard_cap_after": self.batch_hard_cap_after,
+            "device_ids_before": list(self.device_ids_before),
+            "device_ids_after": list(self.device_ids_after),
+            "stage_max_replicas_per_device_before": self.stage_max_replicas_per_device_before,
+            "stage_max_replicas_per_device_after": self.stage_max_replicas_per_device_after,
+            "plan_max_colocated_replicas_before": self.plan_max_colocated_replicas_before,
+            "plan_max_colocated_replicas_after": self.plan_max_colocated_replicas_after,
+            "per_actor_vram_budget_before": self.per_actor_vram_budget_before,
+            "per_actor_vram_budget_after": self.per_actor_vram_budget_after,
+            "effective": self.effective,
             "timestamp_ms": self.timestamp_ms,
         }
 
@@ -223,21 +250,30 @@ class PartitionReplanController:
         return candidates
 
     def _recompute_budget_and_cap(self, stage_key: str) -> int:
-        from .parallelism_planner import device_replica_counts
-
         stage_plan = self.plan.stages[stage_key]
         demand = self.demands[stage_key]
         device_ids = stage_plan.device_ids
         budget = self.cluster.device_memory_budget_bytes
         if device_ids:
-            used = self._device_memory_used.get(device_ids[0], 0)
-            free_after_release = self.cluster.device_memory_budget_bytes - (used - demand.effective_peak_bytes)
-            replicas = max(1, device_replica_counts(self.plan.stages).get(device_ids[0], 1))
-            shared_budget = max(
-                demand.effective_peak_bytes,
-                self.cluster.device_memory_budget_bytes // replicas,
-            )
-            budget = max(demand.effective_peak_bytes, min(free_after_release, shared_budget))
+            device_replicas = device_replica_counts(self.plan.stages)
+            per_device_budget = {}
+            for device_id in set(device_ids):
+                used = self._device_memory_used.get(device_id, 0)
+                free_after_release = self.cluster.device_memory_budget_bytes - (
+                    used - demand.effective_peak_bytes
+                )
+                replicas = max(1, device_replicas.get(device_id, 1))
+                shared_budget = max(
+                    demand.effective_peak_bytes,
+                    self.cluster.device_memory_budget_bytes // replicas,
+                )
+                per_device_budget[device_id] = max(
+                    demand.effective_peak_bytes, min(free_after_release, shared_budget)
+                )
+            # The stage's actors share one budget, so it is derived from the
+            # most replicated device the stage occupies (conservative for
+            # every actor, mirroring the planner).
+            budget = min(per_device_budget.values())
         stage_plan.per_actor_vram_budget_bytes = int(budget)
         cap = max(1, int(budget // max(demand.per_row_vram_bytes, 1e-9)))
         if demand.oom_upper_bound is not None:
@@ -272,10 +308,17 @@ class PartitionReplanController:
                 if previous_goodput > 0:
                     gain = (goodput_rows_per_sec - previous_goodput) / previous_goodput
                 if gain < self.config.marginal_gain_epsilon:
-                    changes.append(self._scale(stage_key, partition_id, -1, action="revert_scale_up", reason=(
-                        f"marginal goodput gain {gain:.3f} < epsilon "
-                        f"{self.config.marginal_gain_epsilon}; stage frozen"
-                    )))
+                    changes.append(self._scale(
+                        stage_key,
+                        partition_id,
+                        -1,
+                        action="revert_scale_up",
+                        reason=(
+                            f"marginal goodput gain {gain:.3f} < epsilon "
+                            f"{self.config.marginal_gain_epsilon}; stage frozen"
+                        ),
+                        revert_device=pending.get("device_id"),
+                    ))
                     self._frozen_stages.add(stage_key)
                     continue
                 # Gain met: treat the resolution as a change of this
@@ -327,12 +370,16 @@ class PartitionReplanController:
             ):
                 candidates = self._device_candidates(demand)
                 if candidates:
+                    device_id = candidates[0]
                     change = self._scale(stage_key, partition_id, +1, action="scale_up", reason=(
                         f"per-actor throughput {observation.rows_per_sec:.1f} rows/s below "
                         f"{self.config.underperformance_ratio:.0%} of probed "
                         f"{demand.probed_throughput_rps:.1f} rows/s"
                     ))
-                    self._pending_scale_up[stage_key] = {"goodput_before": goodput_rows_per_sec}
+                    self._pending_scale_up[stage_key] = {
+                        "goodput_before": goodput_rows_per_sec,
+                        "device_id": device_id,
+                    }
                     changes.append(change)
 
         if changes and self.events_path:
@@ -351,11 +398,77 @@ class PartitionReplanController:
             return False
         return observation.bytes_per_row * self.demands[stage_key].batch_size > stage_plan.per_actor_vram_budget_bytes
 
-    def _scale(self, stage_key: str, partition_id: int, delta: int, *, action: str, reason: str) -> PlanChange:
+    def _stage_max_replicas(self, stage_key: str) -> int:
+        """Largest number of this stage's replicas on any single device."""
+
+        counts: Dict[int, int] = {}
+        for device_id in self.plan.stages[stage_key].device_ids:
+            counts[device_id] = counts.get(device_id, 0) + 1
+        return max(counts.values()) if counts else 0
+
+    def _plan_max_colocated_replicas(self) -> int:
+        """Largest total replicas (any stage) colocated on any single device."""
+
+        counts = device_replica_counts(self.plan.stages)
+        return max(counts.values()) if counts else 0
+
+    def _remove_device_replicas(self, stage_key: str, *, device_ids: List[int]) -> int:
+        """Remove one replica of the stage from each given device."""
+
+        stage_plan = self.plan.stages[stage_key]
+        demand = self.demands[stage_key]
+        removed = 0
+        for device_id in device_ids:
+            if device_id not in stage_plan.device_ids:
+                continue
+            stage_plan.device_ids.remove(device_id)
+            self._device_memory_used[device_id] = max(
+                0, self._device_memory_used.get(device_id, 0) - demand.effective_peak_bytes
+            )
+            removed += 1
+        stage_plan.planned_actors -= removed
+        return removed
+
+    def _scale_down_targets(self, stage_key: str) -> List[int]:
+        """Devices to shed: one replica from every device at the stage maximum.
+
+        All-or-nothing: the step only makes sense if the per-device maximum
+        actually drops, and never below ``min_actors`` total.  Returns an
+        empty list when the stage already runs one replica per device (a
+        pure actor-count reduction would leave the envelope untouched).
+        """
+
+        stage_plan = self.plan.stages[stage_key]
+        counts: Dict[int, int] = {}
+        for device_id in stage_plan.device_ids:
+            counts[device_id] = counts.get(device_id, 0) + 1
+        if not counts or max(counts.values()) < 2:
+            return []
+        stage_max = max(counts.values())
+        targets = sorted(device_id for device_id, count in counts.items() if count == stage_max)
+        if stage_plan.planned_actors - len(targets) < self.config.min_actors:
+            return []
+        return targets
+
+    def _scale(
+        self,
+        stage_key: str,
+        partition_id: int,
+        delta: int,
+        *,
+        action: str,
+        reason: str,
+        revert_device: Optional[int] = None,
+    ) -> PlanChange:
         stage_plan = self.plan.stages[stage_key]
         demand = self.demands[stage_key]
         actors_before = stage_plan.planned_actors
         cap_before = stage_plan.batch_hard_cap
+        budget_before = stage_plan.per_actor_vram_budget_bytes
+        devices_before = list(stage_plan.device_ids)
+        stage_max_before = self._stage_max_replicas(stage_key)
+        colocated_before = self._plan_max_colocated_replicas()
+
         if delta > 0:
             candidates = self._device_candidates(demand)
             if not candidates:
@@ -365,16 +478,66 @@ class PartitionReplanController:
             self._device_memory_used[device_id] = (
                 self._device_memory_used.get(device_id, 0) + demand.effective_peak_bytes
             )
+            stage_plan.planned_actors += 1
         else:
-            if stage_plan.planned_actors <= self.config.min_actors:
-                raise RuntimeError(f"cannot scale down stage {stage_key}: already at min_actors")
-            device_id = stage_plan.device_ids.pop()
-            self._device_memory_used[device_id] = max(
-                0, self._device_memory_used.get(device_id, 0) - demand.effective_peak_bytes
-            )
-        stage_plan.planned_actors += delta
+            if revert_device is not None:
+                # Exact undo of the probe scale-up: shed the replica that was
+                # added on the recorded device.
+                targets = [revert_device]
+            else:
+                # Device-level envelope step: one replica off every device
+                # currently at the stage's per-device maximum.
+                targets = self._scale_down_targets(stage_key)
+            if (
+                not targets
+                or (revert_device is not None and revert_device not in stage_plan.device_ids)
+            ):
+                # No device-level step is possible (e.g. one replica per
+                # device): dropping actors cannot change the envelope, so
+                # record a no-op instead of shrinking the actor list alone.
+                self._last_change_partition[stage_key] = partition_id
+                return PlanChange(
+                    partition_id=partition_id,
+                    stage_key=stage_key,
+                    op_name=stage_plan.op_name,
+                    action=action,
+                    reason=(
+                        reason
+                        + "; no-op: no device-level replica step available that "
+                        "changes the resource envelope (actor-count-only "
+                        "reductions are not recorded as adaptations)"
+                    ),
+                    actors_before=actors_before,
+                    actors_after=actors_before,
+                    batch_hard_cap_before=cap_before,
+                    batch_hard_cap_after=cap_before,
+                    device_ids_before=devices_before,
+                    device_ids_after=devices_before,
+                    stage_max_replicas_per_device_before=stage_max_before,
+                    stage_max_replicas_per_device_after=stage_max_before,
+                    plan_max_colocated_replicas_before=colocated_before,
+                    plan_max_colocated_replicas_after=colocated_before,
+                    per_actor_vram_budget_before=budget_before,
+                    per_actor_vram_budget_after=budget_before,
+                    effective=False,
+                )
+            self._remove_device_replicas(stage_key, device_ids=targets)
+
         cap_after = self._recompute_budget_and_cap(stage_key)
         self._last_change_partition[stage_key] = partition_id
+        stage_max_after = self._stage_max_replicas(stage_key)
+        colocated_after = self._plan_max_colocated_replicas()
+        budget_after = stage_plan.per_actor_vram_budget_bytes
+        envelope_changed = (
+            stage_max_before != stage_max_after
+            or colocated_before != colocated_after
+            or budget_before != budget_after
+            or cap_before != cap_after
+        )
+        # A scale-up always extends the physical footprint (one more actor
+        # process plus its reserved peak memory on a device); a scale-down
+        # only counts when the safety envelope itself moved.
+        effective = envelope_changed or delta > 0
         return PlanChange(
             partition_id=partition_id,
             stage_key=stage_key,
@@ -385,6 +548,15 @@ class PartitionReplanController:
             actors_after=stage_plan.planned_actors,
             batch_hard_cap_before=cap_before,
             batch_hard_cap_after=cap_after,
+            device_ids_before=devices_before,
+            device_ids_after=list(stage_plan.device_ids),
+            stage_max_replicas_per_device_before=stage_max_before,
+            stage_max_replicas_per_device_after=stage_max_after,
+            plan_max_colocated_replicas_before=colocated_before,
+            plan_max_colocated_replicas_after=colocated_after,
+            per_actor_vram_budget_before=budget_before,
+            per_actor_vram_budget_after=budget_after,
+            effective=effective,
         )
 
     def _append_events(self, changes: List[PlanChange]) -> None:
