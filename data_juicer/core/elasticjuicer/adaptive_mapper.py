@@ -1,5 +1,6 @@
 """Lossless OOM-safe micro-batching for one mapper callable."""
 
+import time
 from collections.abc import Mapping
 from contextlib import nullcontext
 from typing import Any, Callable, List, Optional
@@ -113,9 +114,15 @@ class OOMSafeAdaptiveMapper:
         snapshot_callback: Optional[Callable] = None,
         label: str = "",
         batch_cost_fn: Optional[Callable[[Any], float]] = None,
+        max_floor_retries: int = 3,
+        floor_retry_backoff_sec: float = 1.0,
     ):
         if max_retries_per_slice < 0:
             raise ValueError("max_retries_per_slice must be non-negative")
+        if max_floor_retries < 0:
+            raise ValueError("max_floor_retries must be non-negative")
+        if floor_retry_backoff_sec < 0:
+            raise ValueError("floor_retry_backoff_sec must be non-negative")
         self.mapper = mapper
         self.controller = controller
         self.sampler = sampler
@@ -126,6 +133,8 @@ class OOMSafeAdaptiveMapper:
         self.snapshot_callback = snapshot_callback
         self.label = label or "op"
         self.batch_cost_fn = batch_cost_fn
+        self.max_floor_retries = max_floor_retries
+        self.floor_retry_backoff_sec = floor_retry_backoff_sec
         self.oom_retries = 0
         self.successful_slices = 0
 
@@ -149,6 +158,7 @@ class OOMSafeAdaptiveMapper:
         offset = 0
         while offset < total_rows:
             retries = 0
+            floor_retries = 0
             while True:
                 if self.before_slice is not None:
                     self.before_slice()
@@ -167,9 +177,22 @@ class OOMSafeAdaptiveMapper:
                     try:
                         self.controller.observe_oom(batch_size)
                     except MinimumBatchSizeOOM:
+                        # Transient co-location starvation: a sibling actor
+                        # may be holding a huge slice right now (fractional-
+                        # GPU packing).  Bounded same-size retries give it a
+                        # chance to release before the floor becomes fatal;
+                        # the slice, size and error stay identical (same-
+                        # slice semantics) and the propagation after the
+                        # budget is exhausted stays explicit.
+                        if floor_retries < self.max_floor_retries:
+                            floor_retries += 1
+                            self._emit_snapshot(measurement)
+                            time.sleep(self.floor_retry_backoff_sec * floor_retries)
+                            continue
                         logger.error(
                             f"ElasticJuicer[{self.label}] OOM at minimum batch size "
-                            f"({batch_size}); propagating (no smaller slice possible)"
+                            f"({batch_size}) persisted after {self.max_floor_retries} "
+                            f"bounded wait-retr(ies); propagating (no smaller slice possible)"
                         )
                         self._emit_snapshot(measurement)
                         raise error

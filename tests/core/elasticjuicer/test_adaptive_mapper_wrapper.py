@@ -120,12 +120,74 @@ def test_oom_at_minimum_re_raises_original_error():
     wrapper = OOMSafeAdaptiveMapper(
         always_oom,
         controller=AdaptiveBatchController(initial_batch_size=1, min_batch_size=1, max_batch_size=8),
+        max_floor_retries=0,
     )
 
     with pytest.raises(FakeCudaOutOfMemoryError) as raised:
         wrapper([1, 2])
 
     assert raised.value is error
+
+
+def test_floor_oom_retries_transient_starvation_before_failing():
+    # A co-located sibling holding a huge slice can starve this actor's
+    # minimum-size batch for a few seconds (the W2' P4 entry transient:
+    # one actor's 91.7 GiB slice vs a 5.6 GiB bs=1 request).  The floor
+    # must wait it out with bounded same-slice retries instead of
+    # declaring the slice fatal on the first try.
+
+    class TransientFloorMapper:
+        def __init__(self, failures_left):
+            self.failures_left = failures_left
+            self.calls = 0
+
+        def __call__(self, batch):
+            self.calls += 1
+            if self.failures_left > 0:
+                self.failures_left -= 1
+                raise FakeCudaOutOfMemoryError("sibling still holds the device")
+            return list(batch)
+
+    mapper = TransientFloorMapper(failures_left=2)
+    wrapper = OOMSafeAdaptiveMapper(
+        mapper,
+        controller=AdaptiveBatchController(initial_batch_size=1, min_batch_size=1, max_batch_size=8),
+        max_floor_retries=3,
+        floor_retry_backoff_sec=0.0,
+    )
+
+    result = wrapper([1, 2, 3])
+
+    assert result == [1, 2, 3]
+    # slice [1]: attempt + 2 bounded wait-retries that survive; slices [2] and
+    # [3] then succeed on their first attempt
+    assert mapper.calls == 5
+
+
+def test_floor_oom_still_propagates_after_bounded_retries():
+    # The wait budget is bounded: permanent starvation still propagates
+    # the original error explicitly (no silent skip, no infinite loop).
+
+    class AlwaysFloorMapper:
+        def __init__(self):
+            self.calls = 0
+
+        def __call__(self, batch):
+            self.calls += 1
+            raise FakeCudaOutOfMemoryError("permanent starvation")
+
+    wrapper = OOMSafeAdaptiveMapper(
+        AlwaysFloorMapper(),
+        controller=AdaptiveBatchController(initial_batch_size=1, min_batch_size=1, max_batch_size=8),
+        max_floor_retries=2,
+        floor_retry_backoff_sec=0.0,
+    )
+
+    with pytest.raises(FakeCudaOutOfMemoryError):
+        wrapper([1, 2])
+
+    # one first attempt plus the two bounded retries, then fatal
+    assert wrapper.mapper.calls == 3
 
 
 def test_mapping_batches_preserve_order_and_schema():
