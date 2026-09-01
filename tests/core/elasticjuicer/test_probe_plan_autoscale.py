@@ -591,6 +591,48 @@ class ReplanControllerTest(unittest.TestCase):
         self.assertLessEqual(change.batch_hard_cap_after, entitlement)
         self.assertGreaterEqual(change.batch_hard_cap_after, 1)
 
+    def test_drift_tightens_hard_cap_even_without_actor_shedding(self):
+        # 8 actors, one per device: no actor-shedding step exists, but the
+        # observed per-row VRAM (drift) must still tighten the batch hard
+        # cap against the fractional entitlement -- otherwise the next
+        # partition's co-located actors keep colliding at the probed-head
+        # cap (the W2' floor OOMs: observed per-row 6.4 GiB, entitlement
+        # 21.5 GiB, honest cap ~3, hard limit stayed 16).
+        device_ids = list(range(8))
+        controller, plan = self._wide_controller(device_ids=device_ids)
+        stage_plan = plan.stages["stage:a"]
+        cap_before = stage_plan.batch_hard_cap
+        budget = stage_plan.per_actor_vram_budget_bytes
+        observed_per_row = 4 * 1024**3
+        changes = controller.on_partition_complete(
+            3, self._obs(bytes_per_row=observed_per_row, oom=1), goodput_rows_per_sec=100
+        )
+        self.assertEqual(len(changes), 1)
+        change = changes[0]
+        self.assertTrue(change.effective)
+        # the envelope moved, not the actor count
+        self.assertEqual(change.actors_before, change.actors_after)
+        expected_cap = int(budget // observed_per_row)
+        self.assertEqual(change.batch_hard_cap_after, expected_cap)
+        self.assertLess(change.batch_hard_cap_after, cap_before)
+        self.assertEqual(stage_plan.batch_hard_cap, expected_cap)
+
+    def test_drift_with_smaller_observed_per_row_never_loosens_cap(self):
+        # Only drift-up may tighten: an observation below the probed
+        # per-row cost must leave the cap alone (relaxation belongs to the
+        # scale-up path, not to noise).
+        device_ids = list(range(8))
+        controller, plan = self._wide_controller(device_ids=device_ids)
+        stage_plan = plan.stages["stage:a"]
+        cap_before = stage_plan.batch_hard_cap
+        small_observation = 25 * 1024 * 1024  # drifted (2x baseline) yet below the probed 128 MiB/row
+        changes = controller.on_partition_complete(
+            3, self._obs(bytes_per_row=small_observation, oom=1), goodput_rows_per_sec=100
+        )
+        self.assertEqual(len(changes), 1)
+        self.assertFalse(changes[0].effective)
+        self.assertEqual(stage_plan.batch_hard_cap, cap_before)
+
     def test_drift_scale_down_at_one_replica_per_device_is_noop(self):
         # 8 actors, one per device: shedding actors cannot change the
         # resource envelope, so the action is recorded as an honest no-op.

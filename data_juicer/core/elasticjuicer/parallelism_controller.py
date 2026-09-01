@@ -255,7 +255,9 @@ class PartitionReplanController:
         candidates.sort(key=lambda d: (self._device_memory_used.get(d, 0), d))
         return candidates
 
-    def _recompute_budget_and_cap(self, stage_key: str) -> int:
+    def _recompute_budget_and_cap(
+        self, stage_key: str, observed_bytes_per_row: Optional[float] = None
+    ) -> int:
         stage_plan = self.plan.stages[stage_key]
         demand = self.demands[stage_key]
         device_ids = stage_plan.device_ids
@@ -289,7 +291,14 @@ class PartitionReplanController:
             # every actor, mirroring the planner).
             budget = min(per_device_budget.values())
         stage_plan.per_actor_vram_budget_bytes = int(budget)
-        cap = max(1, int(budget // max(demand.per_row_vram_bytes, 1e-9)))
+        # Drift only tightens: an observed per-row cost above the probed
+        # value replaces it (the probe sampled the dataset head; the
+        # observation measured the region the actors actually ran).
+        # Relaxation stays the scale-up path's job, never noise's.
+        per_row = demand.per_row_vram_bytes
+        if observed_bytes_per_row is not None and observed_bytes_per_row > per_row:
+            per_row = observed_bytes_per_row
+        cap = max(1, int(budget // max(per_row, 1e-9)))
         if demand.oom_upper_bound is not None:
             cap = min(cap, max(1, demand.oom_upper_bound - 1))
         stage_plan.batch_hard_cap = cap
@@ -368,11 +377,17 @@ class PartitionReplanController:
                 and stage_plan.planned_actors > self.config.min_actors
                 and pressure
             ):
-                changes.append(self._scale(stage_key, partition_id, -1, action="scale_down", reason=(
-                    f"per-row VRAM {observation.bytes_per_row:.0f}B > baseline "
-                    f"{baseline:.0f}B x {self.config.drift_threshold} "
-                    f"(oom_batches={observation.oom_batches}); redistributing budget"
-                )))
+                changes.append(self._scale(
+                    stage_key,
+                    partition_id,
+                    -1,
+                    action="scale_down",
+                    observed_bytes_per_row=observation.bytes_per_row,
+                    reason=(
+                        f"per-row VRAM {observation.bytes_per_row:.0f}B > baseline "
+                        f"{baseline:.0f}B x {self.config.drift_threshold} "
+                        f"(oom_batches={observation.oom_batches}); redistributing budget"
+                    )))
                 continue
 
             expected_rps = demand.probed_throughput_rps * self.config.underperformance_ratio
@@ -473,6 +488,7 @@ class PartitionReplanController:
         action: str,
         reason: str,
         revert_device: Optional[int] = None,
+        observed_bytes_per_row: Optional[float] = None,
     ) -> PlanChange:
         stage_plan = self.plan.stages[stage_key]
         demand = self.demands[stage_key]
@@ -506,10 +522,18 @@ class PartitionReplanController:
                 not targets
                 or (revert_device is not None and revert_device not in stage_plan.device_ids)
             ):
-                # No device-level step is possible (e.g. one replica per
-                # device): dropping actors cannot change the envelope, so
-                # record a no-op instead of shrinking the actor list alone.
+                # No device-level replica step is possible (e.g. one replica
+                # per device): dropping actors cannot change the envelope.
+                # Drift still has one honest lever left -- tighten the budget
+                # and batch hard cap against the observed per-row cost so
+                # the next partition's co-located actors do not collide at
+                # the probed-head cap (the W2' floor OOMs).
                 self._last_change_partition[stage_key] = partition_id
+                cap_after = self._recompute_budget_and_cap(
+                    stage_key, observed_bytes_per_row=observed_bytes_per_row
+                )
+                budget_after = stage_plan.per_actor_vram_budget_bytes
+                envelope_tightened = cap_after != cap_before or budget_after != budget_before
                 return PlanChange(
                     partition_id=partition_id,
                     stage_key=stage_key,
@@ -517,14 +541,18 @@ class PartitionReplanController:
                     action=action,
                     reason=(
                         reason
-                        + "; no-op: no device-level replica step available that "
-                        "changes the resource envelope (actor-count-only "
-                        "reductions are not recorded as adaptations)"
+                        + (
+                            "; envelope tightened to the observed per-row VRAM"
+                            if envelope_tightened
+                            else "; no-op: no device-level replica step available and "
+                            "the envelope is already tight at the observed per-row VRAM "
+                            "(actor-count-only reductions are not recorded as adaptations)"
+                        )
                     ),
                     actors_before=actors_before,
                     actors_after=actors_before,
                     batch_hard_cap_before=cap_before,
-                    batch_hard_cap_after=cap_before,
+                    batch_hard_cap_after=cap_after,
                     device_ids_before=devices_before,
                     device_ids_after=devices_before,
                     stage_max_replicas_per_device_before=stage_max_before,
@@ -532,12 +560,14 @@ class PartitionReplanController:
                     plan_max_colocated_replicas_before=colocated_before,
                     plan_max_colocated_replicas_after=colocated_before,
                     per_actor_vram_budget_before=budget_before,
-                    per_actor_vram_budget_after=budget_before,
-                    effective=False,
+                    per_actor_vram_budget_after=budget_after,
+                    effective=envelope_tightened,
                 )
             self._remove_device_replicas(stage_key, device_ids=targets)
 
-        cap_after = self._recompute_budget_and_cap(stage_key)
+        cap_after = self._recompute_budget_and_cap(
+            stage_key, observed_bytes_per_row=observed_bytes_per_row
+        )
         self._last_change_partition[stage_key] = partition_id
         stage_max_after = self._stage_max_replicas(stage_key)
         colocated_after = self._plan_max_colocated_replicas()
