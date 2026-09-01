@@ -864,6 +864,10 @@ class WarmFastPathExecutorTest(unittest.TestCase):
             # the cached probed OOM bound seeds the actor batch cap
             self.assertGreaterEqual(op.num_proc, 1)
             self.assertLessEqual(op._elastic_juicer_batch_hard_cap, 11)
+            # the warm hit is re-persisted so file consumers see cache_hit=True
+            persisted = load_probe_results(os.path.join(tmp, PROBE_RESULTS_FILENAME))
+            self.assertTrue(persisted["stages"][stage_key]["cache_hit"])
+            self.assertEqual(persisted["dataset"]["total_rows"], 4096)
 
     def test_data_change_falls_back_to_cold_probe(self):
         with tempfile.TemporaryDirectory() as tmp:

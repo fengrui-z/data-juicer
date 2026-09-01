@@ -1106,6 +1106,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             probe_gpu_stages,
             resolve_probe_cache,
             sample_columns_digest,
+            save_probe_results,
         )
         from data_juicer.core.elasticjuicer.parallelism_controller import (
             PLAN_EVENTS_FILENAME,
@@ -1194,6 +1195,14 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         if probe_enabled and not pending_specs:
             probe_results = stage_hits
             total_rows = cached_total_rows
+            # Re-persist the hit flags and binding so downstream consumers
+            # (e.g. the harness cache-hit verdict) read the warm rerun from
+            # the file, exactly like the cold path does.
+            save_probe_results(
+                results_path,
+                probe_results,
+                dataset=cached_payload.get("dataset"),
+            )
             logger.info(
                 "ElasticJuicer warm fast path: probe cache fully valid for the "
                 f"dataset snapshot (total_rows={total_rows}); sample read and "
