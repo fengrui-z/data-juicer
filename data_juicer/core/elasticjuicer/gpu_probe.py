@@ -15,6 +15,14 @@ provenance fingerprint per stage (operator config + GPU + probe params).
 A stage whose fingerprint matches the cache skips probing entirely; any
 fingerprint change invalidates that stage's cached result.
 
+The file additionally binds the input snapshot: a ``dataset`` block
+carries a content fingerprint of the source files plus the total row
+count and the probe sample digest.  A run whose dataset fingerprint no
+longer matches rejects the whole cache (fail-closed) so stale
+sample/cost evidence is never reused, while a fully compatible hit may
+skip re-reading the sample and recounting rows entirely (see
+:func:`dataset_cache_usable`).
+
 The module keeps all arithmetic pure (dataclass inputs, dict outputs) so
 the planner and tests run without Ray or CUDA.  Only
 :func:`probe_gpu_stages` touches Ray.
@@ -22,17 +30,18 @@ the planner and tests run without Ray or CUDA.  Only
 
 from __future__ import annotations
 
+import glob
 import hashlib
 import json
 import os
 import tempfile
 import time
 from dataclasses import asdict, dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from .oom import is_oom_error
 
-PROBE_RESULTS_SCHEMA_VERSION = 1
+PROBE_RESULTS_SCHEMA_VERSION = 2
 PROBE_RESULTS_FILENAME = "gpu_probe_results.json"
 
 
@@ -166,12 +175,89 @@ def load_probe_results(path: str) -> Optional[Dict[str, Any]]:
     return payload
 
 
-def save_probe_results(path: str, stages: Dict[str, StageProbeResult]) -> None:
+def dataset_snapshot_fingerprint(paths: Optional[Sequence[str]]) -> Optional[str]:
+    """Content fingerprint of the file-backed input snapshot.
+
+    Every source path contributes its path, size, and file bytes to a
+    single sha256, so any data edit, shard reordering, or added/removed
+    shard changes the fingerprint.  The cost is one sequential read per
+    file -- the same bytes the cached full row count was derived from.
+    Returns None when the input is not plain file-backed (missing path,
+    empty glob): callers must then treat the dataset binding as unusable
+    (fail-closed).
+    """
+
+    resolved: List[str] = []
+    for raw in paths or ():
+        if not isinstance(raw, str) or not raw:
+            return None
+        if any(char in raw for char in "*?["):
+            matches = sorted(glob.glob(raw))
+            if not matches:
+                return None
+            resolved.extend(matches)
+        elif os.path.isfile(raw):
+            resolved.append(raw)
+        else:
+            return None
+    if not resolved:
+        return None
+    digest = hashlib.sha256()
+    for path in sorted(resolved):
+        digest.update(path.encode("utf-8"))
+        digest.update(str(os.path.getsize(path)).encode("ascii"))
+        with open(path, "rb") as handle:
+            for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                digest.update(chunk)
+    return digest.hexdigest()
+
+
+def sample_columns_digest(sample_columns: Dict[str, List[Any]]) -> str:
+    """Stable digest of the probe sample that was actually measured."""
+
+    payload = json.dumps(
+        {key: list(values) for key, values in sample_columns.items()},
+        sort_keys=True,
+        default=str,
+    )
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def dataset_cache_usable(cached: Optional[Dict[str, Any]], fingerprint: Optional[str]) -> Optional[int]:
+    """Cached total row count when the dataset binding still matches.
+
+    The binding is only usable when the stored fingerprint equals the
+    current input snapshot's fingerprint and both the total row count and
+    the sample digest are intact.  Anything else returns None so callers
+    fall back to the cold path (fail-closed).
+    """
+
+    if not isinstance(cached, dict) or fingerprint is None:
+        return None
+    binding = cached.get("dataset")
+    if not isinstance(binding, dict) or binding.get("fingerprint") != fingerprint:
+        return None
+    total_rows = binding.get("total_rows")
+    if isinstance(total_rows, bool) or not isinstance(total_rows, int) or total_rows <= 0:
+        return None
+    sample_digest = binding.get("sample_digest")
+    if not isinstance(sample_digest, str) or not sample_digest:
+        return None
+    return total_rows
+
+
+def save_probe_results(
+    path: str,
+    stages: Dict[str, StageProbeResult],
+    dataset: Optional[Dict[str, Any]] = None,
+) -> None:
     payload = {
         "schema_version": PROBE_RESULTS_SCHEMA_VERSION,
         "generated_at_ms": int(time.time() * 1000),
         "stages": {key: result.to_dict() for key, result in stages.items()},
     }
+    if dataset:
+        payload["dataset"] = dict(dataset)
     atomic_write_json(path, payload)
 
 
@@ -355,11 +441,21 @@ def probe_gpu_stages(
     results_path: str,
     cost_column: Optional[str] = None,
     ray_module: Any = None,
+    dataset_fingerprint: Optional[str] = None,
+    dataset_stats: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, StageProbeResult]:
     """Probe every spec serially and persist merged results.
 
     Serial probing is the default because concurrent large-model loads can
     saturate shared storage; the cache makes repeat runs cheap.
+
+    ``dataset_fingerprint`` gates the whole cache: a snapshot whose
+    fingerprint no longer matches is rejected before stage resolution, so
+    stale sample/cost evidence is re-measured instead of reused.  When
+    ``dataset_stats`` is provided (total row count, sample digest) it is
+    bound to the fingerprint in the same atomic write as the stage
+    results; a missing count keeps the previous valid binding instead of
+    caching a wrong one.
     """
 
     params.validate()
@@ -368,6 +464,8 @@ def probe_gpu_stages(
             raise ValueError(f"stage {spec.stage_key} has an invalid batch_size")
 
     cached = load_probe_results(results_path)
+    if cached is not None and dataset_cache_usable(cached, dataset_fingerprint) is None:
+        cached = None
     results, pending = resolve_probe_cache(specs, params, cached)
 
     if pending:
@@ -415,5 +513,12 @@ def probe_gpu_stages(
             init_seconds=float(raw.get("init_seconds", 0.0) or 0.0),
         )
 
-    save_probe_results(results_path, results)
+    dataset_block: Optional[Dict[str, Any]] = None
+    if dataset_stats is not None and dataset_fingerprint is not None:
+        dataset_block = {"fingerprint": dataset_fingerprint, **dataset_stats}
+    elif cached is not None:
+        previous = cached.get("dataset")
+        if isinstance(previous, dict):
+            dataset_block = dict(previous)
+    save_probe_results(results_path, results, dataset=dataset_block)
     return results

@@ -292,3 +292,23 @@ def test_seed_bounds_is_rejected_after_first_observation_and_validates_types():
     controller.observe_success(8)
     with pytest.raises(RuntimeError, match="before the first observation"):
         controller.seed_bounds(safe_batch_size=4)
+
+
+def test_fresh_local_oom_supersedes_seeded_bound():
+    """A cached batch seed is advisory: a fresh local OOM tightens the bound.
+
+    The seed may set the starting batch and an advisory OOM bound, but new
+    actor-local OOM evidence always wins -- even at the seeded size.
+    """
+    controller = AdaptiveBatchController(initial_batch_size=16, max_batch_size=32)
+
+    assert controller.seed_bounds(safe_batch_size=16, oom_upper_bound=32) == 16
+
+    # The very first batch at the seeded size OOMs locally.
+    assert controller.observe_oom(16) == 8
+    assert controller.oom_upper_bound == 16
+    assert controller.current_batch_size == 8
+
+    # Further local evidence keeps tightening below the seed.
+    assert controller.observe_oom(8) == 4
+    assert controller.oom_upper_bound == 8

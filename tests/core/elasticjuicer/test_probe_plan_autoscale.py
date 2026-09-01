@@ -11,6 +11,7 @@ from data_juicer.core.elasticjuicer.config_contract import (
     validate_elastic_juicer_config,
 )
 from data_juicer.core.elasticjuicer.gpu_probe import (
+    PROBE_RESULTS_FILENAME,
     PROBE_RESULTS_SCHEMA_VERSION,
     ProbeParams,
     StageProbeResult,
@@ -19,9 +20,13 @@ from data_juicer.core.elasticjuicer.gpu_probe import (
     _cost_stats,
     _cycled_batch,
     atomic_write_json,
+    dataset_cache_usable,
+    dataset_snapshot_fingerprint,
     load_probe_results,
     probe_fingerprint,
+    probe_gpu_stages,
     resolve_probe_cache,
+    sample_columns_digest,
     save_probe_results,
 )
 from data_juicer.core.elasticjuicer.parallelism_controller import (
@@ -591,6 +596,308 @@ class AutoParallelismContractTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_elastic_juicer_config({**base, "elastic_juicer_actor_startup_seconds": -1.0})
         validate_elastic_juicer_config({**base, "elastic_juicer_actor_startup_seconds": 2.0})
+
+
+class DatasetSnapshotBindingTest(unittest.TestCase):
+    """The warm fast path must be bound to the exact input bytes."""
+
+    def test_fingerprint_binds_file_content(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "uniform.jsonl")
+            with open(path, "w") as handle:
+                handle.write('{"a": 1}\n{"a": 2}\n')
+            first = dataset_snapshot_fingerprint([path])
+            self.assertIsNotNone(first)
+            with open(path, "a") as handle:
+                handle.write('{"a": 3}\n')
+            self.assertNotEqual(dataset_snapshot_fingerprint([path]), first)
+            # restoring the exact bytes restores the fingerprint
+            with open(path, "w") as handle:
+                handle.write('{"a": 1}\n{"a": 2}\n')
+            self.assertEqual(dataset_snapshot_fingerprint([path]), first)
+
+    def test_fingerprint_requires_resolvable_file_backing(self):
+        self.assertIsNone(dataset_snapshot_fingerprint([]))
+        self.assertIsNone(dataset_snapshot_fingerprint(None))
+        self.assertIsNone(dataset_snapshot_fingerprint(["/nonexistent/path.jsonl"]))
+        with tempfile.TemporaryDirectory() as tmp:
+            first = os.path.join(tmp, "a.jsonl")
+            second = os.path.join(tmp, "b.jsonl")
+            with open(first, "w") as handle:
+                handle.write("x\n")
+            with open(second, "w") as handle:
+                handle.write("y\n")
+            self.assertIsNotNone(dataset_snapshot_fingerprint([first, second]))
+            # the shard set itself is part of the fingerprint
+            self.assertNotEqual(
+                dataset_snapshot_fingerprint([first]), dataset_snapshot_fingerprint([first, second])
+            )
+
+    def test_dataset_cache_usable_requires_intact_binding(self):
+        good = {"dataset": {"fingerprint": "fp1", "total_rows": 4096, "sample_digest": "d1"}}
+        self.assertEqual(dataset_cache_usable(good, "fp1"), 4096)
+        # a changed input snapshot must reject the cache
+        self.assertIsNone(dataset_cache_usable(good, "fp2"))
+        self.assertIsNone(dataset_cache_usable(good, None))
+        self.assertIsNone(dataset_cache_usable({"dataset": {}}, "fp1"))
+        self.assertIsNone(dataset_cache_usable({}, "fp1"))
+        self.assertIsNone(dataset_cache_usable(None, "fp1"))
+        zero_rows = {"dataset": {"fingerprint": "fp1", "total_rows": 0, "sample_digest": "d1"}}
+        self.assertIsNone(dataset_cache_usable(zero_rows, "fp1"))
+        no_digest = {"dataset": {"fingerprint": "fp1", "total_rows": 8}}
+        self.assertIsNone(dataset_cache_usable(no_digest, "fp1"))
+
+    def test_save_and_load_roundtrip_carries_dataset_binding(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, PROBE_RESULTS_FILENAME)
+            stages = {"stage:fake_op:1": _result()}
+            save_probe_results(
+                path, stages, dataset={"fingerprint": "fp", "total_rows": 4096, "sample_digest": "d"}
+            )
+            payload = load_probe_results(path)
+            self.assertEqual(payload["dataset"]["total_rows"], 4096)
+            # a save without a binding drops it: later runs stay cold
+            save_probe_results(path, stages)
+            self.assertIsNone(load_probe_results(path).get("dataset"))
+
+    def test_sample_columns_digest_is_stable_and_content_sensitive(self):
+        columns = {"id": [1, 2, 3], "cost": [1.5, 2.5, 3.5]}
+        self.assertEqual(sample_columns_digest(columns), sample_columns_digest(dict(columns)))
+        changed = {"id": [1, 2, 4], "cost": [1.5, 2.5, 3.5]}
+        self.assertNotEqual(sample_columns_digest(columns), sample_columns_digest(changed))
+
+
+class _FakeProbeTask:
+    def __init__(self, owner):
+        self._owner = owner
+
+    def options(self, **kwargs):
+        return self
+
+    def remote(self, *args, **kwargs):
+        self._owner.probe_calls += 1
+        return object()
+
+
+class _FakeRayModule:
+    """Minimal ray stand-in: every remote task resolves to one canned result."""
+
+    def __init__(self, raw_result):
+        self.raw_result = raw_result
+        self.probe_calls = 0
+
+    def remote(self, *decorator_args, **decorator_kwargs):
+        def decorate(fn):
+            return _FakeProbeTask(self)
+
+        return decorate
+
+    def get(self, future, timeout=None):
+        return self.raw_result
+
+
+class WarmCacheGatingTest(unittest.TestCase):
+    """probe_gpu_stages must reject the cache when the dataset changes."""
+
+    @staticmethod
+    def _raw():
+        return {
+            "gpu_name": "FakeGPU",
+            "resident_bytes": 1_000_000,
+            "effective_peak_bytes": 8_000_000,
+            "peak_bytes_with_headroom": 8_800_000,
+            "throughput_rows_per_sec": 100.0,
+            "probed_batch_size": 8,
+            "oom_upper_bound": None,
+            "probe_duration_sec": 0.5,
+            "rows_probed": 24,
+            "init_seconds": 0.5,
+        }
+
+    @staticmethod
+    def _write_cache(tmp, fingerprint, total_rows=4096):
+        spec = _spec()
+        params = ProbeParams()
+        result = _result(stage_key=spec.stage_key)
+        result.fingerprint = probe_fingerprint(
+            spec.op_name, spec.init_args, spec.init_kwargs, "FakeGPU", params
+        )
+        path = os.path.join(tmp, PROBE_RESULTS_FILENAME)
+        save_probe_results(
+            path,
+            {spec.stage_key: result},
+            dataset={"fingerprint": fingerprint, "total_rows": total_rows, "sample_digest": "d"},
+        )
+        return path, spec, params
+
+    def test_compatible_hit_skips_gpu_probe_and_preserves_binding(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data = os.path.join(tmp, "data.jsonl")
+            with open(data, "w") as handle:
+                handle.write('{"a": 1}\n')
+            fingerprint = dataset_snapshot_fingerprint([data])
+            path, spec, params = self._write_cache(tmp, fingerprint)
+            ray_fake = _FakeRayModule(self._raw())
+            results = probe_gpu_stages(
+                [spec],
+                {"a": [1]},
+                params,
+                path,
+                ray_module=ray_fake,
+                dataset_fingerprint=fingerprint,
+            )
+            self.assertEqual(ray_fake.probe_calls, 0)
+            self.assertTrue(results[spec.stage_key].cache_hit)
+            payload = load_probe_results(path)
+            self.assertEqual(payload["dataset"]["fingerprint"], fingerprint)
+            self.assertEqual(payload["dataset"]["total_rows"], 4096)
+
+    def test_dataset_change_rejects_cache_and_reprobes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data = os.path.join(tmp, "data.jsonl")
+            with open(data, "w") as handle:
+                handle.write('{"a": 1}\n')
+            fingerprint = dataset_snapshot_fingerprint([data])
+            path, spec, params = self._write_cache(tmp, fingerprint)
+            with open(data, "a") as handle:
+                handle.write('{"a": 2}\n')
+            changed = dataset_snapshot_fingerprint([data])
+            ray_fake = _FakeRayModule(self._raw())
+            results = probe_gpu_stages(
+                [spec],
+                {"a": [1]},
+                params,
+                path,
+                ray_module=ray_fake,
+                dataset_fingerprint=changed,
+                dataset_stats={"total_rows": 2, "sample_digest": "d2"},
+            )
+            self.assertEqual(ray_fake.probe_calls, 1)
+            self.assertFalse(results[spec.stage_key].cache_hit)
+            payload = load_probe_results(path)
+            self.assertEqual(payload["dataset"]["fingerprint"], changed)
+            self.assertEqual(payload["dataset"]["total_rows"], 2)
+
+
+class _StubRayData:
+    def __init__(self, rows):
+        self._rows = rows
+        self.take_calls = 0
+        self.count_calls = 0
+
+    def take(self, n):
+        self.take_calls += 1
+        return self._rows[:n]
+
+    def count(self):
+        self.count_calls += 1
+        return len(self._rows)
+
+
+class WarmFastPathExecutorTest(unittest.TestCase):
+    """_elastic_juicer_autoscale_setup must skip the sample read and the
+    full row count on a fully compatible cache hit, and go cold otherwise."""
+
+    def _op(self):
+        op = _FakeOp()
+        op._name = "fake_op"
+        op._init_args = ()
+        op._init_kwargs = {}
+        op.num_gpus = 0.25
+        op.num_cpus = 1.0
+        op.batch_size = 8
+        op.is_batched_op = lambda: True
+        return op
+
+    def _executor(self, work_dir, data_path):
+        from data_juicer.core.executor.ray_executor_partitioned import PartitionedRayExecutor
+
+        executor = object.__new__(PartitionedRayExecutor)
+        executor.cfg = {
+            "elastic_juicer_auto_parallelism": True,
+            "elastic_juicer_probe_enabled": True,
+            "gpu_probe_sample_rows": 8,
+            "dataset_path": data_path,
+        }
+        executor.work_dir = work_dir
+        executor.num_partitions = 4
+        executor._explicit_actor_op_ids = set()
+        executor._ej_build_cluster_spec = lambda: ClusterSpec(
+            total_cpus=16.0,
+            num_devices=2,
+            device_memory_bytes=8 * 1024**3,
+            device_memory_budget_fraction=1.0,
+        )
+        return executor
+
+    def _write_executor_cache(self, work_dir, data_path, stage_key, oom_upper_bound=None):
+        params = ProbeParams(sample_rows=8)
+        result = _result(stage_key=stage_key)
+        result.fingerprint = probe_fingerprint("fake_op", (), {}, "FakeGPU", params)
+        result.oom_upper_bound = oom_upper_bound
+        fingerprint = dataset_snapshot_fingerprint([data_path])
+        save_probe_results(
+            os.path.join(work_dir, PROBE_RESULTS_FILENAME),
+            {stage_key: result},
+            dataset={"fingerprint": fingerprint, "total_rows": 4096, "sample_digest": "d"},
+        )
+        return fingerprint
+
+    def test_warm_hit_skips_sample_read_and_full_count(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data = os.path.join(tmp, "uniform.jsonl")
+            with open(data, "w") as handle:
+                handle.write('{"a": 1}\n')
+            stage_key = "stage-000000:fake_op"
+            self._write_executor_cache(tmp, data, stage_key, oom_upper_bound=12)
+            executor = self._executor(tmp, data)
+            stub = _StubRayData([{"a": i} for i in range(16)])
+            op = self._op()
+
+            executor._elastic_juicer_autoscale_setup(
+                type("Dataset", (), {"data": stub})(), [op]
+            )
+
+            self.assertEqual(stub.take_calls, 0)
+            self.assertEqual(stub.count_calls, 0)
+            self.assertIsNotNone(executor._ej_autoscale_state)
+            # the cached probed OOM bound seeds the actor batch cap
+            self.assertGreaterEqual(op.num_proc, 1)
+            self.assertLessEqual(op._elastic_juicer_batch_hard_cap, 11)
+
+    def test_data_change_falls_back_to_cold_probe(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data = os.path.join(tmp, "uniform.jsonl")
+            with open(data, "w") as handle:
+                handle.write('{"a": 1}\n')
+            stage_key = "stage-000000:fake_op"
+            self._write_executor_cache(tmp, data, stage_key)
+            with open(data, "a") as handle:
+                handle.write('{"a": 2}\n')
+            executor = self._executor(tmp, data)
+            stub = _StubRayData([{"a": i} for i in range(16)])
+
+            import data_juicer.core.elasticjuicer.gpu_probe as gpu_probe_module
+
+            calls = []
+            original = gpu_probe_module.probe_gpu_stages
+
+            def fake_probe(specs, sample_columns, params, results_path, **kwargs):
+                calls.append(kwargs.get("dataset_fingerprint"))
+                return {spec.stage_key: _result(stage_key=spec.stage_key) for spec in specs}
+
+            gpu_probe_module.probe_gpu_stages = fake_probe
+            try:
+                executor._elastic_juicer_autoscale_setup(
+                    type("Dataset", (), {"data": stub})(), [self._op()]
+                )
+            finally:
+                gpu_probe_module.probe_gpu_stages = original
+
+            self.assertEqual(len(calls), 1)
+            self.assertEqual(stub.take_calls, 1)
+            self.assertEqual(stub.count_calls, 1)
+            self.assertIsNotNone(executor._ej_autoscale_state)
 
 
 if __name__ == "__main__":

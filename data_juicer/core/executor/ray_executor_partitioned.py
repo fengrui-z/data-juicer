@@ -1021,6 +1021,26 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         except Exception:
             return getattr(self.cfg, key, default)
 
+    def _ej_dataset_source_paths(self) -> List[str]:
+        """File-backed input paths used to fingerprint the probe cache.
+
+        The binding covers the configured input snapshot that feeds the
+        first pipeline stage; non-file inputs yield an empty list so the
+        dataset cache stays unusable (fail-closed).
+        """
+
+        try:
+            raw = ConfigAccessor.get(self.cfg, "dataset_path", None)
+        except Exception:
+            raw = None
+        if raw is None:
+            return []
+        if isinstance(raw, str):
+            return [raw]
+        if isinstance(raw, (list, tuple)):
+            return [item for item in raw if isinstance(item, str)]
+        return []
+
     def _ej_build_cluster_spec(self):
         from data_juicer.core.elasticjuicer.parallelism_planner import ClusterSpec
 
@@ -1080,8 +1100,12 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             PROBE_RESULTS_FILENAME,
             ProbeParams,
             StageProbeSpec,
+            dataset_cache_usable,
+            dataset_snapshot_fingerprint,
             load_probe_results,
             probe_gpu_stages,
+            resolve_probe_cache,
+            sample_columns_digest,
         )
         from data_juicer.core.elasticjuicer.parallelism_controller import (
             PLAN_EVENTS_FILENAME,
@@ -1132,58 +1156,119 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         probe_enabled = bool(self._ej_cfg_get("elastic_juicer_probe_enabled", True))
         results_path = os.path.join(work_dir, PROBE_RESULTS_FILENAME)
 
-        sample_rows_list = dataset.data.take(params.sample_rows)
-        sample_columns = {}
-        if sample_rows_list:
-            for key in sample_rows_list[0].keys():
-                sample_columns[key] = [row.get(key) for row in sample_rows_list]
-        if not sample_columns:
-            logger.warning("ElasticJuicer auto-parallelism disabled: empty probe sample")
-            return
+        specs = [
+            StageProbeSpec(
+                stage_key=stage_key,
+                op_name=getattr(op, "_name", None) or op.__class__.__name__,
+                op_class=op.__class__,
+                init_args=tuple(getattr(op, "_init_args", ())),
+                init_kwargs=dict(getattr(op, "_init_kwargs", {})),
+                batch_size=int(getattr(op, "batch_size", 1) or 1),
+                num_gpus=float(getattr(op, "num_gpus", 1.0) or 1.0),
+            )
+            for op, stage_key in eligible
+        ]
+        cost_column = self._ej_cfg_get("elastic_juicer_cost_column", None)
 
-        if probe_enabled:
-            specs = [
-                StageProbeSpec(
-                    stage_key=stage_key,
-                    op_name=getattr(op, "_name", None) or op.__class__.__name__,
-                    op_class=op.__class__,
-                    init_args=tuple(getattr(op, "_init_args", ())),
-                    init_kwargs=dict(getattr(op, "_init_kwargs", {})),
-                    batch_size=int(getattr(op, "batch_size", 1) or 1),
-                    num_gpus=float(getattr(op, "num_gpus", 1.0) or 1.0),
-                )
-                for op, stage_key in eligible
-            ]
-            cost_column = self._ej_cfg_get("elastic_juicer_cost_column", None)
-            probe_results = probe_gpu_stages(
-                specs, sample_columns, params, results_path, cost_column=cost_column
+        # Warm fast path: the cached probe results are only reusable when
+        # the input snapshot fingerprint still matches.  Any data change
+        # rejects the whole cache (fail-closed) so stale sample/cost
+        # evidence is re-measured, and a fully compatible hit additionally
+        # skips the sample read and the full row count.
+        dataset_fingerprint = dataset_snapshot_fingerprint(self._ej_dataset_source_paths())
+        cached_payload = load_probe_results(results_path)
+        cached_total_rows = dataset_cache_usable(cached_payload, dataset_fingerprint)
+        if cached_payload is not None and cached_total_rows is None:
+            logger.info(
+                "ElasticJuicer probe cache rejected: dataset fingerprint mismatch "
+                "or missing dataset binding; falling back to cold probe"
+            )
+            cached_payload = None
+
+        stage_hits: Dict[str, Any] = {}
+        pending_specs: List[Any] = specs
+        if probe_enabled and cached_payload is not None:
+            stage_hits, pending_specs = resolve_probe_cache(specs, params, cached_payload)
+
+        sample_columns: Dict[str, List[Any]] = {}
+        if probe_enabled and not pending_specs:
+            probe_results = stage_hits
+            total_rows = cached_total_rows
+            logger.info(
+                "ElasticJuicer warm fast path: probe cache fully valid for the "
+                f"dataset snapshot (total_rows={total_rows}); sample read and "
+                "full row count skipped"
             )
         else:
-            cached = load_probe_results(results_path)
-            if cached is None:
-                logger.warning(
-                    "ElasticJuicer auto-parallelism disabled: probing turned off "
-                    f"and no cached probe results at {results_path}"
-                )
+            sample_rows_list = dataset.data.take(params.sample_rows)
+            if sample_rows_list:
+                for key in sample_rows_list[0].keys():
+                    sample_columns[key] = [row.get(key) for row in sample_rows_list]
+            if not sample_columns:
+                logger.warning("ElasticJuicer auto-parallelism disabled: empty probe sample")
                 return
-            from data_juicer.core.elasticjuicer.gpu_probe import StageProbeResult
 
-            probe_results = {}
-            for _op, stage_key in eligible:
-                entry = cached["stages"].get(stage_key)
-                if isinstance(entry, dict):
-                    probe_results[stage_key] = StageProbeResult(
-                        **{key: entry[key] for key in entry if key in StageProbeResult.__dataclass_fields__}
+            if probe_enabled:
+                # Count before probing so one atomic save binds stages,
+                # total rows and the sample digest to the dataset
+                # fingerprint.  A failed count leaves the binding out
+                # rather than caching a wrong row count (fail-closed for
+                # later runs).
+                count_succeeded = True
+                try:
+                    total_rows = dataset.data.count()
+                except Exception as error:
+                    logger.warning(
+                        f"ElasticJuicer auto-parallelism: row count unavailable ({error}); using sample size"
                     )
+                    total_rows = len(next(iter(sample_columns.values())))
+                    count_succeeded = False
+                probe_results = probe_gpu_stages(
+                    specs,
+                    sample_columns,
+                    params,
+                    results_path,
+                    cost_column=cost_column,
+                    dataset_fingerprint=dataset_fingerprint,
+                    dataset_stats=(
+                        {
+                            "total_rows": total_rows,
+                            "sample_digest": sample_columns_digest(sample_columns),
+                        }
+                        if count_succeeded
+                        else None
+                    ),
+                )
+            else:
+                if cached_payload is None:
+                    logger.warning(
+                        "ElasticJuicer auto-parallelism disabled: probing turned off "
+                        f"and no cached probe results at {results_path}"
+                    )
+                    return
+                from data_juicer.core.elasticjuicer.gpu_probe import StageProbeResult
+
+                probe_results = {}
+                for _op, stage_key in eligible:
+                    entry = cached_payload["stages"].get(stage_key)
+                    if isinstance(entry, dict):
+                        probe_results[stage_key] = StageProbeResult(
+                            **{key: entry[key] for key in entry if key in StageProbeResult.__dataclass_fields__}
+                        )
+                if cached_total_rows is not None:
+                    total_rows = cached_total_rows
+                else:
+                    try:
+                        total_rows = dataset.data.count()
+                    except Exception as error:
+                        logger.warning(
+                            f"ElasticJuicer auto-parallelism: row count unavailable ({error}); using sample size"
+                        )
+                        total_rows = len(next(iter(sample_columns.values())))
 
         num_partitions = self.num_partitions
         if not isinstance(num_partitions, int) or num_partitions < 1:
             num_partitions = 1
-        try:
-            total_rows = dataset.data.count()
-        except Exception as error:
-            logger.warning(f"ElasticJuicer auto-parallelism: row count unavailable ({error}); using sample size")
-            total_rows = len(next(iter(sample_columns.values())))
         rows_per_partition = max(1, math.ceil(total_rows / num_partitions))
 
         explicit_op_ids = getattr(self, "_explicit_actor_op_ids", set())
