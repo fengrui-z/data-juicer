@@ -53,16 +53,22 @@ def _profile_from_dict(data: Dict) -> "StageProfile":
 
 
 def save_stage_profiles(
-    path: str, profiles: List["StageProfile"], pipeline_fingerprint: str
+    path: str,
+    profiles: List["StageProfile"],
+    pipeline_fingerprint: str,
+    plan_fingerprint: str = "",
 ) -> None:
     """Atomically persist stage profiles (tmp file + os.replace).
 
     Lessons from the 0803 checkpoint row-loss defect apply here: a
     partially written profiles file must never be readable as valid.
+    The envelope carries the execution-plan fingerprint (contract C3) so
+    a later driver under a different plan envelope rejects the file.
     """
     envelope = {
         "schema_version": STAGE_PROFILES_FILE_SCHEMA_VERSION,
         "pipeline_fingerprint": pipeline_fingerprint,
+        "plan_fingerprint": plan_fingerprint if isinstance(plan_fingerprint, str) else "",
         "persisted_at_ms": current_time_ms(),
         "profiles": [_profile_to_dict(profile) for profile in profiles],
     }
@@ -76,12 +82,18 @@ def save_stage_profiles(
     os.replace(tmp_path, path)
 
 
-def load_stage_profiles(path: str, expected_pipeline_fingerprint: str) -> List["StageProfile"]:
+def load_stage_profiles(
+    path: str,
+    expected_pipeline_fingerprint: str,
+    expected_plan_fingerprint: str = "",
+) -> List["StageProfile"]:
     """Load persisted profiles; fail closed on any incompatibility.
 
     Restored profiles are advisory priors only (RFC 4.5): stale or
     mismatched entries must degrade to an unseeded start, never brick the
     incarnation. Expiry is enforced later by the service's profile TTL.
+    A non-empty ``expected_plan_fingerprint`` additionally rejects files
+    persisted under a different execution-plan envelope (contract C3).
     """
     try:
         with open(path, "r", encoding="utf-8") as stream:
@@ -95,6 +107,12 @@ def load_stage_profiles(path: str, expected_pipeline_fingerprint: str) -> List["
         logger.warning(
             f"Stage profiles file {path} pipeline fingerprint mismatch "
             f"(expected {expected_pipeline_fingerprint[:8]}...); ignoring"
+        )
+        return []
+    if expected_plan_fingerprint and envelope.get("plan_fingerprint", "") != expected_plan_fingerprint:
+        logger.warning(
+            f"Stage profiles file {path} plan envelope fingerprint mismatch "
+            f"(expected {expected_plan_fingerprint[:8]}...); ignoring"
         )
         return []
     restored: List[StageProfile] = []
@@ -200,6 +218,7 @@ class ControlService:
         self.pipeline_fingerprint = (
             pipeline_fingerprint if isinstance(pipeline_fingerprint, str) else ""
         )
+        self.plan_fingerprint = ""
         self._registrations: Dict[_ActorKey, ActorRegistration] = {}
         self._active_incarnations: Dict[str, str] = {}
         self._latest_quotas: Dict[_ActorKey, QuotaEnvelope] = {}
@@ -340,6 +359,44 @@ class ControlService:
                 self._restored_profiles += 1
         return self._restored_profiles
 
+    def configure_plan_envelope(self, plan_fingerprint: str) -> int:
+        """Bind profile persistence to the execution-plan envelope (contract C3).
+
+        Called once the initial runtime plan exists (before any actor
+        registers).  Profiles persisted under a different plan envelope --
+        different per-actor budget, hard caps, actor count or placement --
+        are rejected instead of seeding this run: learned bounds from
+        another envelope must not act as priors here.  The binding is
+        stamped into every subsequent persistence.
+        """
+
+        self.plan_fingerprint = plan_fingerprint if isinstance(plan_fingerprint, str) else ""
+        if not self.profiles_path:
+            return 0
+        # The plan is bound before actors report, so in-job learning can
+        # only be a defensive concern here; it is preserved regardless.
+        in_job = {
+            key: profile
+            for key, profile in self._stage_profiles.items()
+            if profile.job_id == self.job_id
+        }
+        restored = load_stage_profiles(
+            self.profiles_path, self.pipeline_fingerprint, self.plan_fingerprint
+        )
+        self._stage_profiles = in_job
+        for profile in restored:
+            key = profile.store_key
+            self._stage_profiles[key] = self._merge_stage_profile(
+                self._stage_profiles.get(key), profile
+            )
+        self._restored_profiles = len(restored)
+        if restored:
+            logger.info(
+                f"ControlService kept {len(restored)} stage profile(s) under the "
+                f"plan envelope {self.plan_fingerprint[:8] if self.plan_fingerprint else '-'}..."
+            )
+        return self._restored_profiles
+
     def report_stage_profile(self, profile: StageProfile) -> StageProfile:
         """Merge one incarnation's learning into the job-scoped stage profile."""
 
@@ -369,6 +426,7 @@ class ControlService:
                 self.profiles_path,
                 list(self._stage_profiles.values()),
                 self.pipeline_fingerprint,
+                self.plan_fingerprint,
             )
         except Exception as error:
             logger.warning(f"Failed to persist stage profiles to {self.profiles_path}: {error}")

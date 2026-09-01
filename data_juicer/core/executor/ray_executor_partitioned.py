@@ -1119,6 +1119,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             DEFAULT_STARTUP_AMORTIZATION_RATIO,
             RUNTIME_PLAN_FILENAME,
             StageDemand,
+            plan_envelope_fingerprint,
             plan_parallelism,
             save_runtime_plan,
         )
@@ -1349,6 +1350,20 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             logger.warning(f"ElasticJuicer auto-parallelism disabled: planning failed ({error})")
             return
         save_runtime_plan(os.path.join(work_dir, RUNTIME_PLAN_FILENAME), plan)
+
+        # Contract C3 execution-plan dimension: bind profile persistence to
+        # the envelope this plan actually grants (actors, placement,
+        # per-actor budget, hard caps).  Profiles learned under a different
+        # envelope are then rejected instead of seeding this run.
+        try:
+            control_service = self._ej_cfg_get("_elastic_juicer_control_service", None)
+            if control_service is not None:
+                ray.get(
+                    control_service.configure_plan_envelope.remote(plan_envelope_fingerprint(plan)),
+                    timeout=10,
+                )
+        except Exception as error:  # noqa: BLE001 - advisory binding, fail open for the job
+            logger.warning(f"ElasticJuicer could not bind plan envelope to profile store: {error}")
 
         replan_config = ReplanConfig(
             drift_threshold=float(self._ej_cfg_get("elastic_juicer_drift_threshold", 1.3)),

@@ -232,6 +232,82 @@ class PlannerTest(unittest.TestCase):
         plan = plan_parallelism([demand], cluster)
         self.assertLessEqual(plan.stages["oombound"].batch_hard_cap, 15)
 
+    def test_fractional_gpu_budget_caps_per_actor_share(self):
+        # Ray packs fractional-GPU actors up to 1/num_gpus per device no
+        # matter where the plan lists them, so the honest per-actor budget
+        # is the fractional share of the device budget -- never the whole
+        # device.  (The W2' smoke crashed on a whole-device 86 GiB budget
+        # while four co-located actors each really owned ~21.5 GiB.)
+        cluster = self._cluster(num_devices=8, mem_gib=8, cpus=64.0)
+        demand = self._demand("quarter", peak_mib=16, batch_size=8, num_gpus=0.25)
+        plan = plan_parallelism([demand], cluster, max_replicas_per_device=4)
+        stage = plan.stages["quarter"]
+        self.assertGreaterEqual(stage.planned_actors, 1)
+        entitlement = int(cluster.device_memory_budget_bytes * 0.25)
+        self.assertLessEqual(stage.per_actor_vram_budget_bytes, entitlement)
+
+    def test_full_gpu_actor_keeps_whole_device_budget(self):
+        # num_gpus=1.0 actors keep the whole-device share: the fractional
+        # entitlement must not change classic full-GPU planning.
+        cluster = self._cluster(num_devices=2, mem_gib=8)
+        demand = self._demand("whole", peak_mib=16, batch_size=8, num_gpus=1.0)
+        plan = plan_parallelism([demand], cluster, max_replicas_per_device=1)
+        stage = plan.stages["whole"]
+        self.assertEqual(
+            stage.per_actor_vram_budget_bytes, cluster.device_memory_budget_bytes
+        )
+
+    def test_budget_never_drops_below_probed_peak(self):
+        cluster = self._cluster(num_devices=2, mem_gib=8)
+        # probed peak 4 GiB exceeds the 2 GiB fractional entitlement: the
+        # stage must never be told it owns less than what it measured.
+        demand = self._demand("heavy", peak_mib=4096, batch_size=8, num_gpus=0.25)
+        plan = plan_parallelism([demand], cluster, max_replicas_per_device=4)
+        stage = plan.stages["heavy"]
+        self.assertEqual(stage.per_actor_vram_budget_bytes, 4 * 1024**3)
+
+    def test_planning_gates_record_fractional_entitlement(self):
+        # The plan is auditable evidence: it must state the entitlement the
+        # budget was derived from (contract 5.1 plan outputs).
+        cluster = self._cluster(num_devices=2, mem_gib=8)
+        demand = self._demand("audited", peak_mib=16, batch_size=8, num_gpus=0.25)
+        plan = plan_parallelism([demand], cluster, max_replicas_per_device=4)
+        gates = plan.planning_gates["per_stage"]["audited"]
+        self.assertEqual(
+            gates["per_actor_entitlement_bytes"], int(cluster.device_memory_budget_bytes * 0.25)
+        )
+
+    def test_plan_envelope_fingerprint_binds_resource_semantics(self):
+        # Contract C3's execution-plan dimension: every plan output that
+        # shapes profile learning (actors, placement, budget, hard cap,
+        # replica limit, cluster) must change the fingerprint.
+        from data_juicer.core.elasticjuicer.parallelism_planner import plan_envelope_fingerprint
+
+        cluster = self._cluster(num_devices=2, mem_gib=8)
+        demand = self._demand("fp", peak_mib=16, batch_size=8, num_gpus=0.25)
+        plan = plan_parallelism([demand], cluster, max_replicas_per_device=4)
+        base = plan_envelope_fingerprint(plan)
+        # deterministic for an identical plan
+        self.assertEqual(base, plan_envelope_fingerprint(plan))
+
+        stage = plan.stages["fp"]
+        for mutate, restore in [
+            ("per_actor_vram_budget_bytes", stage.per_actor_vram_budget_bytes),
+            ("batch_hard_cap", stage.batch_hard_cap),
+            ("planned_actors", stage.planned_actors),
+        ]:
+            setattr(stage, mutate, getattr(stage, mutate) + 1)
+            self.assertNotEqual(base, plan_envelope_fingerprint(plan), mutate)
+            setattr(stage, mutate, restore)
+        self.assertEqual(base, plan_envelope_fingerprint(plan))
+        # a different cluster is a different envelope
+        other = plan_parallelism(
+            [self._demand("fp", peak_mib=16, batch_size=8, num_gpus=0.25)],
+            self._cluster(num_devices=4, mem_gib=8),
+            max_replicas_per_device=4,
+        )
+        self.assertNotEqual(base, plan_envelope_fingerprint(other))
+
     def test_planning_is_deterministic(self):
         cluster = self._cluster(mem_gib=8)
         demands = [self._demand(f"s{i}", rps=100.0 - i) for i in range(4)]
@@ -339,6 +415,7 @@ class ObservationAggregationTest(unittest.TestCase):
         self.assertEqual(aggregate_stage_observations(events, partition_id=0), {})
 
 
+
 class ReplanControllerTest(unittest.TestCase):
     def _controller(self, *, events_path=None, drift_threshold=1.3, epsilon=0.03, cooldown=1):
         cluster = ClusterSpec(total_cpus=16, num_devices=1, device_memory_bytes=8 * 1024**3)
@@ -371,6 +448,18 @@ class ReplanControllerTest(unittest.TestCase):
         observation.rows_per_sec = rps
         observation.bytes_per_row = bytes_per_row
         return {"stage:a": observation}
+
+    def test_recompute_budget_respects_fractional_entitlement(self):
+        # Boundary replanning must redistribute budget against the actor's
+        # fractional share too, or drift-time hard limits stay 4x too
+        # loose and never bind (the W2' no-op redistribution).
+        controller, plan = self._controller()
+        stage_plan = plan.stages["stage:a"]
+        demand = controller.demands["stage:a"]
+        entitlement = int(controller.cluster.device_memory_budget_bytes * demand.num_gpus)
+        controller._recompute_budget_and_cap("stage:a")
+        self.assertLessEqual(stage_plan.per_actor_vram_budget_bytes, entitlement)
+        self.assertGreaterEqual(stage_plan.batch_hard_cap, 1)
 
     def test_drift_up_triggers_scale_down_and_budget_redistribution(self):
         controller, plan = self._controller()
@@ -491,8 +580,16 @@ class ReplanControllerTest(unittest.TestCase):
         self.assertEqual(change.stage_max_replicas_per_device_after, 2)
         self.assertEqual(change.device_ids_after.count(0), 2)
         self.assertTrue(change.effective)
-        self.assertGreater(change.per_actor_vram_budget_after, before_budget)
-        self.assertGreater(change.batch_hard_cap_after, before_cap)
+        # Under fractional GPUs the budget is honestly capped at the
+        # entitlement (Ray packs up to 1/num_gpus replicas per device no
+        # matter where the plan lists them), so shedding replicas cannot
+        # grow it beyond that share; the envelope still moved via the
+        # per-device replica maxima and the actor count.
+        entitlement = int(80 * 1024**3 * 0.25)
+        self.assertLessEqual(change.per_actor_vram_budget_after, entitlement)
+        self.assertGreaterEqual(change.per_actor_vram_budget_after, 1 * 1024**3)
+        self.assertLessEqual(change.batch_hard_cap_after, entitlement)
+        self.assertGreaterEqual(change.batch_hard_cap_after, 1)
 
     def test_drift_scale_down_at_one_replica_per_device_is_noop(self):
         # 8 actors, one per device: shedding actors cannot change the

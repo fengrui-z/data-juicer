@@ -20,6 +20,7 @@ fast instead of hiding the problem through overcommitment.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import os
@@ -144,6 +145,42 @@ def save_runtime_plan(path: str, plan: RuntimePlan) -> None:
     atomic_write_json(path, plan.to_dict())
 
 
+def plan_envelope_fingerprint(plan: RuntimePlan) -> str:
+    """Fingerprint of the resource-semantics fields of a runtime plan.
+
+    Binds cross-restart stage profiles (contract C3's execution-plan
+    dimension) to the envelope they were learned under: actors, placement,
+    per-actor VRAM budget, batch hard caps, replica limits and the cluster
+    they were planned against.  Any change to these fields must reject
+    previously learned profiles instead of silently seeding a different
+    envelope.  Advisory throughput numbers and gate bookkeeping are
+    deliberately excluded: they do not change what an actor owns.
+    """
+
+    cluster_payload = None
+    if plan.cluster is not None:
+        cluster_payload = {
+            "num_devices": plan.cluster.num_devices,
+            "device_memory_bytes": plan.cluster.device_memory_bytes,
+            "device_memory_budget_fraction": plan.cluster.device_memory_budget_fraction,
+        }
+    payload = {
+        "cluster": cluster_payload,
+        "max_replicas_per_device": plan.max_replicas_per_device,
+        "stages": {
+            key: {
+                "planned_actors": stage.planned_actors,
+                "device_ids": sorted(stage.device_ids),
+                "per_actor_vram_budget_bytes": stage.per_actor_vram_budget_bytes,
+                "batch_hard_cap": stage.batch_hard_cap,
+            }
+            for key, stage in sorted(plan.stages.items())
+        },
+    }
+    blob = json.dumps(payload, sort_keys=True).encode("utf-8")
+    return hashlib.sha256(blob).hexdigest()
+
+
 def device_replica_counts(stages: Dict[str, StagePlan]) -> Dict[int, int]:
     """Total replicas placed on each device across all stages."""
 
@@ -163,6 +200,22 @@ def colocated_actor_budget(cluster: ClusterSpec, stages: Dict[str, StagePlan], d
 
     replicas = max(1, device_replica_counts(stages).get(device_id, 0))
     return max(1, cluster.device_memory_budget_bytes // replicas)
+
+
+def fractional_actor_entitlement(cluster: ClusterSpec, num_gpus: float) -> int:
+    """Memory an actor is honestly entitled to under fractional-GPU packing.
+
+    Ray schedules actors by their num_gpus fraction and may colocate up to
+    1/num_gpus replicas of a stage on one device regardless of where the
+    plan lists them, so an actor's guaranteed share is its fraction of the
+    device budget -- not the whole device divided over the replicas the
+    plan happens to place there.  Full-GPU actors keep the whole-device
+    share; multi-GPU actors scale linearly.  The envelope floor stays the
+    probed peak (see colocated_actor_budget): a stage that measured more
+    than its entitlement is never told to shrink below the measurement.
+    """
+
+    return max(1, int(cluster.device_memory_budget_bytes * num_gpus))
 
 
 class _DeviceState:
@@ -376,6 +429,7 @@ def plan_parallelism(
             demand.stage_key: {
                 "actor_startup_seconds": demand.actor_startup_seconds,
                 "per_actor_batch_floor": batch_floor_by_key[demand.stage_key],
+                "per_actor_entitlement_bytes": fractional_actor_entitlement(cluster, demand.num_gpus),
             }
             for demand in demands
         },
@@ -383,7 +437,9 @@ def plan_parallelism(
 
     # Phase 3: per-actor VRAM budgets and batch hard caps.  The budget is
     # the device budget divided over colocated replicas (capped by the free
-    # space left on the device), so drift detection later compares apples
+    # space left on the device AND by the actor's fractional entitlement --
+    # Ray packs fractional-GPU actors up to 1/num_gpus per device no matter
+    # where the plan lists them), so drift detection later compares apples
     # to apples against the envelope every actor actually owns.  Because a
     # stage's actors all share the same budget, it is derived from the most
     # replicated device the stage occupies (conservative for every actor).
@@ -391,7 +447,8 @@ def plan_parallelism(
     for stage_key, stage_plan in plan.stages.items():
         demand = demand_by_key[stage_key]
         device_ids = stage_plan.device_ids
-        per_actor_budget = cluster.device_memory_budget_bytes
+        entitlement = fractional_actor_entitlement(cluster, demand.num_gpus)
+        per_actor_budget = entitlement
         if device_ids:
             per_device_budget = {}
             for device_id in set(device_ids):
@@ -401,7 +458,10 @@ def plan_parallelism(
                 )
                 shared_budget = max(
                     demand.effective_peak_bytes,
-                    cluster.device_memory_budget_bytes // max(1, device_replicas.get(device_id, 1)),
+                    min(
+                        cluster.device_memory_budget_bytes // max(1, device_replicas.get(device_id, 1)),
+                        entitlement,
+                    ),
                 )
                 per_device_budget[device_id] = max(
                     demand.effective_peak_bytes, min(free_on_device, shared_budget)

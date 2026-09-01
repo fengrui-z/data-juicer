@@ -36,7 +36,13 @@ from typing import Any, Dict, Iterable, List, Optional
 
 from loguru import logger
 
-from .parallelism_planner import ClusterSpec, RuntimePlan, StageDemand, device_replica_counts
+from .parallelism_planner import (
+    ClusterSpec,
+    RuntimePlan,
+    StageDemand,
+    device_replica_counts,
+    fractional_actor_entitlement,
+)
 
 PLAN_EVENTS_FILENAME = "plan_events.jsonl"
 
@@ -253,7 +259,12 @@ class PartitionReplanController:
         stage_plan = self.plan.stages[stage_key]
         demand = self.demands[stage_key]
         device_ids = stage_plan.device_ids
-        budget = self.cluster.device_memory_budget_bytes
+        # Same honesty rule as the planner: the budget is bounded by the
+        # actor's fractional entitlement (Ray packs fractional-GPU actors
+        # up to 1/num_gpus per device), never above the free device space,
+        # and never below the probed peak the stage already measured.
+        entitlement = fractional_actor_entitlement(self.cluster, demand.num_gpus)
+        budget = entitlement
         if device_ids:
             device_replicas = device_replica_counts(self.plan.stages)
             per_device_budget = {}
@@ -265,7 +276,10 @@ class PartitionReplanController:
                 replicas = max(1, device_replicas.get(device_id, 1))
                 shared_budget = max(
                     demand.effective_peak_bytes,
-                    self.cluster.device_memory_budget_bytes // replicas,
+                    min(
+                        self.cluster.device_memory_budget_bytes // replicas,
+                        entitlement,
+                    ),
                 )
                 per_device_budget[device_id] = max(
                     demand.effective_peak_bytes, min(free_after_release, shared_budget)

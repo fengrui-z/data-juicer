@@ -9,6 +9,7 @@ TTL-expired at read time). Restored profiles remain advisory priors per
 RFC 4.5: local OOM evidence always overrides them.
 """
 
+import json
 import os
 import shutil
 import tempfile
@@ -64,6 +65,65 @@ class StageProfilePersistenceUnitTest(unittest.TestCase):
         self.assertIsNotNone(restored)
         self.assertEqual(restored.safe_batch_size, 8)
         self.assertEqual(restored.oom_upper_bound, 16)
+
+    def test_plan_envelope_mismatch_fails_closed(self):
+        # Contract C3's execution-plan dimension: profiles learned under
+        # one plan envelope (budget/caps/actors) must never seed a run
+        # planned under a different one.
+        save_stage_profiles(
+            self.path, [_profile()], "pipe-fp", plan_fingerprint="plan-a"
+        )
+        self.assertEqual(
+            len(load_stage_profiles(self.path, "pipe-fp", "plan-a")), 1
+        )
+        self.assertEqual(
+            len(load_stage_profiles(self.path, "pipe-fp", "plan-b")), 0
+        )
+        # an unbound reader keeps the lenient behaviour
+        self.assertEqual(len(load_stage_profiles(self.path, "pipe-fp")), 1)
+
+    def test_configure_plan_envelope_rejects_mismatched_profiles(self):
+        # The service restores at construction knowing only the pipeline
+        # fingerprint; once the plan exists, configure_plan_envelope must
+        # drop restored profiles whose file was written under a different
+        # plan envelope (fail-closed, observable).
+        save_stage_profiles(
+            self.path, [_profile()], "pipe-fp", plan_fingerprint="plan-old"
+        )
+        service = ControlService(
+            "job-b", profiles_path=self.path, pipeline_fingerprint="pipe-fp"
+        )
+        self.assertEqual(service._restored_profiles, 1)
+        service.configure_plan_envelope("plan-new")
+        self.assertEqual(service._restored_profiles, 0)
+        self.assertIsNone(
+            service.get_stage_profile("job-b", _profile().stage_id, op_fingerprint="abcd1234")
+        )
+
+    def test_configure_plan_envelope_accepts_matching_profiles(self):
+        save_stage_profiles(
+            self.path, [_profile()], "pipe-fp", plan_fingerprint="plan-a"
+        )
+        service = ControlService(
+            "job-b", profiles_path=self.path, pipeline_fingerprint="pipe-fp"
+        )
+        kept = service.configure_plan_envelope("plan-a")
+        self.assertEqual(kept, 1)
+        restored = service.get_stage_profile(
+            "job-b", _profile().stage_id, op_fingerprint="abcd1234"
+        )
+        self.assertIsNotNone(restored)
+        self.assertEqual(restored.safe_batch_size, 8)
+
+    def test_reports_after_configure_stamp_plan_envelope(self):
+        service = ControlService(
+            "job-c", profiles_path=self.path, pipeline_fingerprint="pipe-fp"
+        )
+        service.configure_plan_envelope("plan-a")
+        service.report_stage_profile(_profile(job_id="job-c"))
+        with open(self.path, "r", encoding="utf-8") as stream:
+            envelope = json.load(stream)
+        self.assertEqual(envelope["plan_fingerprint"], "plan-a")
 
     def test_fingerprint_mismatch_fails_closed(self):
         service_a = ControlService(
