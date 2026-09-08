@@ -252,6 +252,9 @@ class DurableExecutionSink(AsyncMetricsSink):
         if value["call_id"] >= self.actor_timings.get(incarnation, {}).get("call_id", 0):
             self.actor_timings[incarnation] = value
 
+    def comparison_snapshot(self):
+        return dict(super().snapshot(), actors=self.actors, actor_timings=self.actor_timings)
+
     def export_audit(self):
         """Publish derived artifacts atomically; never export just the ring."""
         fd, temporary = tempfile.mkstemp(prefix=".metrics_", dir=self.work_dir)

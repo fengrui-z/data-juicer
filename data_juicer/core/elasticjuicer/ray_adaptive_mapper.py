@@ -131,6 +131,7 @@ class RayAdaptiveMapperActor:
         self._operator_seconds = 0.0
         self._mapper_seconds = 0.0
         self._profile_seconds = 0.0
+        self._comparison_context = None
         operator_args = tuple(operator_args or ())
         operator_kwargs = dict(operator_kwargs or {})
         max_batch_size = initial_batch_size if max_batch_size is None else max_batch_size
@@ -263,6 +264,7 @@ class RayAdaptiveMapperActor:
             self.metrics_reporter = AcknowledgedMetricsReporter(
                 metrics_sink, self.job_id, execution_audit["run_id"], identity,
                 self._metrics_control_state, max_buffered=metrics_max_in_flight,
+                comparison_context_provider=lambda: self._comparison_context,
             )
         elif metrics_sink is not None:
             self.metrics_reporter = AsyncMetricsReporter(
@@ -618,11 +620,16 @@ class RayAdaptiveMapperActor:
     def _process_strict(self, batch):
         """Run below Mapper's broad skip wrapper so OOM reaches the controller."""
 
+        from .performance_window import input_cost_counts
+
+        costs = input_cost_counts(batch, getattr(self.operator, "elastic_juicer_cost_columns", ()))
         started = time.perf_counter()
         try:
             return self._process_operator(batch)
         finally:
-            self._operator_seconds += time.perf_counter() - started
+            ended = time.perf_counter()
+            self._operator_seconds += ended - started
+            self._comparison_context = {"cost_counts": costs, "start": started, "end": ended}
 
     def _process_operator(self, batch):
         process_batched = getattr(self.operator, "process_batched", None)

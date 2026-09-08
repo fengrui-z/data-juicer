@@ -1579,7 +1579,8 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             logger.info("ElasticJuicer replan: no metrics sink on cfg; observations empty")
             return {}
         try:
-            snapshot = ray.get(sink.snapshot.remote(), timeout=15)
+            snapshot_method = sink.comparison_snapshot if self._ej_cfg_get("_elastic_juicer_audit_context") else sink.snapshot
+            snapshot = ray.get(snapshot_method.remote(), timeout=15)
         except Exception as error:
             logger.warning(f"ElasticJuicer replan: metrics snapshot failed ({error})")
             return {}
@@ -1589,6 +1590,25 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         observations = aggregate_stage_observations(
             events, partition_id=partition_id, resident_bytes_by_stage=residents
         )
+        if snapshot.get("actors") and state:
+            from data_juicer.core.elasticjuicer.async_metrics_sink import serialize_metrics_event
+            from data_juicer.core.elasticjuicer.performance_window import build_window
+
+            resource_state = {
+                "cluster": asdict(state["controller"].cluster),
+                "ray_capacity": ray.cluster_resources(),
+                "topology": (self._ej_cfg_get("_elastic_juicer_gpu_placement") or {}).get("topology"),
+            }
+            serialized = [event if isinstance(event, dict) else serialize_metrics_event(event) for event in events]
+            for key, observation in observations.items():
+                actors = {inc: actor for inc, actor in snapshot["actors"].items()
+                          if actor["identity"].get("stage_id") == key
+                          and actor["identity"].get("partition_id") == partition_id}
+                observation.performance_window = build_window(
+                    [event for event in serialized if event.get("stage_id") == key
+                     and event.get("partition_id") == partition_id],
+                    partition_id, actors, snapshot.get("actor_timings", {}), resource_state,
+                )
         logger.info(
             f"ElasticJuicer replan: partition {partition_id} sink events={len(events)} "
             f"stages_observed={len(observations)}"

@@ -83,6 +83,7 @@ class ActorMetricsEvent:
     partition_id: Optional[int] = None
     schema_version: int = METRICS_EVENT_SCHEMA_VERSION
     run_id: Optional[str] = None
+    comparison_context: Optional[dict] = None
 
     def __post_init__(self):
         if not self.job_id:

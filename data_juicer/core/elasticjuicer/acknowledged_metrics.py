@@ -46,6 +46,7 @@ class AcknowledgedMetricsReporter:
         ack_fn=None,
         timeout_seconds=15,
         max_attempts=3,
+        comparison_context_provider=None,
     ):
         if max_buffered < 1 or max_attempts < 1:
             raise ValueError("metrics buffer and retry budget must be positive")
@@ -54,6 +55,7 @@ class AcknowledgedMetricsReporter:
         self.run_id = run_id
         self.identity = identity
         self.control_state_provider = control_state_provider
+        self.comparison_context_provider = comparison_context_provider
         self.max_buffered = max_buffered
         self.ack_fn = ack_fn
         self.timeout_seconds = timeout_seconds
@@ -116,6 +118,7 @@ class AcknowledgedMetricsReporter:
                 snapshot=snapshot,
                 control=self.control_state_provider(),
                 partition_id=self.identity.get("partition_id"),
+                comparison_context=(self.comparison_context_provider() if self.comparison_context_provider else None),
             )
         )
         self.counts["succeeded_batches" if snapshot.succeeded else "failed_batches"] += 1

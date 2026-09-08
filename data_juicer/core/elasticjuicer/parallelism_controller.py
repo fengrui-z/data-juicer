@@ -12,9 +12,10 @@ two deterministic rules per stage:
   device, dropping actors cannot change the envelope, so the decision is
   recorded as a no-op instead of shrinking only the actor count;
 - scale-up gate: per-actor throughput fell far below the probed steady
-  rate, so one replica is added behind a marginal-gain gate -- if the
-  next partition's goodput gain is below ``marginal_gain_epsilon`` the
-  addition is reverted and further performance exploration is frozen.
+  rate and a measured stable baseline exists, so one replica is tested.
+  Only comparable input/resource/plan windows can resolve the gain gate.
+  Incomparable trials are inconclusive and conservatively rolled back;
+  ineffective trials freeze exploration only under matching conditions.
   Safety tightening continues during freeze, cooldown and gain evaluation.
 
 Batch size remains owned by the actor-local controller; this module only
@@ -39,6 +40,7 @@ from typing import Any, Dict, Iterable, List, Optional
 from loguru import logger
 
 from .oom import snapshot_is_oom
+from .performance_window import PerformanceWindow, comparison_reasons, same_conditions
 from .parallelism_planner import (
     ClusterSpec,
     RuntimePlan,
@@ -46,6 +48,7 @@ from .parallelism_planner import (
     _batch_hard_cap,
     device_replica_counts,
     fractional_actor_entitlement,
+    plan_envelope_fingerprint,
 )
 
 PLAN_EVENTS_FILENAME = "plan_events.jsonl"
@@ -82,6 +85,7 @@ class StageObservation:
     rows_per_sec: float = 0.0
     bytes_per_row: Optional[float] = None
     sample_count: int = 0
+    performance_window: Optional[PerformanceWindow] = None
 
 
 def _event_attr(event: Any, name: str, default: Any = None) -> Any:
@@ -229,6 +233,8 @@ class PartitionReplanController:
         self.resident_bytes_by_stage = dict(resident_bytes_by_stage or {})
         self._last_change_partition: Dict[str, int] = {}
         self._frozen_stages: set = set()
+        self._frozen_conditions: Dict[str, PerformanceWindow] = {}
+        self.performance_trials: List[Dict[str, Any]] = []
         self._pending_scale_up: Dict[str, Dict[str, Any]] = {}
         self._device_memory_used: Dict[int, int] = {}
         for stage_plan in plan.stages.values():
@@ -358,7 +364,10 @@ class PartitionReplanController:
                 and observation.bytes_per_row > baseline * self.config.drift_threshold
                 and self._budget_pressure(stage_key, observation)
             ):
-                self._pending_scale_up.pop(stage_key, None)
+                interrupted = self._pending_scale_up.pop(stage_key, None)
+                if interrupted:
+                    self._record_trial(stage_key, partition_id, interrupted, observation.performance_window,
+                                       "inconclusive", ["safety_tightening"], None)
                 changes.append(self._scale(
                     stage_key,
                     partition_id,
@@ -379,10 +388,22 @@ class PartitionReplanController:
             # Performance-only decisions may be frozen or rate-limited.
             pending = self._pending_scale_up.pop(stage_key, None)
             if pending is not None:
-                previous_goodput = pending["goodput_before"]
-                gain = 0.0
-                if previous_goodput > 0:
-                    gain = (goodput_rows_per_sec - previous_goodput) / previous_goodput
+                window = observation.performance_window if observation else None
+                reasons = comparison_reasons(pending["baseline"], window, pending["expected_plan"])
+                if observation is not None and observation.oom_batches:
+                    reasons.append("oom_or_failed_batch")
+                if reasons:
+                    self._record_trial(stage_key, partition_id, pending, window, "inconclusive", reasons, None)
+                    # A conservative rollback is risk management, NOT evidence
+                    # that more actors were ineffective. No performance freeze.
+                    changes.append(self._scale(stage_key, partition_id, -1, action="revert_scale_up",
+                                               reason="inconclusive: " + ", ".join(reasons),
+                                               revert_device=pending.get("device_id")))
+                    continue
+                previous_goodput = pending["baseline"].steady_goodput
+                gain = (window.steady_goodput - previous_goodput) / previous_goodput
+                self._record_trial(stage_key, partition_id, pending, window,
+                                   "ineffective" if gain < self.config.marginal_gain_epsilon else "effective", [], gain)
                 if gain < self.config.marginal_gain_epsilon:
                     changes.append(self._scale(
                         stage_key,
@@ -391,11 +412,12 @@ class PartitionReplanController:
                         action="revert_scale_up",
                         reason=(
                             f"marginal goodput gain {gain:.3f} < epsilon "
-                            f"{self.config.marginal_gain_epsilon}; stage frozen"
+                            f"{self.config.marginal_gain_epsilon}; current conditions frozen"
                         ),
                         revert_device=pending.get("device_id"),
                     ))
                     self._frozen_stages.add(stage_key)
+                    self._frozen_conditions[stage_key] = window
                     continue
                 # Gain met: treat the resolution as a change of this
                 # partition so the cooldown applies before the next move.
@@ -403,8 +425,17 @@ class PartitionReplanController:
                 continue
 
             if stage_key in self._frozen_stages:
-                continue
+                window = observation.performance_window if observation else None
+                if window is None or window.invalid_reasons() or same_conditions(self._frozen_conditions[stage_key], window):
+                    continue
+                self._frozen_stages.discard(stage_key)
+                self._frozen_conditions.pop(stage_key, None)
             if observation is None or observation.sample_count == 0:
+                continue
+            window = observation.performance_window
+            if window is None or window.invalid_reasons() or observation.oom_batches:
+                continue
+            if window.plan_version != plan_envelope_fingerprint(self.plan):
                 continue
 
             last_change = self._last_change_partition.get(stage_key)
@@ -429,12 +460,33 @@ class PartitionReplanController:
                     self._pending_scale_up[stage_key] = {
                         "goodput_before": goodput_rows_per_sec,
                         "device_id": device_id,
+                        "baseline": window,
+                        "expected_plan": plan_envelope_fingerprint(self.plan),
+                        "started_at_ms": int(time.time() * 1000),
                     }
+                    self._record_trial(stage_key, partition_id, self._pending_scale_up[stage_key],
+                                       None, "pending", [], None)
                     changes.append(change)
 
         if changes and self.events_path:
             self._append_events(changes)
         return changes
+
+    def _record_trial(self, stage_key, partition_id, pending, window, verdict, reasons, gain):
+        record = {
+            "schema_version": 1, "run_id": self.run_id, "stage_key": stage_key,
+            "partition_id": partition_id, "verdict": verdict, "reasons": reasons,
+            "marginal_gain": gain, "started_at_ms": pending["started_at_ms"],
+            "expected_plan_version": pending["expected_plan"],
+            "baseline": pending["baseline"].to_dict(),
+            "candidate": window.to_dict() if window else None,
+        }
+        self.performance_trials.append(record)
+        if self.events_path:
+            path = os.path.join(os.path.dirname(self.events_path), "performance_trials.jsonl")
+            os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+            with open(path, "a") as handle:
+                handle.write(json.dumps(record, sort_keys=True) + "\n")
 
     # ------------------------------------------------------------------
     # internals

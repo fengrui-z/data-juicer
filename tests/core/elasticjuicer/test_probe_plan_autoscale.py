@@ -45,7 +45,25 @@ from data_juicer.core.elasticjuicer.parallelism_planner import (
     StagePlan,
     _batch_hard_cap,
     plan_parallelism,
+    plan_envelope_fingerprint,
 )
+from data_juicer.core.elasticjuicer.performance_window import PerformanceWindow
+
+
+class _StationaryFixtureController(PartitionReplanController):
+    """These legacy allocation tests explicitly assume stationary input/resources.
+
+    New comparability tests use the production class directly, including absent
+    evidence. Do not restore an implicit adjacent-partition fallback in production.
+    """
+
+    def on_partition_complete(self, partition_id, observations, goodput_rows_per_sec):
+        for observation in observations.values():
+            observation.performance_window = PerformanceWindow(
+                partition_id, plan_envelope_fingerprint(self.plan), {"resource": "fixed"},
+                {"fixture_cost": 1.0}, goodput_rows_per_sec, 10, 80, 1, 9, [0.1],
+            )
+        return super().on_partition_complete(partition_id, observations, goodput_rows_per_sec)
 
 
 class _FakeOp:
@@ -510,7 +528,7 @@ class ResidentMemoryModelTest(unittest.TestCase):
         )
         stage = StagePlan(stage_key="s", op_name="model", planned_actors=1,
                           device_ids=[0], per_actor_vram_budget_bytes=10000, batch_hard_cap=20)
-        controller = PartitionReplanController(
+        controller = _StationaryFixtureController(
             RuntimePlan(stages={"s": stage}, cluster=cluster), {"s": demand}, cluster,
             ReplanConfig(), baseline_bytes_per_row={"s": 100},
         )
@@ -541,7 +559,7 @@ class ReplanGpuFeasibilityTest(unittest.TestCase):
                 device_ids=list(placement), batch_hard_cap=8,
             )
         plan = RuntimePlan(stages=stages, cluster=cluster, max_replicas_per_device=16)
-        return PartitionReplanController(plan, demands, cluster, ReplanConfig())
+        return _StationaryFixtureController(plan, demands, cluster, ReplanConfig())
 
     def test_full_gpu_plan_cannot_add_a_fifth_actor_on_four_devices(self):
         controller = self._controller([("s", 1.0, [0, 1, 2, 3])], devices=4)
@@ -589,7 +607,7 @@ class ReplanControllerTest(unittest.TestCase):
         # force a deterministic 3-actor starting point for the rules below
         plan.stages["stage:a"].planned_actors = 3
         plan.stages["stage:a"].device_ids = [0, 0, 0]
-        controller = PartitionReplanController(
+        controller = _StationaryFixtureController(
             plan,
             {"stage:a": demand},
             cluster,
@@ -761,7 +779,7 @@ class ReplanControllerTest(unittest.TestCase):
         plan = plan_parallelism([demand], cluster, max_replicas_per_device=8)
         plan.stages["stage:a"].planned_actors = len(device_ids)
         plan.stages["stage:a"].device_ids = list(device_ids)
-        controller = PartitionReplanController(
+        controller = _StationaryFixtureController(
             plan,
             {"stage:a": demand},
             cluster,
