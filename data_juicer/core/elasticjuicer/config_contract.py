@@ -121,6 +121,22 @@ def validate_elastic_juicer_config(cfg: Any, *, require_job_id: bool = False) ->
     """
 
     enabled = bool(_get(cfg, "elastic_juicer_adaptive_batching", False))
+    worker_mode = _get(cfg, "elastic_juicer_worker_mode", "ray_data")
+    if worker_mode not in ("ray_data", "managed_fresh", "resident"):
+        raise ValueError("unknown elastic_juicer_worker_mode")
+    if worker_mode != "ray_data":
+        partition = _get(cfg, "partition", {})
+        if not (enabled and _get(cfg, "executor_type") == "ray_partitioned"
+                and _get(cfg, "elastic_juicer_enforce_gpu_placement", False)
+                and not _get(cfg, "elastic_juicer_replan_enabled", True)
+                and _get(partition, "mode") == "manual"
+                and _get(partition, "max_concurrent_partitions") == 1):
+            raise ValueError("managed worker mode requires ray_partitioned, adaptive batching, enforced placement, "
+                             "manual serial partitions and replan_enabled=false")
+        if (_get(_get(cfg, "checkpoint", {}), "enabled", True)
+                or _get(cfg, "use_checkpoint", False) or _get(cfg, "op_fusion", False)
+                or _get(cfg, "_user_provided_job_id", False)):
+            raise ValueError("managed worker mode does not support checkpoints, resume or fusion")
     if _get(cfg, "elastic_juicer_enforce_gpu_placement", False) and not (
         _get(cfg, "elastic_juicer_execution_audit", False) and _get(cfg, "elastic_juicer_auto_parallelism", False)
     ):
@@ -205,6 +221,7 @@ def effective_elastic_juicer_config(cfg: Any) -> Dict[str, Any]:
         "cost_signal": "none" if cost_column is None else cost_column,
         "profile_seed": bool(_get(cfg, "elastic_juicer_profile_seed", False)),
         "profile_context": bool(_get(cfg, "elastic_juicer_profile_context", False)),
+        "worker_mode": _get(cfg, "elastic_juicer_worker_mode", "ray_data"),
         "profiles_path": profiles_path,
         "profile_ttl_ms": int(_get(cfg, "elastic_juicer_profile_ttl_ms", 1_800_000)),
         "auto_parallelism": bool(_get(cfg, "elastic_juicer_auto_parallelism", False)),

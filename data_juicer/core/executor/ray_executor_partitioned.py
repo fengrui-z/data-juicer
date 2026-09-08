@@ -421,7 +421,15 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
                 return result
             finally:
                 try:
-                    self._ej_finalize_execution_audit(succeeded)
+                    try:
+                        pool = getattr(self, "_ej_managed_pool", None)
+                        if pool is not None:
+                            pool.close()
+                    except BaseException:
+                        succeeded = False
+                        raise
+                    finally:
+                        self._ej_finalize_execution_audit(succeeded)
                 finally:
                     lease = getattr(self, "_ej_gpu_placement_lease", None)
                     if lease is not None:
@@ -523,6 +531,12 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         logger.info("Preparing operations...")
         ops = self._prepare_operators()
         self._ensure_elastic_juicer_stage_identities(ops)
+        mode = self._ej_cfg_get("elastic_juicer_worker_mode", "ray_data")
+        if mode != "ray_data":
+            from data_juicer.core.elasticjuicer.managed_mapper_pool import ManagedMapperPool, validate_managed_operators
+
+            validate_managed_operators(ops)
+            self._ej_managed_pool = ManagedMapperPool(mode, getattr(self, "_ej_timing", None))
 
         # Handle auto partition mode BEFORE initializing DAG
         # (DAG needs final partition count)
@@ -661,6 +675,13 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         )
         processed_partitions = [None] * len(partitions)
 
+        if getattr(self, "_ej_managed_pool", None) is not None:
+            if max_workers != 1:
+                raise ValueError("managed workers require serial partitions")
+            count = int(ops[0].num_proc)
+            if any(rows < count for rows in self._partition_expected_rows.values()):
+                raise ValueError("each partition must contain at least one row per planned worker")
+
         autoscale_state = getattr(self, "_ej_autoscale_state", None)
         use_serial_replan = bool(autoscale_state and autoscale_state["replan_enabled"] and max_workers == 1)
         if use_serial_replan:
@@ -748,6 +769,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             # tracing). Give every concurrent partition its own instances.
             partition_ops = self._clone_partition_operators(ops) if isolate_operators else ops
             partition_dataset = self._wrap_with_precomputed_parallelism(partition)
+            partition_dataset._elastic_juicer_managed_pool = getattr(self, "_ej_managed_pool", None)
             if hasattr(partition_dataset, "set_elastic_juicer_partition_id"):
                 partition_dataset.set_elastic_juicer_partition_id(partition_id)
             processed_partition = self._process_with_checkpointing(partition_dataset, partition_id, partition_ops)

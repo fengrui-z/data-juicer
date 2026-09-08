@@ -825,6 +825,11 @@ def build_base_parser() -> ArgumentParser:
         "--elastic_juicer_enforce_gpu_placement", type=bool, default=False,
         help="Bind serial-partition GPU actors to measured whole-device placement bundles; requires execution audit.",
     )
+    parser.add_argument(
+        "--elastic_juicer_worker_mode", type=str, default="ray_data",
+        choices=["ray_data", "managed_fresh", "resident"],
+        help="Experimental fixed GPU worker lifetime in ray_partitioned; managed_fresh is the same-path control.",
+    )
 
     parser.add_argument(
         "--elastic_juicer_controller_policy",

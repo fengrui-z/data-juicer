@@ -341,6 +341,8 @@ class RayDataset(DJDataset):
                 cached_columns = self._run_single_op(op, cached_columns, tracer=tracer, stage_id=stage_id)
             except Exception as e:
                 logger.error(f"Error processing operator {op}: {e}.")
+                if getattr(self, "_elastic_juicer_managed_pool", None) is not None:
+                    raise  # Eager managed execution must never replay after an ACK failure.
                 if op.runtime_env is not None:
                     logger.error("Try to fallback to the base runtime environment.")
                     original_runtime_env = op.runtime_env
@@ -492,11 +494,7 @@ class RayDataset(DJDataset):
                                         placement["group"], device_ids, placement["topology"], op.runtime_env,
                                     )
                                 ray.get(self._elastic_juicer_metrics_sink.expect_execution.remote(execution_audit), timeout=15)
-                            self.data = self.data.map_batches(
-                                RayAdaptiveMapperActor,
-                                fn_args=None,
-                                fn_kwargs=None,
-                                fn_constructor_kwargs={
+                            constructor = {
                                     "operator_class": op.__class__,
                                     "operator_args": op._init_args,
                                     "operator_kwargs": op._init_kwargs,
@@ -521,15 +519,21 @@ class RayDataset(DJDataset):
                                     "controller_policy": getattr(self, "_elastic_juicer_controller_policy", "ej"),
                                     "cost_column": getattr(self, "_elastic_juicer_cost_column", None),
                                     "execution_audit": execution_audit,
-                                },
-                                batch_size=batch_size,
-                                num_cpus=op.num_cpus,
-                                num_gpus=op.num_gpus,
-                                compute=compute,
-                                batch_format="pyarrow",
-                                runtime_env=op.runtime_env,
-                                **placement_options,
-                            )
+                            }
+                            managed = getattr(self, "_elastic_juicer_managed_pool", None)
+                            if managed is not None:
+                                self.data = managed.map(
+                                    self.data, constructor=constructor,
+                                    selector=placement_options.get("ray_remote_args_fn"),
+                                    batch_size=batch_size, num_cpus=op.num_cpus, num_gpus=op.num_gpus,
+                                )
+                            else:
+                                self.data = self.data.map_batches(
+                                    RayAdaptiveMapperActor, fn_args=None, fn_kwargs=None,
+                                    fn_constructor_kwargs=constructor, batch_size=batch_size,
+                                    num_cpus=op.num_cpus, num_gpus=op.num_gpus, compute=compute,
+                                    batch_format="pyarrow", runtime_env=op.runtime_env, **placement_options,
+                                )
                         else:
                             compute = self._actor_pool_for(op)
                             self.data = self.data.map_batches(

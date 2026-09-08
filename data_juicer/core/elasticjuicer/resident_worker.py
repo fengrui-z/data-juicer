@@ -1,6 +1,6 @@
 """Experimental fixed-placement worker, independent of Ray Data pool internals.
 
-Not wired into the public partition executor. The caller must serially bind,
+The opt-in public managed pool (or an explicit caller) must serially bind,
 execute, and finish each work unit. Only the operator/process is retained;
 controllers, quotas, call/metric sequences and audit execution bindings are
 fresh. No resizing, crash recovery or concurrent partitions are supported.
