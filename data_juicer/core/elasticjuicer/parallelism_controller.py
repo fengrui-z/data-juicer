@@ -14,7 +14,8 @@ two deterministic rules per stage:
 - scale-up gate: per-actor throughput fell far below the probed steady
   rate, so one replica is added behind a marginal-gain gate -- if the
   next partition's goodput gain is below ``marginal_gain_epsilon`` the
-  addition is reverted and the stage is frozen.
+  addition is reverted and further performance exploration is frozen.
+  Safety tightening continues during freeze, cooldown and gain evaluation.
 
 Batch size remains owned by the actor-local controller; this module only
 changes replica counts and the batch hard-cap envelope.  Every action
@@ -266,7 +267,7 @@ class PartitionReplanController:
         return candidates
 
     def _recompute_budget_and_cap(
-        self, stage_key: str, observed_bytes_per_row: Optional[float] = None
+        self, stage_key: str, observed_bytes_per_row: Optional[float] = None, *, tighten_only: bool = False
     ) -> int:
         stage_plan = self.plan.stages[stage_key]
         demand = self.demands[stage_key]
@@ -311,6 +312,8 @@ class PartitionReplanController:
         cap = max(1, int(budget // max(per_row, 1e-9)))
         if demand.oom_upper_bound is not None:
             cap = min(cap, max(1, demand.oom_upper_bound - 1))
+        if tighten_only and stage_plan.batch_hard_cap > 0:
+            cap = min(cap, stage_plan.batch_hard_cap)
         stage_plan.batch_hard_cap = cap
         return cap
 
@@ -330,10 +333,41 @@ class PartitionReplanController:
         for stage_key in sorted(self.plan.stages):
             stage_plan = self.plan.stages[stage_key]
             demand = self.demands.get(stage_key)
-            if demand is None or stage_plan.fixed:
+            if demand is None:
                 continue
 
-            # Resolve a pending marginal-gain check first.
+            # Safety is evaluated before performance freeze, cooldown and
+            # gain checks. A resource-pressure window cannot validate a
+            # throughput experiment, so discard its pending verdict.
+            observation = observations.get(stage_key)
+            baseline = self.baseline_bytes_per_row.get(stage_key)
+            if (
+                observation is not None
+                and observation.sample_count > 0
+                and baseline
+                and observation.bytes_per_row is not None
+                and observation.bytes_per_row > baseline * self.config.drift_threshold
+                and self._budget_pressure(stage_key, observation)
+            ):
+                self._pending_scale_up.pop(stage_key, None)
+                changes.append(self._scale(
+                    stage_key,
+                    partition_id,
+                    -1,
+                    action="scale_down",
+                    observed_bytes_per_row=observation.bytes_per_row,
+                    reason=(
+                        f"per-row VRAM {observation.bytes_per_row:.0f}B > baseline "
+                        f"{baseline:.0f}B x {self.config.drift_threshold} "
+                        f"(oom_batches={observation.oom_batches}); safety tightening"
+                    ),
+                ))
+                continue
+
+            if stage_plan.fixed:
+                continue
+
+            # Performance-only decisions may be frozen or rate-limited.
             pending = self._pending_scale_up.pop(stage_key, None)
             if pending is not None:
                 previous_goodput = pending["goodput_before"]
@@ -361,43 +395,11 @@ class PartitionReplanController:
 
             if stage_key in self._frozen_stages:
                 continue
-            observation = observations.get(stage_key)
             if observation is None or observation.sample_count == 0:
                 continue
 
             last_change = self._last_change_partition.get(stage_key)
             if last_change is not None and partition_id - last_change < self.config.cooldown_partitions:
-                continue
-
-            baseline = self.baseline_bytes_per_row.get(stage_key)
-            pressure = self._budget_pressure(stage_key, observation)
-            drifted = bool(
-                baseline
-                and observation.bytes_per_row is not None
-                and observation.bytes_per_row > baseline * self.config.drift_threshold
-            )
-            logger.debug(
-                f"[ElasticJuicer replan-eval] partition {partition_id} stage={stage_key} "
-                f"actors={stage_plan.planned_actors} baseline_bpr={baseline} "
-                f"obs_bpr={observation.bytes_per_row} drifted={drifted} pressure={pressure} "
-                f"budget={stage_plan.per_actor_vram_budget_bytes}"
-            )
-            if (
-                drifted
-                and stage_plan.planned_actors > self.config.min_actors
-                and pressure
-            ):
-                changes.append(self._scale(
-                    stage_key,
-                    partition_id,
-                    -1,
-                    action="scale_down",
-                    observed_bytes_per_row=observation.bytes_per_row,
-                    reason=(
-                        f"per-row VRAM {observation.bytes_per_row:.0f}B > baseline "
-                        f"{baseline:.0f}B x {self.config.drift_threshold} "
-                        f"(oom_batches={observation.oom_batches}); redistributing budget"
-                    )))
                 continue
 
             expected_rps = demand.probed_throughput_rps * self.config.underperformance_ratio
@@ -478,6 +480,8 @@ class PartitionReplanController:
         """
 
         stage_plan = self.plan.stages[stage_key]
+        if stage_plan.fixed:
+            return []
         counts: Dict[int, int] = {}
         for device_id in stage_plan.device_ids:
             counts[device_id] = counts.get(device_id, 0) + 1
@@ -540,7 +544,7 @@ class PartitionReplanController:
                 # the probed-head cap (the W2' floor OOMs).
                 self._last_change_partition[stage_key] = partition_id
                 cap_after = self._recompute_budget_and_cap(
-                    stage_key, observed_bytes_per_row=observed_bytes_per_row
+                    stage_key, observed_bytes_per_row=observed_bytes_per_row, tighten_only=action == "scale_down"
                 )
                 budget_after = stage_plan.per_actor_vram_budget_bytes
                 envelope_tightened = cap_after != cap_before or budget_after != budget_before
@@ -576,7 +580,7 @@ class PartitionReplanController:
             self._remove_device_replicas(stage_key, device_ids=targets)
 
         cap_after = self._recompute_budget_and_cap(
-            stage_key, observed_bytes_per_row=observed_bytes_per_row
+            stage_key, observed_bytes_per_row=observed_bytes_per_row, tighten_only=action == "scale_down"
         )
         self._last_change_partition[stage_key] = partition_id
         stage_max_after = self._stage_max_replicas(stage_key)

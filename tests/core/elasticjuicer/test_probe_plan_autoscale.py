@@ -558,14 +558,73 @@ class ReplanControllerTest(unittest.TestCase):
         self.assertEqual(changes, [])  # gain 20% >= 5% -> kept, no event
         self.assertEqual(plan.stages["stage:a"].planned_actors, 2)
 
-    def test_cooldown_blocks_immediate_second_change(self):
+    def test_cooldown_does_not_block_safety_adjustment(self):
         controller, plan = self._controller(cooldown=2)
         baseline_per_row = 100.0 * 1024**2 / 8
         controller.on_partition_complete(0, self._obs(baseline_per_row * 2.0, oom=1), goodput_rows_per_sec=100)
         self.assertEqual(plan.stages["stage:a"].planned_actors, 2)
         changes = controller.on_partition_complete(1, self._obs(baseline_per_row * 2.0, oom=1), goodput_rows_per_sec=100)
-        self.assertEqual(changes, [])  # still inside cooldown window
-        self.assertEqual(plan.stages["stage:a"].planned_actors, 2)
+        self.assertEqual([change.action for change in changes], ["scale_down"])
+        self.assertEqual(plan.stages["stage:a"].planned_actors, 1)
+
+    def test_failed_exploration_still_responds_to_later_drift(self):
+        controller, plan = self._controller()
+        slow = self._obs(bytes_per_row=None, rps=10)
+        controller.on_partition_complete(0, slow, 10)
+        controller.on_partition_complete(1, slow, 10)
+        self.assertIn("stage:a", controller._frozen_stages)
+        cap_before = plan.stages["stage:a"].batch_hard_cap
+
+        changes = controller.on_partition_complete(
+            2, self._obs(bytes_per_row=20 * 1024**3 / 8, oom=1), 5
+        )
+
+        self.assertEqual([change.action for change in changes], ["scale_down"])
+        self.assertLess(plan.stages["stage:a"].batch_hard_cap, cap_before)
+        self.assertIn("stage:a", controller._frozen_stages)
+
+    def test_performance_exploration_still_obeys_cooldown(self):
+        controller, _plan = self._wide_controller(device_ids=[0])
+        controller.config = ReplanConfig(cooldown_partitions=3)
+        slow = self._obs(bytes_per_row=None, rps=10)
+        self.assertEqual(controller.on_partition_complete(0, slow, 10)[0].action, "scale_up")
+        self.assertEqual(controller.on_partition_complete(1, slow, 12), [])
+        self.assertEqual(controller.on_partition_complete(2, slow, 12), [])
+        self.assertEqual(controller.on_partition_complete(4, slow, 12)[0].action, "scale_up")
+
+    def test_safety_preempts_pending_performance_verdict(self):
+        for goodput in (10, 20):
+            with self.subTest(goodput=goodput):
+                controller, plan = self._controller()
+                controller.on_partition_complete(0, self._obs(None, rps=10), 10)
+                changes = controller.on_partition_complete(
+                    1, self._obs(bytes_per_row=20 * 1024**3 / 8, oom=1), goodput
+                )
+                self.assertEqual([change.action for change in changes], ["scale_down"])
+                self.assertNotIn("stage:a", controller._pending_scale_up)
+                self.assertLess(plan.stages["stage:a"].batch_hard_cap, 8)
+
+    def test_safety_tightens_at_minimum_actor_count_and_preserves_explicit_count(self):
+        for fixed in (False, True):
+            with self.subTest(fixed=fixed):
+                controller, plan = self._wide_controller(device_ids=[0])
+                stage = plan.stages["stage:a"]
+                stage.fixed = fixed
+                before = stage.batch_hard_cap
+                changes = controller.on_partition_complete(
+                    0, self._obs(bytes_per_row=8 * 1024**3, oom=1), 5
+                )
+                self.assertEqual(stage.planned_actors, 1)
+                self.assertEqual([change.action for change in changes], ["scale_down"])
+                self.assertLess(stage.batch_hard_cap, before)
+
+    def test_repeated_safety_observation_never_relaxes_an_earlier_cap(self):
+        controller, plan = self._wide_controller(device_ids=[0])
+        stage = plan.stages["stage:a"]
+        controller.on_partition_complete(0, self._obs(8 * 1024**3, oom=1), 5)
+        cap_before = stage.batch_hard_cap
+        controller.on_partition_complete(1, self._obs(4 * 1024**3, oom=1), 5)
+        self.assertLessEqual(stage.batch_hard_cap, cap_before)
 
     def test_plan_events_are_appended(self):
         with tempfile.TemporaryDirectory() as tmp:

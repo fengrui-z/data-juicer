@@ -51,6 +51,14 @@ cost signal, seed state, profiles path, and profile TTL.
 
 ## Default-change gates
 
+Partition-boundary replanning checks safety before performance exploration.
+Freezing an unprofitable scale-up or entering its cooldown never suppresses
+drift-triggered batch-cap tightening. Explicit actor counts remain fixed, but
+their batch cap can still tighten; a safety action never relaxes a previously
+learned cap. GPU fractions are accounted across all planned stages on each
+device. These are plan-feasibility constraints, not proof of runtime placement
+or physical VRAM isolation.
+
 Defaults change only through a separately reviewed decision record:
 
 - `profile_seed=true`: at least 10 paired slow-start/high-cost recovery runs,
