@@ -40,6 +40,8 @@ class BatchControllerState:
     capacity_recovery_hint_pending: bool
     capacity_recovery_hint_expires_at_ms: Optional[int]
     capacity_recovery_hints: int
+    floor_recovery_pending: bool = False
+    floor_recovery_events: int = 0
 
 
 class AdaptiveBatchController:
@@ -114,6 +116,8 @@ class AdaptiveBatchController:
         self._capacity_recovery_hint_pending = False
         self._capacity_recovery_hint_expires_at_ms: Optional[int] = None
         self.capacity_recovery_hints = 0
+        self._floor_recovery_pending = False
+        self.floor_recovery_events = 0
 
     @property
     def state(self) -> BatchControllerState:
@@ -134,6 +138,8 @@ class AdaptiveBatchController:
             capacity_recovery_hint_pending=self._capacity_recovery_hint_pending,
             capacity_recovery_hint_expires_at_ms=self._capacity_recovery_hint_expires_at_ms,
             capacity_recovery_hints=self.capacity_recovery_hints,
+            floor_recovery_pending=self._floor_recovery_pending,
+            floor_recovery_events=self.floor_recovery_events,
         )
 
     def next_batch_size(self, remaining_samples: int) -> int:
@@ -200,7 +206,22 @@ class AdaptiveBatchController:
         self._reprobe_origin = previous_upper_bound
         self._capacity_recovery_hint_pending = False
         self._capacity_recovery_hint_expires_at_ms = None
+        self._floor_recovery_pending = False
         return self.current_batch_size
+
+    def record_floor_recovery(self) -> None:
+        """Confirm a validated same-slice floor retry, without relaxing bounds.
+
+        Only the local mapper calls this after a previously failing minimum
+        slice succeeds. A fresh success window and the existing probe budget
+        are still required before testing a larger batch. This is not a
+        remote quota operation and provides no proof that larger batches fit.
+        """
+        if self.oom_upper_bound != self.min_batch_size or self._floor_recovery_pending:
+            return
+        self.floor_recovery_events += 1
+        self._floor_recovery_pending = True
+        self.successes_since_oom = 0
 
     def record_capacity_recovery_hint(self, expires_at_ms: int, now_ms: Optional[int] = None) -> bool:
         """Record advisory recovery evidence without deleting local OOM state."""
@@ -242,15 +263,25 @@ class AdaptiveBatchController:
 
         if self.oom_upper_bound is not None:
             self.successes_since_oom += 1
+            floor_reprobe = (
+                self._floor_recovery_pending
+                and self.oom_upper_bound == self.min_batch_size
+                and self.hard_limit > self.min_batch_size
+            )
             if (
                 self.oom_reprobe_events < self.max_oom_reprobes
                 and self.successes_since_oom >= self._next_reprobe_successes
-                and (not self.recovery_requires_hint or self._capacity_recovery_hint_pending)
+                and (not self.recovery_requires_hint or self._capacity_recovery_hint_pending or floor_reprobe)
+                and (self.oom_upper_bound > self.min_batch_size or self.hard_limit > self.min_batch_size)
             ):
                 previous_upper_bound = self.oom_upper_bound
                 self.oom_upper_bound = None
                 self.successes_since_oom = 0
-                self._reprobe_origin = previous_upper_bound
+                # Reopening after a floor retry must test a *larger* size
+                # before declaring recovery; success at the floor alone
+                # must not reset the retry budget.
+                self._reprobe_origin = previous_upper_bound + 1 if floor_reprobe else previous_upper_bound
+                self._floor_recovery_pending = False
                 self._capacity_recovery_hint_pending = False
                 self._capacity_recovery_hint_expires_at_ms = None
 
@@ -307,14 +338,15 @@ class AdaptiveBatchController:
         # A new local failure supersedes an unused external hint.
         self._capacity_recovery_hint_pending = False
         self._capacity_recovery_hint_expires_at_ms = None
-
-        if batch_size <= self.min_batch_size:
-            self.current_batch_size = self.min_batch_size
-            raise MinimumBatchSizeOOM(f"OOM at minimum batch size {self.min_batch_size}; no smaller retry is allowed")
+        self._floor_recovery_pending = False
 
         if self.success_lower_bound is not None and self.success_lower_bound >= self.oom_upper_bound:
             self.success_lower_bound = None
             self._probe_ooms_for_bound = 0
+
+        if batch_size <= self.min_batch_size:
+            self.current_batch_size = self.min_batch_size
+            raise MinimumBatchSizeOOM(f"OOM at minimum batch size {self.min_batch_size}; no smaller retry is allowed")
 
         if self.success_lower_bound is not None and self._probe_ooms_for_bound >= self.max_probe_ooms:
             # Once the probe budget is exhausted, freeze at the best proven

@@ -152,6 +152,47 @@ def test_oom_at_minimum_batch_size_is_terminal():
         controller.observe_oom(1)
 
 
+def test_floor_recovery_keeps_quota_and_requires_explicit_local_confirmation():
+    controller = AdaptiveBatchController(
+        initial_batch_size=1, max_batch_size=8, max_oom_reprobes=1,
+        oom_reprobe_successes=4, recovery_requires_hint=True, successes_before_growth=1,
+    )
+    with pytest.raises(MinimumBatchSizeOOM):
+        controller.observe_oom(1)
+    for _ in range(8):
+        controller.observe_success(1)
+    assert controller.oom_upper_bound == 1
+
+    controller.set_hard_limit(1)
+    controller.record_floor_recovery()
+    for _ in range(8):
+        controller.observe_success(1)
+    assert controller.oom_upper_bound == 1
+    assert controller.current_batch_size == 1
+    controller.set_hard_limit(3)
+    for _ in range(8):
+        controller.observe_success(controller.next_batch_size(100))
+    assert controller.current_batch_size == 3
+
+
+def test_floor_oom_invalidates_success_evidence_before_raising():
+    controller = AdaptiveBatchController(initial_batch_size=8, max_batch_size=16)
+    controller.observe_success(8)
+    with pytest.raises(MinimumBatchSizeOOM):
+        controller.observe_oom(1)
+    assert controller.success_lower_bound is None
+
+
+def test_floor_recovery_respects_disabled_reprobe_budget():
+    controller = AdaptiveBatchController(initial_batch_size=1, max_batch_size=8, max_oom_reprobes=0)
+    with pytest.raises(MinimumBatchSizeOOM):
+        controller.observe_oom(1)
+    controller.record_floor_recovery()
+    for _ in range(128):
+        controller.observe_success(1)
+    assert controller.current_batch_size == 1
+
+
 def test_smaller_oom_invalidates_a_stale_success_lower_bound():
     controller = AdaptiveBatchController(
         initial_batch_size=8,

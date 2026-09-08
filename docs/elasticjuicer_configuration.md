@@ -51,6 +51,13 @@ cost signal, seed state, profiles path, and profile TTL.
 
 ## Default-change gates
 
+A successful, validated same-slice retry after a minimum-batch OOM records
+local recovery evidence. With the existing reprobe budget enabled, a fresh
+success window permits a larger-batch probe without requiring Captain.
+Static bounds and quota caps still apply. A new OOM cancels that permission;
+persistent minimum-batch failures still propagate after bounded retries.
+The default policy and feature flags are unchanged.
+
 Partition-boundary replanning checks safety before performance exploration.
 Freezing an unprofitable scale-up or entering its cooldown never suppresses
 drift-triggered batch-cap tightening. Explicit actor counts remain fixed, but

@@ -217,6 +217,10 @@ class OOMSafeAdaptiveMapper:
                         raise ValueError(
                             f"mapper returned {output_rows} rows for an {batch_size}-row input micro-batch"
                         )
+                if floor_retries and batch_size == self.controller.min_batch_size:
+                    record_recovery = getattr(self.controller, "record_floor_recovery", None)
+                    if record_recovery is not None:
+                        record_recovery()
                 self.controller.observe_success(batch_size)
                 if retries > 0:
                     logger.info(

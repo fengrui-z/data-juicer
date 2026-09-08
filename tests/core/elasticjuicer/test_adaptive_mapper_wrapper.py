@@ -190,6 +190,67 @@ def test_floor_oom_still_propagates_after_bounded_retries():
     assert wrapper.mapper.calls == 3
 
 
+def test_recovered_floor_reprobes_after_stable_successes_without_captain():
+    calls = []
+    controller = AdaptiveBatchController(
+        initial_batch_size=1, max_batch_size=8, recovery_requires_hint=True,
+        oom_reprobe_successes=4, max_oom_reprobes=1, successes_before_growth=1,
+    )
+
+    def transient_mapper(batch):
+        calls.append(list(batch))
+        if len(calls) <= 2:
+            raise FakeCudaOutOfMemoryError("transient contention")
+        return list(batch)
+
+    wrapper = OOMSafeAdaptiveMapper(transient_mapper, controller, floor_retry_backoff_sec=0)
+    values = list(range(100))
+    assert wrapper(values) == values
+    assert calls[:3] == [[0], [0], [0]]
+    assert all(len(batch) == 1 for batch in calls[:6])
+    assert any(len(batch) > 1 for batch in calls[6:])
+    assert controller.state.floor_recovery_events == 1
+
+
+def test_floor_recovery_does_not_keep_reprobing_a_fresh_larger_oom():
+    calls = []
+    controller = AdaptiveBatchController(
+        initial_batch_size=1, max_batch_size=8, recovery_requires_hint=True,
+        oom_reprobe_successes=4, max_oom_reprobes=1, successes_before_growth=1,
+    )
+
+    def one_row_only(batch):
+        calls.append(list(batch))
+        if len(calls) == 1 or len(batch) > 1:
+            raise FakeCudaOutOfMemoryError("only one row fits")
+        return list(batch)
+
+    wrapper = OOMSafeAdaptiveMapper(one_row_only, controller, floor_retry_backoff_sec=0)
+    values = list(range(128))
+    assert wrapper(values) == values
+    assert sum(len(batch) > 1 for batch in calls) == 1
+    assert controller.oom_upper_bound == 2
+    assert controller.state.oom_reprobe_events == 1
+    assert not controller.state.floor_recovery_pending
+
+
+def test_invalid_floor_retry_output_cannot_authorize_recovery():
+    calls = []
+    controller = AdaptiveBatchController(initial_batch_size=1, max_batch_size=8, max_oom_reprobes=1)
+
+    def invalid_retry(batch):
+        calls.append(list(batch))
+        if len(calls) == 1:
+            raise FakeCudaOutOfMemoryError("transient contention")
+        return []
+
+    wrapper = OOMSafeAdaptiveMapper(invalid_retry, controller, floor_retry_backoff_sec=0)
+    with pytest.raises(ValueError, match="returned 0 rows"):
+        wrapper([1, 2])
+    assert controller.oom_upper_bound == 1
+    assert controller.state.floor_recovery_events == 0
+
+
 def test_mapping_batches_preserve_order_and_schema():
     batch = {
         "id": list(range(25)),
