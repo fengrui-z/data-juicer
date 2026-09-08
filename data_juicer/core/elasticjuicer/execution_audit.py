@@ -101,6 +101,18 @@ class DurableExecutionSink(AsyncMetricsSink):
             if self.actors[key]["identity"] != identity:
                 raise ValueError("actor identity changed")
             return key
+        placement = expected.get("placement")
+        if placement:
+            slot = identity.get("placement_slot", -1)
+            if not isinstance(slot, int) or not 0 <= slot < len(placement["device_ids"]):
+                raise ValueError("actor placement slot is absent or invalid")
+            device_id = placement["device_ids"][slot]
+            device = next(item for item in placement["topology"] if item["device_id"] == device_id)
+            if identity["node_id"] != device["node_id"] or identity.get("gpu_uuids") != [device["gpu_uuid"]]:
+                raise ValueError("actor actual GPU does not match the placement envelope")
+            if any(value["identity"]["execution_id"] == identity["execution_id"]
+                   and value["identity"].get("placement_slot") == slot for value in self.actors.values()):
+                raise ValueError("placement slot already acknowledged; replacement requires a new epoch")
         self._append("register", dict(identity))
         return key
 
@@ -242,6 +254,9 @@ class DurableExecutionSink(AsyncMetricsSink):
                 "registered_actors": len(actors),
                 "applied": len(actors) == expected.get("planned_actors") and bool(actors),
                 "actors": [value["identity"] for value in actors],
+                "placement_verified": bool(expected.get("placement")) and bool(actors)
+                    and len(actors) == expected.get("planned_actors")
+                    and all(value["identity"].get("placement_verified") is True for value in actors),
             }
         roster_present = all(value["registered_actors"] > 0 for value in executions.values())
         watermarks = all(

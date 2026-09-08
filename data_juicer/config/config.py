@@ -821,6 +821,10 @@ def build_base_parser() -> ArgumentParser:
         "--elastic_juicer_execution_audit", type=bool, default=False,
         help="Require durable actor metrics acknowledgements and execution identity in ray_partitioned.",
     )
+    parser.add_argument(
+        "--elastic_juicer_enforce_gpu_placement", type=bool, default=False,
+        help="Bind serial-partition GPU actors to measured whole-device placement bundles; requires execution audit.",
+    )
 
     parser.add_argument(
         "--elastic_juicer_controller_policy",

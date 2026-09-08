@@ -128,6 +128,12 @@ class RayAdaptiveMapperActor:
         operator_args = tuple(operator_args or ())
         operator_kwargs = dict(operator_kwargs or {})
         max_batch_size = initial_batch_size if max_batch_size is None else max_batch_size
+        verified_identity = None
+        if execution_audit is not None and execution_audit.get("placement"):
+            from .acknowledged_metrics import runtime_identity
+            from .gpu_placement import verify_worker_placement
+            verified_identity = runtime_identity()
+            verified_identity.update(verify_worker_placement(verified_identity, execution_audit["placement"]))
 
         self.operator = operator_class(*operator_args, **operator_kwargs)
         self.op_name = op_name or getattr(self.operator, "_name", None) or operator_class.__name__
@@ -241,7 +247,7 @@ class RayAdaptiveMapperActor:
             from .acknowledged_metrics import AcknowledgedMetricsReporter, runtime_identity
 
             identity = {
-                **runtime_identity(), **dict(execution_audit),
+                **(verified_identity or runtime_identity()), **dict(execution_audit),
                 "actor_id": self.actor_id, "actor_incarnation_id": self.actor_incarnation_id,
                 "stage_id": self.stage_id, "op_name": self.op_name, "partition_id": self.partition_id,
                 "applied_cap": self.controller.max_batch_size,

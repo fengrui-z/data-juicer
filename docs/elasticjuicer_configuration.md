@@ -104,7 +104,26 @@ and sequence because a failed append may be retried. These counters cover
 sink receipt, not all producer attempts. Without an expected actor roster
 and final-sequence acknowledgements, end-to-end completeness remains
 unverified (`complete=false`), even when the observed prefix is intact.
-This audit exposes loss; it does not yet provide a reliable transport.
+This legacy audit exposes loss; enable the acknowledged execution audit
+described above for durable producer delivery and final watermarks.
+
+`elastic_juicer_enforce_gpu_placement=true` additionally requires execution
+audit, auto-parallelism, serial partitions and a fixed-size actor pool per
+stage execution. It reserves one whole GPU per Ray placement-group bundle,
+measures each bundle's node and CUDA UUID, binds every fractional-GPU actor
+to an explicit bundle, and checks its actual UUID before operator loading.
+The initial plan is reconciled against CUDA usable capacity (which may be
+below NVML physical capacity). Each partition builds a new acknowledged pool;
+changed actor counts are boundary replacements, not in-place live resizing.
+`elastic_juicer_gpu_placement.json` and the run-scoped execution audit contain
+the physical mapping and applied actor roster.
+
+This first placement path supports at most one GPU per actor and reserves
+CPU capacity for the input pipeline. Unexpected actor replacement in an
+already-acknowledged slot fails closed; restart/migration needs a new epoch
+and is not implemented here. Scheduling fractions and UUID agreement do not
+isolate physical VRAM from other processes. Placement callback compatibility
+is exercised with Ray 2.55.1, including its diagnostic callback invocations.
 
 Defaults change only through a separately reviewed decision record:
 

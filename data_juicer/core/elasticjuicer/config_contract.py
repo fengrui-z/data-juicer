@@ -121,6 +121,10 @@ def validate_elastic_juicer_config(cfg: Any, *, require_job_id: bool = False) ->
     """
 
     enabled = bool(_get(cfg, "elastic_juicer_adaptive_batching", False))
+    if _get(cfg, "elastic_juicer_enforce_gpu_placement", False) and not (
+        _get(cfg, "elastic_juicer_execution_audit", False) and _get(cfg, "elastic_juicer_auto_parallelism", False)
+    ):
+        raise ValueError("elastic_juicer_enforce_gpu_placement requires execution audit and auto-parallelism")
     policy = str(_get(cfg, "elastic_juicer_controller_policy", "ej") or "ej").strip().lower()
     experimental_enabled = bool(_get(cfg, "elastic_juicer_experimental_policies", False))
     profile_seed = bool(_get(cfg, "elastic_juicer_profile_seed", False))

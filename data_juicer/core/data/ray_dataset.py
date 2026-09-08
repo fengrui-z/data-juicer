@@ -463,6 +463,7 @@ class RayDataset(DJDataset):
                             if plan_hard_cap is not None and int(plan_hard_cap) >= 1:
                                 effective_batch_size = min(batch_size, int(plan_hard_cap))
                             execution_audit = None
+                            placement_options = {}
                             audit_cfg = getattr(self, "_elastic_juicer_cfg", None) or {}
                             if audit_cfg.get("elastic_juicer_execution_audit", False):
                                 from uuid import uuid4
@@ -477,6 +478,19 @@ class RayDataset(DJDataset):
                                     "plan_version": getattr(op, "_elastic_juicer_plan_version", "configured"),
                                     "planned_actors": compute.max_size, "applied_cap": effective_batch_size,
                                 }
+                                placement = audit_cfg.get("_elastic_juicer_gpu_placement")
+                                device_ids = getattr(op, "_elastic_juicer_device_ids", None)
+                                if placement and device_ids:
+                                    from data_juicer.core.elasticjuicer.gpu_placement import PlacementSelector
+
+                                    if compute.min_size != compute.max_size or len(device_ids) != compute.max_size:
+                                        raise ValueError("placement requires an exact fixed-size pool for each execution")
+                                    execution_audit["placement"] = {
+                                        "device_ids": device_ids, "topology": placement["topology"],
+                                    }
+                                    placement_options["ray_remote_args_fn"] = PlacementSelector(
+                                        placement["group"], device_ids, placement["topology"], op.runtime_env,
+                                    )
                                 ray.get(self._elastic_juicer_metrics_sink.expect_execution.remote(execution_audit), timeout=15)
                             self.data = self.data.map_batches(
                                 RayAdaptiveMapperActor,
@@ -513,6 +527,7 @@ class RayDataset(DJDataset):
                                 compute=compute,
                                 batch_format="pyarrow",
                                 runtime_env=op.runtime_env,
+                                **placement_options,
                             )
                         else:
                             compute = self._actor_pool_for(op)

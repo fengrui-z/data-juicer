@@ -397,7 +397,12 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
                 succeeded = True
                 return result
             finally:
-                self._ej_finalize_execution_audit(succeeded)
+                try:
+                    self._ej_finalize_execution_audit(succeeded)
+                finally:
+                    lease = getattr(self, "_ej_gpu_placement_lease", None)
+                    if lease is not None:
+                        lease.close()
 
     def _ej_begin_execution_audit(self):
         if not self._ej_cfg_get("elastic_juicer_execution_audit", False):
@@ -407,6 +412,8 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         from data_juicer.core.elasticjuicer.gpu_probe import atomic_write_json
 
         run_id = uuid4().hex
+        self._ej_gpu_placement_lease = None
+        self.cfg["_elastic_juicer_gpu_placement"] = None
         directory = os.path.join(self.work_dir, "elastic_juicer_runs", run_id)
         job_id = self._ej_cfg_get("job_id")
         context = {"run_id": run_id, "job_id": job_id, "directory": directory}
@@ -506,6 +513,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         # ElasticJuicer throughput-aware auto-parallelism: preflight probes
         # + actor plan, applied to operator clones before partition threads.
         self._elastic_juicer_autoscale_setup(dataset, ops)
+        self._ej_setup_gpu_placement(ops)
 
         # Initialize DAG execution planning with final partition count
         # Pass ops to avoid redundant loading
@@ -1457,6 +1465,65 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             op._elastic_juicer_batch_hard_cap = stage_plan.batch_hard_cap
             from data_juicer.core.elasticjuicer.parallelism_planner import plan_envelope_fingerprint
             op._elastic_juicer_plan_version = plan_envelope_fingerprint(plan)
+            op._elastic_juicer_device_ids = list(stage_plan.device_ids)
+
+    def _ej_setup_gpu_placement(self, ops):
+        if not self._ej_cfg_get("elastic_juicer_enforce_gpu_placement", False):
+            return
+        from data_juicer.core.elasticjuicer.gpu_placement import GpuPlacementLease
+        from data_juicer.core.elasticjuicer.gpu_probe import atomic_write_json
+
+        state = getattr(self, "_ej_autoscale_state", None)
+        if not state or self.max_concurrent_partitions != 1:
+            raise ValueError("enforced GPU placement requires a valid plan and serial partitions")
+        gpu_ops = [op for op in ops if float(getattr(op, "num_gpus", 0) or 0) > 0]
+        if any(not getattr(op, "_elastic_juicer_device_ids", None) for op in gpu_ops):
+            raise ValueError("every GPU operator must have an enforceable actor plan")
+        if any(float(op.num_gpus) > 1 for op in gpu_ops):
+            raise ValueError("enforced GPU placement currently supports at most one GPU per actor")
+        controller = state["controller"]
+        cpus = max(float(op.num_cpus or 1) for op in gpu_ops) * controller.max_replicas_per_device
+        if cpus * controller.cluster.num_devices >= controller.cluster.total_cpus:
+            raise ValueError("GPU bundles would leave no CPU capacity for the input pipeline")
+        lease = GpuPlacementLease(controller.cluster.num_devices, cpus)
+        self._ej_gpu_placement_lease = lease
+        actual_capacity = min(device["memory_bytes"] for device in lease.topology)
+        if actual_capacity < controller.cluster.device_memory_bytes:
+            # CUDA usable capacity can be below NVML's physical total. Replan
+            # against the measured minimum before any data actor is admitted.
+            from dataclasses import replace
+            from data_juicer.core.elasticjuicer.parallelism_planner import (
+                plan_parallelism, save_runtime_plan, plan_envelope_fingerprint,
+            )
+            controller.cluster = replace(controller.cluster, device_memory_bytes=actual_capacity)
+            controller.plan = plan_parallelism(
+                list(controller.demands.values()), controller.cluster,
+                max_replicas_per_device=controller.max_replicas_per_device,
+                min_batches_per_actor=int(self._ej_cfg_get("elastic_juicer_min_batches_per_actor", 4)),
+                startup_amortization_ratio=float(self._ej_cfg_get("elastic_juicer_startup_amortization_ratio", 0.10)),
+                min_marginal_makespan_gain=float(self._ej_cfg_get("elastic_juicer_min_marginal_makespan_gain", 0.10)),
+            )
+            # Rebuild resource accounting too; a smaller usable capacity can
+            # change replica counts, not just the batch cap. No data partition
+            # has run yet, so there is no controller history to preserve.
+            controller = type(controller)(
+                controller.plan, controller.demands, controller.cluster, controller.config,
+                baseline_bytes_per_row=controller.baseline_bytes_per_row,
+                resident_bytes_by_stage=controller.resident_bytes_by_stage,
+                events_path=controller.events_path,
+                max_replicas_per_device=controller.max_replicas_per_device,
+            )
+            state["controller"] = controller
+            self._ej_apply_plan_to_ops(ops)
+            save_runtime_plan(os.path.join(self.work_dir, "runtime_plan.json"), controller.plan)
+            service = self._ej_cfg_get("_elastic_juicer_control_service")
+            if service is not None:
+                ray.get(service.configure_plan_envelope.remote(plan_envelope_fingerprint(controller.plan)), timeout=15)
+        self.cfg["_elastic_juicer_gpu_placement"] = {"group": lease.group, "topology": lease.topology}
+        atomic_write_json(os.path.join(self.work_dir, "elastic_juicer_gpu_placement.json"), {
+            "run_id": self._ej_cfg_get("_elastic_juicer_audit_context")["run_id"],
+            "topology": lease.topology, "cpus_per_device": cpus,
+        })
 
     def _ej_collect_partition_observations(self, partition_id: int):
         """Aggregate metrics-sink events for one finished partition."""
