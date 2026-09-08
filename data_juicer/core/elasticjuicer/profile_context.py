@@ -55,5 +55,5 @@ def make_context(batch, operator, controller, execution_audit=None, operator_arg
         }, sort_keys=True, separators=(",", ":"), allow_nan=False)
         validate_context(value)
         return value, "eligible"
-    except (TypeError, ValueError, RuntimeError):
+    except Exception:  # Advisory operator declaration must not brick execution.
         return "", "invalid_resource_contract"

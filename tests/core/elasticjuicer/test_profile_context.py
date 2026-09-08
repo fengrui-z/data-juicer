@@ -170,3 +170,23 @@ def test_bad_service_context_response_is_not_seeded(monkeypatch):
     value(batch(1))
     assert value._profile_seed_evidence["status"] == "context_mismatch"
     assert value.controller.oom_upper_bound is None
+
+
+def test_untrusted_advisory_bounds_do_not_partially_seed(monkeypatch):
+    value, _ = actor(monkeypatch)
+    context, _ = make_context(batch(1), value.operator, value.controller)
+    invalid = StageProfile("job", value.stage_id, value.op_name, True, 4, 100,
+                           op_fingerprint=value.op_fingerprint, resource_class=value.resource_class,
+                           profile_context=context)
+    value._profile_control_service.get_stage_profile = RemoteMethod(lambda *args: invalid)
+    value(batch(1))
+    assert value._profile_seed_evidence["status"] == "invalid_profile"
+    assert value.controller.oom_upper_bound is None
+
+
+def test_resource_provider_error_remains_advisory(monkeypatch):
+    value, _ = actor(monkeypatch)
+    value.operator.elastic_juicer_profile_resource_context = lambda: (_ for _ in ()).throw(KeyError("budget"))
+    result = value(batch(1))
+    assert result.num_rows == 32
+    assert value._profile_seed_evidence["status"] == "invalid_resource_contract"

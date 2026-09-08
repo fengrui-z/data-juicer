@@ -419,6 +419,20 @@ class RayAdaptiveMapperActor:
         if self.profile_context_enabled and getattr(profile, "profile_context", None) != self._profile_context:
             self._profile_seed_evidence = {"status": "context_mismatch"}
             return
+        if self.profile_context_enabled:
+            from .control_service import StageProfile
+
+            valid = isinstance(profile, StageProfile) and all(
+                getattr(profile, key) == expected for key, expected in (
+                    ("stage_id", self.stage_id), ("op_fingerprint", self.op_fingerprint),
+                    ("resource_class", self.resource_class),
+                )
+            )
+            valid = valid and all(bound is None or (type(bound) is int and bound > 0)
+                                  for bound in (profile.safe_batch_size, profile.oom_upper_bound))
+            if not valid:
+                self._profile_seed_evidence = {"status": "invalid_profile"}
+                return
         seeded_size = self.controller.seed_bounds(
             safe_batch_size=profile.safe_batch_size,
             oom_upper_bound=profile.oom_upper_bound,
