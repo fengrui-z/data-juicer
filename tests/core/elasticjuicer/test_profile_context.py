@@ -134,3 +134,39 @@ def test_missing_cost_and_resource_contract(monkeypatch):
 def test_context_requires_opt_in_seed_and_ej():
     with pytest.raises(ValueError, match="profile_context"):
         validate_elastic_juicer_config({"elastic_juicer_profile_context": True})
+
+
+def test_positional_operator_configuration_partitions_context(monkeypatch):
+    value, _ = actor(monkeypatch)
+    a, _ = make_context(batch(1), value.operator, value.controller, operator_args=("model-a",))
+    b, _ = make_context(batch(1), value.operator, value.controller, operator_args=("model-b",))
+    assert a != b
+    assert make_context(batch(1), value.operator, value.controller, operator_args=(object(),))[0] == ""
+
+
+def test_mid_call_quota_tightens_and_invalidates_profile_epoch(monkeypatch):
+    from data_juicer.core.elasticjuicer.quota import QuotaEnvelope, current_time_ms
+    value, service = actor(monkeypatch)
+    value(batch(1))
+    before = service.snapshot()["stage_profiles"]
+    epoch = value._profile_context_epoch
+    now = current_time_ms()
+    quota = QuotaEnvelope("job", value.actor_id, value.actor_incarnation_id, revision=1,
+                          issued_at_ms=now, expires_at_ms=now + 10000, max_batch_size=4, reason="test")
+    value._apply_quota(quota)
+    assert value.controller.hard_limit == 4
+    assert value._profile_seed_evidence["status"] == "quota_changed"
+    assert value._profile_context_epoch == epoch + 1
+    value._report_stage_profile()
+    assert service.snapshot()["stage_profiles"] == before
+    value(batch(1))
+    assert value._profile_seed_evidence["status"] == "no_profile"
+
+
+def test_bad_service_context_response_is_not_seeded(monkeypatch):
+    value, _ = actor(monkeypatch)
+    wrong = StageProfile("job", "stage-0", "op", 2, 4, 100)
+    value._profile_control_service.get_stage_profile = RemoteMethod(lambda *args: wrong)
+    value(batch(1))
+    assert value._profile_seed_evidence["status"] == "context_mismatch"
+    assert value.controller.oom_upper_bound is None

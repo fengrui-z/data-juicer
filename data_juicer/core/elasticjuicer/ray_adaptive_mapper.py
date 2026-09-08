@@ -136,6 +136,7 @@ class RayAdaptiveMapperActor:
         self._profile_seconds = 0.0
         self._comparison_context = None
         operator_args = tuple(operator_args or ())
+        self._profile_operator_args = operator_args
         operator_kwargs = dict(operator_kwargs or {})
         max_batch_size = initial_batch_size if max_batch_size is None else max_batch_size
         if profile_context_enabled and (not profile_seed_enabled or controller_policy != "ej"):
@@ -443,7 +444,8 @@ class RayAdaptiveMapperActor:
     def _prepare_profile_context(self, batch):
         from .profile_context import context_id, make_context
 
-        context, reason = make_context(batch, self.operator, self.controller, self._execution_audit)
+        context, reason = make_context(batch, self.operator, self.controller, self._execution_audit,
+                                       self._profile_operator_args)
         if context and context == self._profile_context:
             return
         # The old epoch is published under its OLD key before resetting. Mixed
@@ -584,6 +586,7 @@ class RayAdaptiveMapperActor:
                 # A mid-call budget change invalidates this call's profile;
                 # safety tightening still applies immediately.
                 self._profile_context = ""
+                self._profile_context_epoch += 1
                 self._profile_seed_evidence = {"status": "quota_changed", "context": "",
                                                "context_id": None, "epoch": self._profile_context_epoch}
         return application

@@ -32,7 +32,7 @@ def context_id(value):
     return hashlib.sha256(value.encode()).hexdigest() if value else None
 
 
-def make_context(batch, operator, controller, execution_audit=None):
+def make_context(batch, operator, controller, execution_audit=None, operator_args=()):
     """Return (canonical key, reason); do not infer budgets from free memory."""
     costs = input_cost_counts(batch, getattr(operator, "elastic_juicer_cost_columns", ()))
     if not costs or sum(costs.values()) != _batch_length(batch):
@@ -49,6 +49,7 @@ def make_context(batch, operator, controller, execution_audit=None):
         value = json.dumps({
             "schema_version": 1, "cost": json.loads(next(iter(costs))),
             "resources": resources,
+            "operator_args": operator_args,
             "limits": [controller.min_batch_size, controller.max_batch_size, controller.hard_limit],
             "placement": (execution_audit or {}).get("placement"),
         }, sort_keys=True, separators=(",", ":"), allow_nan=False)
