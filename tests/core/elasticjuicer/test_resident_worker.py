@@ -12,7 +12,7 @@ class Operator:
 class FakeActor:
     def __init__(self, operator_class, operator_instance=None, **options):
         self.operator = operator_instance or operator_class()
-        self.controller = object()
+        self.controller = SimpleNamespace(hard_limit=options["execution_audit"]["applied_cap"])
         self.metrics_reporter = SimpleNamespace(identity=options)
         self.closed = False
 
@@ -92,6 +92,16 @@ def test_no_rebind_before_finish_or_after_failure(monkeypatch):
     with pytest.raises(RuntimeError, match="ACK failed"):
         value("fail")
     with pytest.raises(RuntimeError):
+        value.bind(execution(1))
+
+
+def test_actual_quota_tightening_cannot_be_reset_by_stale_plan_metadata(monkeypatch):
+    value = worker(monkeypatch)
+    value.bind(execution())
+    value([1])
+    value.actor.controller.hard_limit = 4
+    value.finish_partition()
+    with pytest.raises(ValueError, match="actual quota changed"):
         value.bind(execution(1))
 
 

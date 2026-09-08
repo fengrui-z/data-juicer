@@ -268,6 +268,7 @@ def test_enabled_flag_installs_one_actor_local_adaptive_wrapper(actor_pool_strat
             "sample_interval_sec": 0.01,
             "profile_seed_enabled": False,
             "profile_seed_timeout_sec": 2.0,
+            "profile_context_enabled": False,
             "partition_id": None,
             "controller_policy": "ej",
             "cost_column": None,
@@ -280,6 +281,18 @@ def test_enabled_flag_installs_one_actor_local_adaptive_wrapper(actor_pool_strat
         batch_format="pyarrow",
         runtime_env=operator.runtime_env,
     )
+
+
+@patch("data_juicer.core.data.ray_dataset.ActorPoolStrategy")
+def test_context_seed_flag_is_forwarded_to_actor(actor_pool_strategy):
+    dataset = _dataset(enabled=True)
+    source = dataset.data
+    dataset._elastic_juicer_cfg = {"elastic_juicer_profile_context": True}
+    dataset._elastic_juicer_profile_seed_enabled = True
+    dataset._run_single_op(BatchedActorMapper(batch_size=16, num_proc=2), cached_columns=set())
+    kwargs = source.map_batches.call_args.kwargs["fn_constructor_kwargs"]
+    assert kwargs["profile_context_enabled"] is True
+    assert kwargs["profile_seed_enabled"] is True
 
 
 @patch("data_juicer.core.data.ray_dataset.ActorPoolStrategy")

@@ -36,6 +36,10 @@ class ResidentMapperWorker:
         if isinstance(partition, bool) or not isinstance(partition, int) or partition < 0:
             raise ValueError("partition_id must be a non-negative integer")
         if self.binding:
+            if self.actor.controller.hard_limit != self.binding["applied_cap"]:
+                # Resetting a local controller must not silently undo an
+                # actual safety quota merely because plan metadata is stale.
+                raise ValueError("actual quota changed; fixed-envelope resident rebind is not supported")
             immutable = ("run_id", "stage_id", "plan_version", "planned_actors", "applied_cap", "placement")
             if any(execution.get(key) != self.binding.get(key) for key in immutable):
                 raise ValueError("resident prototype requires an unchanged stage/plan/resource envelope")
