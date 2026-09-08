@@ -392,6 +392,8 @@ class PartitionReplanController:
                 reasons = comparison_reasons(pending["baseline"], window, pending["expected_plan"])
                 if observation is not None and observation.oom_batches:
                     reasons.append("oom_or_failed_batch")
+                if window is not None and window.partition_id != partition_id:
+                    reasons.append("wrong_partition_window")
                 if reasons:
                     self._record_trial(stage_key, partition_id, pending, window, "inconclusive", reasons, None)
                     # A conservative rollback is risk management, NOT evidence
@@ -435,7 +437,7 @@ class PartitionReplanController:
             window = observation.performance_window
             if window is None or window.invalid_reasons() or observation.oom_batches:
                 continue
-            if window.plan_version != plan_envelope_fingerprint(self.plan):
+            if window.partition_id != partition_id or window.plan_version != plan_envelope_fingerprint(self.plan):
                 continue
 
             last_change = self._last_change_partition.get(stage_key)

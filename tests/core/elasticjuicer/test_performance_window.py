@@ -33,8 +33,8 @@ def observe(control, partition, goodput=10, cost="a", **changes):
         goodput,
         10,
         80,
-        1,
-        9,
+        partition * 10 + 1,
+        partition * 10 + 9,
         [0.1],
     )
     window = replace(window, **changes)
@@ -59,6 +59,8 @@ def test_same_cost_trial_verdict_uses_steady_window_not_partition_wall(tmp_path,
         ({"steady_batches": 1}, "insufficient_stable_samples"),
         ({"issues": ["oom_or_failed_batch"]}, "oom_or_failed_batch"),
         ({"plan_version": "unexpected"}, "unexpected_plan_version"),
+        ({"start": 1}, "stale_or_overlapping_window"),
+        ({"partition_id": 0}, "wrong_partition_window"),
     ],
 )
 def test_incomparable_trial_rolls_back_without_freezing_and_reestablishes_baseline(tmp_path, change, reason):

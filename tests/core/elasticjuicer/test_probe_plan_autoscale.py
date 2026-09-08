@@ -61,7 +61,7 @@ class _StationaryFixtureController(PartitionReplanController):
         for observation in observations.values():
             observation.performance_window = PerformanceWindow(
                 partition_id, plan_envelope_fingerprint(self.plan), {"resource": "fixed"},
-                {"fixture_cost": 1.0}, goodput_rows_per_sec, 10, 80, 1, 9, [0.1],
+                {"fixture_cost": 1.0}, goodput_rows_per_sec, 10, 80, partition_id * 10 + 1, partition_id * 10 + 9, [0.1],
             )
         return super().on_partition_complete(partition_id, observations, goodput_rows_per_sec)
 

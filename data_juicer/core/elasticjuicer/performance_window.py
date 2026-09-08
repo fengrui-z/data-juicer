@@ -79,6 +79,8 @@ def comparison_reasons(before, after, expected_plan):
     if after is None:
         return ["missing_window"]
     reasons = before.invalid_reasons() + after.invalid_reasons()
+    if after.partition_id <= before.partition_id or after.start < before.end:
+        reasons.append("stale_or_overlapping_window")
     if after.plan_version != expected_plan:
         reasons.append("unexpected_plan_version")
     if before.resource_state != after.resource_state:
