@@ -126,6 +126,8 @@ class RayAdaptiveMapperActor:
         cost_column: Optional[str] = None,
         execution_audit: Optional[Mapping] = None,
         profile_context_enabled: bool = False,
+        operator_instance=None,
+        worker_lifetime: Optional[Mapping] = None,
     ):
         self._init_started = time.perf_counter()
         self._first_call_delay = None
@@ -154,8 +156,10 @@ class RayAdaptiveMapperActor:
             verified_identity.update(verify_worker_placement(verified_identity, execution_audit["placement"]))
 
         operator_started = time.perf_counter()
-        self.operator = operator_class(*operator_args, **operator_kwargs)
-        self._operator_init_seconds = time.perf_counter() - operator_started
+        if operator_instance is not None and not isinstance(operator_instance, operator_class):
+            raise TypeError("resident operator must match the declared operator class")
+        self.operator = operator_class(*operator_args, **operator_kwargs) if operator_instance is None else operator_instance
+        self._operator_init_seconds = time.perf_counter() - operator_started if operator_instance is None else 0.0
         self.op_name = op_name or getattr(self.operator, "_name", None) or operator_class.__name__
         if controller_policy == "ej":
             self.controller = AdaptiveBatchController(
@@ -274,8 +278,9 @@ class RayAdaptiveMapperActor:
                 "actor_id": self.actor_id, "actor_incarnation_id": self.actor_incarnation_id,
                 "stage_id": self.stage_id, "op_name": self.op_name, "partition_id": self.partition_id,
                 "applied_cap": self.controller.max_batch_size,
-                "operator_initializations": 1,
+                "operator_initializations": int(operator_instance is None),
                 "profile_seed": dict(self._profile_seed_evidence),
+                **({"worker_lifetime": dict(worker_lifetime)} if worker_lifetime is not None else {}),
             }
             self.metrics_reporter = AcknowledgedMetricsReporter(
                 metrics_sink, self.job_id, execution_audit["run_id"], identity,
