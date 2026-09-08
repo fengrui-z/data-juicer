@@ -141,6 +141,26 @@ def test_actor_reconstructs_the_operator_only_once():
     assert constructions == [actor.operator]
 
 
+def test_seed_evidence_distinguishes_applied_missing_and_fetch_failure(monkeypatch):
+    import ray
+
+    actor = RayAdaptiveMapperActor(ThresholdMapper, operator_args=(8,), initial_batch_size=8,
+                                   max_batch_size=8, sampler_factory=NoopSampler, resource_class="cpu", job_id="job")
+    assert actor._profile_seed_evidence == {"status": "disabled"}
+    handle = SimpleNamespace(get_stage_profile=RemoteMethod(lambda *args: None))
+    monkeypatch.setattr(ray, "get", lambda reference, **kwargs: None)
+    actor._seed_from_stage_profile(handle)
+    assert actor._profile_seed_evidence == {"status": "no_profile"}
+    profile = SimpleNamespace(safe_batch_size=4, oom_upper_bound=6, observed_at_ms=123, cost_model=None)
+    monkeypatch.setattr(ray, "get", lambda reference, **kwargs: profile)
+    actor._seed_from_stage_profile(handle)
+    assert actor._profile_seed_evidence["status"] == "applied"
+    assert actor._profile_seed_evidence["initial_batch_size"] == 4
+    monkeypatch.setattr(ray, "get", lambda *args, **kwargs: (_ for _ in ()).throw(TimeoutError()))
+    actor._seed_from_stage_profile(handle)
+    assert actor._profile_seed_evidence["status"] == "fetch_failed"
+
+
 def test_actor_sees_oom_hidden_by_mapper_skip_op_error_wrapper():
     actor = RayAdaptiveMapperActor(
         SkippingThresholdMapper,

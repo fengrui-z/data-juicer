@@ -234,6 +234,7 @@ class RayAdaptiveMapperActor:
         self._last_quota_revision = 0
         self._control_service_handle = control_service
         self.profile_seed_enabled = bool(profile_seed_enabled)
+        self._profile_seed_evidence = {"status": "no_service" if profile_seed_enabled else "disabled"}
         self.profile_seed_timeout_sec = profile_seed_timeout_sec
         self._profile_control_service = control_service if self.profile_seed_enabled else None
         self._last_reported_profile = None
@@ -260,6 +261,8 @@ class RayAdaptiveMapperActor:
                 "actor_id": self.actor_id, "actor_incarnation_id": self.actor_incarnation_id,
                 "stage_id": self.stage_id, "op_name": self.op_name, "partition_id": self.partition_id,
                 "applied_cap": self.controller.max_batch_size,
+                "operator_initializations": 1,
+                "profile_seed": dict(self._profile_seed_evidence),
             }
             self.metrics_reporter = AcknowledgedMetricsReporter(
                 metrics_sink, self.job_id, execution_audit["run_id"], identity,
@@ -383,14 +386,21 @@ class RayAdaptiveMapperActor:
                 timeout=self.profile_seed_timeout_sec,
             )
         except Exception as error:
+            self._profile_seed_evidence = {"status": "fetch_failed", "error_type": type(error).__name__}
             logger.warning(f"ElasticJuicer stage-profile seed fetch failed; starting unseeded: {error}")
             return
         if profile is None:
+            self._profile_seed_evidence = {"status": "no_profile"}
             return
         seeded_size = self.controller.seed_bounds(
             safe_batch_size=profile.safe_batch_size,
             oom_upper_bound=profile.oom_upper_bound,
         )
+        self._profile_seed_evidence = {
+            "status": "applied", "safe_batch_size": profile.safe_batch_size,
+            "oom_upper_bound": profile.oom_upper_bound, "initial_batch_size": seeded_size,
+            "source_observed_at_ms": profile.observed_at_ms,
+        }
         seed_cost_model = getattr(self.controller, "seed_cost_model", None)
         model_seeded = False
         if seed_cost_model is not None and getattr(profile, "cost_model", None):
