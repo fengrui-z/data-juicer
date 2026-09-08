@@ -74,6 +74,18 @@ def test_unfinished_call_and_missing_actor_cannot_be_certified(tmp_path):
     assert sink.seal_run(True)["complete"] is False
 
 
+def test_enforced_placement_cannot_seal_an_undersized_roster(tmp_path):
+    sink = DurableExecutionSink("job-a", "run-a", str(tmp_path))
+    sink.expect_execution({"execution_id": "exec", "stage_id": "stage-a", "plan_version": "plan-a",
+                           "planned_actors": 2, "applied_cap": 4,
+                           "placement": {"device_ids": [0, 0], "topology": [
+                               {"device_id": 0, "node_id": "node-a", "gpu_uuid": "GPU-a"}]}})
+    sink.register_actor({"execution_id": "exec", "actor_incarnation_id": "inc-a", "actor_id": "actor-a",
+                         "plan_version": "plan-a", "applied_cap": 4, "placement_slot": 0,
+                         "placement_verified": True, "node_id": "node-a", "gpu_uuids": ["GPU-a"]})
+    assert sink.seal_run(True)["complete"] is False
+
+
 def test_missing_final_event_is_rejected(tmp_path):
     sink = _sink(tmp_path)
     sink.begin_call("incarnation-a", 1, 4)

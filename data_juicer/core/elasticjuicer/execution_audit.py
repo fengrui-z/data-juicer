@@ -280,7 +280,11 @@ class DurableExecutionSink(AsyncMetricsSink):
                     and len(actors) == expected.get("planned_actors")
                     and all(value["identity"].get("placement_verified") is True for value in actors),
             }
-        roster_present = all(value["registered_actors"] > 0 for value in executions.values())
+        roster_present = all(
+            value["registered_actors"] > 0
+            and (not value.get("placement") or value["placement_verified"])
+            for value in executions.values()
+        )
         watermarks = all(
             actor["active_call"] is None
             and actor["failed_calls"] == 0
