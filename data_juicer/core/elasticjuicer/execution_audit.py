@@ -7,6 +7,7 @@ only after the dependent dataset has materialized. Sealing fences new work.
 
 import json
 import hashlib
+import math
 import os
 import tempfile
 
@@ -38,6 +39,7 @@ class DurableExecutionSink(AsyncMetricsSink):
         self.journal = os.path.join(work_dir, "execution_journal.jsonl")
         self.executions = {}
         self.actors = {}
+        self.partitions = {}
         self.sealed = False
         self.run_succeeded = False
         self._journal_failed = False
@@ -192,6 +194,7 @@ class DurableExecutionSink(AsyncMetricsSink):
                 "final_sequence": 0,
                 "input_rows": 0,
                 "failed_calls": 0,
+                "completed_input_rows": 0,
                 "counts": {"succeeded_batches": 0, "failed_batches": 0, "oom_batches": 0},
             }
         elif kind == "begin":
@@ -213,11 +216,28 @@ class DurableExecutionSink(AsyncMetricsSink):
             actor["last_call"] = payload["call_id"]
             actor["final_sequence"] = payload["final_sequence"]
             actor["failed_calls"] += int(not payload["succeeded"])
+            if payload["succeeded"]:
+                actor["completed_input_rows"] += actor["input_rows"]
+        elif kind == "partition":
+            self.partitions[str(payload["partition_id"])] = payload
         elif kind == "seal":
             self.sealed = True
             self.run_succeeded = payload["succeeded"]
         else:
             raise ValueError(f"unknown journal record {kind!r}")
+
+    def record_partition(self, partition_id, input_rows, wall_seconds):
+        self._open()
+        if input_rows < 0 or not math.isfinite(wall_seconds) or wall_seconds <= 0:
+            raise ValueError("partition measurement requires nonnegative rows and positive finite wall time")
+        value = {"partition_id": partition_id, "input_rows": input_rows, "wall_seconds": wall_seconds}
+        previous = self.partitions.get(str(partition_id))
+        if previous is not None:
+            if previous != value:
+                raise ValueError("partition measurement changed")
+            return partition_id
+        self._append("partition", value)
+        return partition_id
 
     def seal_run(self, succeeded):
         if not self.sealed:
@@ -252,6 +272,8 @@ class DurableExecutionSink(AsyncMetricsSink):
             executions[key] = {
                 **expected,
                 "registered_actors": len(actors),
+                "working_actors": sum(value["last_call"] > 0 for value in actors),
+                "completed_input_rows": sum(value["completed_input_rows"] for value in actors),
                 "applied": len(actors) == expected.get("planned_actors") and bool(actors),
                 "actors": [value["identity"] for value in actors],
                 "placement_verified": bool(expected.get("placement")) and bool(actors)
@@ -293,6 +315,7 @@ class DurableExecutionSink(AsyncMetricsSink):
                 "job_id": self.job_id,
                 "executions": executions,
                 "actors": self.actors,
+                "partitions": self.partitions,
                 "sealed": self.sealed,
             },
         )

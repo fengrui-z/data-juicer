@@ -49,8 +49,22 @@ def test_final_watermark_and_durable_samples_survive_ring_eviction(tmp_path):
     audit = json.loads((tmp_path / "elastic_juicer_execution_audit.json").read_text())
     assert audit["executions"]["exec-a"]["applied"] is True
     assert audit["actors"]["incarnation-a"]["final_sequence"] == 2
+    assert audit["executions"]["exec-a"]["working_actors"] == 1
+    assert audit["executions"]["exec-a"]["completed_input_rows"] == 8
     with pytest.raises(ValueError, match="sealed"):
         sink.begin_call("incarnation-a", 2, 1)
+
+
+def test_partition_wall_is_durable_idempotent_and_finite(tmp_path):
+    sink = _sink(tmp_path)
+    assert sink.record_partition(0, 8, 2.5) == 0
+    assert sink.record_partition(0, 8, 2.5) == 0
+    with pytest.raises(ValueError, match="changed"):
+        sink.record_partition(0, 8, 3.0)
+    with pytest.raises(ValueError, match="finite"):
+        sink.record_partition(1, 8, float("nan"))
+    recovered = DurableExecutionSink("job-a", "run-a", str(tmp_path))
+    assert recovered.partitions == {"0": {"partition_id": 0, "input_rows": 8, "wall_seconds": 2.5}}
 
 
 def test_unfinished_call_and_missing_actor_cannot_be_certified(tmp_path):

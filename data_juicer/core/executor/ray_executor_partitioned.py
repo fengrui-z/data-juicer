@@ -703,6 +703,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         isolate_operators: bool = True,
     ):
         """Process one partition while preserving its position in the final union."""
+        measurement_start = time.perf_counter()
         logger.info(f"Processing partition {partition_id + 1}/{total_partitions}")
 
         self._log_event(
@@ -720,6 +721,11 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             if hasattr(partition_dataset, "set_elastic_juicer_partition_id"):
                 partition_dataset.set_elastic_juicer_partition_id(partition_id)
             processed_partition = self._process_with_checkpointing(partition_dataset, partition_id, partition_ops)
+            if self._ej_cfg_get("elastic_juicer_execution_audit", False):
+                ray.get(self._ej_cfg_get("_elastic_juicer_metrics_sink").record_partition.remote(
+                    partition_id, self._partition_expected_rows.get(partition_id, 0),
+                    time.perf_counter() - measurement_start,
+                ), timeout=15)
         except Exception as error:
             self.log_partition_failed(partition_id, str(error), retry_count=0)
             raise
@@ -1430,6 +1436,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             resident_bytes_by_stage=resident_bytes_by_stage,
             events_path=os.path.join(work_dir, PLAN_EVENTS_FILENAME),
             max_replicas_per_device=max_replicas,
+            run_id=(self._ej_cfg_get("_elastic_juicer_audit_context") or {}).get("run_id"),
         )
 
         self._ej_autoscale_state = {
@@ -1512,6 +1519,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
                 resident_bytes_by_stage=controller.resident_bytes_by_stage,
                 events_path=controller.events_path,
                 max_replicas_per_device=controller.max_replicas_per_device,
+                run_id=controller.run_id,
             )
             state["controller"] = controller
             self._ej_apply_plan_to_ops(ops)

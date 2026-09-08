@@ -211,6 +211,7 @@ class PartitionReplanController:
         events_path: Optional[str] = None,
         max_replicas_per_device: Optional[int] = None,
         resident_bytes_by_stage: Optional[Dict[str, int]] = None,
+        run_id: Optional[str] = None,
     ):
         config.validate()
         self.plan = plan
@@ -218,6 +219,7 @@ class PartitionReplanController:
         self.cluster = cluster
         self.config = config
         self.events_path = events_path
+        self.run_id = run_id
         self.max_replicas_per_device = (
             max_replicas_per_device
             if max_replicas_per_device is not None
@@ -635,7 +637,10 @@ class PartitionReplanController:
             os.makedirs(directory, exist_ok=True)
             with open(self.events_path, "a") as handle:
                 for change in changes:
-                    handle.write(json.dumps(change.to_dict(), sort_keys=True) + "\n")
+                    record = change.to_dict()
+                    if self.run_id is not None:
+                        record["run_id"] = self.run_id
+                    handle.write(json.dumps(record, sort_keys=True) + "\n")
                 handle.flush()
                 os.fsync(handle.fileno())
         except OSError:
