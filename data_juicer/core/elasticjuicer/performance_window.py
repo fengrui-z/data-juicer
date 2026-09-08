@@ -16,6 +16,17 @@ def distribution(counts):
     return {key: value / total for key, value in sorted(counts.items())} if total else {}
 
 
+def _finite_json(value):
+    """Preserve invalid-window evidence as JSON null, never nonstandard NaN."""
+    if isinstance(value, float) and not math.isfinite(value):
+        return None
+    if isinstance(value, dict):
+        return {key: _finite_json(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_finite_json(item) for item in value]
+    return value
+
+
 def distance(left, right):
     return sum(abs(left.get(key, 0) - right.get(key, 0)) for key in left.keys() | right.keys()) / 2
 
@@ -53,7 +64,7 @@ class PerformanceWindow:
     issues: list = field(default_factory=list)
 
     def to_dict(self):
-        return asdict(self)
+        return _finite_json(asdict(self))
 
     def invalid_reasons(self):
         reasons = list(self.issues)

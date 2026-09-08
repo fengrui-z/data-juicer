@@ -1,4 +1,5 @@
 from dataclasses import replace
+import json
 
 import pytest
 
@@ -70,6 +71,7 @@ def test_incomparable_trial_rolls_back_without_freezing_and_reestablishes_baseli
     control.on_partition_complete(0, observe(control, 0), 10)
     control.on_partition_complete(1, observe(control, 1, 1, **change), 1)
     record = control.performance_trials[-1]
+    json.dumps(record, allow_nan=False)
     assert record["verdict"] == "inconclusive" and reason in record["reasons"]
     assert record["marginal_gain"] is None
     assert not control._frozen_stages
