@@ -128,6 +128,8 @@ def validate_elastic_juicer_config(cfg: Any, *, require_job_id: bool = False) ->
     policy = str(_get(cfg, "elastic_juicer_controller_policy", "ej") or "ej").strip().lower()
     experimental_enabled = bool(_get(cfg, "elastic_juicer_experimental_policies", False))
     profile_seed = bool(_get(cfg, "elastic_juicer_profile_seed", False))
+    if _get(cfg, "elastic_juicer_profile_context", False) and (not profile_seed or policy != "ej"):
+        raise ValueError("elastic_juicer_profile_context requires profile_seed=true and controller_policy=ej")
     cost_column = _optional_nonempty_string(
         _get(cfg, "elastic_juicer_cost_column", None),
         "elastic_juicer_cost_column",
@@ -202,6 +204,7 @@ def effective_elastic_juicer_config(cfg: Any) -> Dict[str, Any]:
         "experimental_policies_enabled": bool(_get(cfg, "elastic_juicer_experimental_policies", False)),
         "cost_signal": "none" if cost_column is None else cost_column,
         "profile_seed": bool(_get(cfg, "elastic_juicer_profile_seed", False)),
+        "profile_context": bool(_get(cfg, "elastic_juicer_profile_context", False)),
         "profiles_path": profiles_path,
         "profile_ttl_ms": int(_get(cfg, "elastic_juicer_profile_ttl_ms", 1_800_000)),
         "auto_parallelism": bool(_get(cfg, "elastic_juicer_auto_parallelism", False)),

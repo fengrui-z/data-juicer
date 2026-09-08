@@ -966,6 +966,14 @@ def build_base_parser() -> ArgumentParser:
         "False by default until the benefit is demonstrated end to end.",
     )
     parser.add_argument(
+        "--elastic_juicer_profile_context",
+        type=bool,
+        default=False,
+        help="Experimental exact input/resource-context profile seeding (ej only). "
+        "Requires profile_seed and operator-declared cost columns and resource context; "
+        "unknown/mixed inputs remain unseeded.",
+    )
+    parser.add_argument(
         "--elastic_juicer_profile_seed_timeout_sec",
         type=float,
         default=2.0,

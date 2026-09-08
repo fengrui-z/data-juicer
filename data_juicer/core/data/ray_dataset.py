@@ -516,6 +516,7 @@ class RayDataset(DJDataset):
                                     "profile_seed_timeout_sec": getattr(
                                         self, "_elastic_juicer_profile_seed_timeout_sec", 2.0
                                     ),
+                                    "profile_context_enabled": bool(audit_cfg.get("elastic_juicer_profile_context", False)),
                                     "partition_id": getattr(self, "_elastic_juicer_partition_id", None),
                                     "controller_policy": getattr(self, "_elastic_juicer_controller_policy", "ej"),
                                     "cost_column": getattr(self, "_elastic_juicer_cost_column", None),

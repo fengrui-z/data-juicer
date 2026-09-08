@@ -189,6 +189,7 @@ def test_normalization_and_effective_config_are_deterministic():
         "experimental_policies_enabled": True,
         "cost_signal": "img_pixels",
         "profile_seed": True,
+        "profile_context": False,
         "profiles_path": "/tmp/ej-profiles.json",
         "profile_ttl_ms": 1_800_000,
         "auto_parallelism": False,

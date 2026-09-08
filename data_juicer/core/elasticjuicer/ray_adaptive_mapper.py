@@ -125,6 +125,7 @@ class RayAdaptiveMapperActor:
         controller_policy: str = "ej",
         cost_column: Optional[str] = None,
         execution_audit: Optional[Mapping] = None,
+        profile_context_enabled: bool = False,
     ):
         self._init_started = time.perf_counter()
         self._first_call_delay = None
@@ -135,6 +136,16 @@ class RayAdaptiveMapperActor:
         operator_args = tuple(operator_args or ())
         operator_kwargs = dict(operator_kwargs or {})
         max_batch_size = initial_batch_size if max_batch_size is None else max_batch_size
+        if profile_context_enabled and (not profile_seed_enabled or controller_policy != "ej"):
+            raise ValueError("contextual profiles require profile seeding and the ej controller")
+        self.profile_context_enabled = bool(profile_context_enabled)
+        self._profile_context = ""
+        self._profile_context_epoch = 0
+        self._controller_options = dict(
+            initial_batch_size=initial_batch_size, min_batch_size=min_batch_size,
+            max_batch_size=max_batch_size, oom_reprobe_successes=oom_reprobe_successes,
+            max_oom_reprobes=max_oom_reprobes, recovery_requires_hint=True,
+        )
         verified_identity = None
         if execution_audit is not None and execution_audit.get("placement"):
             from .acknowledged_metrics import runtime_identity
@@ -248,7 +259,9 @@ class RayAdaptiveMapperActor:
         self._profile_reports_delivered = 0
         self._profile_reports_failed = 0
         self._profile_reports_dropped = 0
-        if self._profile_control_service is not None and self.job_id:
+        if self.profile_context_enabled:
+            self._profile_seed_evidence = {"status": "deferred_until_input"}
+        elif self._profile_control_service is not None and self.job_id:
             self._seed_from_stage_profile(self._profile_control_service)
         self.sampler = sampler_factory(sample_interval_sec=sample_interval_sec)
         self.metrics_reporter = None
@@ -322,6 +335,10 @@ class RayAdaptiveMapperActor:
         succeeded = False
         mapper_started = time.perf_counter()
         try:
+            if self.profile_context_enabled:
+                profile_started = time.perf_counter()
+                self._prepare_profile_context(batch)
+                self._profile_seconds += time.perf_counter() - profile_started
             result = self.mapper(batch)
             succeeded = True
             return result
@@ -382,6 +399,7 @@ class RayAdaptiveMapperActor:
                     self.stage_id,
                     self.op_fingerprint,
                     self.resource_class,
+                    *((None, self._profile_context) if self.profile_context_enabled else ()),
                 ),
                 timeout=self.profile_seed_timeout_sec,
             )
@@ -391,6 +409,9 @@ class RayAdaptiveMapperActor:
             return
         if profile is None:
             self._profile_seed_evidence = {"status": "no_profile"}
+            return
+        if self.profile_context_enabled and getattr(profile, "profile_context", None) != self._profile_context:
+            self._profile_seed_evidence = {"status": "context_mismatch"}
             return
         seeded_size = self.controller.seed_bounds(
             safe_batch_size=profile.safe_batch_size,
@@ -414,6 +435,32 @@ class RayAdaptiveMapperActor:
             f"cost_model={'seeded' if model_seeded else 'none'}"
         )
 
+    def _prepare_profile_context(self, batch):
+        from .profile_context import context_id, make_context
+
+        context, reason = make_context(batch, self.operator, self.controller, self._execution_audit)
+        if context and context == self._profile_context:
+            return
+        # The old epoch is published under its OLD key before resetting. Mixed
+        # or unknown calls get a fresh unseeded controller every time and are
+        # never published, so their observations cannot poison a later key.
+        self._report_stage_profile()
+        hard_limit = self.controller.hard_limit
+        self.controller = AdaptiveBatchController(**self._controller_options)
+        self.controller.set_hard_limit(hard_limit)
+        self.mapper.controller = self.controller
+        self._profile_context = context
+        self._profile_context_epoch += 1
+        self._last_reported_profile = None
+        self._pending_profile_learned = None
+        self._profile_report_attempts_for_current = 0
+        self._profile_seed_evidence = {"status": reason if not context else "no_service"}
+        if context and self._profile_control_service is not None and self.job_id:
+            self._seed_from_stage_profile(self._profile_control_service)
+        self._profile_seed_evidence.update(
+            context=context, context_id=context_id(context), epoch=self._profile_context_epoch,
+        )
+
     def _report_stage_profile(self) -> None:
         """Publish learned bounds with a bounded ack wait at batch boundaries.
 
@@ -424,6 +471,8 @@ class RayAdaptiveMapperActor:
         """
 
         if self._profile_control_service is None or not self.job_id:
+            return
+        if self.profile_context_enabled and not self._profile_context:
             return
         state = self.controller.state
         export_cost_model = getattr(self.controller, "export_cost_model", None)
@@ -463,6 +512,7 @@ class RayAdaptiveMapperActor:
                 resource_class=self.resource_class,
                 partition_id=self.partition_id,
                 cost_model=cost_model,
+                profile_context=self._profile_context,
             )
             reference = self._remote_method(self._profile_control_service.report_stage_profile, profile)
             self._await_profile_ack(reference)
@@ -514,6 +564,7 @@ class RayAdaptiveMapperActor:
 
         if not self.job_id:
             raise RuntimeError("actor must have a job_id before a quota can be applied")
+        old_limit = self.controller.hard_limit
         application = apply_batch_size_quota(
             self.controller,
             quota,
@@ -524,6 +575,12 @@ class RayAdaptiveMapperActor:
         )
         if application.applied:
             self._last_quota_revision = quota.revision
+            if self.profile_context_enabled and old_limit != self.controller.hard_limit:
+                # A mid-call budget change invalidates this call's profile;
+                # safety tightening still applies immediately.
+                self._profile_context = ""
+                self._profile_seed_evidence = {"status": "quota_changed", "context": "",
+                                               "context_id": None, "epoch": self._profile_context_epoch}
         return application
 
     def _apply_pending_quota(self):
@@ -640,6 +697,8 @@ class RayAdaptiveMapperActor:
             ended = time.perf_counter()
             self._operator_seconds += ended - started
             self._comparison_context = {"cost_counts": costs, "start": started, "end": ended}
+            if self.profile_context_enabled:
+                self._comparison_context["profile_seed"] = dict(self._profile_seed_evidence)
 
     def _process_operator(self, batch):
         process_batched = getattr(self.operator, "process_batched", None)

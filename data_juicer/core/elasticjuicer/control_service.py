@@ -48,6 +48,7 @@ def _profile_from_dict(data: Dict) -> "StageProfile":
         resource_class=data.get("resource_class", _DEFAULT_RESOURCE_CLASS),
         partition_id=data.get("partition_id"),
         cost_model=data.get("cost_model"),
+        profile_context=data.get("profile_context", ""),
         schema_version=data.get("schema_version", STAGE_PROFILE_SCHEMA_VERSION),
     )
 
@@ -66,7 +67,9 @@ def save_stage_profiles(
     a later driver under a different plan envelope rejects the file.
     """
     envelope = {
-        "schema_version": STAGE_PROFILES_FILE_SCHEMA_VERSION,
+        # Old readers must not silently reinterpret contextual entries as
+        # legacy unscoped profiles after a downgrade.
+        "schema_version": 2 if any(profile.profile_context for profile in profiles) else STAGE_PROFILES_FILE_SCHEMA_VERSION,
         "pipeline_fingerprint": pipeline_fingerprint,
         "plan_fingerprint": plan_fingerprint if isinstance(plan_fingerprint, str) else "",
         "persisted_at_ms": current_time_ms(),
@@ -100,7 +103,7 @@ def load_stage_profiles(
             envelope = json.load(stream)
     except (OSError, ValueError):
         return []
-    if envelope.get("schema_version") != STAGE_PROFILES_FILE_SCHEMA_VERSION:
+    if envelope.get("schema_version") not in (STAGE_PROFILES_FILE_SCHEMA_VERSION, 2):
         logger.warning(f"Stage profiles file {path} has unsupported schema; ignoring")
         return []
     if expected_pipeline_fingerprint and envelope.get("pipeline_fingerprint") != expected_pipeline_fingerprint:
@@ -141,7 +144,9 @@ class StageProfile:
     reader adopts it only as its initial prior and the actor-local controller
     remains the sole authority afterwards.
 
-    Profiles are keyed by ``(stage_id, op_fingerprint, resource_class)`` so a
+    Legacy profiles use ``(stage_id, op_fingerprint, resource_class)``; opt-in
+    contextual profiles append an exact canonical input/resource key, with
+    no fallback to the legacy namespace. This ensures that a
     changed operator configuration or a different device class never inherits
     stale bounds, and carry a schema version so incompatible writers are
     rejected instead of silently merged.
@@ -158,8 +163,12 @@ class StageProfile:
     partition_id: Optional[int] = None
     cost_model: Optional[Dict] = None
     schema_version: int = STAGE_PROFILE_SCHEMA_VERSION
+    profile_context: str = ""
 
     def __post_init__(self):
+        from .profile_context import validate_context
+
+        validate_context(self.profile_context)
         for name in ("job_id", "stage_id", "op_name"):
             value = getattr(self, name)
             if not isinstance(value, str) or not value:
@@ -186,8 +195,9 @@ class StageProfile:
             raise ValueError("cost_model must be a dict or None")
 
     @property
-    def store_key(self) -> Tuple[str, str, str]:
-        return (self.stage_id, self.op_fingerprint, self.resource_class)
+    def store_key(self) -> Tuple[str, ...]:
+        base = (self.stage_id, self.op_fingerprint, self.resource_class)
+        return base + (self.profile_context,) if self.profile_context else base
 
 
 class ControlService:
@@ -223,7 +233,7 @@ class ControlService:
         self._active_incarnations: Dict[str, str] = {}
         self._latest_quotas: Dict[_ActorKey, QuotaEnvelope] = {}
         self._leases: Dict[_ActorKey, int] = {}
-        self._stage_profiles: Dict[Tuple[str, str, str], StageProfile] = {}
+        self._stage_profiles: Dict[Tuple[str, ...], StageProfile] = {}
         self._registration_events = 0
         self._accepted_quotas = 0
         self._rejected_quotas = 0
@@ -409,7 +419,10 @@ class ControlService:
             # __post_init__, so incompatible writers must be rejected here.
             raise ValueError(f"unsupported stage profile schema_version: {profile.schema_version}")
         key = profile.store_key
-        merged = self._merge_stage_profile(self._stage_profiles.get(key), profile)
+        current = self._stage_profiles.get(key)
+        if profile.profile_context and current and profile.observed_at_ms - current.observed_at_ms > self.profile_ttl_ms:
+            current = None  # A fresh write must not rejuvenate expired evidence.
+        merged = self._merge_stage_profile(current, profile)
         self._stage_profiles[key] = merged
         if len(self._stage_profiles) > self.max_stage_profiles:
             oldest_key = min(self._stage_profiles, key=lambda k: self._stage_profiles[k].observed_at_ms)
@@ -442,7 +455,12 @@ class ControlService:
         safe_sizes = [size for size in (current.safe_batch_size, update.safe_batch_size) if size is not None]
         safe_batch_size = max(safe_sizes) if safe_sizes else None
         if safe_batch_size is not None and oom_upper_bound is not None:
-            safe_batch_size = min(safe_batch_size, max(1, oom_upper_bound - 1))
+            if update.profile_context:
+                # Do not manufacture an unobserved "safe" size by clamping.
+                proven = [size for size in safe_sizes if size < oom_upper_bound]
+                safe_batch_size = max(proven) if proven else None
+            else:
+                safe_batch_size = min(safe_batch_size, max(1, oom_upper_bound - 1))
         cost_model = _merge_cost_models(current.cost_model, update.cost_model)
         return StageProfile(
             job_id=update.job_id,
@@ -455,6 +473,7 @@ class ControlService:
             resource_class=update.resource_class,
             partition_id=update.partition_id,
             cost_model=cost_model,
+            profile_context=update.profile_context,
         )
 
     def get_stage_profile(
@@ -464,10 +483,16 @@ class ControlService:
         op_fingerprint: str = "",
         resource_class: str = _DEFAULT_RESOURCE_CLASS,
         now_ms: Optional[int] = None,
+        profile_context: str = "",
     ) -> Optional[StageProfile]:
         if job_id != self.job_id:
             raise ValueError(f"profile job_id {job_id!r} does not match service job_id {self.job_id!r}")
+        from .profile_context import validate_context
+
+        validate_context(profile_context)
         key = (stage_id, op_fingerprint, resource_class)
+        if profile_context:
+            key += (profile_context,)
         profile = self._stage_profiles.get(key)
         if profile is None:
             return None
