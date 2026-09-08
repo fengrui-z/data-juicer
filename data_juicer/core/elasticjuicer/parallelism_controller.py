@@ -241,12 +241,22 @@ class PartitionReplanController:
 
     def _device_candidates(self, demand: StageDemand) -> List[int]:
         replicas: Dict[int, int] = {}
+        gpu_fraction_used: Dict[int, float] = {}
         for stage_plan in self.plan.stages.values():
+            placed_demand = self.demands.get(stage_plan.stage_key)
+            if placed_demand is None:
+                # Unknown reservations cannot safely admit another actor.
+                return []
             for device_id in stage_plan.device_ids:
                 replicas[device_id] = replicas.get(device_id, 0) + 1
+                gpu_fraction_used[device_id] = (
+                    gpu_fraction_used.get(device_id, 0.0) + placed_demand.num_gpus
+                )
         candidates = []
         for device_id in range(self.cluster.num_devices):
             if replicas.get(device_id, 0) >= self.max_replicas_per_device:
+                continue
+            if gpu_fraction_used.get(device_id, 0.0) + demand.num_gpus > self.cluster.gpu_fraction_budget + 1e-9:
                 continue
             used = self._device_memory_used.get(device_id, 0)
             if used + demand.effective_peak_bytes > self.cluster.device_memory_budget_bytes:

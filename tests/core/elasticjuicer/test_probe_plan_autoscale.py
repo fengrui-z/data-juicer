@@ -38,7 +38,9 @@ from data_juicer.core.elasticjuicer.parallelism_controller import (
 from data_juicer.core.elasticjuicer.parallelism_planner import (
     ClusterSpec,
     PlanInfeasibleError,
+    RuntimePlan,
     StageDemand,
+    StagePlan,
     plan_parallelism,
 )
 
@@ -414,6 +416,58 @@ class ObservationAggregationTest(unittest.TestCase):
         events = [_event(partition=5)]
         self.assertEqual(aggregate_stage_observations(events, partition_id=0), {})
 
+
+
+class ReplanGpuFeasibilityTest(unittest.TestCase):
+    def _controller(self, allocations, *, devices=1, fraction_budget=1.0):
+        cluster = ClusterSpec(
+            total_cpus=64,
+            num_devices=devices,
+            device_memory_bytes=64 * 1024**3,
+            gpu_fraction_budget=fraction_budget,
+        )
+        demands = {}
+        stages = {}
+        for key, fraction, placement in allocations:
+            demands[key] = StageDemand(
+                stage_key=key, op_name=key, probed_throughput_rps=100,
+                effective_peak_bytes=1024**2, batch_size=8,
+                available_batches=100, num_gpus=fraction,
+            )
+            stages[key] = StagePlan(
+                stage_key=key, op_name=key, planned_actors=len(placement),
+                device_ids=list(placement), batch_hard_cap=8,
+            )
+        plan = RuntimePlan(stages=stages, cluster=cluster, max_replicas_per_device=16)
+        return PartitionReplanController(plan, demands, cluster, ReplanConfig())
+
+    def test_full_gpu_plan_cannot_add_a_fifth_actor_on_four_devices(self):
+        controller = self._controller([("s", 1.0, [0, 1, 2, 3])], devices=4)
+        observations = {"s": StageObservation(stage_key="s", rows_per_sec=10, sample_count=10)}
+
+        changes = controller.on_partition_complete(0, observations, 10)
+
+        self.assertEqual(changes, [])
+        self.assertEqual(controller.plan.stages["s"].planned_actors, 4)
+
+    def test_gpu_fraction_is_accounted_across_heterogeneous_stages(self):
+        controller = self._controller([("large", 0.75, [0]), ("small", 0.25, [0, 1])], devices=2)
+        self.assertEqual(controller._device_candidates(controller.demands["small"]), [1])
+
+    def test_configured_fraction_budget_and_floating_point_boundary(self):
+        for used, budget, expected in [(4, 0.5, [0]), (5, 0.5, []), (9, 1.0, [0]), (10, 1.0, [])]:
+            with self.subTest(used=used, budget=budget):
+                controller = self._controller([("s", 0.1, [0] * used)], fraction_budget=budget)
+                self.assertEqual(controller._device_candidates(controller.demands["s"]), expected)
+
+    def test_scale_up_and_revert_release_the_gpu_reservation(self):
+        controller = self._controller([("s", 0.5, [0])])
+        observations = {"s": StageObservation(stage_key="s", rows_per_sec=10, sample_count=10)}
+        controller.on_partition_complete(0, observations, 10)
+        self.assertEqual(controller._device_candidates(controller.demands["s"]), [])
+
+        controller.on_partition_complete(1, observations, 10)
+        self.assertEqual(controller._device_candidates(controller.demands["s"]), [0])
 
 
 class ReplanControllerTest(unittest.TestCase):
