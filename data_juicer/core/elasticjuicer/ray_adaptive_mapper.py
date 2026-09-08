@@ -1,6 +1,7 @@
 """Ray actor integration for lossless adaptive Mapper micro-batching."""
 
 import traceback
+import time
 from collections.abc import Mapping
 from typing import Callable, Optional, Sequence
 from uuid import uuid4
@@ -125,6 +126,11 @@ class RayAdaptiveMapperActor:
         cost_column: Optional[str] = None,
         execution_audit: Optional[Mapping] = None,
     ):
+        self._init_started = time.perf_counter()
+        self._first_call_delay = None
+        self._operator_seconds = 0.0
+        self._mapper_seconds = 0.0
+        self._profile_seconds = 0.0
         operator_args = tuple(operator_args or ())
         operator_kwargs = dict(operator_kwargs or {})
         max_batch_size = initial_batch_size if max_batch_size is None else max_batch_size
@@ -135,7 +141,9 @@ class RayAdaptiveMapperActor:
             verified_identity = runtime_identity()
             verified_identity.update(verify_worker_placement(verified_identity, execution_audit["placement"]))
 
+        operator_started = time.perf_counter()
         self.operator = operator_class(*operator_args, **operator_kwargs)
+        self._operator_init_seconds = time.perf_counter() - operator_started
         self.op_name = op_name or getattr(self.operator, "_name", None) or operator_class.__name__
         if controller_policy == "ej":
             self.controller = AdaptiveBatchController(
@@ -298,12 +306,16 @@ class RayAdaptiveMapperActor:
                 poll_interval_sec=control_poll_interval_sec,
             )
             self.control_poller.start()
+        self._init_seconds = time.perf_counter() - self._init_started
 
     def __call__(self, batch):
+        if self._first_call_delay is None:
+            self._first_call_delay = time.perf_counter() - self._init_started
         if self._execution_audit is not None:
             from .adaptive_mapper import _batch_length
             self.metrics_reporter.begin_call(_batch_length(batch))
         succeeded = False
+        mapper_started = time.perf_counter()
         try:
             result = self.mapper(batch)
             succeeded = True
@@ -316,11 +328,36 @@ class RayAdaptiveMapperActor:
             )
             return self._empty_batch(batch)
         finally:
+            self._mapper_seconds += time.perf_counter() - mapper_started
+            profile_started = time.perf_counter()
             self._report_stage_profile()
+            self._profile_seconds += time.perf_counter() - profile_started
             if self._execution_audit is not None:
                 # Do not return data until all metrics and the final sequence
                 # are acknowledged. No reliance on Ray calling __del__.
                 self.metrics_reporter.end_call(succeeded)
+                # Diagnostic only, submitted AFTER the durable final ACK and
+                # BEFORE the result is returned. No new synchronous RPC/fsync.
+                # A sink restart can lose it; consumers must check coverage.
+                self._publish_timing({
+                        "call_id": self.metrics_reporter.call_id,
+                        "init_seconds": self._init_seconds,
+                        "init_to_first_call_seconds": self._first_call_delay,
+                        "operator_init_seconds": self._operator_init_seconds,
+                        "operator_seconds": self._operator_seconds,
+                        "mapper_seconds": self._mapper_seconds,
+                        "profile_seconds": self._profile_seconds,
+                        "ack_seconds": dict(self.metrics_reporter.rpc_seconds),
+                        "ack_attempts": dict(self.metrics_reporter.rpc_attempts),
+                    })
+
+    def _publish_timing(self, value):
+        try:
+            self._timing_ref = self.metrics_reporter.sink.record_actor_timing.remote(
+                self.actor_incarnation_id, value
+            )
+        except Exception as error:
+            logger.warning(f"ElasticJuicer diagnostic timing submission failed: {error}")
 
     def _seed_from_stage_profile(self, control_service) -> None:
         """Adopt a prior incarnation's learned bounds once, before any slice.
@@ -581,6 +618,13 @@ class RayAdaptiveMapperActor:
     def _process_strict(self, batch):
         """Run below Mapper's broad skip wrapper so OOM reaches the controller."""
 
+        started = time.perf_counter()
+        try:
+            return self._process_operator(batch)
+        finally:
+            self._operator_seconds += time.perf_counter() - started
+
+    def _process_operator(self, batch):
         process_batched = getattr(self.operator, "process_batched", None)
         if process_batched is None:
             return self.operator.process(batch)

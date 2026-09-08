@@ -30,6 +30,7 @@ from data_juicer.core.executor import ExecutorBase
 from data_juicer.core.executor.dag_execution_mixin import DAGExecutionMixin
 from data_juicer.core.executor.event_logging_mixin import EventLoggingMixin, EventType
 from data_juicer.core.ray_exporter import RayExporter
+from data_juicer.core.elasticjuicer.phase_timing import PhaseTiming, phase, timed
 from data_juicer.ops import load_ops
 from data_juicer.ops.op_fusion import fuse_operators
 from data_juicer.utils.ckpt_utils import CheckpointStrategy, RayCheckpointManager
@@ -45,14 +46,19 @@ _AUTO_CPU_PARTITION_CAP = 4
 class TempDirManager:
     """Context manager for temporary directory cleanup."""
 
-    def __init__(self, tmp_dir):
+    def __init__(self, tmp_dir, timing=None):
         self.tmp_dir = tmp_dir
+        self._ej_timing = timing
 
     def __enter__(self):
         os.makedirs(self.tmp_dir, exist_ok=True)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        with phase(self, "temp_cleanup"):
+            self._cleanup()
+
+    def _cleanup(self):
         if os.path.exists(self.tmp_dir):
             logger.info(f"Removing tmp dir {self.tmp_dir} ...")
             # in some cases, such as we mount OSS bucket with fuse device
@@ -377,6 +383,23 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             logger.info("Falling back to manual partition configuration")
 
     def run(self, load_data_np: Optional[PositiveInt] = None, skip_return=False):
+        self._ej_timing = PhaseTiming() if self._ej_cfg_get("elastic_juicer_execution_audit", False) else None
+        try:
+            return self._run_with_audit_cleanup(load_data_np, skip_return)
+        finally:
+            if self._ej_timing is not None:
+                from data_juicer.core.elasticjuicer.gpu_probe import atomic_write_json
+                context = self._ej_cfg_get("_elastic_juicer_audit_context")
+                if context:
+                    # Written after seal and cleanup. Not an execution ACK and
+                    # not included in its own wall budget; harness measures the gap.
+                    value = dict(self._ej_timing.snapshot(), run_id=context["run_id"])
+                    try:
+                        atomic_write_json(os.path.join(context["directory"], "elastic_juicer_phase_timing.json"), value)
+                    except Exception as error:
+                        logger.warning(f"ElasticJuicer diagnostic timing export failed: {error}")
+
+    def _run_with_audit_cleanup(self, load_data_np=None, skip_return=False):
         """
         Run the simplified partitioned dataset processing pipeline.
 
@@ -389,7 +412,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             Processed dataset
         """
         # Use TempDirManager to ensure cleanup of temporary files
-        with TempDirManager(self.tmp_dir):
+        with TempDirManager(self.tmp_dir, getattr(self, "_ej_timing", None)):
             self._ej_begin_execution_audit()
             succeeded = False
             try:
@@ -402,8 +425,10 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
                 finally:
                     lease = getattr(self, "_ej_gpu_placement_lease", None)
                     if lease is not None:
-                        lease.close()
+                        with phase(self, "placement_cleanup"):
+                            lease.close()
 
+    @timed("audit_setup")
     def _ej_begin_execution_audit(self):
         if not self._ej_cfg_get("elastic_juicer_execution_audit", False):
             return
@@ -424,6 +449,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         )
         atomic_write_json(os.path.join(self.work_dir, "elastic_juicer_metrics_run.json"), context)
 
+    @timed("seal")
     def _ej_finalize_execution_audit(self, succeeded):
         if not self._ej_cfg_get("_elastic_juicer_audit_context", None):
             return
@@ -558,14 +584,17 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
 
             # Export final dataset
             logger.info("Exporting final dataset...")
-            self.exporter.export(final_dataset.data, columns=columns)
+            with phase(self, "output_export"):
+                self.exporter.export(final_dataset.data, columns=columns)
         finally:
             try:
-                self._ej_persist_metrics_sidecar()
+                with phase(self, "final_audit_export"):
+                    self._ej_persist_metrics_sidecar()
             except Exception as error:
                 logger.warning(f"ElasticJuicer metrics sidecar: final flush failed ({error})")
             if captain_lifecycle is not None:
-                captain_lifecycle.close()
+                with phase(self, "captain_cleanup"):
+                    captain_lifecycle.close()
 
         job_duration = time.time() - job_start_time
         logger.info(f"✅ Job completed successfully in {job_duration:.2f}s")
@@ -694,6 +723,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         # Return as RayDataset wrapper
         return RayDataset(merged_dataset, cfg=self.cfg)
 
+    @timed("partition_execution")
     def _process_partition(
         self,
         partition,
@@ -722,10 +752,11 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
                 partition_dataset.set_elastic_juicer_partition_id(partition_id)
             processed_partition = self._process_with_checkpointing(partition_dataset, partition_id, partition_ops)
             if self._ej_cfg_get("elastic_juicer_execution_audit", False):
-                ray.get(self._ej_cfg_get("_elastic_juicer_metrics_sink").record_partition.remote(
-                    partition_id, self._partition_expected_rows.get(partition_id, 0),
-                    time.perf_counter() - measurement_start,
-                ), timeout=15)
+                partition_wall = time.perf_counter() - measurement_start
+                with phase(self, "partition_ack", partition_id=partition_id):
+                    ray.get(self._ej_cfg_get("_elastic_juicer_metrics_sink").record_partition.remote(
+                        partition_id, self._partition_expected_rows.get(partition_id, 0), partition_wall,
+                    ), timeout=15)
         except Exception as error:
             self.log_partition_failed(partition_id, str(error), retry_count=0)
             raise
@@ -1133,6 +1164,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             device_memory_budget_fraction=budget_fraction,
         )
 
+    @timed("probe_and_initial_plan")
     def _elastic_juicer_autoscale_setup(self, dataset, ops) -> None:
         """Run preflight probes and build the actor plan before partitions.
 
@@ -1474,6 +1506,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             op._elastic_juicer_plan_version = plan_envelope_fingerprint(plan)
             op._elastic_juicer_device_ids = list(stage_plan.device_ids)
 
+    @timed("placement_setup")
     def _ej_setup_gpu_placement(self, ops):
         if not self._ej_cfg_get("elastic_juicer_enforce_gpu_placement", False):
             return
@@ -1533,6 +1566,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             "topology": lease.topology, "cpus_per_device": cpus,
         })
 
+    @timed("boundary_observation")
     def _ej_collect_partition_observations(self, partition_id: int):
         """Aggregate metrics-sink events for one finished partition."""
 
@@ -1593,7 +1627,8 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         state = self._ej_autoscale_state
         controller = state["controller"]
         for i, partition in enumerate(partitions):
-            self._ej_apply_plan_to_ops(ops)
+            with phase(self, "boundary_apply_plan", partition_id=i):
+                self._ej_apply_plan_to_ops(ops)
             start = time.perf_counter()
             partition_id, processed_data = self._process_partition(partition, i, len(partitions), ops, True)
             wall_sec = time.perf_counter() - start
@@ -1601,7 +1636,8 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             rows = self._partition_expected_rows.get(partition_id, 0)
             goodput = rows / wall_sec if wall_sec > 0 else 0.0
             observations = self._ej_collect_partition_observations(partition_id)
-            self._ej_persist_metrics_sidecar()
+            with phase(self, "boundary_audit_export", partition_id=partition_id):
+                self._ej_persist_metrics_sidecar()
             detail = {
                 key: (
                     f"rps={value.rows_per_sec:.1f}",
@@ -1612,7 +1648,8 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             }
             logger.info(f"ElasticJuicer replan: partition {partition_id} observations {detail}")
             try:
-                changes = controller.on_partition_complete(partition_id, observations, goodput)
+                with phase(self, "boundary_controller", partition_id=partition_id):
+                    changes = controller.on_partition_complete(partition_id, observations, goodput)
             except Exception as error:
                 logger.warning(f"ElasticJuicer replan skipped for partition {partition_id}: {error}")
                 continue

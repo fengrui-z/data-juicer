@@ -62,12 +62,22 @@ class AcknowledgedMetricsReporter:
         self.call_id = 0
         self.buffer = []
         self.poisoned = False
+        self.rpc_seconds = {}
+        self.rpc_attempts = {}
         self.counts = {"succeeded_batches": 0, "failed_batches": 0, "oom_batches": 0}
         self._rpc("register_actor", identity)
 
     def _rpc(self, method, *args):
+        started = time.perf_counter()
+        try:
+            return self._rpc_impl(method, *args)
+        finally:
+            self.rpc_seconds[method] = self.rpc_seconds.get(method, 0.0) + time.perf_counter() - started
+
+    def _rpc_impl(self, method, *args):
         last_error = None
         for attempt in range(self.max_attempts):
+            self.rpc_attempts[method] = self.rpc_attempts.get(method, 0) + 1
             try:
                 reference = getattr(self.sink, method).remote(*args)
                 if self.ack_fn is not None:

@@ -40,6 +40,7 @@ class DurableExecutionSink(AsyncMetricsSink):
         self.executions = {}
         self.actors = {}
         self.partitions = {}
+        self.actor_timings = {}  # Ephemeral diagnostics, not execution evidence.
         self.sealed = False
         self.run_succeeded = False
         self._journal_failed = False
@@ -244,6 +245,13 @@ class DurableExecutionSink(AsyncMetricsSink):
             self._append("seal", {"succeeded": bool(succeeded)})
         return self.export_audit()
 
+    def record_actor_timing(self, incarnation, value):
+        actor = self.actors[incarnation]
+        if value["call_id"] > actor["last_call"]:
+            raise ValueError("timing cannot precede durable call completion")
+        if value["call_id"] >= self.actor_timings.get(incarnation, {}).get("call_id", 0):
+            self.actor_timings[incarnation] = value
+
     def export_audit(self):
         """Publish derived artifacts atomically; never export just the ring."""
         fd, temporary = tempfile.mkstemp(prefix=".metrics_", dir=self.work_dir)
@@ -320,6 +328,11 @@ class DurableExecutionSink(AsyncMetricsSink):
                 "executions": executions,
                 "actors": self.actors,
                 "partitions": self.partitions,
+                "actor_timings": self.actor_timings,
+                "actor_timings_complete": bool(self.actors) and all(
+                    value["last_call"] == 0 or self.actor_timings.get(key, {}).get("call_id") == value["last_call"]
+                    for key, value in self.actors.items()
+                ),
                 "sealed": self.sealed,
             },
         )
