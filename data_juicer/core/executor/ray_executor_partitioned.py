@@ -1607,7 +1607,10 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
                 observation.performance_window = build_window(
                     [event for event in serialized if event.get("stage_id") == key
                      and event.get("partition_id") == partition_id],
-                    partition_id, actors, snapshot.get("actor_timings", {}), resource_state,
+                    partition_id, actors, snapshot.get("actor_timings", {}),
+                    dict(resource_state, other_stage_envelopes={
+                        other: asdict(plan) for other, plan in state["controller"].plan.stages.items() if other != key
+                    }),
                 )
         logger.info(
             f"ElasticJuicer replan: partition {partition_id} sink events={len(events)} "

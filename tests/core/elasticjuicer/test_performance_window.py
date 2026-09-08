@@ -61,6 +61,8 @@ def test_same_cost_trial_verdict_uses_steady_window_not_partition_wall(tmp_path,
         ({"plan_version": "unexpected"}, "unexpected_plan_version"),
         ({"start": 1}, "stale_or_overlapping_window"),
         ({"partition_id": 0}, "wrong_partition_window"),
+        ({"startup_seconds": []}, "missing_startup_measurement"),
+        ({"startup_seconds": [float("nan")]}, "missing_startup_measurement"),
     ],
 )
 def test_incomparable_trial_rolls_back_without_freezing_and_reestablishes_baseline(tmp_path, change, reason):

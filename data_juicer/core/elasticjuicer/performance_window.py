@@ -64,6 +64,8 @@ class PerformanceWindow:
             reasons.append("invalid_cost_distribution")
         if not self.resource_state or not self.plan_version:
             reasons.append("missing_resource_or_plan")
+        if not self.startup_seconds or any(not math.isfinite(value) or value < 0 for value in self.startup_seconds):
+            reasons.append("missing_startup_measurement")
         if (
             self.steady_batches < 4
             or self.steady_rows < 16
