@@ -141,6 +141,7 @@ def test_positional_operator_configuration_partitions_context(monkeypatch):
     a, _ = make_context(batch(1), value.operator, value.controller, operator_args=("model-a",))
     b, _ = make_context(batch(1), value.operator, value.controller, operator_args=("model-b",))
     assert a != b
+    assert "model-a" not in a and "model-b" not in b
     assert make_context(batch(1), value.operator, value.controller, operator_args=(object(),))[0] == ""
 
 

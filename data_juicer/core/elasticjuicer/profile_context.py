@@ -49,7 +49,11 @@ def make_context(batch, operator, controller, execution_audit=None, operator_arg
         value = json.dumps({
             "schema_version": 1, "cost": json.loads(next(iter(costs))),
             "resources": resources,
-            "operator_args": operator_args,
+            # Constructor arguments may contain paths or credentials. Their
+            # identity matters to matching, not their plaintext in journals.
+            "operator_args_sha256": hashlib.sha256(json.dumps(
+                operator_args, sort_keys=True, separators=(",", ":"), allow_nan=False,
+            ).encode()).hexdigest(),
             "limits": [controller.min_batch_size, controller.max_batch_size, controller.hard_limit],
             "placement": (execution_audit or {}).get("placement"),
         }, sort_keys=True, separators=(",", ":"), allow_nan=False)
