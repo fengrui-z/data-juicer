@@ -51,6 +51,23 @@ cost signal, seed state, profiles path, and profile TTL.
 
 ## Default-change gates
 
+`elastic_juicer_execution_audit=true` opts the public partitioned executor
+into acknowledged delivery. Each run has an independent UUID and artifact
+directory, addressed by `elastic_juicer_metrics_run.json`. Actors acknowledge
+their applied cap, plan fingerprint, node/Ray identity and visible GPU UUIDs.
+Before returning each outer batch they durably acknowledge every micro-batch
+sample, the final sequence and cumulative outcome counts. The driver seals
+the run only after materialization and export; sealing fences new calls.
+No actor destructor or best-effort final asynchronous message is required.
+
+The driver-node sink uses a checksummed append-only journal, bounded packets
+and idempotent replay after lost acknowledgements or sink restart. A delivery
+failure prevents the actor result from being accepted. Torn/corrupt journals
+fail closed. The exported sidecar includes the journal's complete sample
+history, not just the bounded Captain sampling ring. Audit failure leaves the
+run incomplete. The opt-in adds blocking durability costs and does not by
+itself enforce GPU placement or certify an actor-resize performance gain.
+
 A successful, validated same-slice retry after a minimum-batch OOM records
 local recovery evidence. With the existing reprobe budget enabled, a fresh
 success window permits a larger-batch probe without requiring Captain.

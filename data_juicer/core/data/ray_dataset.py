@@ -462,6 +462,22 @@ class RayDataset(DJDataset):
                             effective_batch_size = batch_size
                             if plan_hard_cap is not None and int(plan_hard_cap) >= 1:
                                 effective_batch_size = min(batch_size, int(plan_hard_cap))
+                            execution_audit = None
+                            audit_cfg = getattr(self, "_elastic_juicer_cfg", None) or {}
+                            if audit_cfg.get("elastic_juicer_execution_audit", False):
+                                from uuid import uuid4
+
+                                context = audit_cfg.get("_elastic_juicer_audit_context")
+                                if not context:
+                                    raise ValueError("execution audit requires PartitionedRayExecutor.run()")
+                                execution_audit = {
+                                    "run_id": context["run_id"], "execution_id": uuid4().hex,
+                                    "stage_id": resolved_stage_id,
+                                    "partition_id": getattr(self, "_elastic_juicer_partition_id", None),
+                                    "plan_version": getattr(op, "_elastic_juicer_plan_version", "configured"),
+                                    "planned_actors": compute.max_size, "applied_cap": effective_batch_size,
+                                }
+                                ray.get(self._elastic_juicer_metrics_sink.expect_execution.remote(execution_audit), timeout=15)
                             self.data = self.data.map_batches(
                                 RayAdaptiveMapperActor,
                                 fn_args=None,
@@ -489,6 +505,7 @@ class RayDataset(DJDataset):
                                     "partition_id": getattr(self, "_elastic_juicer_partition_id", None),
                                     "controller_policy": getattr(self, "_elastic_juicer_controller_policy", "ej"),
                                     "cost_column": getattr(self, "_elastic_juicer_cost_column", None),
+                                    "execution_audit": execution_audit,
                                 },
                                 batch_size=batch_size,
                                 num_cpus=op.num_cpus,

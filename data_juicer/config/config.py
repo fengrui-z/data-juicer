@@ -818,6 +818,11 @@ def build_base_parser() -> ArgumentParser:
     from data_juicer.core.elasticjuicer.config_contract import CONTROLLER_POLICIES
 
     parser.add_argument(
+        "--elastic_juicer_execution_audit", type=bool, default=False,
+        help="Require durable actor metrics acknowledgements and execution identity in ray_partitioned.",
+    )
+
+    parser.add_argument(
         "--elastic_juicer_controller_policy",
         type=str,
         default="ej",

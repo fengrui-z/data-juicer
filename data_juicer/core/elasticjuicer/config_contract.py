@@ -144,6 +144,8 @@ def validate_elastic_juicer_config(cfg: Any, *, require_job_id: bool = False) ->
 
     if not enabled:
         active_options = []
+        if _get(cfg, "elastic_juicer_execution_audit", False):
+            active_options.append("elastic_juicer_execution_audit")
         if policy != "ej":
             active_options.append("elastic_juicer_controller_policy")
         if cost_column is not None:

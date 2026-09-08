@@ -159,6 +159,33 @@ process:
         self.fail(f"timed out waiting for expected metrics; last snapshot={snapshot}")
 
     @TEST_TAG("ray")
+    def test_public_run_confirms_execution_and_durable_final_watermarks(self):
+        cfg = init_configs(["--config", self.config_path])
+        cfg.work_dir = self.work_dir
+        cfg.elastic_juicer_execution_audit = True
+        cfg.elastic_juicer_metrics_sink_max_events = 1
+        cfg.elastic_juicer_captain_enabled = False
+        cfg.elastic_juicer_profile_seed = False
+        executor = PartitionedRayExecutor(cfg)
+        try:
+            executor.run(skip_return=True)
+            with open(os.path.join(self.work_dir, "elastic_juicer_metrics_run.json")) as handle:
+                context = json.load(handle)
+            with open(os.path.join(context["directory"], "elastic_juicer_metrics_integrity.json")) as handle:
+                integrity = json.load(handle)
+            self.assertTrue(integrity["complete"])
+            self.assertGreater(integrity["buffer_evictions"], 0)
+            self.assertEqual(integrity["received_events"], integrity["persisted_events"])
+            with open(os.path.join(context["directory"], "elastic_juicer_execution_audit.json")) as handle:
+                audit = json.load(handle)
+            self.assertEqual({value["partition_id"] for value in audit["executions"].values()}, {0, 1})
+            self.assertTrue(all(value["applied"] for value in audit["executions"].values()))
+            self.assertTrue(all(value["final_sequence"] > 0 for value in audit["actors"].values()))
+            self.assertEqual(len(self._read_exported_rows()), self.NUM_ROWS)
+        finally:
+            self._shutdown_job_services(cfg)
+
+    @TEST_TAG("ray")
     def test_public_run_proves_quota_seed_partition_id_and_manifest(self):
         import ray
 

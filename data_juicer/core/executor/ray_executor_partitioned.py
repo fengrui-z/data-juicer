@@ -390,7 +390,42 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         """
         # Use TempDirManager to ensure cleanup of temporary files
         with TempDirManager(self.tmp_dir):
-            return self._run_impl(load_data_np, skip_return)
+            self._ej_begin_execution_audit()
+            succeeded = False
+            try:
+                result = self._run_impl(load_data_np, skip_return)
+                succeeded = True
+                return result
+            finally:
+                self._ej_finalize_execution_audit(succeeded)
+
+    def _ej_begin_execution_audit(self):
+        if not self._ej_cfg_get("elastic_juicer_execution_audit", False):
+            return
+        from uuid import uuid4
+        from data_juicer.core.elasticjuicer.execution_audit import create_durable_execution_sink
+        from data_juicer.core.elasticjuicer.gpu_probe import atomic_write_json
+
+        run_id = uuid4().hex
+        directory = os.path.join(self.work_dir, "elastic_juicer_runs", run_id)
+        job_id = self._ej_cfg_get("job_id")
+        context = {"run_id": run_id, "job_id": job_id, "directory": directory}
+        self.cfg["_elastic_juicer_audit_context"] = context
+        self.cfg["_elastic_juicer_metrics_sink"] = create_durable_execution_sink(
+            job_id, run_id, directory,
+            max_events=int(self._ej_cfg_get("elastic_juicer_metrics_sink_max_events", 2048)),
+        )
+        atomic_write_json(os.path.join(self.work_dir, "elastic_juicer_metrics_run.json"), context)
+
+    def _ej_finalize_execution_audit(self, succeeded):
+        if not self._ej_cfg_get("_elastic_juicer_audit_context", None):
+            return
+        sink = self._ej_cfg_get("_elastic_juicer_metrics_sink")
+        # Every returned actor batch has already ACKed its watermark. The
+        # public run's materialization/export barrier now fences all new work.
+        status = ray.get(sink.seal_run.remote(succeeded), timeout=30)
+        if succeeded and not status["complete"]:
+            raise RuntimeError(f"ElasticJuicer final delivery was not confirmed: {status}")
 
     def _run_impl(self, load_data_np: Optional[PositiveInt] = None, skip_return=False):
         """
@@ -1420,6 +1455,8 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             stage_plan = plan.stages[stage_key]
             op.num_proc = stage_plan.planned_actors
             op._elastic_juicer_batch_hard_cap = stage_plan.batch_hard_cap
+            from data_juicer.core.elasticjuicer.parallelism_planner import plan_envelope_fingerprint
+            op._elastic_juicer_plan_version = plan_envelope_fingerprint(plan)
 
     def _ej_collect_partition_observations(self, partition_id: int):
         """Aggregate metrics-sink events for one finished partition."""
@@ -1457,6 +1494,9 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         sink = self._ej_cfg_get("_elastic_juicer_metrics_sink", None)
         if sink is None:
             return 0
+        if self._ej_cfg_get("_elastic_juicer_audit_context", None):
+            status = ray.get(sink.export_audit.remote(), timeout=30)
+            return status["persisted_events"]
         try:
             snapshot = ray.get(sink.snapshot.remote(), timeout=15)
         except Exception as error:

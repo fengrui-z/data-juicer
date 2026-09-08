@@ -123,6 +123,7 @@ class RayAdaptiveMapperActor:
         profile_ack_fn: Optional[Callable] = None,
         controller_policy: str = "ej",
         cost_column: Optional[str] = None,
+        execution_audit: Optional[Mapping] = None,
     ):
         operator_args = tuple(operator_args or ())
         operator_kwargs = dict(operator_kwargs or {})
@@ -235,7 +236,21 @@ class RayAdaptiveMapperActor:
             self._seed_from_stage_profile(self._profile_control_service)
         self.sampler = sampler_factory(sample_interval_sec=sample_interval_sec)
         self.metrics_reporter = None
-        if metrics_sink is not None:
+        self._execution_audit = execution_audit
+        if execution_audit is not None:
+            from .acknowledged_metrics import AcknowledgedMetricsReporter, runtime_identity
+
+            identity = {
+                **runtime_identity(), **dict(execution_audit),
+                "actor_id": self.actor_id, "actor_incarnation_id": self.actor_incarnation_id,
+                "stage_id": self.stage_id, "op_name": self.op_name, "partition_id": self.partition_id,
+                "applied_cap": self.controller.max_batch_size,
+            }
+            self.metrics_reporter = AcknowledgedMetricsReporter(
+                metrics_sink, self.job_id, execution_audit["run_id"], identity,
+                self._metrics_control_state, max_buffered=metrics_max_in_flight,
+            )
+        elif metrics_sink is not None:
             self.metrics_reporter = AsyncMetricsReporter(
                 sink_handle=metrics_sink,
                 job_id=self.job_id,
@@ -279,8 +294,14 @@ class RayAdaptiveMapperActor:
             self.control_poller.start()
 
     def __call__(self, batch):
+        if self._execution_audit is not None:
+            from .adaptive_mapper import _batch_length
+            self.metrics_reporter.begin_call(_batch_length(batch))
+        succeeded = False
         try:
-            return self.mapper(batch)
+            result = self.mapper(batch)
+            succeeded = True
+            return result
         except Exception as error:
             if is_oom_error(error) or not getattr(self.operator, "skip_op_error", False):
                 raise
@@ -290,6 +311,10 @@ class RayAdaptiveMapperActor:
             return self._empty_batch(batch)
         finally:
             self._report_stage_profile()
+            if self._execution_audit is not None:
+                # Do not return data until all metrics and the final sequence
+                # are acknowledged. No reliance on Ray calling __del__.
+                self.metrics_reporter.end_call(succeeded)
 
     def _seed_from_stage_profile(self, control_service) -> None:
         """Adopt a prior incarnation's learned bounds once, before any slice.

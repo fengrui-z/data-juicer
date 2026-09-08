@@ -271,6 +271,7 @@ def test_enabled_flag_installs_one_actor_local_adaptive_wrapper(actor_pool_strat
             "partition_id": None,
             "controller_policy": "ej",
             "cost_column": None,
+            "execution_audit": None,
         },
         batch_size=16,
         num_cpus=operator.num_cpus,
