@@ -8,6 +8,7 @@ from dataclasses import asdict, dataclass, is_dataclass
 from typing import Callable, Deque, Optional
 
 from .actor_resource_sampler import ActorResourceSnapshot
+from .oom import snapshot_is_oom
 
 METRICS_EVENT_SCHEMA_VERSION = 1
 METRICS_EVENTS_FILENAME = "elastic_juicer_metrics_events.jsonl"
@@ -141,12 +142,23 @@ class AsyncMetricsSink:
         self._events: Deque[ActorMetricsEvent] = deque(maxlen=max_events)
         self._received_events = 0
         self._dropped_events = 0
+        self._last_sequence = {}
+        self._sequence_gaps = 0
+        self._out_of_order_events = 0
+        self._outcome_counts = {"succeeded_batches": 0, "failed_batches": 0, "oom_batches": 0}
 
     def record(self, event: ActorMetricsEvent) -> None:
         if not isinstance(event, ActorMetricsEvent):
             raise TypeError("event must be an ActorMetricsEvent")
         if event.job_id != self.job_id:
             raise ValueError(f"event job_id {event.job_id!r} does not match sink job_id {self.job_id!r}")
+        previous = self._last_sequence.get(event.actor_incarnation_id, 0)
+        self._sequence_gaps += max(0, event.sequence - previous - 1)
+        self._out_of_order_events += int(event.sequence <= previous)
+        self._last_sequence[event.actor_incarnation_id] = max(previous, event.sequence)
+        outcome = "succeeded_batches" if event.snapshot.succeeded else "failed_batches"
+        self._outcome_counts[outcome] += 1
+        self._outcome_counts["oom_batches"] += int(snapshot_is_oom(event.snapshot))
         if len(self._events) == self.max_events:
             self._dropped_events += 1
         self._events.append(event)
@@ -160,6 +172,9 @@ class AsyncMetricsSink:
             "max_events": self.max_events,
             "received_events": self._received_events,
             "dropped_events": self._dropped_events,
+            "sequence_gaps": self._sequence_gaps,
+            "out_of_order_events": self._out_of_order_events,
+            "outcome_counts": dict(self._outcome_counts),
             "events": list(self._events),
         }
 

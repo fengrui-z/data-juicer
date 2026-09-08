@@ -14,6 +14,23 @@ from data_juicer.core.elasticjuicer.actor_resource_sampler import (
 MB = 1024 * 1024
 
 
+@pytest.mark.parametrize("error, expected", [
+    (MemoryError("allocation failed"), True),
+    (RuntimeError("CUDA out of memory"), True),
+    (RuntimeError("shape mismatch"), False),
+    (ValueError("out of memory in a label"), False),
+])
+def test_snapshot_records_shared_oom_classification(error, expected):
+    sampler = ActorResourceSampler(process=FakeProcess([100]), cuda_backend=None)
+    try:
+        with pytest.raises(type(error)):
+            with sampler.measure(1):
+                raise error
+        assert sampler.last_snapshot.oom is expected
+    finally:
+        sampler.close()
+
+
 class FakeProcess:
     pid = 1234
 

@@ -8,6 +8,7 @@ from typing import Callable, Optional
 
 import psutil
 
+from .oom import is_oom_error
 from .profiler.metrics import MetricScope
 
 _BYTES_PER_MB = 1024 * 1024
@@ -54,6 +55,7 @@ class ActorResourceSnapshot:
     process_confidence: float = 1.0
     rss_peak_confidence: float = 1.0
     schema_version: int = ACTOR_RESOURCE_SCHEMA_VERSION
+    oom: Optional[bool] = None
 
     def __post_init__(self):
         if self.schema_version != ACTOR_RESOURCE_SCHEMA_VERSION:
@@ -238,6 +240,7 @@ class BatchResourceMeasurement:
             cuda=self._read_cuda_memory(),
             succeeded=exc_type is None,
             error_type=None if exc_type is None else exc_type.__name__,
+            oom=False if exc_value is None else is_oom_error(exc_value),
             rss_peak_confidence=self._rss_peak_confidence(latency_seconds),
         )
         self.sampler._record(self.snapshot)

@@ -1450,20 +1450,9 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         return observations
 
     def _ej_persist_metrics_sidecar(self) -> int:
-        """Append unseen metrics-sink events to the durable JSONL sidecar.
+        """Persist received metrics and a conservative delivery audit."""
 
-        The sink keeps a bounded deque that can evict old events under load,
-        so the driver drains it incrementally: every serial-partition
-        boundary and the job exit path persist events not yet written, keyed
-        by ``(actor_incarnation_id, sequence)``.  Experiments count OOM
-        probes, recovery, and adaptation evidence from this file instead of
-        Ray logs (which may be deduplicated or truncated).
-        """
-
-        from data_juicer.core.elasticjuicer.async_metrics_sink import (
-            METRICS_EVENTS_FILENAME,
-            serialize_metrics_event,
-        )
+        from data_juicer.core.elasticjuicer.metrics_audit import MetricsSidecarWriter
 
         sink = self._ej_cfg_get("_elastic_juicer_metrics_sink", None)
         if sink is None:
@@ -1473,47 +1462,15 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         except Exception as error:
             logger.warning(f"ElasticJuicer metrics sidecar: snapshot failed ({error})")
             return 0
-        events = (snapshot or {}).get("events", [])
-        if not events:
-            return 0
-        written = getattr(self, "_ej_sidecar_written_keys", None)
-        if written is None:
-            written = set()
-            self._ej_sidecar_written_keys = written
-        fresh = []
-        for event in events:
-            if isinstance(event, dict):
-                key = (event.get("actor_incarnation_id"), event.get("sequence"))
-                payload = event
-            else:
-                key = (
-                    getattr(event, "actor_incarnation_id", None),
-                    getattr(event, "sequence", None),
-                )
-                try:
-                    payload = serialize_metrics_event(event)
-                except Exception as error:
-                    logger.debug(f"ElasticJuicer metrics sidecar: skip unserializable event ({error})")
-                    continue
-            if key in written:
-                continue
-            written.add(key)
-            fresh.append(json.dumps(payload, sort_keys=True, default=str))
-        if not fresh:
-            return 0
-        path = os.path.join(self.work_dir, METRICS_EVENTS_FILENAME)
         try:
-            os.makedirs(self.work_dir, exist_ok=True)
-            with open(path, "a") as handle:
-                for line in fresh:
-                    handle.write(line + "\n")
-                handle.flush()
-                os.fsync(handle.fileno())
+            writer = getattr(self, "_ej_sidecar_writer", None)
+            if writer is None:
+                writer = MetricsSidecarWriter(self.work_dir)
+                self._ej_sidecar_writer = writer
+            return writer.persist(snapshot or {})
         except OSError as error:
             logger.warning(f"ElasticJuicer metrics sidecar: write failed ({error})")
             return 0
-        logger.info(f"ElasticJuicer metrics sidecar: persisted {len(fresh)} events to {path}")
-        return len(fresh)
 
     def _run_partitions_serial_with_replan(self, partitions, ops, processed_partitions) -> None:
         """Sequential partition loop with replanning at each boundary."""

@@ -77,6 +77,18 @@ Old probe caches are rejected and must be reprobed. This linear model does
 not yet predict input-feature-dependent costs, fragmentation, or changes
 in model residency; it is not a physical memory-isolation guarantee.
 
+Metrics snapshots carry the same OOM classification used by local retries.
+The sink retains received success/failure/OOM counters and sequence-gap
+counts independently of its bounded sample buffer. The driver writes
+`elastic_juicer_metrics_integrity.json` alongside the event sidecar, including
+received versus persisted counts, known loss and write failures. Events are
+acknowledged only after `fsync`; consumers deduplicate by job, incarnation
+and sequence because a failed append may be retried. These counters cover
+sink receipt, not all producer attempts. Without an expected actor roster
+and final-sequence acknowledgements, end-to-end completeness remains
+unverified (`complete=false`), even when the observed prefix is intact.
+This audit exposes loss; it does not yet provide a reliable transport.
+
 Defaults change only through a separately reviewed decision record:
 
 - `profile_seed=true`: at least 10 paired slow-start/high-cost recovery runs,

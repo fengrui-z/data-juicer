@@ -38,6 +38,7 @@ from typing import Any, Dict, Iterable, List, Optional
 
 from loguru import logger
 
+from .oom import snapshot_is_oom
 from .parallelism_planner import (
     ClusterSpec,
     RuntimePlan,
@@ -48,8 +49,6 @@ from .parallelism_planner import (
 )
 
 PLAN_EVENTS_FILENAME = "plan_events.jsonl"
-
-OOM_ERROR_MARKER = "outofmemory"
 
 
 @dataclass(frozen=True)
@@ -120,9 +119,8 @@ def aggregate_stage_observations(
         if snapshot is None:
             continue
         observation = observations.setdefault(stage_key, StageObservation(stage_key=stage_key))
-        error_type = _event_attr(snapshot, "error_type", None) or ""
         succeeded = bool(_event_attr(snapshot, "succeeded", True))
-        if not succeeded and OOM_ERROR_MARKER in str(error_type).lower():
+        if snapshot_is_oom(snapshot):
             observation.oom_batches += 1
             continue
         if not succeeded:

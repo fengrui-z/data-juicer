@@ -398,6 +398,12 @@ def _event(stage="stage:a", partition=0, batch_size=8, peak_mb=100.0, throughput
 
 
 class ObservationAggregationTest(unittest.TestCase):
+    def test_structured_oom_classification_matches_the_local_retry_path(self):
+        event = _event(ok=False, error="RuntimeError")
+        event.snapshot.oom = True
+        observation = aggregate_stage_observations([event])["stage:a"]
+        self.assertEqual(observation.oom_batches, 1)
+
     def test_resident_model_memory_does_not_turn_batch_changes_into_drift(self):
         costs = []
         for size in (16, 1):

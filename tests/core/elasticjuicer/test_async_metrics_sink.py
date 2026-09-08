@@ -1,3 +1,4 @@
+from dataclasses import replace
 from types import SimpleNamespace
 
 import pytest
@@ -66,6 +67,18 @@ def test_sink_history_is_bounded_and_counts_evictions():
     assert [event.sequence for event in snapshot["events"]] == [3, 4]
     assert snapshot["received_events"] == 4
     assert snapshot["dropped_events"] == 2
+
+
+def test_sink_retains_counters_and_sequence_gaps_after_eviction():
+    sink = AsyncMetricsSink(job_id="job-a", max_events=1)
+    sink.record(replace(_event("job-a", 1), snapshot=replace(
+        _snapshot(succeeded=False, error_type="RuntimeError"), oom=True,
+    )))
+    sink.record(_event("job-a", 3))
+    snapshot = sink.snapshot()
+    assert snapshot["outcome_counts"] == {"succeeded_batches": 1, "failed_batches": 1, "oom_batches": 1}
+    assert snapshot["sequence_gaps"] == 1
+    assert [event.sequence for event in snapshot["events"]] == [3]
 
 
 def test_reporter_uses_bounded_fire_and_forget_window():
