@@ -66,6 +66,17 @@ learned cap. GPU fractions are accounted across all planned stages on each
 device. These are plan-feasibility constraints, not proof of runtime placement
 or physical VRAM isolation.
 
+The memory model reserves resident memory before dividing the remaining
+budget by per-row working memory. Probe schema v3 records CUDA allocator
+residency after warmup and the steady-state allocator peak; online drift
+uses `(allocator_peak - allocator_resident) / batch_size` in the same scope.
+Whole-device free-memory deltas remain conservative planning diagnostics,
+not interchangeable drift baselines. Missing or incompatible residency
+measurements disable that stage's memory-drift signal, not local OOM safety.
+Old probe caches are rejected and must be reprobed. This linear model does
+not yet predict input-feature-dependent costs, fragmentation, or changes
+in model residency; it is not a physical memory-isolation guarantee.
+
 Defaults change only through a separately reviewed decision record:
 
 - `profile_seed=true`: at least 10 paired slow-start/high-cost recovery runs,

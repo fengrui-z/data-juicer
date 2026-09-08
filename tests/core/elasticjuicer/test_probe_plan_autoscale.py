@@ -5,6 +5,7 @@ import json
 import os
 import tempfile
 import unittest
+from unittest.mock import MagicMock, patch
 
 from data_juicer.core.elasticjuicer.config_contract import (
     effective_elastic_juicer_config,
@@ -25,6 +26,7 @@ from data_juicer.core.elasticjuicer.gpu_probe import (
     load_probe_results,
     probe_fingerprint,
     probe_gpu_stages,
+    probe_stage_on_worker,
     resolve_probe_cache,
     sample_columns_digest,
     save_probe_results,
@@ -41,6 +43,7 @@ from data_juicer.core.elasticjuicer.parallelism_planner import (
     RuntimePlan,
     StageDemand,
     StagePlan,
+    _batch_hard_cap,
     plan_parallelism,
 )
 
@@ -395,6 +398,26 @@ def _event(stage="stage:a", partition=0, batch_size=8, peak_mb=100.0, throughput
 
 
 class ObservationAggregationTest(unittest.TestCase):
+    def test_resident_model_memory_does_not_turn_batch_changes_into_drift(self):
+        costs = []
+        for size in (16, 1):
+            event = _event(batch_size=size, peak_mb=(8 + 0.1 * size) * 1024)
+            observation = aggregate_stage_observations(
+                [event], resident_bytes_by_stage={"stage:a": 8 * 1024**3}
+            )["stage:a"]
+            costs.append(observation.bytes_per_row)
+        self.assertAlmostEqual(costs[0] / 1024**3, 0.1)
+        self.assertAlmostEqual(costs[1] / 1024**3, 0.1)
+
+    def test_missing_or_incompatible_resident_measurement_disables_memory_drift(self):
+        for residents in ({}, {"stage:a": 200 * 1024**2}):
+            with self.subTest(residents=residents):
+                result = aggregate_stage_observations(
+                    [_event(peak_mb=100)], resident_bytes_by_stage=residents
+                )["stage:a"]
+                self.assertIsNone(result.bytes_per_row)
+                self.assertEqual(result.succeeded_batches, 1)
+
     def test_partition_filter_and_oom_counting(self):
         events = [
             _event(partition=0, peak_mb=100, throughput=50),
@@ -416,6 +439,79 @@ class ObservationAggregationTest(unittest.TestCase):
         events = [_event(partition=5)]
         self.assertEqual(aggregate_stage_observations(events, partition_id=0), {})
 
+
+
+class ResidentMemoryModelTest(unittest.TestCase):
+    def test_probe_samples_allocator_residency_after_lazy_warmup(self):
+        cuda = MagicMock()
+        cuda.get_device_name.return_value = "FakeGPU"
+        cuda.mem_get_info.return_value = (100_000, 200_000)
+        cuda.memory_allocated.return_value = 0
+        cuda.max_memory_allocated.return_value = 9600
+
+        class LazyModel(_FakeOp):
+            def process_batched(self, samples):
+                cuda.memory_allocated.return_value = 8000
+                return super().process_batched(samples)
+
+        with patch("torch.cuda", cuda):
+            result = probe_stage_on_worker(
+                LazyModel, (), {}, {"sample_id": list(range(16))}, 16,
+                {"warmup_batches": 1, "steady_batches": 1, "batch_cap_multiplier": 1},
+            )
+        self.assertEqual(result["allocator_resident_bytes"], 8000)
+        self.assertEqual(result["allocator_peak_bytes"], 9600)
+        self.assertEqual(result["resident_bytes"], 0)  # Different diagnostic scope.
+
+    def test_legacy_cache_is_rejected_instead_of_reusing_total_peak_model(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, PROBE_RESULTS_FILENAME)
+            atomic_write_json(path, {"schema_version": 2, "stages": {"k": _result().to_dict()}})
+            self.assertIsNone(load_probe_results(path))
+
+    def test_budget_reserves_resident_memory_before_sizing_working_batch(self):
+        demand = StageDemand(
+            stage_key="s", op_name="model", probed_throughput_rps=100,
+            effective_peak_bytes=9600, resident_bytes=8000,
+            batch_size=16, available_batches=100,
+        )
+        self.assertEqual(demand.per_row_vram_bytes, 100)
+        self.assertEqual(_batch_hard_cap(demand, 10000), 20)
+        self.assertEqual(_batch_hard_cap(demand, 8100), 1)
+
+    def test_zero_working_slope_does_not_authorize_unbounded_growth(self):
+        demand = StageDemand(
+            stage_key="s", op_name="model", probed_throughput_rps=100,
+            effective_peak_bytes=8000, resident_bytes=8000,
+            batch_size=16, available_batches=100,
+        )
+        self.assertEqual(_batch_hard_cap(demand, 10000), 16)
+
+    def test_probe_preserves_headroom_on_resident_and_working_memory(self):
+        result = _result(peak=9600, batch_size=16)
+        result.allocator_resident_bytes = 8000
+        result.allocator_peak_bytes = 9600
+        self.assertEqual(result.resident_bytes_with_headroom, 8800)
+        self.assertEqual(result.working_bytes_per_row, 100)
+        self.assertAlmostEqual(result.memory_headroom_factor, 1.1)
+
+    def test_replan_budget_pressure_includes_resident_memory(self):
+        cluster = ClusterSpec(total_cpus=4, num_devices=1, device_memory_bytes=10000, device_memory_budget_fraction=1)
+        demand = StageDemand(
+            stage_key="s", op_name="model", probed_throughput_rps=100,
+            effective_peak_bytes=9600, resident_bytes=8000,
+            batch_size=16, available_batches=100,
+        )
+        stage = StagePlan(stage_key="s", op_name="model", planned_actors=1,
+                          device_ids=[0], per_actor_vram_budget_bytes=10000, batch_hard_cap=20)
+        controller = PartitionReplanController(
+            RuntimePlan(stages={"s": stage}, cluster=cluster), {"s": demand}, cluster,
+            ReplanConfig(), baseline_bytes_per_row={"s": 100},
+        )
+        observations = {"s": StageObservation(stage_key="s", bytes_per_row=200, sample_count=10)}
+        changes = controller.on_partition_complete(0, observations, 10)
+        self.assertEqual([change.action for change in changes], ["scale_down"])
+        self.assertEqual(stage.batch_hard_cap, 10)
 
 
 class ReplanGpuFeasibilityTest(unittest.TestCase):
@@ -956,6 +1052,8 @@ class WarmCacheGatingTest(unittest.TestCase):
         return {
             "gpu_name": "FakeGPU",
             "resident_bytes": 1_000_000,
+            "allocator_resident_bytes": 2_000_000,
+            "allocator_peak_bytes": 8_000_000,
             "effective_peak_bytes": 8_000_000,
             "peak_bytes_with_headroom": 8_800_000,
             "throughput_rows_per_sec": 100.0,
@@ -1026,6 +1124,8 @@ class WarmCacheGatingTest(unittest.TestCase):
             )
             self.assertEqual(ray_fake.probe_calls, 1)
             self.assertFalse(results[spec.stage_key].cache_hit)
+            self.assertEqual(results[spec.stage_key].allocator_resident_bytes, 2_000_000)
+            self.assertEqual(results[spec.stage_key].working_bytes_per_row, 750_000)
             payload = load_probe_results(path)
             self.assertEqual(payload["dataset"]["fingerprint"], changed)
             self.assertEqual(payload["dataset"]["total_rows"], 2)

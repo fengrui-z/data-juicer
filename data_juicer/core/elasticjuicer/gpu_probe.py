@@ -41,7 +41,7 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from .oom import is_oom_error
 
-PROBE_RESULTS_SCHEMA_VERSION = 2
+PROBE_RESULTS_SCHEMA_VERSION = 3
 PROBE_RESULTS_FILENAME = "gpu_probe_results.json"
 
 
@@ -112,6 +112,31 @@ class StageProbeResult:
     rows_probed: int
     cache_hit: bool = False
     init_seconds: float = 0.0
+    allocator_resident_bytes: Optional[int] = None
+    allocator_peak_bytes: Optional[int] = None
+
+    @property
+    def memory_headroom_factor(self) -> float:
+        return max(1.0, self.peak_bytes_with_headroom / max(1, self.effective_peak_bytes))
+
+    @property
+    def resident_bytes_with_headroom(self) -> int:
+        # Use the same allocator scope as online CUDA peaks. Whole-device
+        # free-memory deltas can include unrelated processes and caches.
+        if self.working_bytes_per_row is None:
+            return 0
+        return int(self.allocator_resident_bytes * self.memory_headroom_factor)
+
+    @property
+    def working_bytes_per_row(self) -> Optional[float]:
+        if (
+            self.allocator_resident_bytes is None
+            or self.allocator_peak_bytes is None
+            or not 0 <= self.allocator_resident_bytes <= self.allocator_peak_bytes
+            or self.probed_batch_size < 1
+        ):
+            return None
+        return (self.allocator_peak_bytes - self.allocator_resident_bytes) / self.probed_batch_size
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -361,6 +386,8 @@ def probe_stage_on_worker(
         warm_index += 1
 
     # Steady-state throughput + peak memory at the configured batch size.
+    # Warmup may lazily initialize the model, so measure residency here.
+    allocator_resident_bytes = torch.cuda.memory_allocated()
     torch.cuda.reset_peak_memory_stats()
     rows = 0
     steady_wall = 0.0
@@ -398,6 +425,8 @@ def probe_stage_on_worker(
     return {
         "gpu_name": gpu_name,
         "resident_bytes": int(resident_bytes),
+        "allocator_resident_bytes": int(allocator_resident_bytes),
+        "allocator_peak_bytes": int(torch_peak_bytes),
         "effective_peak_bytes": int(effective_peak_bytes),
         "peak_bytes_with_headroom": int(peak_with_headroom),
         "throughput_rows_per_sec": float(throughput),
@@ -498,6 +527,8 @@ def probe_gpu_stages(
             fingerprint=fingerprint,
             gpu_name=raw["gpu_name"],
             resident_bytes=raw["resident_bytes"],
+            allocator_resident_bytes=raw.get("allocator_resident_bytes"),
+            allocator_peak_bytes=raw.get("allocator_peak_bytes"),
             effective_peak_bytes=raw["effective_peak_bytes"],
             peak_bytes_with_headroom=raw["peak_bytes_with_headroom"],
             throughput_rows_per_sec=raw["throughput_rows_per_sec"],

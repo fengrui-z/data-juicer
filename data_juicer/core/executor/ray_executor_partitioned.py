@@ -1307,6 +1307,8 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
                     op_name=getattr(op, "_name", None) or op.__class__.__name__,
                     probed_throughput_rps=throughput,
                     effective_peak_bytes=peak_bytes,
+                    resident_bytes=result.resident_bytes_with_headroom,
+                    memory_headroom_factor=result.memory_headroom_factor,
                     batch_size=batch_size,
                     available_batches=max(1, rows_per_partition // batch_size),
                     num_gpus=float(getattr(op, "num_gpus", 1.0) or 1.0),
@@ -1371,17 +1373,18 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             cooldown_partitions=int(self._ej_cfg_get("elastic_juicer_parallelism_cooldown_partitions", 1)),
         )
         baseline_bytes_per_row = {}
+        resident_bytes_by_stage = {}
         for stage_key, result in probe_results.items():
-            batch_size = int(getattr(result, "probed_batch_size", 0) or 0)
-            peak_bytes = int(getattr(result, "effective_peak_bytes", 0) or 0)
-            if batch_size > 0 and peak_bytes > 0:
-                baseline_bytes_per_row[stage_key] = peak_bytes / float(batch_size)
+            if result.working_bytes_per_row is not None:
+                baseline_bytes_per_row[stage_key] = result.working_bytes_per_row
+                resident_bytes_by_stage[stage_key] = result.allocator_resident_bytes
         controller = PartitionReplanController(
             plan,
             demands,
             cluster,
             replan_config,
             baseline_bytes_per_row=baseline_bytes_per_row,
+            resident_bytes_by_stage=resident_bytes_by_stage,
             events_path=os.path.join(work_dir, PLAN_EVENTS_FILENAME),
             max_replicas_per_device=max_replicas,
         )
@@ -1435,7 +1438,11 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             logger.warning(f"ElasticJuicer replan: metrics snapshot failed ({error})")
             return {}
         events = (snapshot or {}).get("events", [])
-        observations = aggregate_stage_observations(events, partition_id=partition_id)
+        state = getattr(self, "_ej_autoscale_state", None)
+        residents = state["controller"].resident_bytes_by_stage if state else {}
+        observations = aggregate_stage_observations(
+            events, partition_id=partition_id, resident_bytes_by_stage=residents
+        )
         logger.info(
             f"ElasticJuicer replan: partition {partition_id} sink events={len(events)} "
             f"stages_observed={len(observations)}"

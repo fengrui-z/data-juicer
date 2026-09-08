@@ -30,6 +30,7 @@ unchanged) is recorded as a no-op.  All decisions are appended to
 from __future__ import annotations
 
 import json
+import math
 import os
 import time
 from dataclasses import dataclass, field
@@ -41,6 +42,7 @@ from .parallelism_planner import (
     ClusterSpec,
     RuntimePlan,
     StageDemand,
+    _batch_hard_cap,
     device_replica_counts,
     fractional_actor_entitlement,
 )
@@ -92,12 +94,16 @@ def _event_attr(event: Any, name: str, default: Any = None) -> Any:
 def aggregate_stage_observations(
     events: Iterable[Any],
     partition_id: Optional[int] = None,
+    *,
+    resident_bytes_by_stage: Optional[Dict[str, int]] = None,
 ) -> Dict[str, StageObservation]:
     """Fold metrics-sink events into per-stage observations for a partition.
 
     Accepts ActorMetricsEvent instances or plain dicts (tests).  Events
     from other partitions are ignored; per-row VRAM is derived from CUDA
-    peak allocations so drift detection needs no cost column.
+    peak allocations less same-scope probed residency. Supplying a residency
+    map disables memory-drift evidence for stages missing that measurement.
+    Omitted maps retain legacy total-peak aggregation for offline callers.
     """
 
     observations: Dict[str, StageObservation] = {}
@@ -129,8 +135,12 @@ def aggregate_stage_observations(
         batch_size = _event_attr(snapshot, "batch_size", 0)
         if cuda is not None and batch_size:
             peak_bytes = float(_event_attr(cuda, "peak_allocated_mb", 0.0)) * 1024 * 1024
-            if peak_bytes > 0:
-                bytes_per_row_values.setdefault(stage_key, []).append(peak_bytes / float(batch_size))
+            resident = 0 if resident_bytes_by_stage is None else resident_bytes_by_stage.get(stage_key)
+            if (
+                resident is not None and math.isfinite(resident)
+                and math.isfinite(peak_bytes) and 0 <= resident <= peak_bytes and peak_bytes > 0
+            ):
+                bytes_per_row_values.setdefault(stage_key, []).append((peak_bytes - resident) / float(batch_size))
         observation.sample_count += 1
 
     for stage_key, observation in observations.items():
@@ -202,6 +212,7 @@ class PartitionReplanController:
         baseline_bytes_per_row: Optional[Dict[str, float]] = None,
         events_path: Optional[str] = None,
         max_replicas_per_device: Optional[int] = None,
+        resident_bytes_by_stage: Optional[Dict[str, int]] = None,
     ):
         config.validate()
         self.plan = plan
@@ -215,6 +226,7 @@ class PartitionReplanController:
             else plan.max_replicas_per_device
         )
         self.baseline_bytes_per_row = dict(baseline_bytes_per_row or {})
+        self.resident_bytes_by_stage = dict(resident_bytes_by_stage or {})
         self._last_change_partition: Dict[str, int] = {}
         self._frozen_stages: set = set()
         self._pending_scale_up: Dict[str, Dict[str, Any]] = {}
@@ -306,10 +318,7 @@ class PartitionReplanController:
         # value replaces it (the probe sampled the dataset head; the
         # observation measured the region the actors actually ran).
         # Relaxation stays the scale-up path's job, never noise's.
-        per_row = demand.per_row_vram_bytes
-        if observed_bytes_per_row is not None and observed_bytes_per_row > per_row:
-            per_row = observed_bytes_per_row
-        cap = max(1, int(budget // max(per_row, 1e-9)))
+        cap = _batch_hard_cap(demand, budget, observed_bytes_per_row)
         if demand.oom_upper_bound is not None:
             cap = min(cap, max(1, demand.oom_upper_bound - 1))
         if tighten_only and stage_plan.batch_hard_cap > 0:
@@ -344,7 +353,7 @@ class PartitionReplanController:
             if (
                 observation is not None
                 and observation.sample_count > 0
-                and baseline
+                and baseline is not None
                 and observation.bytes_per_row is not None
                 and observation.bytes_per_row > baseline * self.config.drift_threshold
                 and self._budget_pressure(stage_key, observation)
@@ -437,7 +446,12 @@ class PartitionReplanController:
             return True
         if observation.bytes_per_row is None:
             return False
-        return observation.bytes_per_row * self.demands[stage_key].batch_size > stage_plan.per_actor_vram_budget_bytes
+        demand = self.demands[stage_key]
+        projected_peak = (
+            demand.resident_bytes
+            + observation.bytes_per_row * demand.memory_headroom_factor * demand.batch_size
+        )
+        return projected_peak > stage_plan.per_actor_vram_budget_bytes
 
     def _stage_max_replicas(self, stage_key: str) -> int:
         """Largest number of this stage's replicas on any single device."""

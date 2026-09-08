@@ -85,6 +85,8 @@ class StageDemand:
     explicit: bool = False
     explicit_actors: Optional[int] = None
     actor_startup_seconds: float = 0.0
+    resident_bytes: int = 0
+    memory_headroom_factor: float = 1.0
 
     def __post_init__(self):
         if not self.stage_key:
@@ -105,10 +107,14 @@ class StageDemand:
             raise ValueError("explicit stages need explicit_actors >= 1")
         if self.actor_startup_seconds < 0:
             raise ValueError("actor_startup_seconds must be non-negative")
+        if not 0 <= self.resident_bytes <= self.effective_peak_bytes:
+            raise ValueError("resident_bytes must be within the effective peak")
+        if not math.isfinite(self.memory_headroom_factor) or self.memory_headroom_factor < 1:
+            raise ValueError("memory_headroom_factor must be finite and >= 1")
 
     @property
     def per_row_vram_bytes(self) -> float:
-        return self.effective_peak_bytes / float(self.batch_size)
+        return (self.effective_peak_bytes - self.resident_bytes) / float(self.batch_size)
 
 
 @dataclass
@@ -227,13 +233,17 @@ class _DeviceState:
         self.replicas = 0
 
 
-def _batch_hard_cap(demand: StageDemand, per_actor_budget_bytes: int) -> int:
-    """Largest batch whose probed per-row VRAM fits the per-actor budget."""
+def _batch_hard_cap(
+    demand: StageDemand, per_actor_budget_bytes: int, observed_bytes_per_row: Optional[float] = None
+) -> int:
+    """Reserve resident memory, then budget the batch's working memory."""
 
     per_row = demand.per_row_vram_bytes
+    if observed_bytes_per_row is not None:
+        per_row = max(per_row, observed_bytes_per_row * demand.memory_headroom_factor)
     if per_row <= 0:
         return demand.batch_size
-    cap = int(per_actor_budget_bytes // per_row)
+    cap = int(max(0, per_actor_budget_bytes - demand.resident_bytes) // per_row)
     return max(1, cap)
 
 
@@ -503,6 +513,8 @@ def plan_from_probe_results(
                 op_name=info["op_name"],
                 probed_throughput_rps=max(result.throughput_rows_per_sec, 1e-9),
                 effective_peak_bytes=max(result.peak_bytes_with_headroom, 1),
+                resident_bytes=result.resident_bytes_with_headroom,
+                memory_headroom_factor=result.memory_headroom_factor,
                 batch_size=info["batch_size"],
                 available_batches=available_batches,
                 num_gpus=info.get("num_gpus", 1.0),
