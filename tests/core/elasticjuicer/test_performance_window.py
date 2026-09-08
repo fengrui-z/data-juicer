@@ -133,3 +133,7 @@ def test_common_steady_window_excludes_each_actor_startup_and_rejects_lost_prefi
     assert window.steady_goodput == 64 / 4
     lost = build_window(events[1:], 0, actors, timings, {"gpu": "fixed"})
     assert "incomplete_metrics_window" in lost.issues
+    # A truncated ring must not allocate a list sized by the lifetime watermark.
+    actors["a"]["final_sequence"] = 10**12
+    truncated = build_window(events, 0, actors, timings, {"gpu": "fixed"})
+    assert "incomplete_metrics_window" in truncated.issues

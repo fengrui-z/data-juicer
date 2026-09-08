@@ -70,8 +70,9 @@ class PerformanceWindow:
         reasons = list(self.issues)
         if not self.cost_distribution:
             reasons.append("missing_input_cost")
-        elif (not all(math.isfinite(value) and value >= 0 for value in self.cost_distribution.values())
-              or not math.isclose(sum(self.cost_distribution.values()), 1.0, abs_tol=1e-8)):
+        elif not all(
+            math.isfinite(value) and value >= 0 for value in self.cost_distribution.values()
+        ) or not math.isclose(sum(self.cost_distribution.values()), 1.0, abs_tol=1e-8):
             reasons.append("invalid_cost_distribution")
         if not self.resource_state or not self.plan_version:
             reasons.append("missing_resource_or_plan")
@@ -142,7 +143,7 @@ def build_window(events, partition_id, actors, timings, resource_state):
     expected = {key for key, value in actors.items() if value["identity"].get("partition_id") == partition_id}
     for key in expected:
         sequence = sorted(event["sequence"] for event in events if event["actor_incarnation_id"] == key)
-        if sequence != list(range(1, actors[key]["final_sequence"] + 1)):
+        if len(sequence) != actors[key]["final_sequence"] or any(value != i for i, value in enumerate(sequence, 1)):
             issues.append("incomplete_metrics_window")
     if set(by_actor) != expected or not expected:
         issues.append("incomplete_actor_coverage")
