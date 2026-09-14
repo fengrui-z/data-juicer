@@ -30,6 +30,10 @@ from data_juicer.core.data.dataset_builder import (
     deprecated_load_data_np_kwargs,
 )
 from data_juicer.core.data.ray_dataset import RayDataset
+from data_juicer.core.elasticjuicer.stage_identity import (
+    assign_stage_identities,
+    stamped_stage_identity,
+)
 from data_juicer.core.executor import ExecutorBase
 from data_juicer.core.executor.dag_execution_mixin import DAGExecutionMixin
 from data_juicer.core.executor.event_logging_mixin import EventLoggingMixin, EventType
@@ -1655,6 +1659,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
             "operators": [
                 {
                     "name": spec["name"],
+                    "stage_id": stamped_stage_identity(spec["op"]),
                     "actors": count,
                     "steady_rows_per_second": spec["throughput"],
                     "source_input_ratio": spec["source_ratio"],
@@ -2297,6 +2302,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
                 mapper_fusion_vram_limit=getattr(self.cfg, "mapper_fusion_vram_limit", 0.9),
             )
 
+        self.cfg._resolved_stage_identities = assign_stage_identities(ops)
         return ops
 
     def _override_strategy_methods(self):
