@@ -369,6 +369,7 @@ class OP(metaclass=OPMetaClass):
             # reconstruction — the kwargs dict embeds work_dir
             "_init_args",
             "_init_kwargs",
+            "_elastic_juicer_stage_identity",
         }
     )
 
