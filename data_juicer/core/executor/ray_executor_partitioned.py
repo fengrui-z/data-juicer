@@ -2327,6 +2327,15 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
     def _prepare_operators(self):
         """Prepare process operators."""
         ops = load_ops(self.cfg.process)
+        if getattr(self.cfg, "elastic_juicer_adaptive_batching", False):
+            from data_juicer.core.elasticjuicer.ray_adaptive_mapper import (
+                adaptive_batching_enabled,
+            )
+
+            if getattr(self.cfg, "op_fusion", False):
+                raise ValueError("elastic_juicer_adaptive_batching currently requires op_fusion=false")
+            for op in ops:
+                adaptive_batching_enabled(op, True)
 
         # Check for op_fusion configuration with safe attribute access
         if hasattr(self.cfg, "op_fusion") and self.cfg.op_fusion:
