@@ -1,6 +1,7 @@
 """Lossless OOM-safe micro-batching for one mapper callable."""
 
 import time
+import traceback
 from collections.abc import Mapping
 from contextlib import nullcontext
 from copy import deepcopy
@@ -192,6 +193,9 @@ class OOMSafeAdaptiveMapper:
                         if floor_retries < self.max_floor_retries:
                             floor_retries += 1
                             self._emit_snapshot(measurement)
+                            traceback.clear_frames(error.__traceback__)
+                            if self.oom_cleanup is not None:
+                                self.oom_cleanup()
                             time.sleep(self.floor_retry_backoff_sec * floor_retries)
                             continue
                         logger.error(
@@ -211,6 +215,9 @@ class OOMSafeAdaptiveMapper:
                     self._emit_snapshot(measurement)
                     if retries > self.max_retries_per_slice:
                         raise
+                    # Failed model frames may retain CUDA tensors. Release them
+                    # before cache cleanup and before attempting a smaller slice.
+                    traceback.clear_frames(error.__traceback__)
                     if self.oom_cleanup is not None:
                         self.oom_cleanup()
                     continue

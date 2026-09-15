@@ -1120,9 +1120,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         except Exception:
             names = set()
         if _LOGICAL_PARTITION_COLUMN in names:
-            raise RuntimeError(
-                f"Input dataset contains reserved execution-group column {_LOGICAL_PARTITION_COLUMN!r}."
-            )
+            raise RuntimeError(f"Input dataset contains reserved execution-group column {_LOGICAL_PARTITION_COLUMN!r}.")
         return True
 
     def _resolve_execution_group_size(
@@ -1518,9 +1516,7 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
         if not candidates:
             self._resolved_throughput_actor_plan = None
             self._throughput_planned_op_ids = set()
-            profiled_cuda_ops = [
-                op for op in ops if self._is_cuda_operator(op) and hasattr(op, "_gpu_rows_per_second")
-            ]
+            profiled_cuda_ops = [op for op in ops if self._is_cuda_operator(op) and hasattr(op, "_gpu_rows_per_second")]
             if profiled_cuda_ops:
                 skipped = ", ".join(
                     f"{getattr(op, '_name', type(op).__name__)}=" f"{getattr(op, 'num_proc', None)}"
@@ -2292,6 +2288,15 @@ class PartitionedRayExecutor(ExecutorBase, DAGExecutionMixin, EventLoggingMixin)
     def _prepare_operators(self):
         """Prepare process operators."""
         ops = load_ops(self.cfg.process)
+        if getattr(self.cfg, "elastic_juicer_adaptive_batching", False):
+            from data_juicer.core.elasticjuicer.ray_adaptive_mapper import (
+                adaptive_batching_enabled,
+            )
+
+            if getattr(self.cfg, "op_fusion", False):
+                raise ValueError("elastic_juicer_adaptive_batching currently requires op_fusion=false")
+            for op in ops:
+                adaptive_batching_enabled(op, True)
 
         # Check for op_fusion configuration with safe attribute access
         if hasattr(self.cfg, "op_fusion") and self.cfg.op_fusion:
