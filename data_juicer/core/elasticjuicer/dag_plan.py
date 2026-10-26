@@ -202,6 +202,9 @@ def payload_bytes(value, seen=None):
 class DAGPayload:
     columns: dict
     writers: Dict[str, str] = field(default_factory=dict)
+    # Intermediate outputs carry their writes and references to parent data.
+    origin: str = None
+    bases: dict = field(default_factory=dict)
 
 
 def merge_parents(payloads, node, compiled, id_column):

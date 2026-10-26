@@ -208,7 +208,12 @@ class ResidentDAGExecutor:
                         refs = (
                             self.actors[key]
                             .process.options(num_returns=len(group.nodes) + 1)
-                            .remote(group_name, parents, *[state["refs"][p] for p in parents])
+                            .remote(
+                                group_name,
+                                parents,
+                                [state["refs"][p] for p in parents],
+                                *[state["refs"][p] for p in parents],
+                            )
                         )
                         pending[refs[-1]] = dict(
                             unit=unit, group=group_name, key=key, refs=refs[:-1], submitted=time.perf_counter()

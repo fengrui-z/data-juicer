@@ -18,6 +18,38 @@ from .dag_plan import DAGContractError, DAGPayload, merge_parents, payload_bytes
 from .oom import is_oom_error
 
 
+def materialize_payload(payload, compiled, id_column, cache=None):
+    """Resolve a lineage of small deltas inside the worker, never the driver."""
+    import ray
+
+    cache = {} if cache is None else cache
+    if isinstance(payload, ray.ObjectRef):
+        if payload not in cache:
+            cache[payload] = materialize_payload(ray.get(payload), compiled, id_column, cache)
+        return cache[payload]
+    if not isinstance(payload, DAGPayload):
+        raise DAGContractError("invalid DAG payload reference")
+    if payload.origin is None:
+        return payload
+    node = compiled["nodes"][payload.origin]
+    expected = node.parents or ("$input",)
+    if set(payload.bases) != set(expected):
+        raise DAGContractError("delta parent lineage does not match the logical DAG")
+    if set(payload.columns) != {id_column, *node.writes}:
+        raise DAGContractError("delta contains undeclared columns")
+    if payload.writers != {key: node.name for key in node.writes}:
+        raise DAGContractError("delta column ownership does not match its logical node")
+    parents = [materialize_payload(payload.bases[name], compiled, id_column, cache) for name in expected]
+    base = merge_parents(parents, node, compiled, id_column)
+    ids = validate_columns(payload.columns, id_column)
+    positions = {key: i for i, key in enumerate(base.columns[id_column])}
+    if not set(ids) <= positions.keys() or (node.row_policy == "preserve" and set(ids) != positions.keys()):
+        raise DAGContractError("delta changed row identity/cardinality")
+    columns = {key: [values[positions[i]] for i in ids] for key, values in base.columns.items()}
+    columns.update(payload.columns)
+    return DAGPayload(columns, {**base.writers, **payload.writers})
+
+
 def _operator_input(value):
     # Isolate mutable containers without copying large image buffers. Operators
     # explicitly opt into the immutable-input, replay-safe DAG contract.
@@ -229,13 +261,24 @@ class ResidentDAGWorker:
         }
         return output, metadata
 
-    def process(self, group_name, parent_names, *payloads):
+    def process(self, group_name, parent_names, parent_refs, *payloads):
         if self.closed:
             raise RuntimeError("resident DAG worker is closed")
         group = self.compiled["groups"][group_name]
         if group.pool != self.pool_name:
             raise DAGContractError("group dispatched to the wrong pool")
-        parents = dict(zip(parent_names, payloads))
+        import ray
+
+        if not (len(parent_names) == len(parent_refs) == len(payloads)) or not all(
+            isinstance(ref, ray.ObjectRef) for ref in parent_refs
+        ):
+            raise DAGContractError("expected top-level payloads and nested parent ObjectRefs")
+        cache = {}
+        parents = {
+            name: materialize_payload(value, self.compiled, self.plan.id_column, cache)
+            for name, value in zip(parent_names, payloads)
+        }
+        references = dict(zip(parent_names, parent_refs))
         results, metadata = {}, []
         names = [n for n in self.compiled["order"] if n in group.nodes]
         if group.parallel:
@@ -255,7 +298,23 @@ class ResidentDAGWorker:
             for name in names:
                 results[name], info = self._run_node(name, {**parents, **results})
                 metadata.append(info)
-        return (*[results[n] for n in group.nodes], metadata)
+        emitted = {}
+        for name in names:
+            node, value = self.compiled["nodes"][name], results[name]
+            if name == self.plan.output:
+                emitted[name] = value  # Consumers need not resolve lineage.
+            else:
+                bases = {p: emitted[p] if p in emitted else references[p] for p in node.parents or ("$input",)}
+                emitted[name] = DAGPayload(
+                    {key: value.columns[key] for key in (self.plan.id_column, *node.writes)},
+                    {key: name for key in node.writes},
+                    name,
+                    bases,
+                )
+            info = next(e for e in metadata if e["node"] == name)
+            info["emitted_column_bytes"] = payload_bytes(emitted[name].columns)
+            info["parent_reference_count"] = len(emitted[name].bases)
+        return (*[emitted[n] for n in group.nodes], metadata)
 
     def close(self):
         self.closed = True

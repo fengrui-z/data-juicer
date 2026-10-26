@@ -1,4 +1,4 @@
-# Resident DAG runtime: experimental v0.1
+# Resident DAG runtime: experimental v0.2
 
 Base revision: `22e54c2`. Development branch: `codex/ej-dag-resident-pool`.
 The previous 20k/100k benchmark remains a separate frozen experiment.
@@ -94,7 +94,14 @@ must not be described as complete model warmup.
 ## Bounded execution, failure and pause
 
 The scheduler sends object references to actors and reads only metadata. It
-prioritizes ready downstream groups. Each admitted unit reserves
+prioritizes ready downstream groups. Intermediate payloads contain only the
+node's declared output columns and parent ObjectRefs. Workers reconstruct the
+required column lineage locally, checking IDs, versions and ownership again;
+parallel model branches do not serialize inherited image pixels in their
+outputs. Terminal results are materialized/projected for the consumer. The
+event fields `payload_bytes` and `emitted_column_bytes` estimate reconstructed
+and emitted column sizes; they are not network or wire-byte measurements.
+Each admitted unit reserves
 `(number_of_nodes + 1) * max_batch_bytes`; both admission count and byte budget
 limit in-flight work. Inputs and each node output are checked against the
 payload estimate. This is not a bound on temporary decode/model allocations or
@@ -120,7 +127,9 @@ commits before they can be considered durable.
 1. v0.1: explicit DAG/group contracts, fixed resident pools, exact joins, actual
    branch overlap, identical transport with fixed/adaptive microbatch controls.
 2. v0.2: measured batching/transport improvements and representative real-model
-   validation, preserving the v0.1 contract and recording paired evidence.
+   validation, preserving the v0.1 contract. The first improvement uses delta
+   columns and parent references to remove inherited image payloads from GPU
+   branch outputs. Cross-unit coalescing remains a later optimization.
 3. Next: compare a small set of fused/dedicated candidate plans, reuse compatible
    probes, then add queue-driven boundary replanning and durable drain/resume.
 

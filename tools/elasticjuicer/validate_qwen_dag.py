@@ -253,7 +253,18 @@ def main():
             "gpu_workers_executed": len(used),
             "instances_persisted": True,
             "branch_overlap_units": overlap,
+            "materialized_gpu_column_bytes": sum(
+                e["payload_bytes"] for e in events if e["node"] in ("ocr", "quality", "embedding", "aesthetic")
+            ),
+            "emitted_gpu_column_bytes": sum(
+                e["emitted_column_bytes"] for e in events if e["node"] in ("ocr", "quality", "embedding", "aesthetic")
+            ),
         }
+        assert all(
+            e["emitted_column_bytes"] < e["payload_bytes"]
+            for e in events
+            if e["node"] in ("ocr", "quality", "embedding", "aesthetic") and e["input_rows"]
+        )
     result["status"] = "passed"
     (ROOT / "validation.json").write_text(json.dumps(result, indent=2) + "\n")
     print("VALIDATED", ROOT / "validation.json", flush=True)

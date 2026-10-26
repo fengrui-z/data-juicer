@@ -14,6 +14,7 @@ from data_juicer.core.elasticjuicer.dag_plan import (
     merge_parents,
 )
 from data_juicer.core.executor.resident_dag_executor import ResidentDAGExecutor
+from data_juicer.core.elasticjuicer.dag_worker import materialize_payload
 
 
 def node(name, parents, inputs, output, **options):
@@ -103,6 +104,23 @@ def test_exact_join_reorders_and_checks_versions_and_conflicts():
         merge_parents([a, DAGPayload(a.columns, {"a": "right"})], join, compiled, "id")
 
 
+def test_delta_lineage_reconstructs_columns_and_rejects_forged_identity():
+    compiled = plan().compile()
+    source = DAGPayload({"id": [1, 2], "value": [10, 20]})
+    prepared = DAGPayload({"id": [1, 2], "x": [20, 40]}, {"x": "prepare"}, "prepare", {"$input": source})
+    delta = DAGPayload({"id": [1, 2], "a": [22, 42]}, {"a": "left"}, "left", {"prepare": prepared})
+    result = materialize_payload(delta, compiled, "id")
+    assert result.columns == {"id": [1, 2], "value": [10, 20], "x": [20, 40], "a": [22, 42]}
+    assert "value" not in delta.columns and "x" not in delta.columns
+    delta.writers["a"] = "right"
+    with pytest.raises(DAGContractError, match="ownership"):
+        materialize_payload(delta, compiled, "id")
+    delta.writers["a"] = "left"
+    delta.columns["id"] = [1, 999]
+    with pytest.raises(DAGContractError, match="identity"):
+        materialize_payload(delta, compiled, "id")
+
+
 @pytest.fixture(scope="module")
 def cluster():
     assert not ray.is_initialized(), "test owns an isolated Ray cluster"
@@ -138,6 +156,7 @@ def test_real_ray_forks_filter_join_same_path_and_resident_reuse(cluster, tmp_pa
             assert executor.last_summary["status"] == "complete"
             assert executor.last_summary["peak_inflight_units"] <= 2
         events = read_events(root)
+        assert all(e["emitted_column_bytes"] < e["payload_bytes"] for e in events if e["node"] == "left")
         assert {e["worker_id"] for e in events} <= identities
         by_node_worker = {}
         for event in events:
@@ -174,6 +193,19 @@ def test_local_oom_recovery_preserves_rows_and_state(cluster, tmp_path):
         with pytest.raises(Exception, match="out of memory"):
             list(executor.iter_batches(batches(5)))
         assert executor.closed
+
+
+def test_sequential_group_can_use_local_intermediate_lineage(cluster):
+    p = plan()
+    p = replace(
+        p,
+        groups=(ExecutionGroup("all", tuple(n.name for n in reversed(p.nodes)), "cpu"),),
+        pools=(WorkerPool("cpu", 1),),
+        output_columns=("result",),
+    )
+    with ResidentDAGExecutor(p) as executor:
+        results = [batch.columns() for batch in executor.iter_batches(batches(5))]
+        assert results == [{"id": [0, 2, 4], "result": [25, 65, 105]}]
 
 
 def test_bad_identity_fences_owned_pool(cluster):
