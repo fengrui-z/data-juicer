@@ -144,10 +144,26 @@ claim. The interrupted 100k matrix must not restart implicitly during developmen
   contract/real-Ray tests passed. The first local 8-GPU validation ran the same
   128 Qwen originals four times (two modes, two passes), using all four real
   models and comparing outputs against the frozen validated reference.
-- v0.1 follow-up: FIFO idle-worker selection, detached caller recipes, rejection
+- `0292566` / `ej-resident-dag-v0.1.1`: FIFO idle-worker selection, detached caller recipes, rejection
   of late-completing tasks, and tests for cancellation, duplicate IDs, payload
   limits and fair worker use. The focused regression suite has 46 passing tests
   (13 DAG tests plus the existing managed-pool and resident-worker tests).
+- `ca3f33e` / v0.2 implementation: intermediate delta columns with parent
+  references. 48 focused tests passed (15 DAG and 33 existing managed/resident
+  tests); the sequential-group test was also rechecked after tightening its
+  full-stream consumption assertion. The real-model check passed in fixed and
+  adaptive modes, two passes each over 128 originals: 76 accepted and 52
+  rejected per pass; every mode used all eight GPU worker slots and retained
+  operator instances. Both branch pairs overlapped on all 16 nonempty unit
+  executions per mode. Image/version hashes and DINO features matched exactly;
+  maximum aesthetic error was `7.62939453125e-6`, quality error
+  `9.5367431640625e-7`, below the unchanged `1e-4` absolute tolerance.
+
+The v0.2 diagnostic estimate across two passes in each mode was 1,992,170,860
+bytes of reconstructed GPU-node columns versus 6,702,352 bytes of emitted delta
+columns. Parent references and their stored data are not counted in the latter;
+these are Python/array payload estimates, not measured wire traffic or an
+end-to-end speedup. The short runs do not establish a performance advantage.
 
 Run CPU/Ray regression from this checkout:
 
