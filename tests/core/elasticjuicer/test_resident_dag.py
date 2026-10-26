@@ -198,3 +198,56 @@ def test_pause_drains_without_consuming_remaining_input(cluster):
         rest = [i for result in executor.iter_batches(source) for i in result.input_ids]
         assert sorted(rest) == list(range(10, 35))
         assert executor.last_summary["status"] == "complete"
+
+
+def test_resident_slots_are_fair_and_caller_recipe_is_frozen(cluster, tmp_path):
+    p = ResidentDAGPlan(
+        (node("only", (), ("value",), "result", offset=1),),
+        (ExecutionGroup("only", ("only",), "models"),),
+        (WorkerPool("models", 4),),
+        "only",
+        operator_modules=("tests.core.elasticjuicer.dag_test_ops",),
+        max_inflight_units=1,
+        output_columns=("result",),
+    )
+    root = tmp_path / "fair"
+    with ResidentDAGExecutor(p, artifact_dir=root) as executor:
+        p.nodes[0].operator["ej_test_dag_mapper"]["offset"] = 999
+        outputs = [b.columns() for b in executor.iter_batches(batches(5, 1))]
+        assert outputs == [{"id": [i], "result": [i + 1]} for i in range(5)]
+        assert len({e["worker_id"] for e in read_events(root)}) == 4
+
+
+@pytest.mark.parametrize("failure", ["duplicate", "oversize", "cancel"])
+def test_input_errors_and_cancel_retire_pool(cluster, failure):
+    p = plan()
+    if failure == "oversize":
+        p = replace(p, max_batch_bytes=100)
+    with ResidentDAGExecutor(p) as executor:
+        if failure == "duplicate":
+            with pytest.raises(DAGContractError, match="duplicate"):
+                list(executor.iter_batches([{"id": [1], "value": [1]}] * 2))
+        elif failure == "oversize":
+            with pytest.raises(DAGContractError, match="max_batch_bytes"):
+                list(executor.iter_batches(batches()))
+        else:
+            iterator = executor.iter_batches(batches())
+            next(iterator)
+            iterator.close()
+        assert executor.closed
+        assert executor.last_summary["status"] == "failed"
+
+
+def test_task_timeout_fences_pool(cluster):
+    p = ResidentDAGPlan(
+        (node("slow", (), ("value",), "result", sleep_seconds=0.1),),
+        (ExecutionGroup("slow", ("slow",), "cpu"),),
+        (WorkerPool("cpu", 1),),
+        "slow",
+        operator_modules=("tests.core.elasticjuicer.dag_test_ops",),
+        task_timeout_seconds=0.01,
+    )
+    with ResidentDAGExecutor(p) as executor:
+        with pytest.raises(TimeoutError):
+            list(executor.iter_batches(batches(1)))
+        assert executor.closed

@@ -5,10 +5,12 @@ actors, never the cluster. It does not claim checkpoint recovery, live resizing,
 automatic placement optimization, or exactly-once external side effects.
 """
 
+import copy
 import json
 import os
 import threading
 import time
+from collections import deque
 from dataclasses import dataclass
 from pathlib import Path
 from uuid import uuid4
@@ -56,7 +58,10 @@ class ResidentDAGExecutor:
     def __init__(self, plan: ResidentDAGPlan, *, adaptive=True, artifact_dir=None, runtime_env=None):
         if not ray.is_initialized():
             raise RuntimeError("initialize Ray explicitly before constructing ResidentDAGExecutor")
+        # Freeze caller-owned nested recipes as well as the dataclass fields.
+        plan = copy.deepcopy(plan)
         self.plan, self.compiled = plan, plan.compile()
+        self.plan_fingerprint = plan.fingerprint()
         self.adaptive = bool(adaptive)
         self.artifact_dir = Path(artifact_dir) if artifact_dir else None
         if self.artifact_dir:
@@ -86,7 +91,7 @@ class ResidentDAGExecutor:
             remote = ray.remote(max_restarts=0, max_task_retries=0)(ResidentDAGWorker)
             pending = {}
             for pool in plan.pools:
-                self.idle[pool.name] = []
+                self.idle[pool.name] = deque()
                 for slot in range(pool.workers):
                     key = (pool.name, slot)
                     options = dict(num_cpus=pool.num_cpus, num_gpus=pool.num_gpus)
@@ -197,7 +202,9 @@ class ResidentDAGExecutor:
                         )
                         if any(not self.compiled["nodes"][n].parents for n in group.nodes):
                             parents.append("$input")
-                        key = self.idle[group.pool].pop()
+                        # FIFO reuse avoids repeatedly selecting one warm slot
+                        # while other admitted, resident workers never run.
+                        key = self.idle[group.pool].popleft()
                         refs = (
                             self.actors[key]
                             .process.options(num_returns=len(group.nodes) + 1)
@@ -213,6 +220,11 @@ class ResidentDAGExecutor:
                 for ref in done:
                     task = pending.pop(ref)
                     metadata = ray.get(ref)  # Small metadata only, never pixels.
+                    if (
+                        max(e["ended"] for e in metadata) - min(e["started"] for e in metadata)
+                        > self.plan.task_timeout_seconds
+                    ):
+                        raise TimeoutError("completed DAG task exceeded its execution timeout")
                     state, group = active[task["unit"]], self.compiled["groups"][task["group"]]
                     self.idle[group.pool].append(task["key"])
                     state["done"].add(group.name)

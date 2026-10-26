@@ -128,3 +128,41 @@ Every stage is committed separately. Performance claims require identical code,
 models, input slice, logical DAG and budgets, output correctness, cold/warm time
 separation, and repeated paired measurements. A GPU smoke test is not a speedup
 claim. The interrupted 100k matrix must not restart implicitly during development.
+
+## Verification and development history
+
+- `1d563c7`: initial explicit DAG, resident pool and fixed/adaptive parity; eight
+  contract/real-Ray tests passed. The first local 8-GPU validation ran the same
+  128 Qwen originals four times (two modes, two passes), using all four real
+  models and comparing outputs against the frozen validated reference.
+- v0.1 follow-up: FIFO idle-worker selection, detached caller recipes, rejection
+  of late-completing tasks, and tests for cancellation, duplicate IDs, payload
+  limits and fair worker use. The focused regression suite has 46 passing tests
+  (13 DAG tests plus the existing managed-pool and resident-worker tests).
+
+Run CPU/Ray regression from this checkout:
+
+```bash
+python -m pytest tests/core/elasticjuicer/test_resident_dag.py \
+  tests/core/elasticjuicer/test_managed_mapper_pool.py \
+  tests/core/elasticjuicer/test_resident_worker.py -q
+```
+
+The focused real-model check deliberately imports model/transform code from an
+existing frozen Qwen suite, while importing DJ and the new executor from this
+checkout. It requires eight free GPUs, existing local weights, and a new output
+directory. No weights or dataset are downloaded. It verifies exact IDs and
+image hashes, feature/score agreement at absolute tolerance `1e-4`, actual use
+of all eight GPU worker slots, branch overlap and stable operator instances.
+Both modes use the same plan, with only the local batch policy changed.
+
+```bash
+python tools/elasticjuicer/validate_qwen_dag.py \
+  --reference-suite /path/to/frozen-qwen-suite \
+  --output /path/to/new-validation --rows 128
+```
+
+The output records the Git revision, adapter hashes, plan fingerprint, GPU UUIDs,
+per-node execution events and comparisons. Four passes over 128 originals are
+512 processing records, not 512 independent images. These short passes validate
+integration and resident reuse; they do not establish a throughput advantage.
