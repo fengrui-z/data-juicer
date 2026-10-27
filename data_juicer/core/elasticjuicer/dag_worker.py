@@ -14,7 +14,13 @@ import numpy as np
 from .adaptive_mapper import OOMSafeAdaptiveMapper
 from .baseline_controllers import FixedBatchController
 from .batch_controller import AdaptiveBatchController
-from .dag_plan import DAGContractError, DAGPayload, merge_parents, payload_bytes, validate_columns
+from .dag_plan import (
+    DAGContractError,
+    DAGPayload,
+    merge_parents,
+    payload_bytes,
+    validate_columns,
+)
 from .oom import is_oom_error
 
 
@@ -91,7 +97,8 @@ class _NodeRunner:
         if getattr(self.op, "elastic_juicer_dag_safe", False) is not True:
             raise DAGContractError("mapper must opt into elastic_juicer_dag_safe (immutable inputs, replay-safe)")
         controller_type = AdaptiveBatchController if adaptive else FixedBatchController
-        self.controller = controller_type(initial_batch_size=node.batch_size, max_batch_size=node.batch_size)
+        initial = node.initial_batch_size if adaptive and node.initial_batch_size is not None else node.batch_size
+        self.controller = controller_type(initial_batch_size=initial, max_batch_size=node.batch_size)
         self.mapper = OOMSafeAdaptiveMapper(
             self._call,
             self.controller,
@@ -211,6 +218,11 @@ class ResidentDAGWorker:
     def ready(self):
         import ray
 
+        memory = None
+        if self.device:
+            import torch
+
+            memory = {"allocated_bytes": torch.cuda.memory_allocated(), "reserved_bytes": torch.cuda.memory_reserved()}
         return {
             "worker_id": self.instance_id,
             "pool": self.pool_name,
@@ -218,6 +230,7 @@ class ResidentDAGWorker:
             "pid": os.getpid(),
             "node_id": ray.get_runtime_context().get_node_id(),
             "device": self.device,
+            "torch_memory_at_ready": memory,
             "operators": {n: r.diagnostics() for n, r in self.runners.items()},
         }
 
@@ -262,6 +275,7 @@ class ResidentDAGWorker:
         return output, metadata
 
     def process(self, group_name, parent_names, parent_refs, *payloads):
+        group_started = time.perf_counter()
         if self.closed:
             raise RuntimeError("resident DAG worker is closed")
         group = self.compiled["groups"][group_name]
@@ -314,6 +328,12 @@ class ResidentDAGWorker:
             info = next(e for e in metadata if e["node"] == name)
             info["emitted_column_bytes"] = payload_bytes(emitted[name].columns)
             info["parent_reference_count"] = len(emitted[name].bases)
+        # Worker-side monotonic time includes parent materialization, local OOM
+        # retries and all nodes, without driver waits or consumer/export time.
+        duration = time.perf_counter() - group_started
+        for info in metadata:
+            info["group_seconds"] = duration
+            info["group_input_rows"] = metadata[0]["input_rows"]
         return (*[emitted[n] for n in group.nodes], metadata)
 
     def close(self):

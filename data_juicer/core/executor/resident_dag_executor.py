@@ -17,6 +17,11 @@ from uuid import uuid4
 
 import ray
 
+from data_juicer.core.elasticjuicer.compute_flow import (
+    ComputeFlowConfig,
+    ComputeFlowController,
+    ReadyWork,
+)
 from data_juicer.core.elasticjuicer.dag_plan import (
     DAGContractError,
     DAGPayload,
@@ -55,12 +60,15 @@ class ResidentDAGExecutor:
     ``elastic_juicer_dag_safe=True``. Failures fence/retire this executor's pool.
     """
 
-    def __init__(self, plan: ResidentDAGPlan, *, adaptive=True, artifact_dir=None, runtime_env=None):
+    def __init__(self, plan: ResidentDAGPlan, *, adaptive=True, compute_flow=None, artifact_dir=None, runtime_env=None):
         if not ray.is_initialized():
             raise RuntimeError("initialize Ray explicitly before constructing ResidentDAGExecutor")
         # Freeze caller-owned nested recipes as well as the dataclass fields.
         plan = copy.deepcopy(plan)
         self.plan, self.compiled = plan, plan.compile()
+        if compute_flow is not None and not isinstance(compute_flow, ComputeFlowConfig):
+            raise DAGContractError("compute_flow must be a ComputeFlowConfig or None")
+        self.flow = ComputeFlowController(self.compiled, copy.deepcopy(compute_flow)) if compute_flow else None
         self.plan_fingerprint = plan.fingerprint()
         self.adaptive = bool(adaptive)
         self.artifact_dir = Path(artifact_dir) if artifact_dir else None
@@ -124,6 +132,7 @@ class ResidentDAGExecutor:
                         "control_service": False,
                         "automatic_topology": False,
                         "live_resizing": False,
+                        "compute_flow": self.flow.summary() if self.flow else None,
                     },
                 )
         except BaseException:
@@ -154,6 +163,7 @@ class ResidentDAGExecutor:
         if directory:
             directory.mkdir()
         stream = (directory / "events.jsonl").open("x") if directory else None
+        control_stream = (directory / "compute_flow.jsonl").open("x") if directory and self.flow else None
         started = time.perf_counter()
         source = iter(batches)
         active, pending, seen = {}, {}, set()
@@ -180,31 +190,68 @@ class ResidentDAGExecutor:
                         "refs": {"$input": ray.put(DAGPayload(columns))},
                         "submitted": set(),
                         "done": set(),
+                        "ready_since": {},
+                        "rows": {"$input": len(ids)},
                     }
                     next_unit += 1
                     peak_active = max(peak_active, len(active))
                 if not active:
                     break
-                # Downstream-first dispatch avoids filling a shared GPU pool
-                # exclusively with upstream work while joins retain buffers.
+                now = time.perf_counter()
+                ready = {name: deque() for name in self.compiled["group_order"]}
                 for group_name in reversed(self.compiled["group_order"]):
-                    group = self.compiled["groups"][group_name]
                     for unit, state in active.items():
-                        if not self.idle[group.pool]:
-                            break
                         if (
                             group_name in state["submitted"]
                             or not self.compiled["dependencies"][group_name] <= state["done"]
                         ):
                             continue
+                        group = self.compiled["groups"][group_name]
+                        parents = [
+                            p for n in group.nodes for p in self.compiled["nodes"][n].parents if p not in group.nodes
+                        ]
+                        rows = state["rows"][parents[0]] if parents else len(state["ids"])
+                        since = state["ready_since"].setdefault(group_name, now)
+                        ready[group_name].append(ReadyWork(unit, rows, since))
+                if self.flow:
+                    ready = {name: deque(sorted(work, key=lambda w: (w.since, w.unit))) for name, work in ready.items()}
+                running = {name: [] for name in ready}
+                for task in pending.values():
+                    running[task["group"]].append(task["rows"])
+                if self.flow:
+                    for event in self.flow.replan(ready, running, now):
+                        if control_stream:
+                            control_stream.write(json.dumps({"run_id": run_id, **event}) + "\n")
+                counts = {name: len(rows) for name, rows in running.items()}
+                for pool, idle in self.idle.items():
+                    while idle:
+                        if self.flow and pool in self.flow.pools:
+                            choice = self.flow.choose(pool, idle, ready, counts, now)
+                            if choice is None:
+                                break
+                            key, group_name, reason = choice
+                            lease = self.flow.dispatched(key, group_name, reason)
+                        else:
+                            group_name = next(
+                                (
+                                    name
+                                    for name in reversed(self.compiled["group_order"])
+                                    if self.compiled["groups"][name].pool == pool and ready[name]
+                                ),
+                                None,
+                            )
+                            if group_name is None:
+                                break
+                            key, lease = idle[0], None
+                        work = ready[group_name].popleft()
+                        unit, state = work.unit, active[work.unit]
+                        group = self.compiled["groups"][group_name]
                         parents = sorted(
                             {p for n in group.nodes for p in self.compiled["nodes"][n].parents if p not in group.nodes}
                         )
                         if any(not self.compiled["nodes"][n].parents for n in group.nodes):
                             parents.append("$input")
-                        # FIFO reuse avoids repeatedly selecting one warm slot
-                        # while other admitted, resident workers never run.
-                        key = self.idle[group.pool].popleft()
+                        idle.remove(key)
                         refs = (
                             self.actors[key]
                             .process.options(num_returns=len(group.nodes) + 1)
@@ -216,9 +263,24 @@ class ResidentDAGExecutor:
                             )
                         )
                         pending[refs[-1]] = dict(
-                            unit=unit, group=group_name, key=key, refs=refs[:-1], submitted=time.perf_counter()
+                            unit=unit,
+                            group=group_name,
+                            key=key,
+                            refs=refs[:-1],
+                            submitted=time.perf_counter(),
+                            rows=work.rows,
                         )
                         state["submitted"].add(group_name)
+                        counts[group_name] += 1
+                        if control_stream and lease:
+                            control_stream.write(
+                                json.dumps(
+                                    {"run_id": run_id, "unit": unit, "ready_wait_seconds": now - work.since, **lease}
+                                )
+                                + "\n"
+                            )
+                if control_stream:
+                    control_stream.flush()
                 if not pending:
                     raise DAGContractError("DAG scheduler made no progress")
                 done, _ = ray.wait(list(pending), num_returns=1, timeout=0.2)
@@ -234,6 +296,11 @@ class ResidentDAGExecutor:
                     self.idle[group.pool].append(task["key"])
                     state["done"].add(group.name)
                     state["refs"].update(zip(group.nodes, task["refs"]))
+                    state["rows"].update({event["node"]: event["output_rows"] for event in metadata})
+                    if self.flow:
+                        self.flow.observe(
+                            group.name, task["key"], metadata[0]["group_input_rows"], metadata[0]["group_seconds"]
+                        )
                     if stream:
                         for event in metadata:
                             stream.write(
@@ -267,6 +334,8 @@ class ResidentDAGExecutor:
         finally:
             if stream:
                 stream.close()
+            if control_stream:
+                control_stream.close()
             self.running = False
             elapsed = time.perf_counter() - started
             self.last_summary = {
@@ -283,6 +352,7 @@ class ResidentDAGExecutor:
                 "peak_inflight_units": peak_active,
                 "reserved_payload_bytes": peak_active * self.compiled["unit_reservation_bytes"],
                 "pool_startup_seconds": self.startup_seconds,
+                "compute_flow_lifetime": self.flow.summary() if self.flow else None,
             }
             if not completed:
                 self.close()  # Includes consumer cancellation and partial iteration.

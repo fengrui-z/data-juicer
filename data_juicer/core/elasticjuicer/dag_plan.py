@@ -27,6 +27,7 @@ class DAGNode:
     batch_size: int = 32
     row_policy: str = "preserve"
     join_keys: Tuple[str, ...] = ()
+    initial_batch_size: int = None
 
 
 @dataclass(frozen=True)
@@ -100,6 +101,10 @@ class ResidentDAGPlan:
                 raise DAGContractError("each node requires one DJ operator recipe")
             if type(node.batch_size) is not int or node.batch_size < 1:
                 raise DAGContractError("node batch_size must be positive")
+            if node.initial_batch_size is not None and (
+                type(node.initial_batch_size) is not int or not 1 <= node.initial_batch_size <= node.batch_size
+            ):
+                raise DAGContractError("initial_batch_size must be within [1, batch_size]")
             if node.row_policy not in ("preserve", "subset"):
                 raise DAGContractError("row_policy must be preserve or subset")
             if self.id_column in node.writes or len(set(node.writes)) != len(node.writes):
