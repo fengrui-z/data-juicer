@@ -123,7 +123,10 @@ python tools/elasticjuicer/benchmark_compute_flow.py \
 ```
 
 JSONL 每条包含唯一 `id`、`image_path`、`image_sha256`。脚本先验证源文件与可用
-GPU；仅创建/关闭自己的本地 Ray 集群，不停止其他任务。原暂停的 20k/100k 实验
+GPU，并读取实际图片尺寸，按保守的 RGB 解码占用推导每批上限。总对象预算默认
+64 GiB（可用 `--object-budget-gib` 修改），在途上限默认 16（`--inflight`）；预算
+不足时执行器降低有效在途数量，连一批也无法容纳则在建池前报错。仅创建/关闭自己的
+本地 Ray 集群，不停止其他任务。原暂停的 20k/100k 实验
 不因此恢复。代码、环境、输入 hash 与计划记录在 `provenance.json`；`results.json`
 保存耗时/校验结果，每个 cell 的 `compute_flow.jsonl` 保存计划与实际租约证据。
 

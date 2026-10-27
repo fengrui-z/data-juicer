@@ -37,6 +37,8 @@ def arguments():
     parser.add_argument("--unit-rows", type=int, default=32)
     parser.add_argument("--batch-cap", type=int, default=32)
     parser.add_argument("--initial-batch", type=int, default=8)
+    parser.add_argument("--object-budget-gib", type=int, default=64)
+    parser.add_argument("--inflight", type=int, default=16)
     parser.add_argument("--workload", choices=("uniform", "phase-shift"), default="phase-shift")
     parser.add_argument("--light-side", type=int, default=448)
     parser.add_argument("--heavy-side", type=int, default=896)
@@ -47,7 +49,19 @@ def arguments():
         default=["legacy-fixed", "static-fixed", "flow-fixed", "static-adaptive", "flow-adaptive"],
     )
     args = parser.parse_args()
-    if any(v < 1 for v in (args.rows, args.repeats, args.passes, args.unit_rows, args.batch_cap, args.initial_batch)):
+    if any(
+        v < 1
+        for v in (
+            args.rows,
+            args.repeats,
+            args.passes,
+            args.unit_rows,
+            args.batch_cap,
+            args.initial_batch,
+            args.object_budget_gib,
+            args.inflight,
+        )
+    ):
         parser.error("counts and batch sizes must be positive")
     if args.gpus < 2 or args.initial_batch > args.batch_cap:
         parser.error("at least two GPUs and initial-batch <= batch-cap are required")
@@ -58,7 +72,7 @@ def arguments():
     return args
 
 
-def make_plan(args):
+def make_plan(args, max_batch_bytes):
     from data_juicer.core.elasticjuicer.dag_plan import (
         DAGNode,
         ExecutionGroup,
@@ -108,9 +122,9 @@ def make_plan(args):
         (WorkerPool("cpu", 4, 2), WorkerPool("gpu", args.gpus, 4, 1)),
         "pack",
         operator_modules=("compute_flow_image_ops",),
-        max_inflight_units=16,
-        max_batch_bytes=256 * 1024**2,
-        object_budget_bytes=20 * 1024**3,
+        max_inflight_units=args.inflight,
+        max_batch_bytes=max_batch_bytes,
+        object_budget_bytes=args.object_budget_gib * 1024**3,
         output_columns=("image_hash", "width", "height", "input_side", "quality", "embedding", "embedding_norm"),
     )
 
@@ -183,6 +197,7 @@ def main():
     )
     import numpy as np
     import ray
+    from PIL import Image
 
     from data_juicer.core.elasticjuicer.compute_flow import ComputeFlowConfig
     from data_juicer.core.executor.resident_dag_executor import ResidentDAGExecutor
@@ -196,12 +211,20 @@ def main():
             source.append(json.loads(line))
     if len(source) != args.rows or len({r["id"] for r in source}) != args.rows:
         raise ValueError("insufficient rows or duplicate input IDs")
+    decoded_estimates = []
     for i, row in enumerate(source):
         if hashlib.sha256(Path(row["image_path"]).read_bytes()).hexdigest() != row["image_sha256"]:
             raise ValueError("manifest image hash mismatch")
         row["input_side"] = (
             args.light_side if args.workload == "phase-shift" and i < len(source) // 2 else args.heavy_side
         )
+        with Image.open(row["image_path"]) as source_image:
+            # payload_bytes deliberately counts an owning ndarray's storage
+            # conservatively twice. Include headers/metadata before alignment.
+            decoded_estimates.append(source_image.width * source_image.height * 6 + 65536)
+    peak_estimate = max(sum(decoded_estimates[i : i + args.unit_rows]) for i in range(0, len(source), args.unit_rows))
+    quantum = 64 * 1024**2
+    max_batch_bytes = ((peak_estimate + quantum - 1) // quantum) * quantum
     smi = subprocess.check_output(
         ["nvidia-smi", "--query-gpu=index,name,uuid,memory.used", "--format=csv,noheader"], text=True
     )
@@ -210,8 +233,8 @@ def main():
     ).strip()
     if occupied or len(smi.splitlines()) < args.gpus:
         raise RuntimeError("GPU processes already exist or insufficient GPUs; no other job was stopped")
-    plan = make_plan(args)
-    plan.compile()
+    plan = make_plan(args, max_batch_bytes)
+    compiled = plan.compile()
     provenance = dict(
         command=sys.argv,
         product_commit=subprocess.check_output(["git", "-C", str(product), "rev-parse", "HEAD"], text=True).strip(),
@@ -222,6 +245,8 @@ def main():
         ray=ray.__version__,
         unique_images=len({r["image_sha256"] for r in source}),
         rows=len(source),
+        decoded_batch_estimate_bytes=peak_estimate,
+        effective_inflight_units=compiled["capacity"],
         tolerance_absolute=1e-4,
         code_sha256={
             str(p.relative_to(product)): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -245,7 +270,7 @@ def main():
             num_cpus=4 * args.gpus + 8,
             num_gpus=args.gpus,
             include_dashboard=False,
-            object_store_memory=20 * 1024**3,
+            object_store_memory=plan.object_budget_bytes,
             log_to_driver=False,
             runtime_env={"env_vars": {"PYTHONPATH": paths}},
         )
