@@ -1,7 +1,7 @@
 """Reproducible CPU -> GPU fork -> CPU join experiment on local Qwen images.
 
-Five arms distinguish the existing shared-pool scheduler, fixed slot ownership,
-global compute flow and actor-local adaptive batching. Default is a small
+Six arms distinguish the existing shared-pool scheduler, grouped operators,
+fixed slot ownership, global compute flow and actor-local batching. Default is a small
 integration experiment, not a statistically conclusive speedup measurement.
 """
 
@@ -12,7 +12,7 @@ import os
 import subprocess
 import sys
 import time
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from pathlib import Path
 
 
@@ -45,8 +45,8 @@ def arguments():
     parser.add_argument(
         "--modes",
         nargs="+",
-        choices=("legacy-fixed", "static-fixed", "static-adaptive", "flow-fixed", "flow-adaptive"),
-        default=["legacy-fixed", "static-fixed", "flow-fixed", "static-adaptive", "flow-adaptive"],
+        choices=("legacy-fixed", "grouped-fixed", "static-fixed", "static-adaptive", "flow-fixed", "flow-adaptive"),
+        default=["legacy-fixed", "static-fixed", "flow-fixed", "static-adaptive", "flow-adaptive", "grouped-fixed"],
     )
     args = parser.parse_args()
     if any(
@@ -133,6 +133,16 @@ def write_json(path, value):
     temporary = path.with_suffix(".partial")
     temporary.write_text(json.dumps(value, indent=2, allow_nan=False) + "\n")
     temporary.replace(path)
+
+
+def mode_plan(plan, mode):
+    if mode != "grouped-fixed":
+        return plan
+    from data_juicer.core.elasticjuicer.dag_plan import ExecutionGroup
+
+    return replace(
+        plan, groups=(plan.groups[0], ExecutionGroup("models", ("quality", "embedding"), "gpu", True), plan.groups[-1])
+    )
 
 
 def compare(actual, expected):
@@ -235,12 +245,16 @@ def main():
         raise RuntimeError("GPU processes already exist or insufficient GPUs; no other job was stopped")
     plan = make_plan(args, max_batch_bytes)
     compiled = plan.compile()
+    plans = {mode: mode_plan(plan, mode) for mode in args.modes}
+    for variant in plans.values():
+        variant.compile()
     provenance = dict(
         command=sys.argv,
         product_commit=subprocess.check_output(["git", "-C", str(product), "rev-parse", "HEAD"], text=True).strip(),
         dirty=bool(subprocess.check_output(["git", "-C", str(product), "status", "--porcelain"], text=True).strip()),
         plan=asdict(plan),
         plan_fingerprint=plan.fingerprint(),
+        physical_variants={mode: asdict(variant) for mode, variant in plans.items()},
         gpu=smi,
         ray=ray.__version__,
         unique_images=len({r["image_sha256"] for r in source}),
@@ -285,12 +299,12 @@ def main():
                 print("START", cell.name, flush=True)
                 config = (
                     None
-                    if mode.startswith("legacy")
+                    if mode.startswith(("legacy", "grouped"))
                     else ComputeFlowConfig(mode="dynamic" if mode.startswith("flow") else "static")
                 )
                 started = time.perf_counter()
                 with ResidentDAGExecutor(
-                    plan, adaptive=mode.endswith("adaptive"), compute_flow=config, artifact_dir=cell
+                    plans[mode], adaptive=mode.endswith("adaptive"), compute_flow=config, artifact_dir=cell
                 ) as executor:
                     gpu_ids = {w["worker_id"] for w in executor.worker_identities if w["device"]}
                     if len({w["device"]["uuid"] for w in executor.worker_identities if w["device"]}) != args.gpus:

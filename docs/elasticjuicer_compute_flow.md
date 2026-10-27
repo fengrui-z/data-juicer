@@ -94,13 +94,16 @@ CPU Pack：检查评分/1024 维向量、计算范数 → 流式导出 NPZ
 | 对照 | 全局分配 | 局部 batch | 用途 |
 |---|---|---|---|
 | legacy-fixed | 原 v0.2 共享池调度 | 固定 | 检验新策略相对现有模块的增量 |
+| grouped-fixed | 一个常驻 GPU 执行组内并行跑两个算子 | 固定 | 检验已有算子共置与组内并行的收益 |
 | static-fixed | 固定 slot 归属，8 卡默认 4/4 | 固定 | 固定资源基线 |
 | flow-fixed | 动态组租约 | 固定 | 隔离全局层效果 |
 | static-adaptive | 固定 slot 归属 | 自适应 | 隔离局部层效果 |
 | flow-adaptive | 动态组租约 | 自适应 | 验证双层协作 |
 
-五组使用相同 Actor 数、CPU/GPU 声明、预加载模型、DAG、输出语义、microbatch
-上限和在途预算。静态组也预加载两模型，防止把模型启动/驻留差异误归因于调度。
+六组使用相同 Actor 数、CPU/GPU 声明、预加载模型、逻辑 DAG、输出语义、microbatch
+上限和在途预算。`grouped-fixed` 单独改变物理执行分组，使用 Resident DAG 的
+`ExecutionGroup(parallel=True)`，不是 DJ 主库的 `FusedSequentialBatchOp`，也不
+代表自动融合搜索。静态组也预加载两模型，防止把模型启动/驻留差异误归因于调度。
 另报这种共驻方案相对专用单模型 Actor 的显存代价；本实验不代表二者的全部成本对比。
 
 主指标分别报告“建池至首次完整导出”和“同池后续 warm pass”；Ray 启动不计入上述
